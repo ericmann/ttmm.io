@@ -8,7 +8,7 @@ author:
   image: 'authorimage.jpg'
   #greetings: "Eric is a storyteller, web developer, and outdoorsman living in the Pacific Northwest. If he's not working with new tech in web development, you can probably find him out running, climbing, or hiking in the woods."
 favicon: 'assets/images/favicon.ico'
-baseurl:
+baseurl: https://eamann.com/ttmm.io/
 production_url: https://ttmm.io
 destination: docs
 #disqus: 'justgoodthemes'
