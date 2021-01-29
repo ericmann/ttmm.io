@@ -1,37 +1,37 @@
 # Site setings
-name: 'Royce'
-description: 'Web Developer'
-meta_description: 'Jekyll template, minimal style, perfect for bloggers.'
+name: 'Things that Matter Most'
+description: 'Things that Matter Most'
+meta_description: 'Personal blog of Eric Mann'
 logo:
 # Author image is used in site sidebar and greetings in the home page hero text
 author:
   image: 'authorimage.jpg'
-  greetings: "Hi there! My name is Charles Lavoie. I'm a freelance web developer, author and speaker based in Montreal, Canada. It’s nice to meet you."
+  #greetings: "Eric is a storyteller, web developer, and outdoorsman living in the Pacific Northwest. If he's not working with new tech in web development, you can probably find him out running, climbing, or hiking in the woods."
 favicon: 'assets/images/favicon.ico'
-baseurl: 
-production_url: https://royce.netlify.com/
-disqus: 'justgoodthemes'
-mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
+baseurl:
+production_url: https://ttmm.io
+#disqus: 'justgoodthemes'
+#mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
 # Add your GA Tracking Id
-ga_analytics: 
+ga_analytics: UA-4156949-6
 
 # Contact form setings
-email: youremail@email.com
+email: ttmm@eamann.com
 contact_page_description: "Horace theme comes with a contact form built-in. You can use this form with Formspree service and get up to 50 submissions for free. Also, you can easily switch to another service if you want."
-thankyou_page_description: "Your message has been successfully sent. We will contact you very soon!"
+thankyou_page_description: "Your message has been successfully sent. I'll get back to you as soon as I can!"
 
 # Social links
-twitter: 'justgoodthemes'
-facebook: 'username'
-github: 'justgoodthemes'
-codepen: 'username'
-dribbble: 'username'
-medium: '@username'
-instagram: 'username'
-pinterest: 'username'
-linkedin: 'username'
-producthunt: '@username'
-quora: 'username'
+twitter: 'ericmann'
+#facebook: 'username'
+github: 'ericmann'
+#codepen: 'username'
+#dribbble: 'username'
+#medium: '@username'
+#instagram: 'username'
+#pinterest: 'username'
+linkedin: 'ericallenmann'
+#producthunt: '@username'
+#quora: 'username'
 
 # Navigation
 navigation:
@@ -39,8 +39,6 @@ navigation:
     url: /
   - text: About
     url: /about
-  - text: Style Guide
-    url: /style-guide
   - text: Contact Me
     url: /contact
   - text: Search
