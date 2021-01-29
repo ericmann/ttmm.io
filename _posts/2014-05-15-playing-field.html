@@ -1,0 +1,62 @@
+---
+layout: post
+title: Playing the Field
+date: 2014-05-15 08:00:15.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- deck.js
+- reveal.js
+- seoslides
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1400163821;s:6:"status";s:6:"pushed";}
+  _yoast_wpseo_title: Playing the Field
+  _yoast_wpseo_metadesc: How often do you take a break from your own system to try
+    out alternatives? Could you learn something?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ur
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409915040;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5823;}i:1;a:1:{s:2:"id";i:5557;}i:2;a:1:{s:2:"id";i:5914;}}}}
+  keen_postview_count_this_7_days: '5'
+  _wpghs_github_path: _posts/2014-05-15-playing-field.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/playing-field/"
+excerpt: How often do you take a break from your own system to try out alternatives?
+  Could you learn something?
+---
+<p>I have always been and always will be a huge proponent of <a title="Daily Dogfooding" href="http://eamann.com/tech/daily-dogfooding/">dogfooding</a>. If you aren't willing (and able) to use your own product, why would your customers use it?</p>
+<p>At the same time, I'm also recognize the need to evaluate and learn from others in the community.</p>
+<h2>Online Presentations</h2>
+<p>It's probably no secret, but I spend <a title="seoslides" href="https://github.com/alorum/seoslides">a lot of time hacking</a> on <a title="seoslides" href="http://wordpress.org/plugins/seoslides/">seoslides</a>. I'm incredibly proud of the product we've created, even if it's had a couple of directional pivots in its history.</p>
+<p>seoslides gives you, a WordPress site owner, the ability to create dynamic presentations <em>and host them yourself</em> on the same infrastructure you use for your blog. WordPress is all about democratizing publishing - seoslides is all about democratizing online presentations.</p>
+<p>That said, it's only <em>one</em> approach to the solution.</p>
+<p>When we built seoslides, we originally used the <a title="Shower Presentation Engine" href="http://shwr.me/">Shower Presentation Engine</a> at its core. A few product requirements forced us to replace Shower later with <a title="deck.js" href="http://imakewebthings.com/deck.js/">deck.js</a> instead, and this system has powered seoslides ever since.</p>
+<p>Unlike a vanilla deck.js presentation, though, seoslides abstracts the HTML hacking into a dynamically-positioned GUI. The objective here (and this objective could change) was to make it easier for non-developers and those who don't know HTML and JavaScript to build an HTML-based presentation. No code is required at all on your part to build the presentation, just a drag-and-drop UI.</p>
+<p>This direction is not without its limitations.</p>
+<blockquote><p>&#91;seoslides&#93;’ interface is not the WordPress post editor. I suspect, if it was, I’d be happy since I can mangle HTML there all day long. But &#91;seoslides&#93; doesn’t let you at the source code of the page, you have to use their GUI[ref]<a title="All is Revealed" href="http://halfelf.org/2014/all-is-revealed/">All is Revealed</a>[/ref]</p></blockquote>
+<p>Some WordPress aficionados are super savvy with HTML. Some are not. Our target has always been those who <em>can't</em> otherwise use an HTML presentation tool, and that limits what we can provide in a way.</p>
+<p>Navigational elements all need to be visual - hidden keyboard shortcuts just won't do. I'm super comfortable with the command line, so a keyboard shortcut is easy for me; it's incredibly foreign to someone used to clicking buttons for navigation or seeing animated menus for information.</p>
+<p>Take a look at <a title="Monkeys in the Machine" href="http://eamann.com/slides/monkeys-machine">any seoslides presentation</a> today. Then press "m" on your keyboard to get an exploded "overview" of the presentation. It's a cool feature,[ref]This is actually a part of deck.js itself.[/ref] but not marketed because we don't yet have a GUI button to trigger the view.</p>
+<h2>Reveal</h2>
+<p>One of the other slide systems I like today is <a title="reveal.js" href="http://lab.hakim.se/reveal-js/">reveal.js</a>. I've used it for my past two presentations so I can get a feel for another tool on the market, and I love some of the features it provides; I'd absolutely love to bundle some of its awesomeness into seoslides.</p>
+<p>But I also have certain trepidations to doing so.</p>
+<p>On the one hand, the side-by-side speaker view is amazing. On the other hand, it doesn't work in every browser (and we're trying to keep things fairly compatible across demographics).</p>
+<p>On the one hand, nested slides are an incredible way to navigate through different topics. On the other hand, a visual editor for creating such a relationship would be needlessly complex (and likely not used by enough of the target market to justify the engineering time).</p>
+<p>Also, <em>there is no visual GUI for creating a reveal.js presentation</em>. You <em>have</em> to know and be able to hack HTML to build the slideshow.</p>
+<p>Are there things I like about reveal.js? Definitely. Will I try to utilize some of these tools for further improving seoslides? You bet.</p>
+<p>Do I think reveal.js is better than seoslides? No. But not because of product pride, but because each product serves a different audience - anyone can build a presentation with a drag-and-drop tool. Not everyone can hack and layout HTML.</p>
+<p>Neither workflow is superior; they are each used by different demographics and fit certain personality types. That doesn't make either tool better than the other, but it does help to evaluate which features and workflows can be borrowed from each and implemented in the other.</p>
+<p>How often do you take a break from your own system to try out alternatives? Could you learn something?</p>

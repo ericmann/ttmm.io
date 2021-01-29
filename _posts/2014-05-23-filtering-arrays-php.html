@@ -1,0 +1,83 @@
+---
+layout: post
+title: Filtering Arrays in PHP
+date: 2014-05-23 08:00:55.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- array
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1400851563;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Filtering Arrays in PHP
+  _yoast_wpseo_metadesc: Few PHP developers know how to manipulate arrays using PHP's
+    built-in functionality. Here are three powerful examples of how to do exactly
+    that.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/u-
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409725597;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6275;}i:1;a:1:{s:2:"id";i:6129;}i:2;a:1:{s:2:"id";i:2811;}}}}
+  keen_postview_count_this_7_days: '3'
+  _wpghs_github_path: _posts/2014-05-23-filtering-arrays-php.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/filtering-arrays-php/"
+excerpt: Few PHP developers know how to manipulate arrays using PHP's built-in functionality.
+  Here are three powerful applications of this function set and why you should use
+  them in your code.
+---
+<p>I discovered yesterday how few developers use array filtering in PHP. Sure, they know <em>how</em> to filter arrays, but like most sane people avoid any function within PHP that starts with [cci]array_[/cci]</p>
+<p>After all, PHP's array handling is flat out insane.</p>
+<p>As a result, most developers will use [cci]for[/cci] loops to manually iterate over arrays. It works, but consumes several lines of code and generally looks ugly.</p>
+<p>There are a handful of functions <i>built into PHP</i> that can be lifesavers when building a project.</p>
+<h2>Mapping Arrays</h2>
+<p>The most widely recognized PHP array method is [cci]array_map()[/cci]. With this method, you can "map" an arbitrary function to every element in an array.</p>
+<p>Let's say, for example, an API or database lookup gives you an array of numbers but for some reason all of these numbers are stored as strings. It would be far better if we could apply, say WordPress' [cci]absint()[/cci] function to each item before using it elsewhere in our code.</p>
+<p><code lang="php">// Get an array of strings from a data source<br />
+$our_array = get_some_data_from_somewhere();</p>
+<p>// Turn those strings into integers<br />
+$our_array = array_map( 'absint', $our_array );</code></p>
+<h2>Filtering Arrays</h2>
+<p>Sometimes, an array contains a lot more data than we actually need to use. Perhaps its a collection of <i>all</i> WordPress posts and we want to specifically exclude certain posts that have been printed elsewhere on the page.[ref]In some cases, you might just run a second query. With a [cci]post__not_in[/cci] parameter, but then you're running <i>two</i> queries. The second version is also not cachable.[/ref]</p>
+<p>Luckily, the [cci]array_filter()[/cci] method allows us to iterate through our array and determine whether or not individual elements should remain in the collection:</p>
+<p><code lang="php">// Get an array of strings from a data source<br />
+$our_array = get_some_data_from_somewhere();</p>
+<p>// We want to exclude posts from the following array<br />
+$exclude = array( 15, 27, 123 );</p>
+<p>// Now do the filter, using a closure<br />
+$filtered = array_filter( $our_array, function( $item ) use ( $exclude ) {<br />
+  if ( in_array( $item->ID, $exclude ) ) {<br />
+    return false;<br />
+  }</p>
+<p>  return true;<br />
+} );</code></p>
+<p>When the closure returns true, the current item will remain in the array. When it returns false, the item is skipped. You <i>could</i> just filter the array back to itself - storing the result of [cci]array_filter()[/cci] in a second variable allows us to be nondestructive in our operation (if we need the original array again for any reason).</p>
+<h2>Reducing Arrays</h2>
+<p>My personal favorite, though, is [cci]array_reduce()[/cci]. Like [cci]array_filter()[/cci] above, it can be used to filter an array down to a specific subset. Since it builds up an internal array (the reduce function applies iteratively to the carrying array), you can also manipulate <i>the keys</i> of the array at the same time.</p>
+<p>For example, let's say you're working again with an array of posts in WordPress. You want to strip out 2 posts that have already been used on the page. At the same time, you want to convert your numerically-indexed array to an <i>associative</i> array keyed by post IDs.</p>
+<p><code lang="php">// Get an array of strings from a data source<br />
+$our_array = get_some_data_from_somewhere();</p>
+<p>// We want to exclude posts from the following array<br />
+$exclude = array( 15, 27, 123 );</p>
+<p>// Now reduce the array, using a closure<br />
+$reduced = array_reduce( $our_array, function( $carry, $item ) use ( $exclude ) {<br />
+  if ( ! in_array( $item->ID, $exclude ) ) {<br />
+    $carry[ $post->ID ] = $item;<br />
+  }</p>
+<p>  return $carry;<br />
+} );</code></p>
+<p>You're effectively using [cci]array_reduce()[/cci] to filter the array, but killing two birds with one stone by rekeying the array at the same time.</p>
+<p>What other PHP array functions do you use?</p>

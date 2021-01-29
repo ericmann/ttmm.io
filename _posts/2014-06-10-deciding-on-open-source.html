@@ -1,0 +1,53 @@
+---
+layout: post
+title: Making the Decision for Open Source
+date: 2014-06-10 08:00:12.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- free software
+- open source
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Making the Decision for Open Source
+  _yoast_wpseo_metadesc: At some point in your career, you might find yourself weighing
+    the pros and cons of open source as it relates to your business.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vh
+  _wpghs_github_path: _posts/2014-06-10-deciding-on-open-source.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/deciding-on-open-source/"
+excerpt: At some point in your career, you might find yourself weighing the pros and
+  cons of open source as it relates to your business.
+---
+<p>At some point in your career, you might find yourself weighing the pros and cons of open source as it relates to your business. I've been working with and writing open source software in a variety of situations for several years now. Let me give you some advice, based specifically on the <em>drawbacks</em> I've seen in the open source world.</p>
+<h2>Using Open Source</h2>
+<p>Often, the primary driver behind using an open source solution over an in-house or paid alternative is cost. An open source database is likely free, whereas a proprietary one might cost several thousand dollars. Per year. Per installation.</p>
+<p>Using the "free" option instead of the paid option will get you a pat on the back for saving money. It might also be a good fit for your business; it might also be a bad fit.</p>
+<p>One business I worked with was in the medical field. Our flagship product was a desktop-based medical records management system that we were trying to put online to leverage a SaaS infrastructure. Unfortunately, our entire business was running on a very much bootstrapped budget, so we were tasked with using exclusively open source (read: "free") libraries of those written by our (underpaid) in-house team.</p>
+<p>Things were going well until our competitor launched a web-based version of their own product. With a much nicer user interface than ours. And a far broader base of device support.[ref]For reasons that still elude logic, we only supported Windows XP (or older) machines with IE6-8. This was <em>after</em> IE9 and Windows 7 had been released.[/ref] Our first assignment: catch up. Quickly.</p>
+<p>I shopped around for a few open source libraries and found one that would work wonders. Unfortunately, the organization publishing the library had a rather Orwellian interpretation of the open source license they used - they actually threatened to sue us if we used their license in a commercial setting since, apparently, open source to them means absolutely-zero-profit-allowed.</p>
+<p>In some industries, the requirements of open source licensing make it difficult to understand what you can and cannot do with the various tools upon which you build your product. In certain circumstances, when the landscape is too murky for comfort, it's safer to use an in-house or proprietarily-licensed product instead.</p>
+<h2>Creating Open Source</h2>
+<p>The biggest drawback to producing open source software is the response.</p>
+<p>Often times, you'll see overwhelming praise and support when your first launch. Everyone loves the new product you've released and is quick to snatch up a copy and deploy it in their own environments.</p>
+<p>Then, when the newness of your release fades, the requests begin to come in. Support for customers who can't figure something out. Requests to add this feature or change that feature. Bug reports unrelated to your initially-designed use case or expectations. If you're used to providing customer support for <em>paid</em> customers (who rightfully expect support), you'll quickly become bogged down trying to cater to the needs and demands of customers who have yet to pay a dime for your product.</p>
+<p>Many open source projects release software without ever charging a dime for development, hosting, distribution, documentation, or even support.[ref]There are several successful companies out there who deal explicitly in open source. Some business models work quite well. Others are horrendous failures that paint the open source community as a bunch of entitled pricks. For now, we're talking about people who work, for free, on essentially free projects that just contribute goodwill to the community.[/ref] Unless you have some sort of revenue stream available to support on-going development, merely releasing free software is unsustainable.</p>
+<p>I once built a .Net-based wrapper for the Gecko rendering engine (i.e. Firefox) so I could use the engine as a drop-in replacement for browser controls in a Windows desktop application. It was a fun project, diving deep into the browser's internals and exposing a .Net-programmable API. And it was <em>paid</em> work since I was using the library in my day job.</p>
+<p>I maintained ownership of the project when I left that job.[ref]The library had been built entirely on my own time, and I had licensed it back to my employer under the terms of the MIT license.[/ref] This meant I kept working on it long after I stopped being <em>paid</em> to work on the library. My will to focus time and energy on the project quickly waned in favor of actual, paying jobs that were available. After about a year, I abandoned the project entirely.</p>
+<p>I couldn't keep up with my regular job (bills need to be paid!), my own private to-do list for the project, and the ever-growing list of demands from other developers building on top of my library. I walked away from the project and, though I'd love to go back to finish it, there is absolutely zero incentive for me to do so.</p>
+<p>Don't get me wrong - open source can be an amazing element of any business, big or small. There are, however, times when incorporating an open source library into your project is a bad idea. There are also times when open sourcing a project into which you've invested significant time and energy is a poor decision. Please hear me - these times are <em>extremely rare</em>. My goal is that anyone considering either of the above options fully consider the ramifications of their decision before blindly moving forward.</p>
+<p>That said, I still encourage you to both use and contribute to open source!</p>

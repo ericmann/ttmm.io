@@ -1,0 +1,55 @@
+---
+layout: post
+title: Introducing Sessionz
+date: 2016-11-27 09:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- PHP
+- Sessionz
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_metadesc: Introducing a new, middleware-inspired session handler for
+    PHP projects (not just WordPress) called Sessionz. It's open source; take a look!
+  yourls_shorturl: http://eam.me/10t
+  _wpas_done_all: '1'
+  _wpghs_github_path: _posts/2016-11-27-introducing-sessionz.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/introducing-sessionz/"
+excerpt: Introducing a new, middleware-inspired session handler for PHP projects (not
+  just WordPress) called Sessionz. It's open source; take a look!
+---
+<p>Not that long ago, I made <a href="http://ttmm.io/tech/wp_session-a-proposal/">an attempt</a> to fix what I saw as one of the biggest issues facing session management in WordPress. Many larger sites use multiple servers for presenting content, but the lack of sticky sessions on the load balancer[ref]This one change, making sessions sticky, can often correct the issue on its own. That said, some hosting environments don't allow enough control over the stack to make such a change in the first place.[/ref] means that standard PHP sessions, which live in the filesystem, tend to fail quite quickly.</p>
+<p>My first attempt, WP_Session, was a great prototype and helped prove the need for a solid solution. Unfortunately, it was prone to many issues on its own.</p>
+<h2>The Issues</h2>
+<p>As I was trying to prove a <em>WordPress</em> solution, I used WordPress as a platform itself. This isn't an issue, per se, but it meant my experiment was limited to only WordPress sites and feedback. The limited scope of the project was an issue.</p>
+<p>I also used the WordPress database for session storage. Again, not an issue on its own, but my aim at <em>not</em> changing the database schema did become an issue. WP Session Manager stores data in the options table by default - for smaller sites, this is OK. For larger sites, this can slow the server to a crawl as that table isn't indexed for the kind of data we were throwing at it.</p>
+<p>Finally, the system I had built was a reinvention of a wheel that already worked quite well. Instead of using PHP's native sessions, I built an entirely new system from scratch that required developers to learn a new interface and made their code completely reliable on my very specific implementation. Understanding how cookies were created and curated alone was problematic, and that was the smallest component of the system.</p>
+<h2>The New Player</h2>
+<p>Over the past year, I've been able to step away from WordPress a bit and have learned how other platforms (and languages) are choosing to solve similar problems. I've been blown away by how fluent and efficient systems for request middleware have become, and I started to think about how that might affect session management as well.</p>
+<p>Enter my new experiment: <a href="https://github.com/ericmann/sessionz">Sessionz</a>.</p>
+<p>Sessionz is a middleware-inspired session management stack that works for <em>any</em> PHP application running on PHP 5.6 or better.[ref]Yes, I could run this on older PHP, too ... but older PHP is no longer supported. If you're running anything less than PHP 5.6 in production, you're just <em>asking</em> for someone to hack your site. Quit it.[/ref] Like a request middleware stack, you can add in additional handlers to take care of different abstractions for your session.</p>
+<p>Right now, Sessionz has implementations for:</p>
+<ul>
+<li>The default PHP session store</li>
+<li>Storing session data in-memory for persistent PHP applications</li>
+<li>Encrypting data before it's written out (and decryption before it's loaded back in)</li>
+</ul>
+<p>The project itself uses PHP's native session implementation, so there's no additional library to learn. Just <a href="https://packagist.org/packages/ericmann/sessionz">add the project with Composer</a>, initialize and set up your stack, then use <tt>$_SESSION</tt> everywhere else like you normally would. Sessionz works transparently in the background to make your life easier.</p>
+<h2>What's Next</h2>
+<p>I'm working on a <em>new</em> version of <a href="https://github.com/ericmann/wp-session-manager">WP Session Manager</a> that will leverage Sessionz under the hood. The old interfaces will still work, but will trigger a deprecation warning. Like the older implementation, I'll still use the WordPress database for persistence, but will set up a hidden post type so we don't fill up the options table.[ref]Using a CPT will also allow us to query for and purge expired sessions using an actual date field in the database. There is no understating how much this will improve the plugin's performance.[/ref]</p>
+<p>I'm always open to feedback and suggestions! Take a look and let me know what you think.</p>

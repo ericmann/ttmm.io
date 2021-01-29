@@ -1,0 +1,78 @@
+---
+layout: post
+title: Multi-Instance Factories in PHP
+date: 2014-06-26 08:00:44.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- factory
+- multiton
+- PHP
+- singleton
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Multi-Instance Factories in PHP
+  _yoast_wpseo_metadesc: I advocate the proper use of Singletons, but that situations
+    where Singletons are appropriate are few and far between.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vx
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409712575;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6129;}i:1;a:1:{s:2:"id";i:5469;}i:2;a:1:{s:2:"id";i:5472;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '2'
+  _wpghs_github_path: _posts/2014-06-26-multi-instance-factories-php.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/multi-instance-factories-php/"
+excerpt: I advocate the proper use of Singletons, but that situations where Singletons
+  are appropriate are few and far between.
+---
+<p>A colleague recently asked me why I <a title="Making Singletons Safe in PHP" href="http://eamann.com/tech/making-singletons-safe-in-php/">advocate Singletons</a> on my site. I explained that I advocate the <em>proper use</em> of Singletons, but that situations where Singletons are appropriate are few and far between.</p>
+<h2>Alternatives</h2>
+<p>The first, and easiest, alternative to a Singleton implementation is documentation. Heavily document in your object where and how it should be used, and explain the dangers of multiple instantiation. This is a quick alternative, but yields absolutely zero actual protection in code.</p>
+<p>Another alternative is to use a <a title="Singleton: Alternative to the Anti-Pattern" href="http://eamann.com/tech/singleton-alternative/">pseudo factory method</a>. The object exposes a public constructor, so it can still be instantiated many times. But if, in your code you need a single, canonical instance reference you can use the class' static [cci]::Factory()[/cci] method. Again, it works but is a bit confusing in implementation.</p>
+<h2>Named Object Factory</h2>
+<p>This is a hybrid of the factory and multiton patterns. Essentially, every object can be instantiated as many times as you want. However, there is a (separate) Factory object that can instantiate other objects for you. This factory object will keep track of the objects it has built and allows you to reference them again int he future.</p>
+<p><code lang="php" height="670">class Factory {<br />
+  protected static $objects = array();</p>
+<p>  /**<br />
+   * Build a named multiton object and return it. Keep a reference when building<br />
+   * so we can reuse it later.<br />
+   *<br />
+   * If you pass something like "my object" or "my-object" to $object, the Factory<br />
+   * will instantiate "Class_My_Object"<br />
+   *<br />
+   * @param string $object Object name.<br />
+   * @param string $name   Optional. Name of the object.<br />
+   *<br />
+   * @throws InvalidArgumentException If the specified class does not exist.<br />
+   *<br />
+   * @returns mixed<br />
+   */<br />
+  public static function build( $object, $name = 'canonical' ) {<br />
+    if ( ! isset( self::$objects[ $object ] ) ) {<br />
+      self::$objects[ $object ] = array();<br />
+    }</p>
+<p>    $class_name = 'Class_' . ucwords( str_replace ( array( ' ', '-' ), '_', $object ) );</p>
+<p>    if ( ! class_exists( $class_name ) ) {<br />
+      throw new InvalidArgumentException( 'No class exists for the "' . $object . '" object.' );<br />
+    }</p>
+<p>    if ( ! isset( self::$objects[ $object ][ $name ] ) ) {<br />
+        self::$objects[ $object ][ $name ] = new $class_name;<br />
+    }</p>
+<p>    return self::$objects[ $object ][ $name ];<br />
+  }<br />
+}</code></p>
+<p>To use this, you'd call something like [cci]Factory::build( 'my-object' );[/cci] to instantiate the canonical [cci]Class_My_Object[/cci] object. If you want to have multiple copies around, you could use something like [cci]Factory::build( 'dba', 'db1' );[/cci] and [cci]Factory::build( 'dba', 'db2' );[/cci] to create two copies of the [cci]Class_Dba[/cci] object (for accessing two discrete databases.</p>
+<p>The advantages of this pattern are that you can use pseudo-singletons throughout your code without actually implementing the Singleton pattern. The disadvantages are that you're using an ambiguous static method to create you objects, so in-line autocomplete within your dev tools will struggle with typing unless you place some explicit type declarations in your documentation.</p>

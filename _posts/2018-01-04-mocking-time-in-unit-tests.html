@@ -1,0 +1,127 @@
+---
+layout: post
+title: Mocking Time in Unit Tests
+date: 2018-01-04 08:00:40.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags: []
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/mocking-time-in-unit-tests/"
+excerpt: Some operations in PHP introduce uncertainty around your code's behavior.
+  In those situations, it's helpful to insert helper functions that make your code
+  more reliable and easier to test.
+---
+<p><!-- wp:core/paragraph --></p>
+<p>Unit testing is a development topic that <a href="https://ttmm.io/tutorial/start-with-a-unit-test/">I&#x27;m fairly passionate about</a>. It is, unfortunately, a bit tricky to understand when you&#x27;re just getting started. Given that some operations in PHP can introduce uncertainty in your code, there are situations where testing is just plain <em>hard</em>﻿ and developers easily get discouraged.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>One of the trickier operations is <tt>time()</tt>.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>A PHP Use Case</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>One of my <a href="https://packagist.org/packages/ericmann/totp">newer PHP extensions</a> is a library for generating and validating time-based one-time-password (<a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a>) codes.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The core of the extension is a function to <em>generate</em>﻿ a TOTP code given a known secret key. It leverages the system clock (<tt>time()</tt>) as a counter and will generate the same code for the same time step every time. The following is drastically simplified from the extension&#x27;s actual code:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="php">function calc_totp($key, $digits = 6, $hash = 'sha1', $time_step = 30)
+{
+    $secret = Encoding::base32DecodeUpper((string)$key);
+
+    // Pad the secret value if necessary ...
+
+    $time_step = intval($time_step);
+
+    $step_count = floor(time() / $time_step);
+
+    $timestamp = pack('J', $step_count);
+    $hash = hash_hmac($hash, $timestamp, $secret, true);
+
+    // Encode the hash ...
+
+    return str_pad($code, $digits, '0', STR_PAD_LEFT);
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p><em>Testing</em>﻿ this code can be a bit tricky. On the one hand, it&#x27;s fairly straight-forward to generate a code then <em>immediately</em>﻿ validate it with the same library. Codes are valid for up to ~4 minutes, so you&#x27;re not dealing with any race conditions there.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>However, there&#x27;s not really a clear way to generate <em>deterministic</em>﻿ codes as we&#x27;re bound to a system-level call to <tt>time()</tt>.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The TOTP specification includes <a href="https://tools.ietf.org/html/rfc6238#appendix-B">a set of reference values</a> for testing custom implementations - given a specific secret <em>at a specific time</em>, any valid TOTP implementation should produce a specific result. In order to add these reference values to our test suite, we need a way to substitute a deterministic value for the system time.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Mocking Time</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Luckily, the project itself leverages <a href="http://php.net/manual/en/language.namespaces.php">PHP namespaces</a> for encapsulation. This helps keep <em>my</em>﻿ code separate from everyone else&#x27;s code, but also comes with a great ancillary benefit for testing.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>When a function is called without a namespace modifier, PHP will <em>by default</em>﻿ look within the current namespace for an implementation. If none is found, the interpreter will instead look in the global namespace.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This means we can redefine <tt>time()</tt> within our test namespace to override the system implementation!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="php"><?php namespace EAMann\TOTP;
+
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Override time() in the current namespace for testing.
+ *
+ * @return int
+ */
+function time()
+{
+    return ReferenceTest::$now ?: \time();
+}
+
+/**
+ * Verify the TOTPs calculated for various timestamps match the
+ * text vectors identified in the reference spec implementation.
+ *
+ * @see https://tools.ietf.org/html/rfc6238#appendix-B
+ */
+class ReferenceTest extends TestCase {
+    /**
+     * @var int $now Timestamp returned by time()
+     */
+    public static $now;
+
+
+    public function test_sha1_generate() {
+
+        $hash = 'sha1';
+
+        self::$now = 1514996409;
+
+        $this?>assertEquals(1514996409, time());
+    }
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>By default, invoking <tt>time()</tt> in a test will return the result of a system call as the static timestamp isn&#x27;t set. However, if we need to override that timestamp to set a specific value, we just set <tt>$now</tt> to our value and <tt>time()</tt> will return it on every invocation.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This is a simple trick to make time-based functionality in PHP easily testable.</p>
+<p><!-- /wp:core/paragraph --></p>

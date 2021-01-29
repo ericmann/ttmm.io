@@ -1,0 +1,83 @@
+---
+layout: post
+title: Classy Plugins
+date: 2012-05-15 09:00:28.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/hk
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: plugins
+  _yoast_wpseo_metadesc: Someone asked why I structure my WordPress plugins the way
+    I do. Here's a full explanation ...
+  _yoast_wpseo_linkdex: '73'
+  _wpghs_github_path: _posts/2012-05-15-classy-plugins.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/classy-plugins/"
+---
+<p>I was asked a few weeks ago why I structured my WordPress plugins the way I do.</p>
+<p>Anyone who has spent any time looking at my code knows that I like to keep my main functions in a class and wire up action hooks and filters in the root of the plugin.  But few people have asked me <em>why</em> I set things up this way.</p>
+<p>My explanation is in two parts:</p>
+<ol>
+<li>Writing clean code</li>
+<li>Writing easy-to-maintain code</li>
+</ol>
+<p>Though it should be noted now that, while this particular development style makes heavy use of classes within PHP, this is <strong><em>not</em></strong> object-oriented programming.</p>
+<p>Let me say again - <strong>this is not object-oriented programming</strong>.  I use classes often to define custom objects, but in this situation I use them merely as convenient wrappers for code.<!--more--></p>
+<h2>Writing Clean Code</h2>
+<p>Ideally, code should be self-documenting.</p>
+<p>Function names should be concise yet descriptive.  Variable names should reflect what's contained within them.  I should be able to tell from glancing at your code what it does without looking to external documentation.</p>
+<p>Where code isn't enough to explain what's happening, a quick in-line comment usually is.</p>
+<p>To stick to this idea, I like to name my plugin functions after the WordPress hooks they tie to.  If I want to hook onto the [cci]init[/cci] hook, I'd like to do so with a function named [cci]init()[/cci].</p>
+<p>And that's a problem because that function name is already used.</p>
+<p>To keep things clean, I make all of my plugin functions public, static members of a class.  Then, I can specify the class name when hooking in to WordPress and can keep things clean:</p>
+<p><code lang="php"><br />
+class My_Plugin {<br />
+  public static function init() {<br />
+    add_image_size( 'mp-image', 120, 140, true );<br />
+  }</p>
+<p>public static function query_vars( $public_vars ) {<br />
+    $public_vars[] = 'mp-paged';<br />
+    return $public_vars;<br />
+  }</p>
+<p>public static function the_content( $content ) {<br />
+    global $post;<br />
+    if( 'mp_post_type' != $post->post_type )<br />
+      return $content;</p>
+<pre><code>$mp_post = new MP_Post( $post );
+return $mp_post-&gt;summary;
+</code></pre>
+<p>}<br />
+}<br />
+</code></p>
+<p>A lot of other developers prefix their function names.  I have no problem with this as an alternative practice.  I just have my own preferences for code organization.</p>
+<h2>Easy-to-maintain Code</h2>
+<p>I keep all of my hooks in one place so I don't need to hunt for them later.</p>
+<p>My first experience with an "advanced theme framework" was what should have been a 2-hour design project.  Instead I spent 2 weeks hunting through the code and referencing online documentation to find out which hooks were defined in which files so I could override them.</p>
+<p>It was painful.</p>
+<p>As much as I like the elegance of seeing a [cci]fire_main_engines()[/cci] or similar method in a plugin root (leaving that function to call others that wire up the hooks), that kind of model is difficult to maintain.  If all of the hooks are instead defined in one spot, it's easy to add new ones, remove deprecated ones, or just see at a glance <em>every part of the plugin that interacts with WordPress</em>.</p>
+<p><code lang="php"><br />
+require_once( 'lib/class.my-plugin.php' );</p>
+<p>add_action( 'init',        array( 'My_Plugin', 'init' ) );</p>
+<p>add_filter( 'query_vars',  array( 'My_Plugin', 'query_vars' ) );<br />
+add_filter( 'the_content', array( 'My_Plugin', 'the_content' ) );<br />
+</code></p>
+<h2>What We Gain</h2>
+<p>The folder structures of my plugins are very uniform and easy to follow.  The root directory contains a single PHP file with plugin information, licensing, and all of the hooks used by the system.  There's also a readme file containing a changelog, FAQs, and other useful information.  If the plugin adds presentation elements, there are a few screenshots.</p>
+<p>The [cci]/lib[/cci] folder contains PHP files with static classes that wrap the functionality of the plugin.  They are either [cci]require()[/cci]ed or [cci]include()[/cci]ed by the root PHP file.</p>
+<p>You can browse the base file in the root directory to see where my plugin ties in to WordPress.  Based on the function and class name in the hook, you know exactly which file to look at for the actual functionality.</p>
+<p>Is this the best way to do things?  I don't know for sure.  All I do know is that it's clean and efficient.</p>

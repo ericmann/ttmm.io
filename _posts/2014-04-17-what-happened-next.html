@@ -1,0 +1,56 @@
+---
+layout: post
+title: I submitted a WordPress patch no one asked for; you'll never guess what happened
+  next!
+date: 2014-04-17 08:00:08.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- core
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: I submitted a WordPress patch no one asked for; you'll never
+    guess what happened next!
+  _yoast_wpseo_metadesc: Do you have an unrequested patch lying around somewhere?
+    Put it on Trac; you might be surprised by the response!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/t-
+  _oembed_635f7d350e313354e4414928afb8304a: <blockquote class="twitter-tweet" width="500"><p>I
+    say we boycott all articles containing the phrase &quot;what happens next&quot;
+    <a href="https://twitter.com/search?q=%23cheapseo&amp;src=hash">#cheapseo</a></p>&mdash;
+    Eric Mann (@EricMann) <a href="https://twitter.com/EricMann/statuses/456597510912360448">April
+    17, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _wpghs_github_path: _posts/2014-04-17-what-happened-next.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/what-happened-next/"
+excerpt: Do you have an unrequested patch lying around somewhere? Put it on Trac;
+  you might be surprised by the response!
+---
+<p>The title is absolute link bait, and a reference to a call I made on Twitter last night:</p>
+<p>https://twitter.com/EricMann/status/456597510912360448</p>
+<h2>Link Bait</h2>
+<p>I absolutely hate sites like BuzzFeed. UpWorthy is growing ever closer to being on my personal do-not-click list as well.  Just about all of their articles are some sort of top-10, top-20, or top-43 list that has absolutely zero impact on my life.</p>
+<p>The "what happens next" articles are even worse offenders.  They have all the makings of a stories with unexpected twists, but are merely devious attempts to trick readers into clicking through thanks to a half-hearted cliffhanger.</p>
+<p>On the one hand, it's admirable to find new and inventive ways to draw readers.</p>
+<p>On the other hand, if you need to resort to <em>tricking</em> readers into reading your articles, then I'd argue your content isn't of a high enough quality to deserve to be read.[ref]I recognize the irony of my using a similar title for this post. I'm trying to make a point - if you clicked through from Twitter, thank you. You might be interested in some of <a title="WordPress Archive" href="http://eamann.com/tag/wordpress/">my other articles on WordPress</a> as well. If you feel tricked into reading this article, I invite you to stay anyway and promise to never resort to such devious SEO-gaming techniques again.[/ref]</p>
+<h2>OK, so what happened?</h2>
+<p>Now that I've duped you into reading an article,[ref]I feel really dirty doing this. It won't happen again. Ever. Promise.[/ref] let me actually answer the cliffhanging question.</p>
+<p>Last year, I opened <a title="Deprecate `get_permalink()`" href="https://core.trac.wordpress.org/ticket/24164">a WordPress ticket</a> proposing we deprecate the [cci]get_permalink()[/cci] template tag in favor of [cci]get_the_permalink()[/cci] for consistency among our template tags.  My ticket was a bit selfish, as I've personally used [cci]get_the_[/cci]  functions that don't exist more times than I can count.</p>
+<p>Introducing [cci]get_the_permalink()[/cci] would cut down significantly on the number of typos I introduce to my own code. After talking to several other developers at WordCamps and meetups, it turns out I'm not the only one who makes this mistake.</p>
+<p>There was an ongoing debate on the ticket, and eventually <a title="Changeset 27409" href="https://core.trac.wordpress.org/changeset/27409">my patch was accepted</a> - last month - and released as part of WordPress 3.9.</p>
+<p>Was this unexpected? Yes and no. I never expected this particular patch to land in core, but I did expect the ongoing discussion on the idea.  The WordPress community is an incredibly social and helpful one, so I never doubted we'd come together and actually discuss any proposed idea.</p>
+<p>Even an idea not explicitly requested by members of the core team.</p>
+<p>Do you have an unrequested patch lying around somewhere? Put it on Trac; you might be surprised by the response!</p>

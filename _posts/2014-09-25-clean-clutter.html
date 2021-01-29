@@ -1,0 +1,98 @@
+---
+layout: post
+title: Clean up your clutter
+date: 2014-09-25 08:00:58.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- globals
+- namespacing
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _oembed_24fcea63a63f03a10351f686e2bb257d: <blockquote class="twitter-tweet" width="500"><p>With
+    WordPress, when trying to store instantiated objects in global namespace, should
+    it be in $GLOBALS or $_GLOBALS ?</p>&mdash; {&#39;&#39;nm&#39;&#39;:&#39;&#39;Michael&#39;&#39;}
+    (@tw2113) <a href="https://twitter.com/tw2113/status/514614567846944768">September
+    24, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_24fcea63a63f03a10351f686e2bb257d: '1411653901'
+  _oembed_50167f64f2484e622679cd0e074426ed: <blockquote class="twitter-tweet" width="500"><p><a
+    href="https://twitter.com/EricMann">@EricMann</a> creating classes that have methods
+    that we end up using in other areas is though. We&#39;re just not creating new
+    objects each time</p>&mdash; {&#39;&#39;nm&#39;&#39;:&#39;&#39;Michael&#39;&#39;}
+    (@tw2113) <a href="https://twitter.com/tw2113/status/514775781554147328">September
+    24, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_50167f64f2484e622679cd0e074426ed: '1411654017'
+  _yoast_wpseo_title: Clean up your clutter
+  _yoast_wpseo_metadesc: Global variables are bad, clutter your code, and can be a
+    major stumbling project in terms of project maintainability. Don't use them.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yf
+  _wpghs_github_path: _posts/2014-09-25-clean-clutter.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/clean-clutter/"
+excerpt: Global variables are bad, clutter your code, and can be a major stumbling
+  project in terms of project maintainability. Don't use them.
+---
+<p>A developer friend of mine asked an interesting question[ref]I don't fault Michael for this question at all. I've been in exactly the same boat with a project and asked the exact same question myself. Globals are a messy but very tempting non-solution to several problems that come up in PHP development. I'm often reminded by my team of how much I despise the use of globals because, honestly, they <em>still</em> show up in my code occasionally.[/ref] yesterday on Twitter.</p>
+<p>https://twitter.com/tw2113/status/514614567846944768</p>
+<p>This question was interesting for a multitude of reasons:</p>
+<ol>
+<li>It's not that uncommon. Many developers in the WordPress (or even just PHP) space use globals as a way to quickly and easily transport objects from one file or context to another.</li>
+<li>It demonstrates a too-common design pattern that is the largest stumbling block to new developers trying to learn object-oriented programming.</li>
+</ol>
+<h2>The Rationale</h2>
+<p>Many developers conflate object oriented programming (OOP) with using classes. Unfortunately, there are many things you can do with a class in PHP that <em>look</em> object-like but are in fact not.</p>
+<p>Let's say you have a set of utility functions you need to use multiple places throughout your code:</p>
+<p>https://twitter.com/tw2113/status/514775781554147328</p>
+<p>Functions are miniature programs that can live in our out of classes and provide some sort of <em>functionality</em> that is both stateless and independent of where it's called. <em>Methods</em> are a specific type of functions that belong to an object and act only in the context of that instance of an object.</p>
+<p>When working on a complex project, it's often easier to just drop a utility function into an existing object definition so that function becomes available wherever the object exists. When a project is large, filled with legacy code, or you're just so far in that a client won't give you room to refactor (as in this particular case), this is often the easiest way to get what you need done, done.</p>
+<p>Unfortunately it also pulls some really bad coding designs into your project and helps to perpetuate a misunderstanding (in the PHP world) of how OOP and functions really work. If you need a <em>function</em> in PHP that behaves in a certain way, it shouldn't be part of an object at all.[ref]A caveat here is when working with PHP &lt; 5.3. Earlier versions of PHP lack namespacing capabilities, so <em>static</em> classes that represent a collection of statically-defined methods are often used as pseudo namespaces. This is acceptable, so long as you remember that you're not building <em>objects</em> and thus not doing OOP.[/ref]</p>
+<p>Methods on objects should relate to the object on which they're defined. Static <em>functions</em> wrapped within an object definition should still relate in some way to the object being defined. If you need a truly stand-alone function, leave it as a function and put it in a namespace instead.</p>
+<p>One example of how some are doing things:</p>
+<p><code lang="php">class My_Stuff {<br />
+  public function my_function() {<br />
+    // .. do something awesome<br />
+  }<br />
+}</p>
+<p>$Globals['my_stuff'] = new My_Stuff();</p>
+<p>// In another file<br />
+global $my_stuff;<br />
+$my_stuff->my_function();</code></p>
+<p>An example of how things should be done:</p>
+<p><code lang="php">namespace My_Stuff;</p>
+<p>function my_function() {<br />
+  // ... do something awesome<br />
+}</p>
+<p>// In another file<br />
+My_Stuff\my_function();</code></p>
+<h2>Globals</h2>
+<p>The "how some are doing things" example creates a standalone instance method rather than a static class function. If the function were static, a developer could easily just call [cci]My_Class::my_function()[/cci] anywhere in their code without issue.</p>
+<p>If instead this is a method, then the developer needs a reference to a class instance to call it:</p>
+<p><code lang="php">// Either<br />
+$my_stuff = new My_Stuff();</p>
+<p>// Or<br />
+global $my_stuff; // instantiated elsewhere</p>
+<p>// Then<br />
+$my_stuff->my_function();</code></p>
+<p>If your class is defined in one file, instantiated in another, and the instance method is needed in yet another function (and for some reason you can't create a <em>second</em> instance of the object), you'll be tempted to store the original instance in a global variable.</p>
+<p>This is a bad idea.</p>
+<p>Global variables exist for every part of your application. From the time they're instantiated to the time the PHP thread invokes [cci]shutdown()[/cci], your object will be sitting there, occupying memory, waiting to be used. One global object isn't too bad; once you introduce the pattern, though, the global namespace begins to get crowded as more and more objects will be lying around as new developers join the project and copy-paste your design.</p>
+<p>Lots of objects in the global namespace equals lots of memory consumption by your application.</p>
+<p>Instead, be very careful about what information you actually need at different stages of the application. If you need an object in a function, take that object as a parameter to the function call. If for some reason you <em>can't</em> add another parameter, create an object factory that can reliably return the object instance you need regardless of where you reference the factory.[ref]Storing a reference in an object factory will <em>still</em> keep it around and use memory. But the factory can also be smart about memory management and recycle the object if needed later. Also, either using a factory or passing an object by reference makes your code more unit-testable as it eliminates hidden dependencies on globals.[/ref]</p>
+<p>The short version: global variables are bad, clutter your code, and can be a major stumbling project in terms of project maintainability. Don't use them.</p>

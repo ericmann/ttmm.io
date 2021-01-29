@@ -42,13 +42,15 @@
 .caption-text {
   margin-bottom: 1.66667em;
   padding-top: 1%;
-  text-align: center; 
+  text-align: center;
 }
 
+.post-cats,
 .post-tags,
 .post-share {
   font-size: 0.77778rem;
   line-height: 1.5;
+  margin-bottom: 0;
 }
 
 .post-share-title {
@@ -58,6 +60,7 @@
   margin-right: 10px;
 }
 
+.post-cats a,
 .post-tags a,
 .post-share a {
   display: inline-block;
@@ -65,6 +68,7 @@
   text-decoration: none;
 }
 
+.post-cats a:before,
 .post-tags a:before {
   content: "\0023";
 }
@@ -87,6 +91,7 @@
   margin-bottom: 1.42857em;
 }
 
+.post-fill .post-cats
 .post-full .post-tags {
   margin-top: 2.14285em;
 }

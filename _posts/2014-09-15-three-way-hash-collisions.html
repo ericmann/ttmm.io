@@ -1,0 +1,53 @@
+---
+layout: post
+title: Birthdays and Three-way Hash Collisions
+date: 2014-09-15 08:00:24.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- hash collision
+- security
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Birthdays and Three-way Hash Collisions
+  _yoast_wpseo_metadesc: Let's work out the probability that, in a given group of
+    individuals, at least three share a birthday.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/y5
+  _wpghs_github_path: _posts/2014-09-15-three-way-hash-collisions.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/three-way-hash-collisions/"
+excerpt: Let's work out the probability that, in a given group of individuals, at
+  least three share a birthday.
+---
+<p>Over the past couple of weeks we've been <a title="Playing the Lottery" href="http://eamann.com/tech/playing-lottery/">talking</a> <a title="The Birthday Paradox" href="http://eamann.com/tech/birthday-paradox/">a lot</a> about statistics and calculating the probability of hash collisions.</p>
+<p>Last week, we took some time to calculate the probability that, in a group of people, at least two individuals share a birthday. In computer science, this is a hash collision - where two random events (i.e. hash calculations) happen to coincide exactly.</p>
+<p>Today, we'll instead work out the probability that, in a given group of individuals, at least <em>three</em> share a birthday.</p>
+<h2>The Three-way Birthday Problem</h2>
+<p>If you remember from last week, when we have a group of 50 individuals, there's a 97.04% chance that two[ref]Or more ...[/ref] members of the group share a birthday.</p>
+<p>The next step of the calculation is to figure out the probability of <em>exactly</em> two people sharing a birthday in the group. Unlike the two-or-more problem earlier, we have to work this out based on the number of potential <em>combinations</em> of individuals within the group.</p>
+<p>We can choose 2 individuals from a population of 50 in 1,225 ways.</p>
+<p>The probability that <em>exactly</em> 2 individuals share a birthday is then calculated as:</p>
+<p style="text-align: center;">$latex P=\frac{1225\times365\times364\times\dots\times317}{365^{50}}=11.18\%$</p>
+<p>To review, this means that, for a population of 50, the probability of no one sharing a birthday is 2.96% and the probability of exactly two sharing a birthday is 11.18%.</p>
+<p>The probability, then, that three or more members of the group share a birthday is:</p>
+<p style="text-align: center;">$latex P=1-(0.0296+0.1118)=0.8586-85.86\%$</p>
+<p>Consider this, in a room of 50 people, there's a 97.04% chance that two of them share a birthday. There's also an 85.86% chance that <em>three</em> of them share a birthday.</p>
+<h2>Implications for Security</h2>
+<p>The birthday problem is a convenient way to visualize the behavior of hashes. Out of a population of over 7 billion, the population of the planet can still be summarized in a hash table consisting only of 365 discrete hashes. It's the mapping of a very large data set onto a much smaller one.</p>
+<p>Standard hashes in computing do the same thing. A typical checksum will reduce a possibly infinite set of data down to just ten potential values. The potential for hash collisions is enormous.</p>
+<p>Simple hashing algorithms like MD5 also raise the potential for large numbers of collisions. If a stored password is hashed with MD5, a potential attacker doesn't need to know your actual password to bypass security, only a string that hashes to the same output.</p>
+<p>The smaller the potential set output by the hash function, the higher the likelihood of hash collisions.</p>

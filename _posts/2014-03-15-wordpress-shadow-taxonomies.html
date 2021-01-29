@@ -1,0 +1,160 @@
+---
+layout: post
+title: WordPress and Shadow Taxonomies
+date: 2014-03-15 08:00:08.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- post relationships
+- taxonomy
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1394870578;s:6:"status";s:6:"pushed";}
+  _yoast_wpseo_title: WordPress and Shadow Taxonomies
+  _yoast_wpseo_metadesc: Abstractions build false confidence for new developers -
+    so I'm going to show you how to build a post-to-post relationship system in WordPress
+    from scratch.
+  _wpas_mess: WordPress and Shadow Taxonomies
+  yourls_shorturl: http://eam.me/t2
+  _wpas_done_all: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409784476;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6021;}i:1;a:1:{s:2:"id";i:6252;}i:2;a:1:{s:2:"id";i:3928;}}}}
+  keen_postview_count_this_7_days: '2'
+  keen_postview_count_this_30_days: '28'
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _yoast_wpseo_primary_category: ''
+  _yoast_wpseo_content_score: '90'
+  _wpcom_is_markdown: '1'
+  _wpghs_github_path: _posts/2014-03-15-wordpress-shadow-taxonomies.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-shadow-taxonomies/"
+excerpt: Abstractions build false confidence for new developers - so I'm going to
+  show you how to build a post-to-post relationship system in WordPress from scratch.
+---
+<p>WordPress is well-known for its ability to extend to support custom content in the form of custom post types.</p>
+<p>WordPress is also well-known for its <em>in</em>ability to build relationships between post types, custom or otherwise.</p>
+<p>Savvy developers use tools like <a title="Posts to Posts" href="http://scribu.net/wordpress/posts-to-posts/">Posts 2 Posts</a> to overcome this limitation.  It's a powerful abstraction of an oft-needed one in the development world.  Unfortunately, it's an abstraction.</p>
+<p>When you use abstractions too often, you neglect the underlying architecture and can run afoul of certain issues endemic to how things are build under the surface.</p>
+<p>Abstractions build false confidence for new developers as well - so I'm going to show you how to build a post-to-post relationship system in WordPress from scratch.</p>
+<h2>Shadow Taxonomies</h2>
+<p>Essentially, you need to build a custom taxonomy that shadows your custom post type (or core post type) directly in a 1:1 fashion.</p>
+<p>When new posts are added, new terms are added.</p>
+<p>When posts are deleted, terms are deleted.</p>
+<p>Then, rather than relating posts to other posts, you can tag a post with a term from the matching shadow taxonomy.</p>
+<h3>First Step</h3>
+<p>Assume you have a custom post type called "movie."[ref]Assume you're building a system to track Oscar nominees.  You might want to have both movies <em>and</em> actors since they can both be nominated.  But let's say you <em>also</em> want to relate authors to movies.  This system is designed for exactly that scenario.[/ref]  For simplicity, we'll create a taxonomy called "_movie."  The leading underscore doesn't mean anything significant, it's just how we're distinguishing one form of content from another.</p>
+<p><code lang="php" height="410px">/**<br />
+ * Register a taxonomy that shadows our Movie custom post type.<br />
+ *<br />
+ * This taxonomy will only be available for Actors.<br />
+ *<br />
+ * @uses register_taxonomy()<br />
+ * @uses __()<br />
+ */<br />
+function register_shadow_taxonomy() {<br />
+    register_taxonomy(<br />
+        '_movie',<br />
+        'actor',<br />
+        array(<br />
+            'label'         => __( 'Movie', 'textdomain' ),<br />
+            'rewrite'       => false,<br />
+            'show_in_menu'  => false,<br />
+            'show_tagcloud' => false,<br />
+            'hierarchical'  => false,<br />
+        )<br />
+    );<br />
+}<br />
+add_action( 'init', 'register_shadow_taxonomy' );</code></p>
+<h3>Second Step</h3>
+<p>When you update posts in the "movie" post type collection, you also want to create entries in the "_movie" taxonomy.</p>
+<p><code lang="php" height="680px">/**<br />
+ * When a movie CPT entry is saved, automatically create a entry in our pseudo-hidden "_movie" taxonomy.<br />
+ *<br />
+ * @uses get_post_type()<br />
+ * @uses get_post()<br />
+ * @uses get_term_by()<br />
+ * @uses wp_insert_term()<br />
+ *<br />
+ * @const DOING_AUTOSAVE<br />
+ *<br />
+ * @param int $post_id<br />
+ */<br />
+function update_shadow_taxonomy( $post_id ) {<br />
+    // If we're running an auto-save, don't create a term<br />
+    if ( defined( 'DOING_AUTOSAVE' ) &amp;&amp; DOING_AUTOSAVE ) {<br />
+        return;<br />
+    }</p>
+<pre><code>// If we're not working with a movie, don't create a term
+if ( 'movie' !== get_post_type( $post_id ) ) {
+    return;
+}
+
+// If we can't retrieve the movie, don't create a term
+$movie = get_post( $post_id );
+if ( null === $movie &amp;&amp; 'Auto Draft' !== $movie-&gt;post_title ) {
+    return;
+}
+
+// If the movie already exists, don't create a term.
+$term = get_term_by( 'name', $movie-&gt;post_title, '_movie' );
+if ( false === $term ) {
+    // Create the term
+    wp_insert_term( $movie-&gt;post_title, '_movie' );
+}
+</code></pre>
+<p>}<br />
+add_action( 'save_post', 'update_shadow_taxonomy' );</code></p>
+<h3>Third Step</h3>
+<p>This one is optional - but you might just want to delete terms from the taxonomy as you delete posts from the collection.[ref]I say it's optional because, really, the missing post won't affect much.  But if you're deleting movies (due to editor error) and still present their relationships with actors, things might look a bit funny.[/ref]</p>
+<p><code lang="php" height="680px">/**<br />
+ * Remove a term from the shadow taxonomy upon post delete.<br />
+ *<br />
+ * @uses get_post_type()<br />
+ * @uses get_post()<br />
+ * @uses get_term_by()<br />
+ * @uses wp_delete_term()<br />
+ *<br />
+ * @const DOING_AUTOSAVE<br />
+ *<br />
+ * @param int $post_id<br />
+ */<br />
+function delete_shadow_tax_term( $post_id ) {<br />
+    // If we're running an auto-save, don't delete a term<br />
+    if ( defined( 'DOING_AUTOSAVE' ) &amp;&amp; DOING_AUTOSAVE ) {<br />
+        return;<br />
+    }</p>
+<pre><code>// If we're not working with a movie, don't delete a term
+if ( 'movie' !== get_post_type( $post_id ) ) {
+    return;
+}
+
+// If we can't retrieve the movie, don't delete a term
+$movie = get_post( $post_id );
+if ( null === $movie ) {
+    return;
+}
+
+// If the movie already exists, don't delete anything.
+$term = get_term_by( 'name', $movie-&gt;post_title, '_movie' );
+if ( false !== $term ) {
+    // Delete the term
+    wp_delete_term( $term-&gt;term_id, '_movie' );
+}
+</code></pre>
+<p>}<br />
+add_action( 'before_delete_post', 'delete_shadow_tax_term' );</code></p>
+<h2>Use in Production</h2>
+<p>Now that you have a shadow taxonomy set up, you can use it to relate <em>any</em> other post objects in your installation to movies.  Extending the Oscar concept, this includes not just actors but also directors, producers, studios, and even reviews.</p>
+<p>Post types are useful for storing large chunks of data in the WordPress database.  Taxonomies are great for storing - and efficiently querying - relationships between data.</p>
+<p>Pairing them together means you have the best of both world: comprehensive data <em>and</em> efficient query-able relationships.</p>

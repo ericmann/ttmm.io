@@ -1,0 +1,65 @@
+---
+layout: post
+title: DNS and Cross-Site Scripting
+date: 2014-09-19 08:00:04.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- cross-site scripting
+- DNS
+- escaping
+- hacking
+- vulnerability
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: DNS and Cross-Site Scripting
+  _yoast_wpseo_metadesc: One of the first things on any security auditor's list is
+    checking to see if a site is vulnerable to cross-site scripting (XSS).
+  _oembed_37fb1feead6165e520f1c908e761ceab: '<blockquote class="twitter-tweet" width="500"><p>Ok,
+    this is a pretty amazing XSS exploit: <a href="http://t.co/PObynTNTMV">http://t.co/PObynTNTMV</a></p>&mdash;
+    Owen Winkler (@ringmaster) <a href="https://twitter.com/ringmaster/status/512663527689957377">September
+    18, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>'
+  _oembed_time_37fb1feead6165e520f1c908e761ceab: '1411079590'
+  _wpas_mess: Analyzing yesterday's Harlem Shake cross-site scripting fiasco ...
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/y9
+  _wpghs_github_path: _posts/2014-09-19-dns-cross-site-scripting.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/dns-cross-site-scripting/"
+excerpt: One of the first things on any security auditor's list is checking to see
+  if a site is vulnerable to cross-site scripting (XSS).
+---
+<p>One of the first things on any security auditor's list is checking to see if a site is vulnerable to cross-site scripting (XSS).</p>
+<p>The point of an XSS vulnerability is that an attacker can inject a script into your page. Once the script is there, it can manipulate your page in any way it wants. It can add markup (i.e. reconfigure the page). It can intercept visitor interactions (i.e. capture usernames and passwords, sending them to a remote site).</p>
+<p>Or it can make your entire page to the <a title="Harlem Shake" href="http://en.wikipedia.org/wiki/Harlem_Shake_(meme)">Harlem Shake</a>.</p>
+<p>https://twitter.com/ringmaster/status/512663527689957377</p>
+<p>Own linked here to a DNS lookup tool that, apparently, is suffering from a cross-site scripting exploit.[ref]The site was being actively mocked at the time of this writing, but late yesterday afternoon I noticed that the site host updated their system to properly escape DNS record output. Unfortunately you can't see the active exploit any longer.[/ref] Shortly after the page loads, you hear a Harlem Shake track play in the background and, shortly thereafter, see all of the content on the page dance along with the music.</p>
+<p>It's awesome, both in terms of humor, and in terms of the stellar example this presents of how <em>not</em> to build a site.</p>
+<h2>The Exploit</h2>
+<p>It took a few minutes of digging to figure out what was actually going on with the site. I couldn't track down exactly how the Harlem script was being injected ... until I saw a very specific indicator.</p>
+<p>The domain being looked at returns several TXT records. Two of them appear to be (intentionally) malicious.</p>
+<p>One showed up as blank in the page, so I skipped over it. The second was a YouTube video embed.</p>
+<p><strong>Wait ...</strong></p>
+<p>One of the DNS TXT records was <em>a YouTube video embed</em>. What's worse, it was a <em>functional YouTube video embed!</em></p>
+<p>I used the DOM inspector to look at the seemingly blank TXT record, and found out it was, indeed, the script tag that was triggering the Harlem Shake takeover.</p>
+<p>When the DNS lookup tool rendered the raw content of the TXT records directly to the page. No validation. No escaping. So both the &lt;iframe&gt; and &lt;script&gt; TXT tags became <em>functional markup</em> and part of the page.</p>
+<h2>Lessons Learned</h2>
+<p>When developers are pulling information from external sources, it's often easy to just print the information direction to the page. Often we're the ones <em>writing</em> the information in the first place, so we assume that data will be safe when we read it back out.</p>
+<p>This includes remote APIs, databases, filesystems. Basically any place we take data and turn around to present it to visitors.</p>
+<p><em>Always assume a malicious party can stand between you and your data</em>.</p>
+<p>This is why, with WordPress code, the accepted best practice is to escape <em><a title="The Importance of Escaping All The Things" href="http://vip.wordpress.com/2014/06/20/the-importance-of-escaping-all-the-things/">everything</a></em>. Core functions, custom functions, database reads, remote data fetches - everything must be escaped before we print it to the browser.</p>
+<p>After all, no one expects a TXT record to contain a &lt;script&gt; tag, so it's safe to print without escaping, right?</p>

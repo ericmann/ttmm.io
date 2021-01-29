@@ -1,0 +1,69 @@
+---
+layout: post
+title: Security
+date: 2009-04-03 09:00:59.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+meta:
+  yourls_shorturl: http://eam.me/60
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  _aioseop_description: Different websites demand differing levels of security.  How
+    well did you plan out your system?
+  aktt_tweeted: '1'
+  _aioseop_keywords: web security, authentication, window security, brickwall security
+  _aioseop_title: Security
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407395498;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5894;}i:1;a:1:{s:2:"id";i:6467;}i:2;a:1:{s:2:"id";i:6244;}}}}
+  _wpghs_github_path: _posts/2009-04-03-security.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/security/"
+---
+<p>Nothing can ever be truly secure. The best we can muster is the <em>illusion</em> of security - create a veil through which our world looks private and closed off from the idle hands of those who would disrupt it.</p>
+<p>I've been working quite a bit on website development lately, and I've been thinking a lot about web security.  The fact of the matter is, if one person can get into a website (through authentication, of course) then there's someone out there with the skills to circumvent any security measures you have and also get in.  It's like the old bank vault argument - if there's a door, then someone will be able to sneak through eventually.</p>
+<p>With this in mind, I see two potential forms of website security: <strong>window</strong> security and <strong>brickwall</strong> security.</p>
+<p>For simplicity's sake, I will not try to explain the coding behind how either method works.  That would bore you, frustrate me, and ultimately destroy the conversation I'd like to have on the topic.  Instead, assume your website is a building.  You have an open lobby to receive customers and display information about the services you offer.  There's also a door in the back through which your existing customers or employees can go for deeper access to your resources.</p>
+<p>It's this door that we're talking about.  What kind of a door would you use to protect your deepest, darkest secrets?</p>
+<p>Imagine, for the sake of this argument, that both kinds of doors are indestructible.  You can't beat through them or rip them off the hinges.  But, you probably could pick the lock if you knew what you were doing.  So really, what are the benefits and drawbacks of each door?</p>
+<h3>Window Security</h3>
+<p>You can lock people out, but you can't keep them entirely away from your things.  While they can't reach in and play with the stapler on your desk, they can stand at the door and ogle your new laptop for hours.  On a web system, window security is remarkably easy to set up.  Check whether or not the person is supposed to be there - if they are, they have access.  If they aren't, then the special features of the site are "hidden."</p>
+<p>In reality, this means the web controls are still present, but they can't be used.  Someone with an incredibly high level of tech savvy can right click your website and select "view source" to see all of your private goodies.  Once again, while they can see them, they can't actually interact with anything.</p>
+<p><strong>Benefits</strong></p>
+<ul>
+<li>Very easy to code</li>
+<li>Lightweight on the server</li>
+<li>Easy to find 'broken' elements should something go wrong on the administrative side</li>
+</ul>
+<p><strong>Drawbacks</strong></p>
+<ul>
+<li>As my brother would say, you can't walk around naked if you have a glass door - if the hidden parts of your website are unsightly, remember they are still visible to the righ people</li>
+<li>Priviledged information <em>seems</em> less protected to some stakeholders</li>
+</ul>
+<h3>Brickwall Security</h3>
+<p>Sometimes, you want to restrict people completely from your things.  It's not enough that they can't touch your stapler, you don't want them to even <em>know</em> you have one!  The majority of login-based web systems are built on the concept of brickwall security today.  You can't access any page, file, or folder in the file system without authenticating.  You can't even <em>view</em> the file tree without logging in!  Obviously, brickwall security requires a more refined system of authenticating users.</p>
+<p>Unlike window security, where protected information is merely 'hidden' from prying eyes, brickwall security doesn't give it out at all.  Private data stays on the server and is only returned to the web browser when a user is authenticated.  An otherwise uneducated user wouldn't even know they're missing some of the information on your page.</p>
+<p><strong>Benefits</strong></p>
+<ul>
+<li>More secure</li>
+<li>Priviledged data is protected in its entirety from un-priviledged users</li>
+<li>The unsightly 'hidden' elements of your website are truly hidden, only a select few will even know they exist</li>
+</ul>
+<p><strong>Drawbacks</strong></p>
+<ul>
+<li>A completely authenticated system is a much larger, more intricate piece of code that takes up more room on the server and in your files</li>
+<li>If something breaks on the administrative end, you might not be able to log in to find it</li>
+</ul>
+<p>In the end, the kind of security you choose for your website is heavily dependent on your personal style and needs.  Just like you wouldn't use a twenty pound sledgehammer to drive a nail into a birdhouse, you wouldn't want to build a brickwall security system to protect an online vanity photo album.  Overkill is overkill, no matter the variety.  (On that same note, you wouldn't use a piece of chewing gum to repair Hoover Dam, either.)</p>
+<p>So which kind of security do you use on your company's website (or social network)?  Why did you choose that particular variety?  Did you overspend on something more robust than you needed?  Did you build an ineffective system instead?  How can your resources be better allocated in the future?</p>

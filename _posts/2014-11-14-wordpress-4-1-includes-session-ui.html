@@ -1,0 +1,49 @@
+---
+layout: post
+title: WordPress 4.1 Includes a Session UI
+date: 2014-11-14 08:00:11.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- open source
+- security
+- session management
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress 4.1 Includes a Session UI
+  _yoast_wpseo_metadesc: Open source means someone else built my dream project, and
+    now I get to collaborate on it!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zs
+  _wpghs_github_path: _posts/2014-11-14-wordpress-4-1-includes-session-ui.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-4-1-includes-session-ui/"
+excerpt: My attempts to build a session UI over the weekend failed. My attempt to
+  build one during a team hackathon was sidelined so we could focus on, what seemed
+  at the time, far more interesting code. Now, though, I can jump on board with the
+  new session UI being merged into WordPress 4.1!
+---
+<p>One of my favorite (ok, my <em>only</em> favorite) feature of Facebook is its ability to atomically control user sessions. You can log in from anywhere and, from an administrative screen, see a list of locations from where you logged in.</p>
+<p>In addition to that, you can selectively invalidate user sessions from devices or browsers you forgot had you logged in. It's great if you've ever logged in (even temporarily) from a friend's machine and want to make sure they don't try to smear you online. Or if you lose a phone or device and need to invalidate a rogue session before someone else finds and abuses their fancy new toy.</p>
+<p>I like this feature so much, I proposed we bake it into core.</p>
+<blockquote><p>Ideally, whenever you log in to WordPress, it would record a new authenticated session, identifying you, the time you logged in, the device from which you logged in, and the physical location of your session. This would give visibility into the various machines capable of accessing your account – i.e. machines where you clicked “Remember Me” while logging in.[ref]<a title="WordPress Core Proposal: Session Management" href="https://eamann.com/tech/wordpress-session-management/">WordPress Core Proposal: Session Management</a>[/ref]</p></blockquote>
+<p>I only got a few comments on the post, but that's because I knew this was already something that could be easily implemented thanks to some changes in WordPress 4.0. I didn't have time to work on anything on my own, though, and I also was entirely unaware that anyone else was working on this feature.</p>
+<p>That's the beauty of open source.</p>
+<p>Anyone can work on anything. Sometimes people are working on something you need, and you don't even know about it. Even better, once you <em>do</em> discover the project, you can contribute to what's already in existence rather than work on reinventing the wheel on your own.</p>
+<p>My attempts to build a session UI over the weekend failed. My attempt to build one during a team hackathon was sidelined so we could focus on, what seemed at the time, far more interesting code (well, code that garnered far more active interest from some other engineers).</p>
+<p>Now, though, I can jump on board with the new session UI; particularly since <a title="Focus Project and Session UI Approved for Merge Into WordPress 4.1" href="http://wptavern.com/focus-project-and-session-ui-approved-for-merge-into-wordpress-4-1">it will be shipping with WordPress 4.1</a>!</p>
+<p>&nbsp;</p>

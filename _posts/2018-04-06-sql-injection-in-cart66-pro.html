@@ -1,0 +1,65 @@
+---
+layout: post
+title: 'Disclosure: SQL Injection in Cart66 Pro'
+date: 2018-04-06 05:00:41.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+tags:
+- security
+- vulnerability
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_content_score: '30'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '891'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_focuskw_text_input: Cart66
+  _yoast_wpseo_focuskw: Cart66
+  _yoast_wpseo_linkdex: '77'
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/sql-injection-in-cart66-pro/"
+excerpt: Last month I discovered a critical SQL injection vulnerability in the no-longer-developed
+  yet still actively used Cart66 Pro plugin for WordPress. Here are the details ...
+---
+<p style="text-align: center;"><em>This vulnerability was reported earlier directly to both the Cart66 team and to Semper Fi Web Design (the maintainers of the GitHub clone). This post follows a 30-day responsible disclosure window.</em></p>
+<p>Last month, a friend pointed me to the no-longer-in-development Cart66 Pro module for WordPress. The plugin ceased development about two years ago when the team moved to a hosted SaaS model, but it's still available <a href="https://github.com/semperfiwebdesign/cart66pro">by way of a GitHub mirror</a> for anyone still actively using the tool. Just one problem: it has some significant security holes.</p>
+<h2>Password Use</h2>
+<p>The first critical flaw in the plugin is the way <span style="text-decoration: line-through;">protects</span> it fails to protect user credentials. WordPress isn't widely known for its strong stance on user password hashing, but at least leverages multiple hashing rounds and a random salt to prevent the creation of <a href="https://en.wikipedia.org/wiki/Rainbow_table">rainbow tables</a> for brute forcing a login.</p>
+<p>Cart66, however, <a href="https://github.com/semperfiwebdesign/cart66pro/blob/master/pro/models/Cart66Account.php#L22">uses a <em>single</em> round of MD5 hashing on the password</a>. Without a cryptographic salt.</p>
+<p>This fails to offer much protection at all on a user password. Further, MD5 is considered a broken hash and it's relatively easy to use an aforementioned rainbow table to reverse from a hash to a user-specified string.</p>
+<p>Considering how frequently end users reuse passwords, getting a copy of the unsalted single-round MD5 hashes from a Cart66 database would give any attacker a solid starting point for trying to steal a customers' account elsewhere. Perhaps they reused the same password for PayPal? For another ecommerce site? For their email address?</p>
+<p>The weak state of password hashing on Cart66 Pro-powered sites results in databases ripe for abuse if they can be stolen by a malicious party.</p>
+<h2>SQL Injection</h2>
+<p>Like all good ecommerce and marketing tools, Cart66 Pro presents an efficient way both to email customers and for customers to opt-out of receiving emails. Unfortunately, the opt-out mechanism is vulnerable to a somewhat trivial SQL injection vulnerability!</p>
+<p>The opt-out system is powered by a <a href="https://codex.wordpress.org/shortcode">WordPress shortcode</a>. A WordPress administrator adds this shortcode to a standard post or page in WordPress, then visitors hit that page when they click an opt-out link in the footer of an email. PHP code running on the page will then extract certain query parameters from the URL to identify and flag the user as opted out of messaging.</p>
+<p>One of these parameters is the customer's email address (as that's their primary identifier in the database). By default, the email address is passed as a Base64-encoded, URL-encoded parameter in the request.</p>
+<p>For example, <tt>eric@thisisareallybadidea.com</tt> would be encoded as <tt>ZXJpYyU0MHRoaXNpc2FyZWFsbHliYWRpZGVhLmNvbQ==</tt>.</p>
+<p><em>However</em>, there is zero sanitization on this input. While a typical user would click a link in their email client, an attacker could craft their own URL with whatever parameters they want specified. Imagine instead that an attacker passed <tt>JTI3JTNCVFJVTkNBVEUrd3BfY2FydDY2X2FjY291bnRzJTNCLS0=</tt> as the email parameter in the request.</p>
+<p>This decodes to <tt>';TRUNCATE wp_cart66_accounts;--</tt>, which is obviously not an email address. To understand why it's an issue, you have to understand that, after decoding the email parameter, Cart66 Pro passes the value directly into a SQL statement:</p>
+<pre><code lang="php">$itemsTable = Cart66Common::getTableName('accounts');
+$sql = "SELECT id from $itemsTable where email = '$email'";
+$id = $this->_db->get_var($sql);</code></pre>
+<p>Running through the interpolation, this will have the effect of running the following query directly against the WordPress database:</p>
+<p><tt>SELECT id from wp_cart66_accounts where email = '';TRUNCATE wp_cart66_accounts;--'</tt></p>
+<p>The first SELECT statement will obviously fail to match any accounts, but the second TRUNCATE statement will drop all account data from the database!</p>
+<p>A well-armed attacker could also craft a request to insert arbitrary information into the database, manipulate the data already present, or even extract whatever contents they want from the WordPress database (including a list of all account logins and weakly-hashed passwords)!</p>
+<p>If you are using Cart66 Pro and have not already patched this issue, <strong>please do so immediately</strong> as your database (and your customers' information) is at risk!</p>
+<h2>Moving Forward</h2>
+<p>SQL injection attacks are one of the most prevalent in the open source software community. It's incredibly easy to write insecure code and trust that the only inputs to our functions are legitimate. But every developer needs to occasionally put on their "how would someone break my code" hat and protect against the worst case scenario.</p>
+<p><a href="https://codex.wordpress.org/Class_Reference/wpdb#Protect_Queries_Against_SQL_Injection_Attacks">WordPress in particular has extensive documentation</a> about how to properly <a href="https://developer.wordpress.org/reference/classes/wpdb/prepare/">prepare SQL statements</a> to prevent this kind of injection attack. If you're using WordPress and writing code that queries the database directly, <strong>use this approach</strong> to avoid a malicious party abusing your code to attack the platform.</p>
+<p>If you're writing PHP but <em>not</em> using WordPress, <a href="http://php.net/manual/en/pdo.prepared-statements.php">leverage tools like PDO that support prepared, parameterized statements</a> to protect your code from abuse.</p>
+<p>There is literally no excuse to <em>not</em> prepare your SQL statements in modern code. Anything less is reckless and opens not only your customers but also your business to attack and abuse. It's worth it to take the time and do things right the first time. Security engineers will often find these issues in the wild and give you a head's up; but usually a malicious party has already found and exploited the hole by then.</p>
+<p style="text-align: center;">-~-</p>
+<p><a href="https://www.phparch.com/books/security-principles-for-php-applications/"><img class="alignright size-medium wp-image-7980" src="{{ site.baseurl }}/assets/2018/04/owasp-cover-3d-768x960-1-240x300.png" alt="" width="240" height="300" /></a>For more advice on writing secure PHP code, I'd encourage you to pick up a copy of my new book, <a href="https://www.phparch.com/books/security-principles-for-php-applications/"><em>Security Principles for PHP Applications</em></a>. I'll walk you through all of the updated OWASP Top Ten, and specifically through properly avoiding both SQL and other forms of injection attacks. It's a great place to start to keep your project secure.</p>

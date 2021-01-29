@@ -1,0 +1,63 @@
+---
+layout: post
+title: The Dangerous Allure of the GPL
+date: 2010-08-27 08:00:50.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- GPL
+- license
+meta:
+  yourls_shorturl: http://eam.me/1e
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409762576;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6363;}i:1;a:1:{s:2:"id";i:3989;}i:2;a:1:{s:2:"id";i:6399;}}}}
+  keen_postview_count_this_7_days: '4'
+  _wpghs_github_path: _posts/2010-08-27-the-dangerous-allure-of-the-gpl.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/the-dangerous-allure-of-the-gpl/"
+---
+<p>I am a huge fan of open source development.  From the developer side of things, it means there are limitless tools at my disposal for creating the next knock-your-socks off application.  I can build just about anything with insanely powerful libraries of code that the big guys like Microsoft can't touch.  It's an amazing power, and one that's attracted more than a few good developers.</p>
+<p>From the consumer side, it means I have the luxury of verifying that the application I install that claims to do X actually does X and not something malicious - I can look at the source code, change it if I want, and go about my business.  This has saved my bacon several times when an off-the-shelf solution didn't actually work on my machine.  I just cracked the hood, fixed a couple of things here and there, and viola!  It worked like new!</p>
+<p>The trick to open source development is licensing.  You have to pick what's called a "<a href="http://en.wikipedia.org/wiki/Copyleft" target="_blank">copyleft</a>" license to protect your code.  Basically, it's a way of stamping your name on a product, drafting a bill of rights for your customers, and <em>legally requiring</em> them to pass those same rights on to anyone they happen to give the code to.  One of the most popular modern licenses that does this is the <a href="http://www.gnu.org/licenses/gpl.html" target="_blank">GNU General Public License</a>.</p>
+<p><img class="alignright size-medium wp-image-2727" src="{{ site.baseurl }}/assets/2010/08/gpl_logo-300x295.jpg" alt="" width="180" height="177" />Until recently, I was in love with the GPL.  I learned about it by developing for WordPress, and proceeded to slap it on just about everything I wrote.  This made it really easy to keep all my development on track, because I didn't have to worry about which license applied to which piece of code (all of the projects I was submitting code to were also GPL).</p>
+<p>But I've stumbled upon a few things recently that make me regret that decision ...</p>
+<h2>License Ambiguity</h2>
+<p>First of all, the GPL is only "compatible" with certain other licenses.  And it's viral.  Meaning that if you have one piece of GPL code in your application, the <em>entire</em> application must be licensed with a compatible license - you must extend the same rights to the code for the entire application that are extended to that piece of code.</p>
+<p>On the surface, this seems pretty innocuous.  But there are some major hang-ups involved.  WordPress, for example, is licensed somewhat ambiguously.  The license statement originally claimed WordPress was licensed under "GPL" ... with no version number specified (there are 3 versions of the GPL available, with multiple derivations, too).  But some code that makes up the WordPress core is explicitly licensed as GPLv2.  Some code is licensed as GPLv2 "or any later version."  The <a href="http://core.trac.wordpress.org/ticket/14685" target="_blank">confusion over which parts of the code carry which license terms</a> <a href="http://wordpress.stackexchange.com/questions/377/gpl-and-plugins/">led some (myself included)</a> to believe the <em>entire</em> codebase was licensed as GPLv2.</p>
+<p>The problem here is that most of the code I have written over the past 3 years is licensed as GPLv3 ... I like to use the latest version of everything, so this was pretty automatic.  Other authors did the same, adopting GPLv3 for their libraries, submitting them to the WordPress plug-in repository, distributing them on Google Code, or hosting on their own website.</p>
+<p>The thing is: GPLv3 <strong><a href="http://www.gnu.org/licenses/gpl-faq.html#AllCompatibility" target="_blank">is not compatible</a></strong> with GPLv2.</p>
+<p>So even though we were trying to be good open source contributers, we were actually violating our own license terms.  By writing code for WordPress, claiming it was licensed as GPLv2, then using that code in GPLv3-licensed plug-ins <em>we were infringing on the terms of our own licenses</em>.  Ironically, this would be like stealing your own car by accident.  Or mistakenly breaking in to your own house.</p>
+<p>Needless to say, the <a href="http://lists.automattic.com/pipermail/wp-hackers/2008-October/022236.html" target="_blank">arguments</a> over which version of the GPL WordPress is <em>actually</em> licensed under is <a href="http://lists.automattic.com/pipermail/wp-hackers/2010-July/033027.html" target="_blank">endless</a>.  We've <a href="http://lists.automattic.com/pipermail/wp-hackers/2008-December/023141.html" target="_blank">debated </a>until everyone's frustrated, upset, sad, scared, and spending more time studying legal precedent than actually writing code.  It's a shame, really, when I think about the awesome features that could have been built into WordPress during the countless hours we spent arguing over a stupid version number.</p>
+<p>But if we aren't clear on that version number, we can end up destroying any legitimate claims we have against <em>real</em> license violations.  If we don't follow our own licensing terms, we can't enforce them on anyone else.</p>
+<p>If nothing else, the GPL is aimlessly confusing and seems almost intentionally ambiguous.</p>
+<h2>Viral Licensing</h2>
+<p>We've already said that the GPL is a <a href="http://en.wikipedia.org/wiki/Viral_license" target="_blank">viral license</a>.  This means any work that derives from or requires a GPL-licensed code to function must be licensed by the GPL or another compatible license.  Like I said, it sounds like a good idea ... but can be fatal to a project in practice.</p>
+<p>Let's say you're developing a web application for the financial sector.  You need to encrypt data and transfer it securely.  As we all know, no encryption is 100% secure and no digital communication is impervious to attack.  Eventually, someone will be able to break through.  So you keep your client-side code and server-side code as closed as possible - you don't hire outside firms to write sensitive scripts and you keep all of your data processing in-house on on your own machines.</p>
+<p>Now you've decided to create a mobile version of your popular web app.  So you look around for some available tools to make the job easier and stumble upon a JavaScript library called <a href="http://www.sencha.com/products/touch/" target="_blank">Sencha Touch</a>.  It looks great, has fantastic support for iPhones (the majority of your market), includes fantastic graphing libraries, and is distributed as open source.  You download the library, load it on your server (you're a savvy developer and send all of your JavaScript in a <a href="http://en.wikipedia.org/wiki/Minification_(programming)" target="_blank">minified </a>form), and start pointing customers to your mobile app.</p>
+<p>Oops.</p>
+<p>Sencha Touch is <a href="http://www.sencha.com/products/touch/license.php" target="_blank">licensed under the GPL</a>.  According to their license terms (<em><strong>and the company representative I spoke with</strong></em>), any application that incorporates or links to their JavaScript <em>must also</em> be licensed under the GPL.  This means any JavaScript you use to communicate with Sencha must be open source.  Not too bad ... unless your server-side code generates any of the JavaScript dynamically at runtime ... then <em>it too </em>must be licensed under the GPL.  So must any of the code that you use to minify your JavaScript.  And any code on the server that talks to that.</p>
+<p>Unless you've spent extra time making sure your web application is 100% decoupled (we all aim for that, but everyone slips up from time to time), then your entire web application must be licensed under the GPL.  That means anyone who uses your website can request a copy of the full source code, and you have to give it to them.</p>
+<p>So any security-by-obscurity you used in your application is out the window.  Your encryption algorithms are in the public eye.  And that other bank down the street can see exactly how you built that cool new feature everyone's talking about.</p>
+<p>There is a commercial license available for Sencha Touch, but it's in beta ... and prohibitively expensive for small shops like mine.  Which means I have three options:</p>
+<ol>
+<li>Suck it up and open source my entire application (not feasible for security purposes)</li>
+<li>Buy a commercial license for the library (as I said, prohibitively expensive)</li>
+<li>Build my own JavaScript library from scratch to replicate the functionality</li>
+</ol>
+<p>It's hard to empathize when it comes to financial software - it exists to turn a profit, and that's the entire reason licenses like the GPL exist - to give the "little guys" a leg up on larger players like Microsoft.  But I also work with medical software which, again, is necessarily closed-source for security reasons, personal privacy reasons, and legal compliance reasons.  If I were to use a GPL-licensed library in any of my code, and someone with ill intent asked for a copy of my code, I would be legally required to give it to them ... and be putting all of my customers at risk at the same time.</p>
+<h2>In Conclusion</h2>
+<p>Yes, the GPL is a good idea.  It's aim is to protect small-time developers and give the open source community sets of tools the big players in the market (Microsoft &amp; Apple) can't touch unless they're willing to play on the same level.  At the same time, it's overly ambiguous in its terms and inherently dangerous to certain industries where privacy of code is a necessity.</p>
+<p>It's easy to get wrapped up in writing GPL-compliant code.  So much so, that you almost forget the fact that there are other permissive, copyleft licenses available.  I've been using the <a href="http://en.wikipedia.org/wiki/X11_License" target="_blank">X11 (aka MIT) license</a> for much of my latest code.  It permits the recipient of the code (anyone who downloads it from my site) to use the code in anyway they want ... they just have to leave my copyright notice in the header.  My name still gets used in public, freelancers can use my code in their projects, and it's still <em>free to use and free to edit</em>.  Without the painful overhead of a 3-page license, weeks of arguments between developers, and the potential to rip apart secure systems.</p>

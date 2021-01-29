@@ -1,0 +1,127 @@
+---
+layout: post
+title: A Rookie Attempt at Cron in CentOS
+date: 2011-02-11 08:00:56.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Linux
+- server
+- sysadmin
+meta:
+  yourls_shorturl: http://eam.me/e1
+  _edit_last: '2'
+  _yoast_wpseo_metadesc: How I learned to set up a cron job for an svn-git mirror
+    on CentOS.
+  _yoast_wpseo_metakeywords: cron, centos, linux, git, svn, wordpress, mirror
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409779876;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6457;}i:1;a:1:{s:2:"id";i:3475;}i:2;a:1:{s:2:"id";i:5518;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '2'
+  _wpghs_github_path: _posts/2011-02-11-rookie-attempt-cron-centos.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/rookie-attempt-cron-centos/"
+---
+<p>For years, I used shared hosting systems exclusively for all my websites.  They were affordable, easy to manage, and required zero effort on my part to set up and maintain.  Unfortunately, I have a habit of rapidly outgrowing hosts and usually have to migrate to bigger and better servers about once a year.  I finally decided to bite the bullet and purchased a VPS hosting system with a great company called <a href="http://www.atum.com" target="_blank">Atum </a>last month.</p>
+<p>The advantage of this is that I have complete control over the VPS.  Whereas before I could only host websites, I can now host my own development repositories (currently rocking Subersion, Mercurial, and Git all on my server).  It protects me from the inevitable crashes of my aging computer systems, and makes life a lot easier for me.</p>
+<p>While reveling in my newfound power, though, I ran into a serious issue: <em>I had no idea how to set things up!</em></p>
+<p>I'd read this or that tutorial and get things off the ground.  Setting up Apache took a few tries.  I'm still working on configuring email.  But the biggest challenge I've faced thus far is setting up an automated Subversion-to-Git mirror that would run on a cron job.</p>
+<p>Recently, I started working on a project that needed to maintain an up-to-date mirror of WordPress' Subversion repository ... in a Git repository.  It's easy enough to use <a title="git-svn" href="http://www.kernel.org/pub/software/scm/git/docs/git-svn.html" target="_blank">git-svn</a> to synchronize the repositories.  That I figured out pretty quick.  The challenge lies in <em>automating</em> the process.  It took me a month to figure out the right way to set up a cron job.  So, to save you the trouble, here's the process I took, heavily derived from <a href="http://www.fnokd.com/2008/08/20/mirroring-svn-repository-to-github/" target="_blank">steps outlined by Bob McWhirter</a>.</p>
+<h2>Set up the hosted repository</h2>
+<p>My team elected to work with <a href="http://gitorious.org" target="_blank">Gitorious</a>.  It's a site that hosts public Git repositories for free, and it's not as crowded as GitHub.  So the first step is to set up an empty repository there.  You'll be pushing all of your Subversion stuff into it.  Mine is called "Daybreak:"</p>
+<p><a href="http://gitorious.org/daybreak">http://gitorious.org/daybreak</a></p>
+<h2>Set up a Git repository on your server</h2>
+<p>Remember, the point here is to <em>automate</em> everything.  So we need to set up a Git repository on our server so the server can grab from Subversion and push it into Gitorious.  Log in to your server via SSH and make an empty repository somewhere:</p>
+<p>[cc lang="bash"]<br />
+cd /var/www/git/<br />
+mkdir daybreak<br />
+cd daybreak<br />
+git init<br />
+[/cc]</p>
+<p>Next we need to tell the repository that it's cloning from a Subversion system and which branch to take up.</p>
+<p>[cc lang="bash"]<br />
+git svn init -T http://core.svn.wordpress.org/trunk/<br />
+[/cc]</p>
+<p>The -T reminds Git to grab trunk, only trunk, and nothing but trunk.  Yes, you could clone the branches as well, but I only want the latest development version in my repository.  That's what I'm working with and everything else is noise.</p>
+<p>At this point, we have a Git repository with nothing in it.  We need to tell it to fetch the Subversion revision history, <em>but here is where you need to be careful!</em> WordPress has over 17,000 commits in core.  If you try to fetch everything, the task might never complete.  I say "never" because I tried ... walked away from the computer for several hours ... and came back to see I was still on revision 2,000.  Trust me, you won't ever need to revert that far, so grab a recent revision and fetch from there.  I picked RC3 (revision 17355).</p>
+<p>[cc lang="bash"]<br />
+git svn fetch -r 17355<br />
+[/cc]</p>
+<p>This command might run for a while, depending on how long it's been between the revision you're fetching and trunk's current head.  After it's done, make sure you run the garbage collector to clean things up a bit.</p>
+<p>[cc lang="bash"]<br />
+git gc<br />
+[/cc]</p>
+<h2>Set up your SSH credentials</h2>
+<p>Once again, we want the <em>server</em> to be the one pushing these commits into the repository, so we have to do a few things to set up permission.  The first is set up a public/private key pair for use with Gitorious.</p>
+<p>[cc lang="bash"]<br />
+cd ~<br />
+ssh-keygen -t dsa -f .ssh/id_dsa_gitorious_mirroring<br />
+[/cc]</p>
+<p>I usually go back to the root directory before running commands like this.  I don't know if there are any negative consequences of running the command elsewhere, this is just what <em>I</em> did.</p>
+<p>Next we want to edit our SSH configuration to use a "fake" host so any connection to Gitorious uses the key we just made.</p>
+<p>[cc lang="bash"]<br />
+cd /.ssh<br />
+vim config<br />
+[/cc]</p>
+<p>This opens the config file in vim.  You need to add the following:</p>
+<p>[cc lang="vim"]<br />
+Host gitoriousmirror<br />
+User git<br />
+Hostname gitorious.org<br />
+IdentityFile /home/eric/.ssh/id_dsa_gitorious_mirroring<br />
+[/cc]</p>
+<p>Save the config file and open your public key file so you can copy the SSH key to your Gitorious account.</p>
+<p>[cc lang="bash"]<br />
+vim id_dsa_gitorious_mirroring.pub<br />
+[/cc]</p>
+<p>On Gitorious, go to your Dashboard and click "Manage SSH Keys."  Then click "Add SSH Key" and copy the contents of your public key into the textarea provided.  This makes it so Gitorious will accept pushes from your server.</p>
+<h2>Set up Gitorious as a remote</h2>
+<p>Your server's repository is now set up to clone from WordPress and it knows what SSH key to send to Gitorious.  Now we tell it <em>how</em> to talk to Gitorious.</p>
+<p>[cc lang="bash"]<br />
+cd ~<br />
+cd /var/www/git/daybreak/<br />
+git remote add origin git@gitoriousmirror:daybreak/core.git<br />
+[/cc]</p>
+<p>Now we push to Gitorious.</p>
+<p>[cc lang="bash"]<br />
+git push origin master<br />
+[/cc]</p>
+<p>Voila!  You've just pushed from Subversion to Git.  Doing so again is as simple as rebasing the repository and pushing back:</p>
+<p>[cc lang="bash"]<br />
+git svn rebase<br />
+git gc<br />
+git push origin master<br />
+[/cc]</p>
+<h2>Configure your cron job</h2>
+<p>This is the vital step that was missing from all the other tutorials I read.  I'm not a Linux guy, so "just add this script" doesn't tell me where or how to do it.  I'd never configured a cron job before, so I was in <em>way</em> over my head.  But I did eventually figure it out ... so learn from my mistakes.</p>
+<h3>Lesson 1: Don't do anything as root</h3>
+<p>I was running everything as the root user.  Coming from Windows, I'm used to <em>always</em> doing things as the system administrator.  But everyone I asked for help immediately said, "don't run as root, that's a big no-no."  I'm not sure if it is, but I created a new user anyway and did everything from that account instead.</p>
+<h3>Lesson 2: Remember where you installed git</h3>
+<p>My first attempt at writing a script was just using the same commands as above and invoking Git directly.  But Git wasn't installed that way and cron was throwing errors because the system didn't know what I was talking about.  So I eventually created a file named `wordpress.sh` in my `/etc` folder.  Just use vim to do the same.</p>
+<p>[cc lang="vim"]<br />
+#!/bin/bash<br />
+cd /var/www/git/daybreak<br />
+/usr/bin/git/git checkout wordpress<br />
+/usr/bin/git/git svn rebase<br />
+/usr/bin/git/git gc<br />
+/usr/bin/git/git push origin wordpress<br />
+[/cc]</p>
+<p>This script jumps to my repository's folder, makes sure I'm on the WordPress branch, rebases from the remote Subversion repository, cleans up some garbage, and pushes the changes to Gitorious.  Quick, simple, easy to understand.</p>
+<p>Lesson 3: CentOS Webadmin is your friend</p>
+<p>I spent many fruitless hours trying to add my cron job through the command line.  Then I remembered CentOS allows cron management from the webadmin control panel.  So I logged in and told it to execute the following command every 15 minutes:</p>
+<p>[cc lang="bash"]<br />
+sh /etc/wordpress.sh<br />
+[/cc]</p>
+<p>And just like that, everything works!</p>
+<p>You can now follow WordPress core development live (at least within 15 minutes) through the <a href="http://gitorious.org/daybreak/core/commits/wordpress" target="_blank">WordPress branch of my Daybreak project</a> on Gitorious!</p>

@@ -1,0 +1,43 @@
+---
+layout: post
+title: Bayesian Statistics – Part II
+date: 2009-12-09 09:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- statistics
+meta:
+  yourls_shorturl: http://eam.me/4g
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2009-12-09-bayesian-statistics-part-ii.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/bayesian-statistics-part-ii/"
+---
+<p>Most statistics are based on solid, <em>static</em> data.  The average for a group of numbers is independent of what numbers are actually included in the group.  Statistics give us a snapshot of our data so we can make high-level decisions based on it without knowing the details of each discrete measurement.  This simplicity makes statistics powerful indicators in business, but it also betrays their weakness.</p>
+<p>Let’s take, for example, the classic <a href="http://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a> many of us learned in statistics class.  You are presented with three doors.  Behind one of the doors is a new car.  Behind the other two, nothing.  The game show host asks you to select a door.  Having no information about any of the prizes, you select door number 1.  The game show host then opens door number 3 at random, showing there is nothing behind the door.</p>
+<p>Now he offers you the chance to either keep your original selection or switch your choice to door number 2.  Using basic statistics, there’s still an equal chance the car is behind door number 1 or door number 2.  Unfortunately, basic statistics fail to take the show host’s knowledge into account.  He <em>know</em> where the car is, otherwise he wouldn’t have thrown open door number 3.</p>
+<p>This problem drove me crazy in high school.  It still bugged me in college, too.  That is, until a colleague introduced me to Bayesian statistics.  In Bayes’ model, you apply the host’s knowledge to the system and adjust the probability of the car being behind any one door.  Here’s how it works out:</p>
+<h3>Regular Statistics</h3>
+<p>When you are first asked to pick the door, there’s a 1/3 chance the car is behind any particular door.  So when you pick door number 1, there’s a 2/3 chance that the car is behind either door 2 or door 3.  When the show host opens door 3, you’re reduced to a two-door system.  Now, there’s a 1/2 chance that the car is behind either door and you don’t know whether or not to take the host up on his offer to switch.</p>
+<p>It’s a real problem, particularly when applied to the very real world of marketing and strategic decision making.</p>
+<h3>Bayesian Statistics</h3>
+<p><a href="http://eamann.com/wp-content/uploads/2009/12/Monty_closed_doors.png"><img class="alignright" style="margin-left: 0px; margin-right: 0px; border-width: 0px;" src="{{ site.baseurl }}/assets/2009/12/Monty_closed_doors_thumb.png" alt="Closed Doors" width="200" height="181" align="right" border="0" /></a> You start with the same situation.  You’ve picked door number 1 with it’s 1/3 chance of having a car, leaving a 2/3 chance the car is behind either door one or door two.  The host opens door number 3, revealing nothing and offering you the chance to switch.  While you’ve been reduced to a two-door system, <em>you still know about the third door</em>.  In reality, nothing has changed for you!</p>
+<p>There’s still a 1/3 chance the car is behind door number 1.  There’s still a 2/3 chance the car is <em>not</em> behind door number 1.  This means there’s now a 2/3 chance the car is behind door number 2 and you should <strong>definitely</strong> take the show host up on his offer.</p>
+<h3>Why It Works</h3>
+<p>The only way this works is because of the knowledge of the show host.  He knew the car was not behind door number 3 before he opened the door.  Here’s another way that <a href="http://www.maa.org/devlin/devlin_07_03.html">mathematician Keith Devlin explains it</a>:</p>
+<blockquote><p>By opening his door, Monty is saying to the contestant "There are two doors you did not choose, and the probability that the prize is behind one of them is 2/3. I'll help you by using my knowledge of where the prize is to open one of those two doors to show you that it does not hide the prize. You can now take advantage of this additional information. Your choice of door A has a chance of 1 in 3 of being the winner. I have not changed that. But by eliminating door C, I have shown you that the probability that door B hides the prize is 2 in 3."</p></blockquote>
+<p>Bayesian statistics is the art of applying additional information to our understanding of data.  It helps us determine with greater accuracy the meaning of the various statistical indicators we use in marketing.  When applied to averages (particularly across different demographics), any data plot can change dramatically.  When we analyze the results of market research, using Bayesian mathematics to normalize a distribution across differing market segments not only makes the results comparable over disparate sample sizes but more applicable in the market at large.</p>
+<p>Think about the different segment sizes in your own market.  How valuable would it be if you could compare your analysis of each segment across the entire market at once?</p>

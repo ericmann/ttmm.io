@@ -1,0 +1,37 @@
+---
+layout: post
+title: WordPress XML-RPC - An Introduction
+date: 2010-09-17 08:00:28.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+- xmlrpc
+meta:
+  yourls_shorturl: http://eam.me/y
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  _installment: '1'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409759173;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5995;}i:1;a:1:{s:2:"id";i:6374;}i:2;a:1:{s:2:"id";i:2811;}}}}
+  _wpghs_github_path: _posts/2010-09-17-wordpress-xml-rpc.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-xml-rpc/"
+---
+<p>I've seen a lot of conversations over the past two months regarding WordPress' built-in XML-RPC functionality.  What most of you might not know is that you can write to, read, and administer a WordPress site <em>from anywhere</em>.  There are iPhone applications for creating and revising content.  There are desktop applications for moderating comments.  There are aggregation services that can remotely publish a Twitter feed directly to your site.</p>
+<p>The uses of a public application programming interface for WordPress are endless, so the development team has included a specific type of API in the platform to make our lives easier.  XML-RPC is a system that allows you to send messages to a website (like WordPress) and receive messages in return.  Messages in this case are formatted as XML and sent to your site using HTTP.  Your site reads the XML, interprets the message, and allows functions and processes within WordPress to fire in response.</p>
+<p>Unfortunately, <a href="http://codex.wordpress.org/XML-RPC_Support" target="_blank">WordPress' XML-RPC interface</a> isn't that well-documented.  When I was first learning how to use the API, this was insanely frustrating.  The API actually includes method calls and names from 5 different APIs - WordPress, Blogger, MetaWeblog, MoveableType, and a separate PingBack API.  In addition, you can extend XML-RPC support for plug-ins and themes to provide additional access points, added functionality, and a deeper user experience.</p>
+<p>My <a href="http://code.google.com/p/elliot-server/" target="_blank">Elliot Server system</a>, for example, adds a way for plug-ins to communicate error information back to their original developers.  This isn't a blogging extension, but allows those of us who work to extend WordPress to monitor the health of the systems we distribute and proactively work to fix problems and add features.</p>
+<p>Over the next several weeks, I plan to bring you a <em>comprehensive</em> guide to the various APIs supported by WordPress core.  This will allow you to get your feet wet in XML-RPC development ... and will get many of you started on building your own extensions to the API.  The more developed the system, the richer feature set we have available in the future.</p>
+<p>Next week, I'll present a brief overview of the API framework - demonstrating how PHP functions are called by the XML-RPC library in response to POSTed XML requests.  Once you have the basics down, we'll walk through the 5 available APIs in turn, describing all of the available methods and presenting a few quick use-case tutorials.</p>

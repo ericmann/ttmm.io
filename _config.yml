@@ -51,8 +51,8 @@ plugins_dir:
   - jekyll-sitemap
 
 # Pagination
-paginate: 5
-paginate_path: /page:num/
+paginate: 10
+paginate_path: /page/:num/
 
 # Permalinks
 permalink: /:title

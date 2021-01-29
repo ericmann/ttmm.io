@@ -1,0 +1,63 @@
+---
+layout: post
+title: Device Security
+date: 2014-07-15 08:00:28.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- eyebloc
+- privacy
+- security
+- Shark Tank
+- video
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Device Security
+  _yoast_wpseo_metadesc: How much control are we really giving up to anonymous developers
+    with access to an update hook? How secure are our machines?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wf
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409480056;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5499;}i:1;a:1:{s:2:"id";i:6104;}i:2;a:1:{s:2:"id";i:6086;}}}}
+  keen_postview_count_this_30_days: '42'
+  _wpghs_github_path: _posts/2014-07-15-device-security.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/device-security/"
+excerpt: How much control are we really giving up to anonymous developers with access
+  to an update hook? How secure are our machines?
+---
+<p>I'm a big fan of the TV show <a title="Shark Tank" href="http://abc.go.com/shows/shark-tank"><em>Shark Tank</em></a>, and I watch just about every new episode live when it airs. There's something about entrepreneurs risking it all to make a dream come true that resonates with me.[ref]I would go absolutely bananas to see a WordPress-related or inspired pitched on the show![/ref]</p>
+<p>This past season, though, saw some absolutely insane products pitched in the tank. One I found the most ridiculous was a product called <a title="eyebloc" href="http://eyebloc.com/">eyebloc</a>.</p>
+<p>Eyebloc is a small, plastic cover that fits over the top of your laptop, covering the camera and preventing prying eyes from seeing what you don't want them to see.</p>
+<h2>Why It's Ridiculous</h2>
+<p>My home network is incredibly secure. I use unnecessarily tough encryption for connections, only allow a known set of devices to connect in the first place, and use strong passwords changed regularly to protect administrative tools. Considering I don't do anything warranting that kind of protection in the first place, the lengths I go to when securing my information are a bit extreme.</p>
+<p>Then again, I do this because I don't know for sure how a nefarious individual might use information I otherwise consider "safe." I'd rather they just not have my information in the first place.</p>
+<p>I'm also very cautious when I use software online. All of my devices are networked together in such a way that if <em>any</em> of them changes state (software downloads, updates, system configuration changes, etc) I'm notified immediately.[ref]This shocked my wife when she tried to order a Christmas present online and accidentally clicked a button to update Java. It wasn't really Java, so I shut the machine down remotely and fixed things. She was a bit confused, and disappointed I'd spoiled her surprise, but our machines stayed safe.[/ref]</p>
+<p>The chances anyone could hack in to my system in the first place are remote. The chances of a successful hacker then installing camera-aware spyware are even more so.</p>
+<p>Paying even $5 (the current price of Eyebloc on Amazon.com) to protect against such a remote eventuality seems insane.</p>
+<h2>Why It's a Good Idea</h2>
+<p>Last night, something a bit odd happened.</p>
+<p>I use HipChat for work. Because I'm lazy, I'll usually leave it[ref]And Chrome. And PHPStorm. And Vagrant. And Skype. And Terminal. And Toggle. And Git Gui. And ...[/ref] running when I head out of the house after work. I lock my machine before leaving the desk, but otherwise things are set up so I can quickly get back to work the next day.</p>
+<p>Yesterday was no different. My last Skype/HipChat call was around 3. I finished work a little after 4 and locked my machine before heading out the door.[ref]I know the camera was disabled at this point as there was no little blue light on the top of my laptop. The office was dark save the <em>yellow</em> lights on the router.[/ref] After spending some time downtown and dining out with my wife, I came home and turned the computer on to finish a few things before calling it a night.</p>
+<p>The blue light on my laptop camera was <em>on</em>.</p>
+<p>I pulled up a few systems diagnostic tools and was able to narrow down HipChat as the application responsible. A network trace showed the camera was actively streaming. To where? I have no idea, nor do I care.</p>
+<p>I killed HipChat. Rather than pay $5 on Amazon and wait a few days for an eyebloc, I folded an old business card over the camera.</p>
+<p>It will stay there until my next video call.</p>
+<p><b>To be clear</b>, no one hacked my network. I installed HipChat and, likely, the program has a bug that just randomly enabled the camera. I've noticed since the last update that HipChat randomly steals control of my audio and mutes other applications as well.</p>
+<p>Nothing nefarious is going on - but it <em>could</em> be.</p>
+<p>We install applications all the time that have deep access to our machines. Even some that explicitly call out what they do and do not have access to also feature automated update mechanisms that can pull down new "features" and wider access without our intervention.[ref]When is the last time you <em>really</em> looked at what was installed when Chrome last auto-updated?[/ref]</p>
+<p>You can have the most secure network in the world, but once you let someone else in to that network, they have the ability to run amok without your oversight. Just think, this misuse of my camera was an accident triggered by a bug that will likely be fixed in a week or so - but what if it <em>wasn't</em> a bug? What if it <em>was</em> intentional?</p>
+<p>We exercise a high level of security when it comes to the sites we browse and the applications we install. Often, the applications running on our machines a week or so later bear little to no resemblance to the ones we installed in the first place. How much control are we really giving up to anonymous developers with access to an update hook?</p>
+<p>How secure are our machines?</p>

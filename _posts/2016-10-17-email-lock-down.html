@@ -1,0 +1,53 @@
+---
+layout: post
+title: Email Lock-down
+date: 2016-10-17 08:00:35.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- email
+- hosting
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_content_score: '90'
+  yourls_shorturl: http://eam.me/10q
+  _wpas_done_all: '1'
+  _wpghs_github_path: _posts/2016-10-17-email-lock-down.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/email-lock-down/"
+excerpt: Thanks to the beauty of open source (and other, smarter developers who've
+  already traveled down this rabbit hole), I don't have to figure out how to set up
+  a personal mail server on my own. All of the tools are readily available!
+---
+<p>I like my privacy.</p>
+<p>The other day, I discovered just how "non" private my email had become. I use Facebook. I use Gmail (and Google calendar). I discovered, to my dismay, that the two unrelated services were apparently talking to one another. I had "liked" a book on Facebook, only to see the author's birthday show up automatically on my Google Calendar.</p>
+<p>I'm completely OK with companies making services useful and intuitive, but this is a bit much.</p>
+<p>Similarly, Yahoo used to be a big player in my household. The GUI was never the best in the world, but it was readily available and (best) free. Given the recent news of wide-spread <a href="http://www.nytimes.com/2016/09/23/technology/yahoo-hackers.html">accidental</a> and <a href="http://www.reuters.com/article/us-yahoo-nsa-exclusive-idUSKCN1241YT">intentional</a> information leaks, though, I'm not comfortable with this company having access to my data. Frankly, I'm growing less comfortable with <em>any</em> company having access to my information.</p>
+<h2>Private Email</h2>
+<p>Once upon a time, I broached the idea of configuring WordPress itself to act as a private email server. I was already using the platform to manage content (blog posts and presentations); I figured using the same tools to manage email content would be easy enough. Unfortunately, the world disagreed with me.</p>
+<p>I was warned against the project by scores of people on Twitter and some tech message boards I frequent. The biggest challenge they cited: reverse DNS. Considering I had just mastered <em>regular</em> DNS, this was more than enough to scare me off.</p>
+<p>Until now.</p>
+<h2>Mail-in-a-Box</h2>
+<p>Thanks to the beauty of open source (and other, smarter developers who've already traveled down this rabbit hole), I don't have to figure things out on my own. Since all I need is email, I was able to set things up quickly thanks to <a href="https://mailinabox.email/">Mail-in-a-Box</a>.</p>
+<p>I grabbed a new, dedicated domain for email from Namecheap.</p>
+<p>I set up DNS entries with Amazon Route53.[ref]It's a good idea to keep your DNS registration separate from your registrar in case one or the other is violated.[/ref]</p>
+<p>I spun up a clean EC2 instance on Amazon and configured a fresh Mail-in-a-Box server.</p>
+<p>All-said, the basic setup for my new mail server took less than an hour. Not too bad, considering all of the "it's too hard, don't do it" warnings I'd received in the past. I had a server configured with webmail. I had automated backups running. I had an encrypted hard drive partition to protect data at rest. I had Thunderbird talking to the mail server. Everything was great!</p>
+<p>Except for that dreaded reverse DNS.</p>
+<p>As it so happens, though, configuring reverse DNS with Amazon was ... easy. It took one web form to Amazon explaining the domain I needed mapped from an Elastic IP, plus a wait time of about a day for the settings to begin propagating.</p>
+<p>In hindsight, there is absolutely no reason I should have waited as long as I have to set things up. Now, I manage my own email, it's secure, and I never again have to deal with my host reading or sharing or selling my information.</p>
+<p>So ... why haven't you moved <em>your</em> email yet?</p>

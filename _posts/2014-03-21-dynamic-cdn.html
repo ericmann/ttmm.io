@@ -1,0 +1,76 @@
+---
+layout: post
+title: 'Dynamic CDN: PHP and Checksums'
+date: 2014-03-21 08:00:48.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Cdn
+- crc32
+- parallel download
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_mess: 'Dynamic CDN: PHP and Checksums'
+  _yoast_wpseo_title: 'Dynamic CDN: PHP and Checksums'
+  _yoast_wpseo_metadesc: My new Dynamic CDN plugin uses checksums to verify url consistency.
+    Here's both how and why I use that approach.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/t8
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409622261;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6443;}i:1;a:1:{s:2:"id";i:5489;}i:2;a:1:{s:2:"id";i:3395;}}}}
+  _wpghs_github_path: _posts/2014-03-21-dynamic-cdn.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/dynamic-cdn/"
+excerpt: The general gist of Dynamic CDN is to scan page content before returning
+  it to the browser and dynamically replace locally-hosted assets (images, scripts,
+  styles, etc) with their CDN-hosted equivalents.  The trick is returning consistent
+  CDN urls for hosted assets - the plugin uses PHP to generate a checksum for asset
+  references so it can select the perfect URL.
+---
+<p>The other day, I took on the task of extending a CDN plugin to <a title="Dynamic CDN" href="https://github.com/ericmann/dynamic-cdn">allow multiple origin domains</a>.  Unfortunately, the CDN plugin we were working with only allowed 1 domain.</p>
+<p>If you've ever worked with resource-intensive website, you've likely learned that parallelizing asset downloads leads to increased performance.  As a result, it's a good idea to use <em>multiple</em> static domains to server your content to allow the browser to pull in as much content as is can quickly.</p>
+<h2>PHP and Constants</h2>
+<p>The convenient thing about the original plugin was its used of a configuration constant for specifying the CDN domain.  Drop the plugin in [cci]/mu-plugins[/cci], set up a constant in your [cci]wp-config.php[/cci], and you're ready to go.</p>
+<p>Sadly, this doesn't allow for parallel asset downloads.</p>
+<p>Sadder still, you can't define an <em>array</em> as a <em>constant</em> in PHP.  I had to look for another alternative.<em><br />
+</em></p>
+<p>The first draft utilized a Singleton-style object factory to create the CDN object.  You then added as many domains as you want programatically.  This worked pretty well, but to make it run on production you now need to define <em>two</em> must-use plugins instead of one.  The alternative was to somehow force a constant to work as an array.</p>
+<p>Defining your multiple CDN domains as a comma-delimited list looks messy, but it works just fine.  The constructor of the CDN object reads in the constant, [cci]explode()[/cci]s the list, [cci]trim()[/cci]s off any accidental whitespace, and moves merrily along.</p>
+<h2>Spreading the Load</h2>
+<p>Once we had multiple CDN domains available, we needed a way to route assets somewhat evenly amongst them.</p>
+<p>We also wanted to make sure that individual assets always mapped to the <em>same</em> CDN domain so that browsers would cache them appropriately - this meant randomly mapping images to [cci]cdn1.domain.com[/cci] versus [cci]cdn2.domain.com[/cci] wouldn't be a safe idea as images would switch, at random, from one CDN to the other on repeated page loads.</p>
+<p>Also, running a round-robin between the available domains would only be stable so long as new images were never added to the page.  A new image at the top would force everything to swap to a different domain, thus busting the browser cache.</p>
+<p>My solution - a rarely used PHP function called <a title="crc32" href="http://www.php.net/manual/en/function.crc32.php">[cci]crc32()[/cci]</a>.</p>
+<h2>Checksums</h2>
+<p>Using PHP's built-in [cci]crc32()[/cci] function, I can reliably reduce any asset url to an integer.  Every image url will <em>always</em> map down to the same checksum, meaning it's independent of load time, processing time, or visitor.</p>
+<p>Further, I can calculate the <em><a title="Arithmetic Operators" href="http://www.php.net/manual/en/language.operators.arithmetic.php">modulus</a></em> of that checksum against the number of available CDN urls, generating an array key I can then use to select a specific CDN url.  This all boils down to one magic little function:</p>
+<p><code lang="php">/**<br />
+ * Get a CDN path for a given file, using a reduced checksum to automatically select from an array of available domains.<br />
+ *<br />
+ * @param string $file_path<br />
+ *<br />
+ * @return string<br />
+ */<br />
+public function cdn_domain( $file_path ) {<br />
+    // First, get a checksum for the file path to give us the index we'll use from the CDN domain array.<br />
+    $index = abs( crc32( $file_path ) ) % count( $this->cdn_domains );</p>
+<p>    // Return the correct CDN path to the file<br />
+    return apply_filters( 'dynamic_cdn_domain_for_file', $this->cdn_domains[ $index ], $file_path );<br />
+}</code></p>
+<p>The result of the above - every image on the site maps to a single, reliable CDN url every time.</p>
+<h2>Open Source</h2>
+<p>My new CDN plugin is <a href="https://github.com/ericmann/dynamic-cdn" title="Dynamic CDN">freely available on GitHub</a> for all to enjoy (or critique).</p>
+<p>It borrows heavily from the CDN component of Mark Jaquith's WP Stack toolkit, which is <a href="https://github.com/markjaquith/WP-Stack" title="WP Stack">also available on GitHub</a>.</p>
+<p>The general gist is to scan page content before returning it to the browser and dynamically replace locally-hosted assets (images, scripts, styles, etc) with their CDN-hosted equivalents.  If you use a service like Photon, rewriting your image tags to reference Photon-hosted versions of the same assets will drastically improve your site's performance.</p>
+<p>If you use another CDN system, minor changes might be required to get things to work right.  Luckily, the plugin exposed a wide variety of filters for just that purpose.  If you give it a try and find more filters (or other changes) are needed, I'll be glad to review any pull requests.</p>

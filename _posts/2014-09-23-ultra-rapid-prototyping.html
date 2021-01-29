@@ -1,0 +1,61 @@
+---
+layout: post
+title: Ultra-rapid Prototyping
+date: 2014-09-23 08:00:34.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+- Node
+- prototype
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1411464951;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _wpas_mess: 'I built an app 2 hours that lets me to look up bus arrival times via
+    SMS. #Node is incredible!'
+  _yoast_wpseo_title: Ultra-rapid Prototyping
+  _yoast_wpseo_metadesc: I built an app last night that allows me to look up bus arrival
+    times via SMS. It took me 2 hours. Node is incredible!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yd
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-09-23-ultra-rapid-prototyping.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/ultra-rapid-prototyping/"
+excerpt: I built an app last night that allows me to look up bus arrival times via
+  SMS. It took me 2 hours. Node is incredible!
+---
+<p>I work daily with PHP and JavaScript thanks to WordPress. Our server environments are primarily PHP, and the front-ends are scripted with JavaScript. It's fun, but building a prototype in two languages, one of which that needs a server to process requests, is a bit burdensome.</p>
+<p>Lately I've been experimenting a lot with Node, the V8-powered server-side JavaScript tool we all know and love thanks to Grunt, Bower, and countless other JS-based task runners. Node lets me work quickly in JavaScript, spin up sophisticated prototypes quickly, and test my work both locally <em>and</em> on a real (remote) server in seconds.</p>
+<h2>The Power</h2>
+<p>When I first dabbled with programming in high school, the only options available to me were QuickBasic and C++. At the time, all but one C++ compiler were closed-source and, frankly, my allowance wasn't large enough for me to afford both an instruction manual <em>and</em> the compiler so I could learn how to write C++ and actually <em>use</em> C++ at the same time.</p>
+<p>Instead I stuck with Basic - actually with <em>QBasic</em>, a stripped-down, compiler-free version that shipped with Windows 98. It was easy to learn and in no time I was building fun little to-do applications and mock console UIs and monkeys-throwing-explosive-banana games.</p>
+<p>But without a compiler, I was forced to run all of my code in QBasic itself. I worked around the limitation by writing a few .bat files that would load QBasic, load my script, and run it automatically. Unfortunately, when the program closed, QBasic was still there in the background. If an exception/error was triggered, users would be thrown into QBasic's debugger.</p>
+<p>It was a crappy experience.</p>
+<p>The power of a tool like Node,[ref]Or Ruby. Or Python. Or newer versions of PHP that come with a bundled, lightweight server.[/ref] however, is that you can write a <em>script</em> that runs locally. No compiler, no distributable binary. Just a script file and an interpreter.</p>
+<p>While you still need the interpreter, once it's installed scripts behave just like they're regular, built-in commands. I use Grunt and Bower as if they're system commands (both are Node applications). Like most of my peers, I use [cci]vagrant up[/cci] daily - it's a Ruby command.</p>
+<p>This is hugely powerful, and the exact kind of experience teenage me would've loved to see.</p>
+<h2>Case-in-point</h2>
+<p>My wife takes the bus. Unfortunately, our local transit system has stopped posting bus schedules at the stops and instead urges you to either call a help line (with annoyingly long instructions) or text an SMS shortcode (that potentially charges you each time <em>and</em> bundles meaningless ads for gold to "keep the service free"). Instead of dealing with the super-long messages on the phone, or risking a charge for texting, she texts <em>me</em> and asks me to look up when the next bus will arrive so she knows when to leave work and head to her stop.</p>
+<p>It's a great system for her, but a minor interruption in my day.[ref]I'm more than happy to help, but we both wanted to figure out a way that didn't require me to pause in a meeting or stop coding to look up bus times.[/ref]</p>
+<p>Yesterday, I took some time to prototype an automated application to do the lookup for me.</p>
+<p>Our transit system has a rich API that I can pull against when I know a stop ID. The API will return both scheduled and estimated stop times; if a bus is late I can still grab it's information to figure out when it will arrive.</p>
+<p>My first attempt was a simple command line utility. Specify a stop ID at the command line, get back an array of route numbers and estimated arrival times. Fantastic! But my wife can't use the command line on my local machine while she's at work downtown.</p>
+<p>Enter Twilio.</p>
+<p>I wired the utility up to Twilio's API. A text message to a specific phone number triggers an HTTP POST to my application, which in turn reads and validates the stop ID you've sent it. The application still pulls the same data from the network, but instead of writing it to the console, it pushes the data back through Twilio to the device that sent the stop ID.</p>
+<p>Now my wife can text her stop ID to my custom number, and my application texts back a list of upcoming bus arrivals. For free. Without advertising. Win-win-win.</p>
+<p>I built the app in a grand total of 2 hours last night. It's less than 120 lines of code. Thanks to <a title="OpenShift" href="https://www.openshift.com/">RedHat</a>, it's also hosted online for free. Make that win-win-win-win-win-win.</p>
+<p>What kinds of tools do <em>you</em> prototype with easy-to-use scripting languages like Node, Ruby, and Python?</p>

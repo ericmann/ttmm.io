@@ -1,0 +1,319 @@
+---
+layout: post
+title: Keeping it Realtime - Day 2
+date: 2011-11-08 08:16:32.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- liveblog
+meta:
+  yourls_shorturl: http://eam.me/gt
+  _edit_last: '2'
+  _liveblog: '0'
+  _liveblog_active: '0'
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408442020;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3563;}i:1;a:1:{s:2:"id";i:6237;}i:2;a:1:{s:2:"id";i:6458;}}}}
+  _wpghs_github_path: _posts/2011-11-08-keeping-it-realtime-day-2.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/keeping-it-realtime-day-2/"
+---
+<p>I will once again be liveblogging the <a href="http://krtconf.com" target="_blank">Keeping it Realtime</a> conference in Portland, Oregon.  If you want to catch up with <a title="Keeping it Realtime" href="http://mindsharestrategy.com/2011/keeping-it-realtime/">yesterday's stream</a>, feel free.  Otherwise, stay tuned for more today!</p>
+<p>You can also <a href="#comments">leave comments</a> at the bottom of the feed ...</p>
+<p>---</p>
+<div id="liveblog-entry-3880"><strong>4:56 pm</strong>Next on the schedule is Jack Moffitt on “Imagining the Future of Realtime” at 5:20 …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3878"><strong>4:55 pm</strong>Is it true?  Do we really have a 25-minute break before the next session?  Time to stretch!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3877"><strong>4:53 pm</strong>The various frameworks are being built out of very different use cases.  So “real time” is more a family of ideas than it is a singular concept.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3876"><strong>4:52 pm</strong>Are there any efforts at collaboration between the various frameworks?  Collaboration would help create standardization, but I agree that it might be a mistake.  Don’t start standardizing while you’re still experimenting with new approaches.  Get it all on the table first.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3875"><strong>4:49 pm</strong>Node inspector lets you step through code running on the server inside a browser using Chrome’s JS debugger.  Awesome tool.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3874"><strong>4:48 pm</strong>What are you using for debugging? “I’m using Visual Studio” … “I’m using console.log()” … yeah, I can vouch for VS being a far easier way to debug than printing to the log …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3873"><strong>4:46 pm</strong>Having a context and a stack trace is nice, I agree, but some times they don’t make much sense, either.  I have yet to see a stack trace for a multi-process/asynchronous system that makes sense …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3872"><strong>4:43 pm</strong>SignalR is all about making “this kind” of programming available to a .Net stack.  It’s too important to not have anything.  I agree 100% and hope to see some <em>options</em> come out in the future.  I like the idea of SignalR so far, but I’d like to see other approaches at addressing the same problem, too.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3871"><strong>4:42 pm</strong>More realtime frameworks should interface in a polyglot kind of way.  And should add distributed/realtime debugging.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3870"><strong>4:39 pm</strong>What is the biggest problem that your framework does <em>not</em> solve?  This is a very good question when people like me are trying to choose a framework to start with.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3869"><strong>4:38 pm</strong>What technologies inspired your frameworks? Ruby programming … Jarvis from Iron Man …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3868"><strong>4:36 pm</strong>Using middleware to cancel DDoS attacks … like someone running an RPC command from the browser console a million times …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3867"><strong>4:33 pm</strong>What is your framework’s security model?  ”None.”  That’s been the question no one’s asked yet this conference.  I know everyone’s focused on building the API right now, but “security’s not a big deal” is<strong><em>not</em></strong> a good answer.  Security should be one of the first concerns, not an after-the-fact addition.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3866"><strong>4:29 pm</strong>We <em>should</em> be benchmarking the user experience.  That’s all that matters.  +1</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3865"><strong>4:27 pm</strong>One thing that unites all of the guys using this realtime “stuff” right now is the use of Redis.  That’s true based on what I’ve seen so far … and I’ll be learning Redis over the next few days and weeks to make sure I’m ready for it!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3864"><strong>4:26 pm</strong>A lot of the realtime standards/frameworks are still in their infancy.  This tells me far more about the industry as a whole than most of the other conversations.  Really, if you use any one of these frameworks you’ll need to be somewhat risk tolerant, because the API and standard will probably change tomorrow.  So use it, but be ready and willing to change and evolve your code and implementation as the system grows and matures.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3863"><strong>4:24 pm</strong>We might see more of an <em>organic</em> standards practice with regards to realtime.  This is similar to the way jQuery’s DOM selector pattern has influenced the modern web …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3862"><strong>4:22 pm</strong>Should there be a standard way of “doing realtime?”  I can’t speak for the panelists, but I don’t think there should be.  The potential use cases are still being developed, so creating and sticking to a standard now would be a bit limiting.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3861"><strong>4:17 pm</strong>Out of all of them, I’m the most excited about SignalR … if you haven’t heard of it, it’s freaking awesome!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3860"><strong>4:17 pm</strong>We’re discussing: SocketStream, Flowtype/NowJS, SignalR, dNode, hook.io, and Derby/Racer.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3859"><strong>4:15 pm</strong>I once again have Internet access … but it may or may not last.  In any case, we’re now starting the panel comparing various realtime frameworks.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3857"><strong>1:47 pm</strong>Watching so many command line demos has me really wanting a Mac or a Linux box … I’m installing Cygwin for now …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3856"><strong>1:39 pm</strong>Message queues can be implemented in MongoDB, but you have to poll … so it’s not a good solution.  Redis has Pub/Sub, PostgreSQL has listen/notify.  RabbitMQ and ZeroMQ are MQ’s … right?</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3855"><strong>1:33 pm</strong>Making scalability more fun, less painful …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3854"><strong>1:32 pm</strong>Next we get a “turbocharged toolkit for realtime in the Cloud” … yay for practical takeaways!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3853"><strong>1:30 pm</strong>Sorry, I missed the last half of that chat.  My office website crashed and I’ve spent the last few minutes debugging in terminal server …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3852"><strong>1:07 pm</strong>The browser doesn’t care which Node instance is handling things on the back end.  It gets all of its data through one pipe.  So don’t use one Node instance to handle two different data sources – like a chat feed and a Twitter feed.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3851"><strong>1:05 pm</strong>Does anyone here think that JavaScript is <em>not</em> fun?  Yeah … rhetorical question, but really … not fair to single out someone who dislikes your favorite system just because you have a microphone.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3850"><strong>1:04 pm</strong>You can exploit Node as a message service on the back end with a bunch of different workers.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3849"><strong>12:59 pm</strong>Don’t re-invent the wheel.  Leverage the frameworks and systems that have already been built.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3848"><strong>12:53 pm</strong>You can’t just push TCP traffic out to the Internet, you need a gateway to transport it.  This is where Node and similar systems come in – they act as the gateway.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3847"><strong>12:49 pm</strong>HTTP is wasteful.  Large headers for overhead, high latency with polling and new connections.  These aren’t issues with websockets.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3846"><strong>12:46 pm</strong>We’re all in agreement, websockets are the way to go!  The original system was designed for document pages … i.e. Mosaic.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3845"><strong>12:45 pm</strong>Next presentation by Axel Kratel.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3843"><strong>11:53 am</strong>Time for lunch! Let’s hope it’s a tastier fare than the carb-fest that was our breakfast … bread + french toast + oatmeal + cold cereal … we need some protein!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3842"><strong>11:50 am</strong>Why sticky sessions over pluggable persistence?  Because it’s meant to work with different development frameworks and languages.  You might do one thing if you’re using Redis and Node, you might do something else with a different system.  Specific decisions have been made in order to keep SockJS “polyglot.”</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3841"><strong>11:46 am</strong>Some of the complexity in this system is rooted in the fact that the browser is untrusted.  That’s an issue that comes up time and time again … and I have yet to see a reliable solution that doesn’t include just forcing more of the processing to the server side.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3840"><strong>11:41 am</strong>Google App Engine, PubNub, and Pusher are all trying to do the same thing … providing a messaging API that’s simple to use.  But they’re all very complex under the hood.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3839"><strong>11:39 am</strong>SockJS is <em>only</em> a transport layer.  If you want higher-level message abstractions, you should build them yourself.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3838"><strong>11:37 am</strong>If your server can handle sockets, but doesn’t have a SockJS library for it, you can deploy SockJS as a proxy … that’s interesting, but I don’t see the need.  Sounds like adding complexity for complexity’s sake …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3837"><strong>11:34 am</strong>SockJS requires an asynchronous stack to work properly.  This makes perfect sense and speaks to a lot of the problems I had implementing websockets with Apache a few months ago.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3836"><strong>11:33 am</strong>Most importantly, there is no Flash fallback … just native JavaScript.  <em>This</em> is the best part of SockJS, in my opinion.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3835"><strong>11:32 am</strong>SockJS gives you abstractions that <em>look</em> like websockets but can use different underlying transports if needed.  It makes it easy to begin using websockets without needing to worry about the different implementations of the spec.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3834"><strong>11:30 am</strong>Chrome treats websockets as a binary thing and tries to push a lot of data through.  Firefox treats them like HTTP because they look like HTTP.  This makes using proxies difficult.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3833"><strong>11:28 am</strong>If you want to sum up SockJS in one sentence, you could call it a Socket.IO clone.  I guess that answers my question about the differences between the libraries …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3832"><strong>11:27 am</strong>Ooh, he’s giving away t-shirts for audience participation.  You can never have enough dev-related t-shirts.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3831"><strong>11:27 am</strong>“WebSocket emulation kept simple, stupid.”</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3830"><strong>11:25 am</strong>Next up is Marek Majkowski talking about SockJS.  Hopefully this will explain how SockJS is different than Socket.IO (aside from some obvious differences in implementation that we discussed over breakfast).</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3829"><strong>11:25 am</strong>Why didn’t they use websockets for the messages?  Because they needed to support multiple browsers and devices that don’t support websockets.  So instead they used a standard HTTP POST to send the data and long polling to update the vote tallies.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3828"><strong>11:21 am</strong>And that’s the third person who’s alleged that this is a Node-centered conference.  Maybe we just need more asynchronous, event-driven, open-source servers …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3827"><strong>11:20 am</strong>Is the underlying technology Node.JS since this is the Node.JS conference?  No … they’re using C.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3826"><strong>11:17 am</strong>How does data replication occur for multiple servers? As long as they’re all connected, they’ll all receive the message.  They’re basically all talking to one another all the time and sharing updates.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3825"><strong>11:13 am</strong>10-15 languages and 10-15 frameworks … definitely a rich system.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3824"><strong>11:12 am</strong>Spike allowed people to vote once every 5 seconds.  So apparently there is a bit of state information transferred in that massively distributed system.  They managed to handle 10s of thousands of concurrent users, too!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3823"><strong>11:09 am</strong>Drumo is a realtime app on the web that’s similar to Quora.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3822"><strong>11:07 am</strong>PubNub is “one step closer to the Singularity …”  This is an idea that came up yesterday and, oddly enough, the exact topic of the story I’m writing for <a href="http://nanowrimo.org/en/participants/eamann" target="_blank">NaNoWriMo</a>.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3821"><strong>11:05 am</strong>Doing this kind of project required a new type of architecture.  You can’t just take an existing LAMP stack application and add some realtime functionality to it.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3820"><strong>11:02 am</strong>Once again, Redis comes up as an efficient, quick data store … I will be adding Redis to my stack within the next few weeks …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3819"><strong>11:01 am</strong>Votes came out at a rate of 350 votes/second and updated aggregate totals across all devices at a rate of 10 times/second.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3818"><strong>11:01 am</strong>After 80k votes, there was only a 100-vote difference between zombies and vampires.  I’m less impressed with that stat as I am with the fact that they collected all of those votes in real time in less than a 5 minute period …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3817"><strong>10:59 am</strong>Ten times per second every device connected to the site updated the voting results.  Everyone saw realtime data <em>in real time</em>.  Awesome!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3816"><strong>10:58 am</strong>(The Internet is a bit spotty today, so if I lose you, I apologize in advance.)</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3815"><strong>10:57 am</strong>Real-time voting with SpikeTV using The Deadliest Warrier as an example.  I <em>love</em> that show!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3814"><strong>10:28 am</strong>Had to step out for a minute, what’d I miss?</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3813"><strong>10:22 am</strong>OK, that was cool.  Sending a message from ZeroMQ on the server side with python over a socket to NullMQ in the browser.  Great to have the demo pay off.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3812"><strong>10:21 am</strong>One of the slower live code demonstration sessions of the conference … the ones using prepared code seemed to go a bit smoother.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3811"><strong>10:16 am</strong>Creating a request socket in one browser session and a listener in the other.  Nifty.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3810"><strong>10:15 am</strong>Another real-time demo of realtime.  Awesome!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3809"><strong>10:14 am</strong>Hmm … apparently our table just lost power.  Could be a bad sign …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3808"><strong>10:11 am</strong>STOMP is a simple protocol for PubSub connections. It looks a lot like HTTP, there are verbs, a header, and a body.  It’s simple and human-readable.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3807"><strong>10:09 am</strong>NullMQ is meant to be an implementation of ZeroMQ for the browser.  It’s designed to extend features and the ZeroMQ API to the client-server nature of the web.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3806"><strong>10:08 am</strong>ZeroMQ isn’t in the browser … so there are some limitations to what you can do.  You’d have to write a plugin/extension to get it into the browser.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3805"><strong>10:07 am</strong>I think I could integrate a Twilio-style realtime phone call support feature into my company’s client portal … add another idea to the never-ending to-do list I’ve created this week …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3804"><strong>10:05 am</strong>Twilio has a product for making and receiving calls through the Internet using JavaScript.  Now that’s just cool!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3803"><strong>10:04 am</strong>The Paranoid Pirate Pattern?  Interesting development nomenclature …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3802"><strong>9:59 am</strong>ZeroMQ isn’t a server or a protocol, it’s a library that presents a socket-like messaging API over a variety of transports.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3801"><strong>9:58 am</strong>The context for this involves <a href="http://www.zeromq.org/" target="_blank">ZeroMQ</a>, which is a transport layer I’ve never really heard of.  But from the docs, it acts as a concurrency framework.  Maybe this answers one of my earlier questions …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3800"><strong>9:56 am</strong>NullMQ is so new, it started 3 weeks ago.  I love new tech!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3799"><strong>9:55 am</strong>And now Jeff Lindsay will talk about NullMQ.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3798"><strong>9:53 am</strong>Node is at version 0.6 but is getting pretty stable.  If you want to build a business on it, you might want to wait for 1.0.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3797"><strong>9:47 am</strong>A one-line HTTP server in Node can proxy a request.  Awesome.  I need to start using Node.  Looking forward to the Node/IIS discussion later today!</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3796"><strong>9:45 am</strong>“clientRespsonse” … someone didn’t proofread their slides.  This is why I don’t use code in my presentations …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3794"><strong>9:40 am</strong>I’ve never heard anyone pronounce “url” as a word before.  We all usually just spell it out.  Took me a second to figure out what he was talking about.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3792"><strong>9:36 am</strong>“We need to steal the right ideas, not the popular ideas.”</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3791"><strong>9:33 am</strong>If anyone in the world who wants to edit a specific Yammer page goes to the same Node process, it<em>does</em> make the application code easier.  But that kind of centralized computing comes with its own problems.  There’s a reason AWS and Google’s cloud are so popular …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3790"><strong>9:31 am</strong>One of the reasons dNode is great is because you don’t have to send all of your state arguments with the RPC request, you just leave them in the closure.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3789"><strong>9:29 am</strong>PHP, Python, and Ruby all suck at concurrency.  So this makes me wonder if there’s a language/framework that excels at it …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3788"><strong>9:28 am</strong>“Node.JS is starting to dominate this space.”  That’s seemed very obvious from this conference.  One of the guys I talked to today even suggested changing the conference to ‘Keeping Node Realtime’ based on the number of speakers referencing the project …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3787"><strong>9:25 am</strong>“You might want to talk to Facebook if you want to talk to somebody’s mom …”</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3786"><strong>9:23 am</strong>Another Rails presentation … I <em>really</em> need to learn Ruby …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3785"><strong>9:22 am</strong>“The consumer is never the content creator.”  At least not until Web 2.0 changed the way the web worked …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3784"><strong>9:22 am</strong>So far I’m seeing a lot of logical progressions in how the server side of things changed – static pages to static pages served by Apache to database parsed by PHP and served by Apache.  But we never really changed the <em>browser</em> and are still stuck in the stone age when it comes to consuming the information stored in the DB.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3783"><strong>9:20 am</strong>The problem in the old days was getting really old browsers to use these static web pages … and in many circles, that’s still the problem.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3782"><strong>9:16 am</strong>Getting started with the introduction talk by Mikeal Rogers.</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3781"><strong>8:41 am</strong>Everyone here seems to use Rails for just about everything.  Methinks it’s time to learn Ruby …</p>
+<div></div>
+</div>
+<div id="liveblog-entry-3780"><strong>8:21 am</strong>Good morning from the breakfast table!</div>

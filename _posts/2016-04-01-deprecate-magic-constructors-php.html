@@ -1,0 +1,52 @@
+---
+layout: post
+title: Deprecate Magic Constructors in PHP
+date: 2016-04-01 08:00:34.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/109
+  _wpghs_github_path: _posts/2016-04-01-deprecate-magic-constructors-php.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/deprecate-magic-constructors-php/"
+excerpt: 'Along the lines of the argument to make code easier to understand for quick
+  readers, I want to propose something a little less radical and just as useful for
+  devs: Deprecate the magic `__construct()` function.'
+---
+<p>The PHP community is <a href="https://wiki.php.net/rfc/var_deprecation">currently voting on</a> whether or not to deprecate <tt>var</tt> in favor of <tt>public</tt> for classes starting in version 7.1. This is an interesting idea, to say the least, but <a href="https://evertpot.com/drop-public-not-var/">the arguments <i>against</i> it</a> are even more compelling.</p>
+<blockquote><p>So there’s a small mental tax for a human to read and interpret the entire line. It’s generally accepted that shorter lines are better, and when ‘scanning’ a file from top to bottom, it’s better that the important keywords (the name of the function) are closer to the left-edge of the screen.</p></blockquote>
+<p>Along the same lines of this argument - to make code easier to understand for quick readers - I want to propose something a little less radical and just as useful for devs: Deprecate the magic <tt>__construct()</tt> function.</p>
+<h2>Rationale: It's Ugly!</h2>
+<p>PHP is one of the easiest-learned languages available for fledgling developers. Documentation is deep, code examples exist just about everywhere, and it's such a flexible language that you can write horrible code and have it <i>still just work.</i>[ref]I've seen bugs in PHP code only surfaced and fixed when the maintaining dev team has started refactoring the code for a new system like Ruby. The old bug had been there for <i>years</i> without impacting the function of the application. Isn't that awesome?![/ref] But we still have certain "magic" functions in our code layer that make things harder for non-experts to understand.</p>
+<p>I'm looking at you, <tt>__get()</tt>, <tt>__set()</tt>, and <tt>__construct()</tt>.</p>
+<p>The getters and setters can easily be ignored by merely making everything public to begin with. After all, even internal <tt>var</tt> properties are public by default, so why even use a getter? It's just additional OO cruft added to confuse newcomers.</p>
+<p>Reading through a class quickly, catching the reference to a <tt>__</tt>-prefixed magic method can be difficult. It makes a developer pause to consider what they're doing. It's even more confusing since, traditionally, leading underscores <i>used</i> to mark a method as "private." With a double underscore, it almost makes it look like the constructor is "double private."</p>
+<p>And who ever wants to call <tt>MyClass::__construct()</tt> to build an object? That's just nonsense!</p>
+<h2>Alternative</h2>
+<p>Instead, we should introduce a <i>completely new</i> paradigm in future versions of PHP that support a constructor named identically to the class itself:</p>
+<p><code lang="php"><?php class MyClass {<br />
+  function MyClass() {<br />
+    // Do constructory stuff here<br />
+  }<br />
+}</cod?></p>
+<p>When you read that code, it's obvious the function is the constructor because of their shared name. You'd never want to write <tt>MyClass::MyClass()</tt> - that would just look dumb - so remembering to use the <tt>new</tt> keyword for instantiation is an intuitive bonus this pattern wins for us.</p>
+<h2>Thoughts?</h2>
+<p>Once we get the ball rolling with removing the ugly <tt>__construct()</tt> setup, we can start targeting the other magic methods and truly make PHP an accessible language for even those who don't know how to write code. That's the dream of programming, after all.</p>
+<p>What other features of PHP should we drop as we move forward with future versions?</code></p>

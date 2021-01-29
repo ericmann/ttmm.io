@@ -1,0 +1,52 @@
+---
+layout: post
+title: The Value of Peer Review
+date: 2014-10-03 08:00:19.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- peer review
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1412341541;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: The Value of Peer Review
+  _yoast_wpseo_metadesc: No matter your position, your tenure, or your experience,
+    you should always have someone else double check your code.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yn
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-10-03-value-peer-review.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/value-peer-review/"
+excerpt: No matter your position, your tenure, or your experience, you should always
+  have someone else double check your code.
+---
+<p>In the past several years, I've moved from jobs with solo developers to jobs with teams. The jobs with solo developers, obviously, lacked a culture of peer review - when there's only one developer on the team, having a co-worker review code before it's shipped is a bit difficult.</p>
+<p>Unfortunately, most of the larger teams of which I've been a part have <em>also</em> lacked a culture of peer review. More often than not, these teams were comprised of formerly-solo developers who didn't understand the value of the review. Sometimes, they contained very senior engineers who felt they no longer <em>needed</em> peer review.</p>
+<p>No matter your position, your tenure, or your experience, you should <em>always</em> have someone else double check your code.</p>
+<h2>#WorksForMe</h2>
+<p>Most often, the issue at hand is that code will run on one machine or in one environment, but not others. I've seen this happen when a piece of code requires a library or other dependency and the developer writing that code has a copy of the library or dependency that's out of date, modified, or comes from an unreliable third party.</p>
+<p>The code will run on their system and pass any and all tests it needs to; when moved to production, or just a peer's machine, it fails in a ball of fiery glory and everyone wonders, "what happened?"</p>
+<p>Asking a coworker to not just review your code but make sure it actually works on <em>their</em> machine helps avoid this frustrating situation. If you're working on one operating system (i.e. Windows) and your customers might be using another (i.e. Mac), it's also useful to have a coworker test in the environment your customers will be using.</p>
+<p>The number of development tools that <em>claim</em> cross-platform compatibility but which are unusable on either Windows or Mac is astounding. The number of developers <em>using them anyway</em> demonstrates just how infrequently we actually test on the rival platform in the first place.</p>
+<h2>Hubris</h2>
+<p>I've worked on teams with entrenched senior developers who demonstrated a remarkable level of arrogance when it came to code review. In one position, where I'd just learned and was still using Visual Basic, I was told by a lead engineer explicitly to never touch his code.</p>
+<p>"Maybe after you've graduated to a <em>real</em> language you'll have the chops to understand how this works. Right now, I don't want you wasting your, my, or the company's time looking at this. You wouldn't understand it anyway, so don't even bother. By the way, you've got bugs here and here, so obviously you have a few years to go before you're experienced enough for a review."</p>
+<p>The irony: he was <em>also</em> using Visual Basic. And had far <em>more</em> bugs in his code when I finally ignored him and checked out his repository anyway.</p>
+<p>It doesn't matter how much experience you have, how many years of bug-free code you've written, or the "senior" nature of your job title: you're human. Humans make mistakes, and that means even <em>you</em> can <a title="jQuery and Cross-site Scripting" href="https://eamann.com/tech/jquery-xss/">make a mistake</a>.</p>
+<p>I'm presently a senior engineer. I have a large team of engineers working on projects with me and often only need to work on the more sophisticated coding problems in our projects. I <em>still</em> ask other engineers to give me a "sanity check" before I ship code because I recognize the value of having a second (or third) set of eyes on the code.</p>
+<p>The more <a title="Diversity of Experience" href="https://eamann.com/biz/diversity-experience/">perspectives</a> you have on a problem, the more diverse the solutions you can find - one of them might be better than others. The more perspectives you have on a proposed problem (i.e. ready-to-ship code). the stronger your confidence will be that it's the <em>right</em> solution and the <em>best</em> solution.</p>
+<p>There is never a substitute for quality peer review.</p>

@@ -1,0 +1,58 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Session Management'
+date: 2014-08-06 08:00:20.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- login
+- security
+- session
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1407312030;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409822902;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5460;}i:1;a:1:{s:2:"id";i:5462;}i:2;a:1:{s:2:"id";i:6001;}}}}
+  _yoast_wpseo_title: 'WordPress Core Proposal: Session Management'
+  _yoast_wpseo_metadesc: When logging in to WordPress, we should record the event,
+    where it occurred, and the device used, empowering you to kill off rogue sessions
+    if necessary.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/x1
+  keen_postview_count_this_24_hours: '21'
+  keen_postview_count_this_7_days: '122'
+  keen_postview_count_this_30_days: '122'
+  _wpghs_github_path: _posts/2014-08-06-wordpress-session-management.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-session-management/"
+excerpt: When you log in to WordPress, the platform should record the event, where
+  it occurred from, and the device that was used. This would empower you to kill off
+  rogue sessions if necessary.
+---
+<p>First, let me explain what I mean by "session." I'm not talking about regular sessions in PHP - for those I've already built WP_Session, and I'm quite happy with the direction that project has taken.</p>
+<p>Instead, I'm referring to actual activity sessions - periods of activity for which you are logged in to the site.</p>
+<h2>Security</h2>
+<p>Ideally, whenever you log in to WordPress, it would record a new authenticated session, identifying you, the time you logged in, the device from which you logged in, and the physical location of your session. This would give visibility into the various machines capable of accessing your account - i.e. machines where you clicked "Remember Me" while logging in.</p>
+<p>Once you can see your sessions, you can easily kill off rogue ones. Say you logged in at a public library (bad idea in the first place) and forgot to log out before you went home. Being able to log in, identify the still-open library session, and kill it before a random passer-by finds and abuses your site would be a huge win.</p>
+<p>Facebook, ironically, already implements such a security model. From the Account Security page, you can see a list of all of the locations from which you're logged in and, if necessary, can revoke access to any of those locations.</p>
+<p>[caption id="attachment_6516" align="aligncenter" width="1024"]<a href="http://eamann.com/wp-content/uploads/2014/08/Screenshot-2014-08-06-07.03.18.png"><img class="size-large wp-image-6516" src="{{ site.baseurl }}/assets/2014/08/Screenshot-2014-08-06-07.03.18-1024x434.png" alt="Discrete list of all of the locations from which I'm currently logged-in to Facebook" width="1024" height="434" /></a> Discrete list of all of the locations from which I'm currently logged-in to Facebook[/caption]</p>
+<h2>Drawbacks</h2>
+<p>There are two primary failings of this system. First and foremost, is data storage. We could very easily just store this information in a custom post type as it's not necessarily meant to be queryable. Alternatively, we could also store it in user meta, since it <em>is</em> user-specific. The question becomes: how do we actually track, and negate, active sessions?</p>
+<p>WordPress would have to track not just nonces, but some sort of session ID for each logged-in user (which could become a very large set in some circumstances). We'd then have to check if that session ID is in a known list of closed sessions - a list we'd have to retain for as long as we allow cookies to be valid (which can be a <em>very</em> long time in some situations).</p>
+<p>Secondly, while Facebook can track mobile apps, WordPress wouldn't be able to. WordPress' mobile apps send <a title="Securing XML-RPC for WordPress" href="http://eamann.com/tech/securing-xml-rpc-wordpress/">your username and password</a> on every single request, meaning there isn't a persistent session that can be locked out.[ref]If someone were to find my phone and bypass the laughable security built-in to Android, they'd have unfettered access to this site. For that reason, I refuse to log in to WordPress.com-hosted sites from my phone at all.[/ref] Incidentally, this is why securing both your password <em>and</em> <a title="Why Showing The WordPress Username Is A Security Risk" href="http://eamann.com/tech/wordpress-username-security-risk/">your username</a> is a huge deal.</p>
+<h2>Proposal</h2>
+<p>For now, let's leave off XML-RPC. I've already proposed a solution for further securing that access (which would dovetail nicely with controlling session access). Instead, let's look towards administrative control of logged-in sessions.</p>
+<p>My gut tells me that adding a custom table for user sessions would be a good idea - but for a minimum-viable product, let's store things in usermeta. Every login gets a new entry that records a session ID (also recorded in the [cci]wordpress_logged_in[/cci] cookie). Every invalidated session ID is stored in a second usermeta collection against which we check when providing access for administrators.</p>
+<p>Yes, there will be a little added overhead to admin-side requests. I'm willing to trade a bit on speed in favor of increased security, though.</p>
+<p>Would you take a different approach?</p>

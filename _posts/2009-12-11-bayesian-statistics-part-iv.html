@@ -1,0 +1,106 @@
+---
+layout: post
+title: Bayesian Statistics – Part IV
+date: 2009-12-11 09:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- statistics
+meta:
+  yourls_shorturl: http://eam.me/3o
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2009-12-11-bayesian-statistics-part-iv.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/bayesian-statistics-part-iv/"
+---
+<p>Understanding the Bayesian average is one thing.  Understanding how to calculate it is something different.  Understanding how to apply it is something in a whole other league.  So here’s a quick and simple case study regarding product feedback and comparing aggregate product ratings using Bayesian statistics.</p>
+<h3>Situation</h3>
+<p>Your widget factory produces three different widgets and targets two different segments of the market.  For the sake of simplicity, we won’t go in to the actual definitions of either your product or the market, just assume that they are well suited for one another.  In order to cope with changing market conditions, you’re asked to slim down production and cut one of these three widgets from the market.</p>
+<p>This is an important decision because the company will need to support the construction of a new facility based on the sales of these two remaining widgets.  Cut the wrong product, and you might not make it to the new production season.</p>
+<h3>Vital Statistics</h3>
+<p>Here’s a table showing how each market segment rates your products.  Assume we’re working on a scale from 0 (I wouldn’t use this if you paid me to) to 5 (I can’t live without this product):</p>
+<div>
+<table width="399" border="1" cellspacing="0" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td valign="top" width="100"></td>
+<td valign="top" width="99"><strong>Product A</strong></td>
+<td valign="top" width="99"><strong>Product B</strong></td>
+<td valign="top" width="99"><strong>Product C</strong></td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 1</strong></td>
+<td valign="top" width="99">4.2</td>
+<td valign="top" width="99">3.5</td>
+<td valign="top" width="99">1.0</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 2</strong></td>
+<td valign="top" width="99">3.7</td>
+<td valign="top" width="99">4.0</td>
+<td valign="top" width="99">4.8</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 3</strong></td>
+<td valign="top" width="99">2.4</td>
+<td valign="top" width="100">4.2</td>
+<td valign="top" width="100">2.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Also, you should know that Segment 1 has 5,000 people, Segment 2 has 25,000, and Segment 3 has 1,000 people.</p>
+<h3>First Glance</h3>
+<p>On a first glance, you can easily determine the simple average for each product (average of all three ratings independent of the segment size).  Product A has a rating of 3.43, Product B has a rating of 3.90, and Product C has a rating of 2.63.  According to the simple average you should drop Product C from your offering for the time being and focus more on Products A and B.</p>
+<p>Unfortunately, Product C was favored the most among Segment 2.  Remember that Segment 2 was the largest segment of all three.  Let’s recalculate using a weighted average.  In this case, Product A now has a rating of 3.73, Product B has a rating of 3.93, and Product C has a rating of 4.10.  Now our numbers are telling us to drop Product A and focus instead on marketing Products B and C.  This is an entirely different situation!</p>
+<h3>Bayesian Average</h3>
+<p>Using Bayesian statistics, we look at the <em>entire</em> segment at once.  This moves beyond merely taking an average rating for each product and assumes that consumers are capable of rating products in relation to one another as well.  It’s still an imperfect solution, but if we assume someone who likes Product C says so without thinking about Product A it would be naive.  In the real world, many consumers will be aware of your other product offerings and will rate in context rather than in isolation.</p>
+<p>To determine the the true product rating for each product we first need the Bayesian average for each segment, adjusting our product ratings so they are comparable.  Here is the same table adjusted using <a href="http://mindsharestrategy.com/bayesian-statistics-part-iii/">Bayesian mathematics</a>:</p>
+<div>
+<table width="399" border="1" cellspacing="0" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td valign="top" width="100"></td>
+<td valign="top" width="99"><strong>Product A</strong></td>
+<td valign="top" width="99"><strong>Product B</strong></td>
+<td valign="top" width="99"><strong>Product C</strong></td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 1</strong></td>
+<td valign="top" width="99">3.23</td>
+<td valign="top" width="99">3.05</td>
+<td valign="top" width="99">2.43</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 2</strong></td>
+<td valign="top" width="99">4.05</td>
+<td valign="top" width="99">4.13</td>
+<td valign="top" width="99">4.33</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 3</strong></td>
+<td valign="top" width="99">2.78</td>
+<td valign="top" width="100">3.23</td>
+<td valign="top" width="100">2.70</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Now it’s a matter of re-applying our weighted average to determine the properly adjusted rating for each product category.  In this case, the rating for Product A is 4.01, the rating for Product B is 3.93, and the rating for Product C is 3.97.  Now that we’ve looked at a more holistic overview, we realize it would be best to drop Product B from our offering and focus instead on Products A and C.</p>
+<h3>Summary</h3>
+<p>We looked at three different analytical tools that gave us three very different answers.  First we considered a simple average, but determined this was insufficient because it failed to take segment size into account.  Second we considered a weighted average, but determined this data was inaccurate because it failed to account for consumer’s knowledge of the entire product line.</p>
+<p>Finally we considered a weighted average of the same ratings with a Bayesian filter.  This method took both segment size <em>and</em> consumer knowledge into account, giving us the most accurate means possible with which to judge our three different products.  According to this model, Product B is the least popular (although not by much).  Dropping Product B from our line offering would upset our bottom line the least.</p>
+<p><em>Keep in mind that this is an academic treatment of the situation.  In any real world scenario, there would be considerable risk with dropping any product line.  This is but on analytical tool a savvy management team could use to determine long-term fiscal and brand equity impacts of the decision.</em></p>

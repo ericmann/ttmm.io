@@ -1,0 +1,72 @@
+---
+layout: post
+title: Live Blogging - AJAX Polling
+date: 2011-10-04 09:30:46.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- AJAX
+- liveblog
+meta:
+  yourls_shorturl: http://eam.me/gg
+  yourls_tweeted: '1'
+  _yoast_wpseo_metakeywords: gizmodo, ajax polling, comet, live blog
+  _yoast_wpseo_metadesc: Gizmodo is running a live blog today that uses AJAX polling
+    for live updates. Here's how it works, and why it's so ineffective.
+  _yoast_wpseo_focuskw: live blog
+  _edit_last: '2'
+  _yoast_wpseo_linkdex: '85'
+  _zem_rp_image: '3504'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409763327;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6077;}i:1;a:1:{s:2:"id";i:2630;}i:2;a:1:{s:2:"id";i:3438;}}}}
+  keen_postview_count_this_30_days: '11'
+  _wpghs_github_path: _posts/2011-10-04-live-blogging-ajax-polling.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/live-blogging-ajax-polling/"
+---
+<p>I'm in the midst of developing a real-time publishing system, and I wanted to give an example of what it is and why I want to do it.</p>
+<h2>Gizmodo's live blog</h2>
+<p>Today, Apple is promoting a live press event, and Gizmodo is live blogging their coverage on <a href="http://live.gizmodo.com/">http://live.gizmodo.com/</a>.  It's a really basic page, but it updates automatically as new changes are available.  Their update engine is also pretty basic, but illustrates <em>exactly</em> what I want to do ... just in a very inefficient fashion.</p>
+<p>The core of their code (I'm summarizing it) is written in JavaScript</p>
+<p>[cc lang=javascript width="580" height="500"]<br />
+function update( version ) {<br />
+  var entries = jQuery('#entries .entry');<br />
+  var lastPostId = entries.size() ? parseInt( jQuery('#entries .entry').eq(0).attr( 'id' ).substr( 6 ), 10 ) : 0;</p>
+<p>  if ( typeof lastPostId == 'number' &amp;&amp; !isNaN( lastPostId ) ) {<br />
+    jQuery.get( version + 'update_' + lastPostId + '.html', function( data ) {</p>
+<p>      if ( typeof data != 'undefined' &amp;&amp; data != '' ) {</p>
+<p>        // Process data</p>
+<p>        clearTimeout( timeoutId );<br />
+        timeoutId = setTimeout( function() { update() }, 10 );</p>
+<p>      }</p>
+<p>    } );<br />
+  }<br />
+  timeoutId = setTimeout( function() { update() }, 10000 );<br />
+}<br />
+[/cc]</p>
+<h2>How this works</h2>
+<p>Essentially, this script will automatically fetch "update_XXX.htm" from the server every so often. XXX in this case is the update number (they were on update 408 at the time of this writing).</p>
+<p>[caption id="attachment_3504" align="alignright" width="221" caption="Gizmodo&#39;s AJAX polling method results in repeated 404 Not Found errors."]<a href="http://ttmm.wpengine.com/wp-content/uploads/2011/10/Gizmodo.png"><img class=" wp-image-3504 " title="Gizmodo" src="{{ site.baseurl }}/assets/2011/10/Gizmodo.png" alt="" width="221" height="282" /></a>[/caption]</p>
+<p>If the file exists, the script processes the new data and adds it to the page and fetches the next update (XXX+1) just 10 milliseconds later.</p>
+<p>If the file doesn't exist, the script waits for 10 seconds and tries again.</p>
+<p>This is an example of AJAX polling - The page uses AJAX to check with the server every now and then and ask if anything's changed. It's a simple way to retrieve data, but is ineffective in many regards.</p>
+<p>For one, the browser is firing a new HTTP GET request once every 10 seconds, whether the server has changed or not. This leads to a lot of 404 Not Found errors if the update hasn't happened. It's very much like a kid in the back seat asking "are we there yet" every mile hoping you've finally made it to McDonalds.</p>
+<p>It works, but it's not the best way to do things.</p>
+<p>The system I'm currently working on will use server-triggered events to update data instead. Think of it like the too-mature kid sitting in the back reading a book and waiting until you've stopped the car and are ready to order your Big Mac. Not only is the kid less annoying, but you have fewer distractions to worry about while you're driving.</p>
+<h2>The problem with polling</h2>
+<p>With AJAX polling, every browser is requesting a file from the server every 10 seconds while the user sits on a page. For a site like this one, that's maybe 100-150 requests every 10 seconds in addition to normal traffic. For a site like Gizmodo, that's <em>several thousand</em> requests every 10 seconds <em>in addition to normal traffic</em>.</p>
+<p>When you imagine the single "are we there yet" scenario, it's not too bad. Now imagine you're driving a bus full of kids, all asking "are we there yet" every few seconds. Now imagine an entire <em>school</em> full of impatient kids. An entire city full of them.</p>
+<p>Quickly, this becomes overwhelming.</p>
+<h2>Solution: Server-sent events</h2>
+<p>The alternative is to leave the updating entirely to the server. When new content's ready, it tells the browsers directly. If no content has changed, no extra HTTP messages travel across the wire. Now the server is able to work on other tasks and can serve regular traffic without a chorus of impatient browsers asking if anything's changed.</p>
+<p>The entire city full of kids waits for <em>you</em> to tell them that you're there. Not a single "are we there yet" in earshot to interrupt the pleasant music coming across the radio.</p>
+<p>Tell me, which over-crowded car would <em>you</em> want to drive? I bet your server feels the same way.</p>

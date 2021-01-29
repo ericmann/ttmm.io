@@ -1,0 +1,112 @@
+---
+layout: post
+title: Cracking the Uncrackable - Password Guessing
+date: 2020-11-16 07:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Bitcoin
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cracking-the-uncrackable-part-3/"
+---
+<p><!-- wp:paragraph --></p>
+<p><a href="https://ttmm.io/tech/cracking-the-uncrackable-part-2/">Last week</a> we covered the basics of how Bitcoin keys work and how software like Bitcoin Core can protect a private key with a user-defined password. Assume you've set up your wallet, set a password, then left things along for long enough to forget your password. Now Bitcoin has exploded in value and you want back in.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If it's your own wallet, chances are high you know enough about how you set your password that you can guess what it was.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Maybe you remember a handful of words from a mneumonic. Or that you had used you child's birthday to make the password stronger. You just can't remember the exact format.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:pullquote --></p>
+<figure class="wp-block-pullquote">
+<blockquote>
+<p>Something about a horse being correct? About a staple? Or a battery? And I used my son's birth year I'm sure of it!</p>
+</blockquote>
+</figure>
+<p><!-- /wp:pullquote --></p>
+<p><!-- wp:paragraph --></p>
+<p>If this is the boat you're in, you can try enumerating some of the possibilities and get the wallet unlocked. When you know enough of the password you <em>could</em> just type repeated options into the software manually.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If you know pieces but not the full thing, you're better served by some automation. In this case, we'll use a nifty Python script to automate our attempts.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>btcrecover</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://github.com/gurnec/btcrecover">btcrecover</a> is an open source Python utility built specifically to help you recover your password. It allows you to quickly build a list of potential passwords from a list of known tokens[ref]The parts of the password you remember are the tokens we'll use.[/ref] and test each of those passwords against the wallet.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>First, you'll want to clone the software to your local machine:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">git clone git@github.com:gurnec/btcrecover.git</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>Then move your <tt>wallet.dat</tt> file into the same directory.[ref]It's a good idea to back up your wallet from Bitcoin Core in the event your attempts to break in corrupt the file.[/ref] This way the software can more easily find the file and you keep everything in the same place.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Create a file called <tt>tokens.txt</tt> in the same directory and place each part of the password you remember on a separate line. If you know you used the words "battery," "correct," "horse," and "staple" but can't remember the order, just put each of those on a line. The more words you can remember, the better.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Also, you think you used your son's birth year. Or was it your anniversary? You can either include both years as tokens, or use wildcard placeholders to expand dates. All years from 1900 to 2099 can be expressed through the two tokens "19%2d" and "20%2d." Including these two tokens will drastically expand your word list. It also ensures you won't miss things if you'd included your spouse's birth year instead of your child's.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>For our simple example here, this is enough for now and will give us quite a few possible passwords. But we can't run things just yet. btcrecover requires Python 2.7 to run.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Virtual Environment</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>My machine has both Python 2.7 and Python 3 installed. The latter is used by default and the former is coded explicitly as python2 at the command line. To set up a virtual environment for btcrecover, I need to do the following:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">virtualenv -p $(which python2) venv<br />source venv/bin/activate</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now, the python binary in this environment references Python 2.7 and btcrecover can run just fine. I can further install additional extension as needed with pip running as a module:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">python -m pip install [dependency]</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:heading --></p>
+<h2>Running btcrecover</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that you have a Python environment and a tokens file, you can test the passwords generated by the script to see what's going to happen.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">python btcrecover.py --listpass --tokenlist tokens.txt | more</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>Exit at any time; this step is just to preview what passwords are being generated by the system. When you're ready to <em>actually</em> give things a try, you run btcrecover against your actual wallet:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">python btcrecover.py --tokenlist tokens.txt --wallet wallet.dat</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>The program will load your token list and generate the same list of passwords as our earlier test. It uses each in tern in attempts to decrypt your wallet and will display a helpful progress bar and ETA for when the keyspace will be fully exhausted (when the system runs out of passwords to test).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If your token list was exhaustive enough and was able to generate your original password, you'll be back into your Bitcoin wallet in no time!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>What Next?</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>btcrecover runs on your CPU, so it can leverage multithreading and perform quite quickly with these various password attempts. That being said, if you don't have an exhaustive token list to work from, you might end up running things for several days and <em>still</em> not get into your wallet.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>For trickier scenarios where you still have a handful of suspected tokens (or even a list of words you're confident were related to your passwords at the time), you can leverage GPU-accelerated hashing to try to get in. We'll cover that topic next time.</p>
+<p><!-- /wp:paragraph --></p>

@@ -1,0 +1,64 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Shortcode Tracking'
+date: 2014-01-22 08:00:07.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- feature
+- shortcodes
+- WordPress
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: 'WordPress Core Proposal: Shortcode Tracking'
+  _yoast_wpseo_metadesc: There is no way to query posts in WordPress based on the
+    condition of having or not having a shortcode. We should fix that.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/rn
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409888823;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6084;}i:1;a:1:{s:2:"id";i:3194;}i:2;a:1:{s:2:"id";i:6231;}}}}
+  keen_postview_count_this_7_days: '3'
+  _wpghs_github_path: _posts/2014-01-22-shortcode-tracking.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/shortcode-tracking/"
+excerpt: At the moment, there is no way to query posts in WordPress based on the condition
+  of having or not having a shortcode.  Such an ability would be hugely useful to
+  both themes and plugins - should we add it to core?
+---
+<p>Continuing on with my <a title="WordPress Core Proposal: SUDO" href="http://eamann.com/tech/sudo-in-wordpress/">previous</a> <a title="WordPress Core Proposal: Aribitrary File Upload" href="http://eamann.com/tech/aribitrary-file-upload/">goal</a>, I want to pitch another WordPress core idea - but this time one that would be best suited as a patch rather than a plugin.</p>
+<h2>Current Limitations</h2>
+<p>At the moment, there is no way to query posts in WordPress based on the condition of having or not having a shortcode.  There's no way to grab all posts with galleries.  All posts with embedded audio/video.  All posts with legacy shortcodes in need of an upgrade.</p>
+<p>Well, you <em>can</em> create a new [cci]WP_Query[/cci] instance and pass part of the shortcode in as a search parameter.  You <em>can</em> create a custom SQL query to match against the content of posts.</p>
+<p>Both of these solutions are hacks; non-performant hacks at that![ref]Querying against post content means matching against an unindexed, unbound, <a title="MySql Longtext Documentation" href="http://dev.mysql.com/doc/refman/5.0/en/blob.html">longtext</a> field.  This is a heavy query, and running it during routine blog operations is a horrible, terrible, no-good, really bad idea.[/ref]</p>
+<h2>Proposed Alternative</h2>
+<p>I ran head-first into this issue last week when I needed to query the database for all posts containing a [cci]gallery[/cci] tag.  The solution turned out to be a hook on WordPress' save action that flags the post as having or not having a gallery in a hidden "flags" taxonomy.</p>
+<p>My proposal - make this part of WordPress core.</p>
+<p>Every shortcode tag would become a term in a "shortcode" taxonomy.  On save, posts will be automatically tagged with whatever shortcodes their content happens to contain.  Queries then become simple:</p>
+<p><code lang="php">$galleries = new WP_Query(<br />
+    array(<br />
+        'post_type' => 'post',<br />
+        'tax_query' => array(<br />
+            array(<br />
+                'taxonomy' => 'shortcode',<br />
+                'field'    => 'slug',<br />
+                'terms'    => array( 'gallery' ),<br />
+                'operator' => 'IN',<br />
+            ).<br />
+        ),<br />
+    )<br />
+);</code></p>
+<h2>Does it Make Sense for Core?</h2>
+<p>The first argument against this change would be "this sounds like plugin material."  On one hand, I agree.  Building a flags taxonomy for your theme or plugin to keep track of shortcodes in use is, ultimately, a simple endeavor.  Actually, I've already <a href="https://gist.github.com/ericmann/e60ba7868d9ec16020c0" title="Shortcode Taxonomy Proof of Concept">written the code for it</a>.</p>
+<p>The argument to have this functionality in core, however, is a simple one: Standardization.  By having this code in core by default, all shortcodes will be tracked whether they're in core, in a plugin, or in the theme.  Plugins and themes can then query against a standard taxonomy to find shortcodes in use.</p>
+<p>Ultimately, it's an argument for interoperability between shortcodes among plugin and theme developers.  Does this argument mean it makes sense for core?  I say yes. What do you think?</p>

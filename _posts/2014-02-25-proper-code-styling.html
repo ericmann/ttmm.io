@@ -1,0 +1,76 @@
+---
+layout: post
+title: Proper Code Styling
+date: 2014-02-25 08:00:09.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Apple
+- code style
+- guidelines
+- security
+- TLS/SSL
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: Proper Code Styling
+  _yoast_wpseo_metadesc: There is no excuse for braceless conditionals in production
+    code.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sk
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407368652;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6458;}i:1;a:1:{s:2:"id";i:6275;}i:2;a:1:{s:2:"id";i:5609;}}}}
+  _wpghs_github_path: _posts/2014-02-25-proper-code-styling.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/proper-code-styling/"
+excerpt: "I look at a lot of code.  In my job, recreationally on weekends.  Everywhere
+  I see people using a specific coding style and, upon pushback, defend it in the
+  sake of brevity.\r\n\r\nI'm talking about braceless one-line conditionals. "
+---
+<p>I look at a <em>lot</em> of code.  In my job, recreationally on weekends.  Everywhere I see people using a specific coding style and, upon pushback, defend it in the sake of brevity.</p>
+<p>I'm talking about braceless one-line conditionals.  Like this:</p>
+<p><code>if ( condition )<br />
+    return 'first result';<br />
+if ( other_condition )<br />
+    return 'second result';</code></p>
+<h2>Step Away From the IDE</h2>
+<p>If you're using braceless conditionals in your code, stop. Right now. Quit it.</p>
+<p>I work with WordPress, so the primary languages at my disposal are PHP and JavaScript.  Both languages support braces in their conditionals.</p>
+<p>As of recently, using braces for all conditionals - even one-liners - has been accepted as a coding standard by the WordPress community.[ref]It had been accepted by the jQuery community first.  Since we use jQuery so heavily inside WordPress, and are trying to maintain some sense of parity between our standards, adopting it for PHP code made sense.[/ref]</p>
+<p>Adding another bracket is easy, ultimately doesn't sacrifice performance, and will insulate your code from potentially catastrophic failures.</p>
+<h2>Case In Point</h2>
+<p>Apple just released an update to iOS, and allegedly has a patch pending for OS X, to patch <a href="https://www.imperialviolet.org/2014/02/22/applebug.html" title="Apple's SSL/TLS bug">a major security hole</a> exposed by such a one-line conditional error.  Consider the following code from <a title="sslKeyExchange Library" href="http://opensource.apple.com/source/Security/Security-55471/libsecurity_ssl/lib/sslKeyExchange.c">Apple's published source</a>:</p>
+<p><code>SSLVerifySignedServerKeyExchange(SSLContext *ctx, bool isRsa, SSLBuffer signedParams, uint8_t *signature, UInt16 signatureLen)<br />
+{<br />
+    OSStatus err;<br />
+    // ...</p>
+<p>    if ((err = SSLHashSHA1.update(&hashCtx, &serverRandom)) != 0)<br />
+        goto fail;<br />
+    if ((err = SSLHashSHA1.update(&hashCtx, &signedParams)) != 0)<br />
+        goto fail;<br />
+        goto fail;<br />
+    if ((err = SSLHashSHA1.final(&hashCtx, &hashOut)) != 0)<br />
+        goto fail;</p>
+<p>    // ...</p>
+<p>fail:<br />
+    SSLFreeBuffer(&signedHashes);<br />
+    SSLFreeBuffer(&hashCtx);<br />
+    return err;<br />
+}</code></p>
+<p>Do you see the error?  An extra [cci]goto fail;[/cci] lies outside a conditional statement and, since [cci]err[/cci] will contain valid data at this point, the function will now return a valid authentication in response to attempting to verify a signed SSL certificate.</p>
+<p>This means that SSL is <em>unsafe</em> and <em>broken</em> for any application using this core library on affected versions of iOS and OS X.  This includes the default web browser and many stock apps.</p>
+<p>Apple is working quickly to patch the well-publicized vulnerability; the point is, it exists, is exploitable, and could easily have been prevented.</p>
+<h2>Prevention</h2>
+<p>Two different tools could have been used to prevent this flaw: unit tests and proper code style.</p>
+<p>I love unit testing, and I'll be among the first to point out that a failure like this can be chalked up to insufficient unit tests for the function in question.  If there were tests at all, there were obviously <em>no</em> tests for any failure condition occurring after this errant line of code.  Likely, whomever was responsible for quality control failed to run a code coverage report, otherwise they would have seen immediately that a large section of their logic tree was dead code.</p>
+<p>As much as I advocate unit testing, I also recognize that not all of our code will be properly tested before it ships.  This is a horrible thing, but it happens.  In the absence of proper tests (which, obviously is our reality), proper coding standards would have prevented this error as well.  Adding brackets around one-line conditionals in this function would be trivial and, as it's a <em>compiled language</em> the generated bytecode would end up identical regardless.</p>
+<p>There is absolutely no excuse for poor coding style.  There is also no excuse for such a mission-critical security feature to be shipped without proper unit tests and full code coverage.</p>
+<p>Are you shipping code with potential bugs for which there is no excuse?</p>

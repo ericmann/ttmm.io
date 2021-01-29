@@ -1,0 +1,61 @@
+---
+layout: post
+title: Remote and Secure
+date: 2014-04-24 08:00:29.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- networking
+- security
+- vpn
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Remote and Secure
+  _yoast_wpseo_metadesc: I recently configured a VPN so my network traffic will be
+    secure whether I'm connected at home or to an open network on the road.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/u6
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407986680;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6086;}i:1;a:1:{s:2:"id";i:6043;}i:2;a:1:{s:2:"id";i:6104;}}}}
+  keen_postview_count_this_30_days: '10'
+  _wpghs_github_path: _posts/2014-04-24-remote-secure.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/remote-secure/"
+excerpt: A "virtual private network" is a way to keep your data secure, whether your
+  on a dedicated 4G tether or connected to Starbuck's free wireless.  Traffic from
+  your machine is encrypted at the machine, sent to a remote (trusted) server, decrypted,
+  and proxied to the real network target.
+---
+<p>Earlier this year, I demonstrated to a colleague just how easy it was to sniff data out of the air when everyone's connected to a public network.</p>
+<p>We were sitting in the Chandler Library at <a title="WordCamp Phoenix" href="http://2014.phoenix.wordcamp.org">WordCamp Phoenix</a>, and he had been watching me <a title="Web Requests and Data Leakage" href="http://eamann.com/tech/data-leakage/">write an article</a> about network security.  He challenged me to snoop on his machine, so I pulled up a network profiling tool and started rattling off the names of every application on his Mac that were talking to the network.</p>
+<p>He, understandably, freaked out and shut off his machine.</p>
+<h2>How Secure Are You?</h2>
+<p>I was clearing out my laptop's list of trusted networks the other day when I discovered some troubling entries there.  Once upon a time, I was forced to work from a Starbucks and their generic "attwifi" network was added to my whitelist of networks to which the machine will "automatically connect."</p>
+<p>Not very secure.</p>
+<p>I do travel a lot, though, and I have several hotels and airports permanently loaded in my machine's list of trusted connections.  Since I'm traveling this weekend - to a country known to have hacking and data security issues - I wanted to be sure my data was safe.</p>
+<p>So I configured a VPN.</p>
+<h2>Private Networking</h2>
+<p>A "virtual private network" is a way to keep your data secure, whether your on a dedicated 4G tether or connected to Starbuck's free wireless.  Traffic from your machine is encrypted <em>at the machine</em>, sent to a remote (trusted) server, decrypted, and proxied to the real network target.</p>
+<p>It's similar to how a man-in-the-middle attack might work - except I happen to trust the guy in the middle sniffing my traffic, and I can completely secure my communications with him.  He, in turn, forwards my web requests (and server responses) on to their destination.</p>
+<p>I can browse any site on any network with a high level of confidence that my information is secure.</p>
+<h2>Potential Setups</h2>
+<p>One setup, which I hope to investigate soon, is to set up a dedicated server in my home network and open an encrypted ssh tunnel from my remote location to my home.  The advantages here are manifold:</p>
+<ul>
+<li>Traffic from my machine will <em>always</em> come from my home office's IP address</li>
+<li>The only person I need to trust with my information is, well, myself</li>
+<li>Once tunneled in to my home network, I'll have access to the same resources (printers, NAS, etc) that I do at home</li>
+</ul>
+<p>An open-source tool called <a title="sshuttle" href="https://github.com/apenwarr/sshuttle">sshuttle</a> will make this possible with relative ease.</p>
+<p>The setup I'm currently using is a contract with <a title="Private Internet Access" href="https://www.privateinternetaccess.com/">Private Internet Access</a>.  A one-year contract costs less than running my VPS for the year. It also comes with a level of anonymity that ssh-ing to my local network would not provide. I can flip a switch and route my traffic through data centers on the East coast, the West coast, Europe ...</p>
+<p>I don't have the benefit of accessing my home network's resources remotely, but I do now have the ability to visit sites and conduct business with relative anonymity.</p>
+<p>I value anonymity almost as much as I value security. Not having to maintain my own hardware is an added bonus.</p>

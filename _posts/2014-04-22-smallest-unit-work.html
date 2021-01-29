@@ -1,0 +1,53 @@
+---
+layout: post
+title: Smallest Unit of Work
+date: 2014-04-22 08:00:52.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Octave
+- Unit Test
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1398194982;s:6:"status";s:6:"pushed";}
+  _yoast_wpseo_title: Smallest Unit of Work
+  _yoast_wpseo_metadesc: Whenever I try to explain unit testing to another developer,
+    I refer to the "smallest unit of work" that's possible to test.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/u4
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  keen_postview_count_this_30_days: '9'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408793078;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5929;}i:1;a:1:{s:2:"id";i:6231;}i:2;a:1:{s:2:"id";i:6108;}}}}
+  _wpghs_github_path: _posts/2014-04-22-smallest-unit-work.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/smallest-unit-work/"
+excerpt: Whenever I try to explain unit testing to another developer, I refer to the
+  "smallest unit of work" that's possible to test.
+---
+<p>Whenever I try to explain unit testing to another developer, I refer to the "smallest unit of work" that's possible to test.  Often this leads to head-scratching and confused looks, so let me explain.</p>
+<h2>Octave</h2>
+<p>My wife is taking a Coursera class on machine learning.  Her instructor has put together a fantastic set of exercises in <a title="Octave" href="http://en.wikipedia.org/wiki/GNU_Octave">Octave</a> to teach the material.  He walks through the material one step at a time, and presents functions with incomplete bodies - the assignments are to fill out the body of each function with equations covered in the lectures.</p>
+<p>Once the function is complete, you can run the exercise's main script, and it will step through each part of that week's exercise, executing your code as you go.  When you're right, everything runs and gives you the data you'd expected it to.</p>
+<p>When you're <em>wrong</em>, you'll see a flood of error messages or incorrect data. Unfortunately, this indication of being wrong usually comes halfway through what's often a very <em>long</em> program.</p>
+<p>So a few students and TAs got together and publish weekly unit tests for the course.</p>
+<p>The unit tests are simple function calls that populate the environment with known data, execute <em>just</em> the function you're working with, and return a small subset of data you can compare against a set of expected solutions posted in the class forum.  Running these tests allow students to debug <em>just</em> the exercise they're working with, without needing to run the entire course program.</p>
+<h2>WordPress</h2>
+<p>I don't work with Octave on a daily basis.[ref]I'm glad for this. As cool as the language is for mathematical stuff, the available IDEs are clunky and buggy, and I don't understand much of the syntax in the first place.[/ref] I <em>do</em>, however, work with WordPress - unfortunately WordPress' test suite fails to test only the smallest unit of work.</p>
+<p>This has been my ongoing gripe with the WordPress unit test suite.  Yes, it lets us find bugs in our code and prevent regressions.  Yes, every patch submitted nowadays <em>should</em> have some sort of automated testing performed to make sure it doesn't introduce yet more bugs.</p>
+<p>But the WordPress unit test suite requires a database first of all, which means it's <em>not</em> isolating the code you're trying to test (i.e. a single function) from the rest of the code base and its dependencies.  Also, I'm often criticized for setting up an initial environment when building a test (again, I do so to test <i>just</i> the function in question rather than the set of APIs upon which it depends).</p>
+<p>When you test the smallest unit of work - just <em>one</em> function - you should only need that unit of work available to the test code.  No database. No other application APIs.  No global state set up by other in-application functionality.</p>
+<p><em>This</em> is one of the primary reasons I've helped build <a title="WP_Mock" href="https://github.com/10up/wp_mock">WP_Mock</a>. WP_Mock allows you, within a WordPress theme or plugin, to test <em>just</em> the code in question by mocking the WordPress API.  In most of my test scenarios, the WordPress codebase (and the database against which it runs) <em>is not even included</em>.</p>
+<p>My tests use WP_Mock to set up an initial environment, they then run just the function I want to test (against that known/static environment) and assert the environment meets certain expectations after the function completes.  WP_Mock allows me to mock the behavior of both WordPress APIs <em>and</em> internal theme/plugin APIs - this allows me to isolate functions within my application from one another so I can truly test one unit of work at a time.</p>
+<p>How isolated is the code you work with? When you write tests, are you really testing the smallest unit of work possible?</p>

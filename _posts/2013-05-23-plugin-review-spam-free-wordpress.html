@@ -1,0 +1,122 @@
+---
+layout: post
+title: Plugin Review - Spam Free WordPress
+date: 2013-05-23 10:07:37.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- plugin
+- review
+- WordPress
+meta:
+  _yoast_wpseo_linkdex: '70'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: spam free wordpress
+  _yoast_wpseo_title: Plugin Review - Spam Free WordPress
+  _yoast_wpseo_metadesc: A friend recommended I look at the Spam Free WordPress plugin.
+    I took a look, and I can't make the same recommendation.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/qh
+  _wpas_skip_1588757: '1'
+  _oembed_6dd6a46d332f50db3062a0258bb1c919: '<blockquote class="twitter-tweet" width="500"><p>My
+    Latest Favorite Plugin: Spam Free WordPress <a href="http://t.co/3tQ3a573Ls">http://t.co/3tQ3a573Ls</a></p>&mdash;
+    SureFire / Jonathan  (@SureFireWebServ) <a href="https://twitter.com/SureFireWebServ/statuses/337579757287907328">May
+    23, 2013</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>'
+  _oembed_ed01de0cd43ecf490e52c8fa18c990df: <blockquote class="twitter-tweet" width="500"><p><a
+    href="https://twitter.com/EricMann">@EricMann</a> Don&#39;t knock it til ya try
+    it! I&#39;ve been searching for a while, this plugin helped big time! =) <a href="https://twitter.com/bobWP">@bobWP</a></p>&mdash;
+    SureFire / Jonathan  (@SureFireWebServ) <a href="https://twitter.com/SureFireWebServ/statuses/337581694561439747">May
+    23, 2013</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409927852;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3405;}i:1;a:1:{s:2:"id";i:3395;}i:2;a:1:{s:2:"id";i:3928;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '4'
+  keen_postview_count_this_30_days: '13'
+  _wpghs_github_path: _posts/2013-05-23-plugin-review-spam-free-wordpress.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/plugin-review-spam-free-wordpress/"
+---
+<blockquote><strong>Update 7/31/2013</strong>&mdash;The following review is of an older version of the plugin. As of the newer 2.0 branch, many of the issues below have been resolved.</p></blockquote>
+<p>A friend of mine directed me to a <a title="Spam Free WordPress" href="http://wordpress.org/plugins/spam-free-wordpress/">new spam fighting plugin</a> via a retweet today.</p>
+<p>https://twitter.com/SureFireWebServ/status/337579757287907328</p>
+<p>I'm always on the lookout for cool new software, and as I highly respect my friend's opinion, I had to take a look.  Two things about the plugin download page immediately raised some red flags, so I wrote the plugin off and said so on Twitter.  The immediate response: that I was too quick to judge.</p>
+<p>https://twitter.com/SureFireWebServ/status/337581694561439747</p>
+<p>So here's my <em>full</em> review of the plugin.<!--more--></p>
+<h2>License</h2>
+<p>Refreshingly, the plugin itself is licensed under version 3 of the GPL (which is a requirement to live in the WordPress.org repository). However, there is a somewhat confusing IP disclaimer at the top of the plugin file:</p>
+<blockquote><p>Intellectual Property rights reserved by Todd Lahman, LLC as allowed by law incude, but are not limited to, the working concept, function, and behavior of this plugin, the logical code structure and expression as written. All WordPress functions, objects, and related items, remain the property of WordPress under GPLv2 (or later), and any WordPress core functions and objects in this plugin operate under the GPLv2 (or later) license.</p></blockquote>
+<p>While I am not a lawyer, this doesn't appear to me to violate the GPL, as the GPL still requires a copyright notice to accompany any re-release of licensed software. It does, however, go above and beyond what is normally seen in plugins.</p>
+<h2>Readme</h2>
+<p>The readme file is what threw up my original red flags.</p>
+<p>First of all, the plugin makes some truly interesting claims:</p>
+<blockquote>
+<ol>
+<li>Automatically blocks 100% of automated comment spam</li>
+<li>Local IP address blocklist for manual spam</li>
+<li>Almost zero database load under the heaviest spam conditions.</li>
+<li>Zero false positives</li>
+</ol>
+</blockquote>
+<p>I use Akismet for most of my sites - which is also free. Akismet uses algorithms that help it automatically learn from its mistake, meaning every false-positive (or false-negative) helps to make the system smarter. Also, it runs on WordPress.com, meaning there are literally <em>millions</em> of data points available to help refine the spam catching system.</p>
+<p>But even Akismet can't guarantee 100% efficacy.  Nor can Akismet claim zero false-positives.</p>
+<p>In my experience, when something sounds too good to be true, it probably is.</p>
+<p>The more outrageous claim, though, is that the plugin has been tested up to WordPress 3.7.  For those keeping score at home, at the time of this writing, <em>WordPress 3.6 is <a title="WordPress 3.6 Beta 3" href="http://wordpress.org/news/2013/05/wordpress-3-6-beta-3/">still in beta</a></em> and 3.7 hasn't even been scoped for development yet.</p>
+<h2>Compatibility</h2>
+<p>While the plugin might overstate its compatibility with WordPress, it does go to great lengths to be compatible with everything else on your site.  The plugin disables certain additions by Jetpack that override your comments. It also has hooks set up for several major themes' comment areas so there's a minimal amount of configuration needed on your part.</p>
+<p>A cursory glance at the codebase shows explicit support for:</p>
+<ul>
+<li>Suffusion</li>
+<li>Genesis</li>
+<li>Graphene</li>
+<li>Thesis</li>
+<li>Thematic</li>
+</ul>
+<h2>Internationalization</h2>
+<p>If you're a native English speaker, and your WordPress backend is in English, then you won't notice any problems. If, on the other hand, you administer your site in a language other than English (or want to use this plugin on a non-English client site), then you'll be in for a surprise.</p>
+<p>The plugin itself advertises language support for:</p>
+<ul>
+<li>English</li>
+<li>German - (de_DE)</li>
+<li>Italian (it_IT)</li>
+<li>French - fr_FR)</li>
+<li>Hebrew - (he_IL)</li>
+<li>Japanese - (ja)</li>
+<li>Chinese - (zh_CN)</li>
+<li>Hong Kong - (zh_HK)</li>
+<li>Taiwan - (zh_TW)</li>
+<li>Swedish - Svenska (sv_SE)</li>
+<li>Norwegian - (norsk)</li>
+</ul>
+<p>While these translations exist, and a large portion of the codebase uses <a title="I18n for WordPress Developers" href="http://codex.wordpress.org/I18n_for_WordPress_Developers">WordPress' built-in translation functions</a>, a significant amount of UI code does not.</p>
+<p>For example, certain parts of error messages are translated while others are not. Let's say someone with a blocked IP address submits a comment. They will see an error message in the site's I18N language equivalent to "Comment blocked by Spam Free WordPress because your IP address is in the local blocklist, or you forgot to type a comment."</p>
+<p>But the <em>title</em> of the error page - "Spam Blocked by Spam Free WordPress local blocklist" - will not be translated.</p>
+<p>Certain options on the plugin's settings pages are also not translated, as are portions of the plugin's built-in comments template. This is an oversight that will affect both the back end <em>and</em> the front-end.</p>
+<h2>Security</h2>
+<p>The plugin makes fantastic use of <a title="WordPress Nonces" href="http://codex.wordpress.org/WordPress_Nonces">nonces</a> to secure its various actions.</p>
+<p>When direct database calls are used, everything is properly sanitized and escaped. The funny thing, is that even hard-coded data is being run through <tt>$wpdb-&gt;prepare</tt>, <a title="Protect Queries Against SQL Injection Attacks" href="http://codex.wordpress.org/Class_Reference/wpdb#Protect_Queries_Against_SQL_Injection_Attacks">which is unnecessary</a>.  This is probably a holdover from some version of user input, though, and it doesn't cause any issues.</p>
+<h2>Broken Functionality</h2>
+<p>This is the biggest bone I have to pick with the plugin. Huge swaths of functionality are disabled unless you enter an API key.  This includes:</p>
+<ul>
+<li>The local spam IP blocklist</li>
+<li>The option to customize the comment form message</li>
+<li>Local cron jobs to clean the database</li>
+</ul>
+<p><em>None</em> of these features requires a remote connection, but they're crippled in the plugin unless you validate an API key against the author's server. For the record, this is explicitly against the <a title="Detailed Plugin Guidelines" href="http://wordpress.org/plugins/about/guidelines/">WordPress.org repository guidelines</a>:</p>
+<blockquote><p>All code hosted by WordPress.org servers must be free and fully-functional.</p></blockquote>
+<p>The only part of the plugin that requires remote access is the part that actually validates the API key. Comments are not validated against an external API or blocklist at all, and no web services are involved to enhance the functionality of the plugin.</p>
+<h2>Conclusions</h2>
+<p>This is not a plugin I could ever recommend using on your site.</p>
+<p>If you already have it installed and love the functionality, feel free to keep on trucking. But the fact that the plugin requires you dial in to an external server for no other reason than the author wants to know who installed the software and where is an even bigger flag in my book than overstated efficacy or overconfident compatibility claims.</p>
+<p>With this said, what do <em>you</em> look for in a plugin as a solid go-nogo for making a recommendation?  What other features would you like to see covered in a review before making a decision one way or the other?</p>

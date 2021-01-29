@@ -1,0 +1,68 @@
+---
+layout: post
+title: Why I use the MIT License
+date: 2014-05-26 08:00:17.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- GPL
+- license
+- mit
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Why I Use the MIT License
+  _yoast_wpseo_metadesc: I don't like the GPL, so I license my code under the GPL-compatible
+    MIT license instead. Want to know why?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/v2
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409917678;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6399;}i:1;a:1:{s:2:"id";i:2726;}i:2;a:1:{s:2:"id";i:3989;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '13'
+  keen_postview_count_this_30_days: '42'
+  _wpghs_github_path: _posts/2014-05-26-why-the-mit-license.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/why-the-mit-license/"
+excerpt: I don't like the GPL, so I license my code under the GPL-compatible MIT license
+  instead. Want to know why?
+---
+<p>WordPress was my first exposure to open source software. At the time, the idea of giving your work away <em>for free</em> was so foreign to me that I rejected it almost outright.</p>
+<p>Open source would work for WordPress - a project backed my a multi million dollar company - but wasn't a fit for the real world.</p>
+<p>As I grew in my software experience, I came across more and more open source software. jQuery, at the time, was dual-licensed under the GPL (WordPress' open source license of choice) and MIT licenses. I took this as an indicator that open source was the way to go, so I started distributing my own work under similar licenses.</p>
+<h2>GPL</h2>
+<p>I've already written about why the GPL can be a dangerous license option, but I wanted to cover a few of the reasons I avoid it whenever necessary again.</p>
+<h3>Viral Licensing</h3>
+<p>Firstly, the GPL is a "viral" license. This means that any derivative works (programs based on your code) must <em>also </em>be licensed under the GPL. Also, any works bundling your project (i.e. shipping together as one product) must be licensed under the GPL.</p>
+<p>I use open source licensing because it promotes freedom - forcing someone to a particular license choice for a composite application because of the license choice for a library is the antithesis of "freedom."</p>
+<h3>Distribution</h3>
+<p>Anyone to whom you distribute your application is entitled to an unobfuscated copy of the application's original source code. If you're hosting a website, you aren't <em>distributing</em> the CMS on which you built it, so WordPress' GPL license isn't an issue. Well, until you need to hire someone to help with the project.</p>
+<p>The subcontractor to whom you sent a copy of your in-house WordPress theme? They can repurpose, redistribute, and <em>resell</em> that theme to others.</p>
+<h3>Businesses Built on GPL Software</h3>
+<p>I've never felt that companies "selling" GPL-licensed software will go very far.[ref]Hosting is a very different animal. WordPress.com/Automattic has been very successful since, by hosting their GPL as a SaaS product, they never actually <em>distribute</em> the product to a customer and thus aren't required to share proprietary source.[/ref] There are a few large WordPress companies that sell themes and plugins, quite successfully I might add.</p>
+<p>But the nature of the GPL is such that any customer purchasing a copy of a GPL product <em>also</em> receives the right to distribute that copy - for free or for a fee. Regardless, I've seen the big players threaten legal action against individuals attempting to do this - a development that makes me even less apt to select the GPL (or any GPL-based software/product/business) in the future.[ref]Threatening to sue someone redistributing your GPL-licensed open source code just makes you out to be an ass.[/ref]</p>
+<h2>MIT</h2>
+<p>I use the MIT license because, as open source licenses go, it's incredibly open.</p>
+<blockquote><p>Copyright (c) &lt;year&gt; &lt;copyright holders&gt;</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights<br />
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.[ref]<a title="The MIT License" href="http://opensource.org/licenses/MIT">The MIT License</a>[/ref]</p></blockquote>
+<p>That's it. The whole license. Unlike the GPL, the <em>only</em> requirement an MIT license places on its recipients is that they keep my copyright notice intact when they repurpose, redistribute, or otherwise reuse my code.</p>
+<p>Unlike the GPL, this license is not viral. You can take my library (JavaScript snippet, PHP class, compiled binary distributable, etc) and use it in your project while still licensing the project itself in a way that protects your business. You can <em>add to</em> or otherwise modify my library - and distribute your modified copy - while sublicensing your modifications differently than I licensed the original.</p>
+<p>You can build a business that sells larger, proprietary applications built out of smaller, open source components without the fear of imitators purchasing and re-selling your product.[ref]These imitators you could actually sue if they're redistributing parts of your product <em>not</em> distributed under an open source license.[/ref]</p>
+<h2>Moving Forward</h2>
+<p>I want to clear up two things that this article might have you confused about:</p>
+<p>Firstly, I am <em>still</em> a proponent of open source. I will <em>still</em> continue to write and release open source software. When and wherever possible, however, I will <em><strong>always</strong></em> use the MIT license for my code and will <em>only</em> use a GPL license if given no other option.[ref]I maintain a few projects I've inherited by other developers. Their initial code was GPL, so even though I am now the sole developer, I can't just switch things over to a new license.[/ref]</p>
+<p>Secondly, any code you see on this site, my GitHub account, or receive from me in any way is, unless otherwise explicitly stated, <strong><em>distributed under the terms of the MIT license</em> above.</strong></p>

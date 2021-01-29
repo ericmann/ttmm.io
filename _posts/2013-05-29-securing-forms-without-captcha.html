@@ -1,0 +1,95 @@
+---
+layout: post
+title: Securing Forms Without Captcha
+date: 2013-05-29 08:30:09.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- captcha
+- contact
+- form
+- software development
+- spam
+- submission
+meta:
+  yourls_shorturl: http://eam.me/qj
+  _wpcom_is_markdown: '1'
+  _yoast_wpseo_linkdex: '72'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: captcha
+  _yoast_wpseo_title: Securing Forms Without Captcha
+  _yoast_wpseo_metadesc: Captchas are a terrible user experience and should be avoided
+    at all costs. Here are two practical, passive alternatives to using a captcha.
+  _wpas_done_all: '1'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_focuskw_text_input: captcha
+  _yoast_wpseo_content_score: '90'
+  _wpghs_github_path: _posts/2013-05-29-securing-forms-without-captcha.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/securing-forms-without-captcha/"
+---
+<p><a href="http://en.wikipedia.org/wiki/Captcha" title="Captcha">Captchas</a> are a terrible user experience.</p>
+<p>[caption id="attachment_490" align="alignright" width="208"]<img class=" wp-image-490 " alt="I've seen more captchas like this than I can count." src="{{ site.baseurl }}/assets/2013/05/BadCaptcha2.png" width="208" height="104" /> I've seen more captchas like this than I can count.[/caption]</p>
+<p>They put the onus of spam protection on the visitor filling out the form and, personally, show me how lazy you are as a site administrator. &nbsp;There are a hundred different ways you can protect your site from spam on the server side - why would you forego these options and force your visitors to jump through additional hoops?</p>
+<p>Furthermore, captchas can <a title="CAPTCHA Can Kill Your Conversion Rate" href="http://baymard.com/blog/captcha-conversion-rate">negatively impact the overall user experience</a> on your site for some. They can actually <a title="CAPTCHAs' Effect on Conversion Rates" href="http://moz.com/blog/captchas-affect-on-conversion-rates">hurt your conversion rate</a> for others.</p>
+<p><em>Instead</em> of using a captcha, let's look at two passive things you can add to a form to reduce spam.<!--more--></p>
+<h2>Submission Timer</h2>
+<p>In general, humans are slow. &nbsp;This is one of the reasons we invented computers and started scripting bots to begin with - non-humans are quicker and more efficient at completing certain tasks than we'll ever be.</p>
+<p>And&nbsp;<em>that</em> can also be their disadvantage.</p>
+<p>Add a hidden field to your form that contains the current server time (based on when the form was generated). &nbsp;Then, upon submission, check the form's timestamp against the current server time. &nbsp;If the form was submitted too quickly (say, less than 3 seconds) then a human&nbsp;<em>probably</em> didn't fill it out.</p>
+<p><code lang="html"></p>
+<form>
+    <input type="hidden" value="<?php echo time(); ?>" /><br />
+    <input type="text" name="email" /><br />
+    <input type="submit" value="Submit" /><br />
+</form>
+<p></code></p>
+<p>Twitter, for example, uses a similar timer to secure submissions to their API. &nbsp;Most API requests require a server timestamp. &nbsp;Twitter requires the request timestamp be within five minutes of their server time in order to be marked as "valid."</p>
+<p>This approach won't work if you use full-page caching on your system, though. &nbsp;So be sure to disable the cache for your form pages.</p>
+<h2>Honeypot</h2>
+<p>A <a href="http://en.wikipedia.org/wiki/Honeypot_(computing)" title="Honeypot (computing)">honeypot is a trap</a> used to detect bots.  It's a form field that, usually, is invisible to real visitors but seen - and completed - by scripts, bots, and other programs trying to attack your form.</p>
+<p>A bot is typically smart enough to fill fields labeled "email" with a valid email address so they can skip past validation routines.  Like their speediness, this trait can be used to identify and reject submissions from bots.</p>
+<p>For our purposes, we rename our regular email field and add a <em>new</em> email field that will be hidden later by CSS.</p>
+<p><code lang="html"></p>
+<style type="text/css">
+    .email-block { display: none; }<br />
+</style>
+<form>
+<p class="name-block">
+        <label for="name">Name:</label><br />
+        <input type="text" name="name" />
+    </p>
+<p class="email-block">
+        <label for="email">Leave this blank if you're human</label><br />
+        <input type="text" name="email" />
+    </p>
+<p class="alternate-block">
+        <label for="alternate">Email:</label><br />
+        <input type="text" name="alternate" />
+    </p>
+<p>    <input type="submit" value="Submit" /><br />
+</form>
+<p></code></p>
+<p>When viewed in a browser, the entire email block will be hidden from the user - they can't fill in the "email" field by mistake.  Even if they're using a text-based browser or a screen reader that ignores the <tt>display: none;</tt> declaration, we clearly label the field in such a way as it should be ignored.</p>
+<p>Bots, however, will fill in the field.  When processing the request on the server side, we can reject it wholesale if "email" is non-empty.</p>
+<h2>Further Protection</h2>
+<p>These are just two passive routes you can take to secure contact, purchase, comment, or other forms on your website.  They're almost entirely transparent to your visitors and thus won't carry the same frustration and distasteful UX of a captcha.  At the same time, they're nearly as effective at blocking spam submissions.</p>
+<p>For spam that <em>does</em> continue to make it through, you can turn to active prevention techniques like an IP block list or a service like Akismet.</p>
+<p>An IP block list is a hand-curated list of addresses known to generate spam - requests coming from these IPs can and should be ignored.  You can curate the list yourself, or turn to one of any of the <a href="http://www.selectrealsecurity.com/public-block-lists" title="Public Block Lists of Malicious IPs and URLs">publicly curated lists</a> available online.</p>
+<p><a href="http://akismet.com/" title="Akismet">Akismet</a> will scan the content, referer, and IP address of a comment or form submission and compare it against a database of known spam.  Potential spam submissions are flagged as such and can either be ignored or cached (to allow manual double-checking for false-positives).  The service is free for personal use, or there are reasonably priced plans for commercial sites.</p>
+<p>Whatever route you take, there are always both passive and active alternatives to captchas.  Avoiding captchas will improve your conversion rate and make the experience of using your site that much more pleasant for any visitor who comes along.</p>

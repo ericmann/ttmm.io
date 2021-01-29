@@ -1,0 +1,63 @@
+---
+layout: post
+title: A Hack a Day Keeps the Boredom at Bay
+date: 2014-02-11 08:00:35.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- actions
+- custom post type
+- filters
+- post status
+- WordPress
+meta:
+  _edit_last: '2'
+  _wpas_mess: I hack on WordPress daily - without hacking core!
+  _yoast_wpseo_title: A Hack a Day Keeps the Boredom at Bay
+  _yoast_wpseo_metadesc: I hack on WordPress daily, but I never "hack core."
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/s6
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409722708;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3055;}i:1;a:1:{s:2:"id";i:6366;}i:2;a:1:{s:2:"id";i:5980;}}}}
+  _wpghs_github_path: _posts/2014-02-11-hack-day-keeps-boredom-bay.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/hack-day-keeps-boredom-bay/"
+excerpt: I do a lot of fancy work with WordPress that, at times, has me pulling my
+  hair out in frustration with the lack of (or uselessness of) certain hooks in WordPress
+  core.  At the same time, I never hack core.
+---
+<p>I recently had a tricky WordPress problem to solve:  I needed trashed items in a specific <a title="Post Types" href="http://codex.wordpress.org/Post_Types">CPT</a> visible from a custom URL on the front-end.</p>
+<p>Unfortunately for me, the "trash" post status is explicitly coded in such a way as to prevent front-end queries.  To add to my frustration, WordPress doesn't allow filtering of this behavior.</p>
+<h2>The Issue</h2>
+<p>I built a custom rewrite rule that passed the post ID directly into the query based on the URL.  WordPress had no trouble finding the post[ref]I inspected the query it built. Though the post existed, and was found, the result of the single template's [cci]get_posts()[/cci] would always result in a 404.[/ref], I just couldn't get the thing to display.</p>
+<p>That was when I started stepping through [cci]get_posts()[/cci] and found this little nugget:</p>
+<ul>
+<li>If a post is found, and we're on a single post/page, WordPress will check the publication status with [cci]get_post_status()[/cci] - this function exposes no filters to allow developer overrides</li>
+<li>Once the post status is found, it's converted into a status object (with several useful properties, like [cci]-&gt;public[/cci]), using [cci]get_post_status_object()[/cci] - again, not filtered at all for developer use</li>
+<li>If the post status isn't public (i.e. [cci]-&gt;public === false[/cci]), then WordPress checks to see if we've got a protected or a private post</li>
+<li>If the post isn't in one of the above states - public, protected, or private - WordPress clears the found posts array, resulting in a  404</li>
+</ul>
+<p>I had a trashed post I needed to view from the front end - but WordPress was blocking me!</p>
+<p>Let's fast forward the 2 hours I spent trying to work around the issue ...</p>
+<h2>The Solution</h2>
+<p>If filters are not suppressed (they aren't in my case), there's a filter that runs a few dozen lines before the status check, and another filter that runs a few dozen lines after.  Since these are the <em>only</em> places I can hook in before WordPress throws an error, I elected to abuse these filters for my purposes.</p>
+<p>I hook in on the [cci]posts_results[/cci] filter to modify the global [cci]$wp_post_statuses[/cci] array, making the "trash" post status public if we're querying for my specific post type.</p>
+<p>Then, I hook in again on the [cci]the_posts[/cci] filter to undo my messy hack so further queries will be unaffected.</p>
+<p>It's sinister, ugly, and I won't recommend it for anyone.  However, it does solve my particular problem and, until WordPress creates additional hooks for controlling post statuses and visibility, it will be shipping in this plugin.</p>
+<p>If you want to see the full code of my hack (abstracted slightly away from my CPT), check out the gist below:</p>
+<p><script src="https://gist.github.com/ericmann/8929492.js"></script></p>
+<h2>The Point</h2>
+<p>I do a lot of fancy work with WordPress that, at times, has me pulling my hair out in frustration with the lack of (or uselessness of) certain hooks in WordPress core.  At the same time, I <em>never</em> hack core.</p>
+<p>I might, from time to time, devise a useful hook and attempt to push it upstream to the project.  In this case, <a href="https://core.trac.wordpress.org/ticket/27088" title="Ticket #27088">I did propose a couple of quick filters</a> that will allow for more hookability inside the WordPress query.</p>
+<p>My point isn't that we can change WordPress to be more flexible - it's that WordPress is hugely flexible as it is today.</p>
+<p>Even though the hooks I <em>wanted</em> to work with didn't exist, there <em>are</em> hooks available that let me do what I need.  Is it hacky?  Yes.  But until we can prove my use case isn't an edge case[ref]I highly doubt many other people will need this functionality.  Would I like these features in core?  Absolutely!  Will they make it in?  Probably not.[/ref], I can subsist on the abused hooks I referenced above.</p>
+<p>How have you hacked WordPress - without hacking core - today?</p>

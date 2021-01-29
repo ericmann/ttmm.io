@@ -1,0 +1,105 @@
+---
+layout: post
+title: Cracking the Uncrackable - Hashtopolis
+date: 2020-11-30 07:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Bitcoin
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cracking-the-uncrackable-part-5/"
+excerpt: In part 5 of our Bitcoin series, we leverage Hashtopolis to distribute a
+  cracking operation across multiple independent machines.
+---
+<p><!-- wp:paragraph --></p>
+<p><a href="https://ttmm.io/tech/cracking-the-uncrackable-part-4/">Last week</a> we started down the path of password cracking with an introduction to Hashcat. The unfortunate thing is that Hashcat is limited to the capabilities of your own machine. Rather than stick with <em>one</em> machine for a cracking run, we want to leverage multiple boxes. The open source Hashtopolis project allows us to do just that by splitting Hashcat operations across as many machines as you want!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Basic Setup</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://github.com/s3inlc/hashtopolis">Hashtopolis</a> is easily installed on any Linux machine, but I happen to prefer Ubuntu when working in the cloud, so we'll start there. The first step is to provision a server <em>somewhere</em> and make sure you have access to it. For my purposes, I set up a <tt>t2.micro</tt> EC2 instance on Amazon and configured it with an Elastic IP so I could keep track of things. I also pointed a vanity subdomain[ref]From one of my other, private top-level domains I use for experimentation...[/ref] at it so I can log in and use the machine easily.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I won't go into basic server provisioning here - that's an exercise left for some other time.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once the machine is available, connect via SSH and start setting things up:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class="">sudo apt update &amp;&amp; sudo apt upgrade
+sudo apt install mysql-server apache2 libapache2-mod-php php-mysql php php-gd php-pear php-curl git phpmyadmin</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The above installations will get almost everything set up. You'll also want to execute <tt>mysql_secure_installation</tt> to ensure MySQL is set up securely. Remove anonymous users, disallow remote root login, and remove the test database. Then you're ready for Hashtopolis.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Installing Hashtopolis</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Hashtopolis itself is installed by cloning the project from GitHub and moving it to the appropriate location.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class="">git clone https://github.com/s3inlc/hashtopolis.git
+sudo mkdir /var/www/hashtopolis
+sudo cp -r hashtopolis/src/* /var/www/hashtopolis
+sudo chown -R www-data:www-data /var/www/hashtopolis</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Then, create a dedicated MySQL database for Hashtopolis to use:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class="">sudo mysql -uroot -e "create database hashtopolis;"
+sudo mysql -uroot -e "GRANT ALL ON hashtopolis.* TO 'hashtopolis'@'localhost' identified by 'securePassword';"
+sudo mysql -uroot -e "flush privileges;"</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Finally, create a configuration file for the site you're building out (for example in <tt>/etc/apache2/sites-available/hash.yourcooldomain.com.conf</tt>) with the appropriate configuration[ref]It's a good idea to enable TLS encryption for your site as well. Apache is <a href="https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04">fairly easy to set up with a completely free certificate</a> from LetsEncrypt.[/ref]:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class=""><virtualhost *:80="">
+ ServerName hash.yourcooldomain.com
+ DocumentRoot /var/www/hashtopolis
+ ErrorLog ${APACHE_LOG_DIR}/error.log
+ CustomLog ${APACHE_LOG_DIR}/access.log combined
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enabling this site and disabling the default Apache web demo.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class="">sudo a2dissite 000-default
+sudo a2ensite hash.yourcooldomain.com
+sudo systemctl reload apache2</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>It's a good idea to tweak your PHP settings as well to increase the memory limit and maximum upload sizes (as some of our wordlists are quite large). I also changed my Apache configuration to keep requests open as long as possible. Make any tweaks or customizations you want, then restart Apache before moving on with the installation.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Run the Installer</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The first time you load your newly created site, Hashtopolis will kick off an installation automatically. Fill in your database details (using your local MySQL server on port 3306). Then set up an administrator account with a <em>strong</em> password.[ref]Your administrator account will have full access to jobs, configuration, and the eventual results of your cracking attempts. Keep this account safe![/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once you've set things up and logged in to verify your credentials, it's a good idea to remove the install directory from your server. This way no one can attempt to overwrite your installation and corrupt your data:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code class="">sudo rm -rf /var/www/hashtopolis/install</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:heading --></p>
+<h2>Divide and Conquer</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that your command server is set up, it's time to boot up a fleet of cracking machines and get started with cracking. But that configuration will come next week.</p>
+<p><!-- /wp:paragraph --></p>

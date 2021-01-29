@@ -1,0 +1,73 @@
+---
+layout: post
+title: Web Requests and Data Leakage
+date: 2014-01-18 08:00:01.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- data leakage
+- data security
+- encryption
+- https
+- mixed content
+- privacy
+- ssl
+- vulnerability
+meta:
+  _edit_last: '2'
+  _thumbnail_id: '6044'
+  _yoast_wpseo_title: Web Requests and Data Leakage
+  _yoast_wpseo_metadesc: Mixed content warnings are annoying for most developers.
+    For many they won't mean anything, but if your site hosts sensitive information
+    they can be fatal.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/rj
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408297052;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6091;}i:1;a:1:{s:2:"id";i:6443;}i:2;a:1:{s:2:"id";i:6272;}}}}
+  keen_postview_count_this_30_days: '17'
+  _wpghs_github_path: _posts/2014-01-18-data-leakage.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/data-leakage/"
+excerpt: Even if your site is browsed over HTTPS, it can be insecure if any assets
+  (images, scripts, styles) are transferred over an HTTP connection.  This will trigger
+  a "mixed content" warning in the browser that many will brush off as unimportant.  The
+  warning can be a major issue for some sites, though, and I want to explain why.
+---
+<p>When I wrote earlier on securing images and solving <a title="Mixed Content" href="https://developer.mozilla.org/en-US/docs/Security/MixedContent">mixed content issues</a> on websites, my friend Mike Schinkel asked if I could <a title="Comment on Photon and HTTPS" href="http://eamann.com/tech/photon-https-making-work/#comment-1956">explain why it mattered</a>.  I briefly covered information leakage in the comments, but wanted to go over things a bit more in detail for anyone interested.</p>
+<h2>The Tools</h2>
+<p>I use a variety of network tools to monitor requests going back and forth from the browser to the server.  Seeing exactly what the browser sends and exactly what the server returns helps debug interactions, detect potential optimization routes, and gain a better sense of what's going on under the hood.</p>
+<p>On my Windows machine, I use <a title="Fiddler" href="http://fiddler2.com/">Fiddler</a> as a proxy so I can see every piece of data passing over the wire.  On both my Windows and Mac I use <a title="Wireshark" href="http://www.wireshark.org/">Wireshark</a> to monitor both web requests and, well, <em>everything </em>exchanged over the network.</p>
+<p>Wireshark, in particular, is a fun tool to run when connected to any network as it lets me see not just the traffic from my machine but any machine on the network.  If you want proof that people are still using insecure network connections to send sensitive data, spend 5 minutes reading a Wireshark feed.  It's a sobering experience.</p>
+<h2>The Experiment</h2>
+<p>To demonstrate how information could leak with images, I did a quick experiment on my own site.  I made a web request to [cci]http://eamann.com/biz/does-the-fold-still-matter/?username=testing&amp;password=1234[/cci].  This is to demonstrate two things:</p>
+<ol>
+<li>The relative insecurity of GET parameters (variables passed in a URL)</li>
+<li>How data passed in a referrer header can be intercepted by an eavesdropper</li>
+</ol>
+<p>Once upon a time I worked on a stateless REST-based web application that still authenticated users on each request.  The user authentication required the username and password of the current user to be passed as GET parameters in every request.  Every. Request.  This experiment recreates that environment as an illustration.</p>
+<p>Assume, though, that we're requesting an https url.[ref]I don't have an SSL certificate set up for my site because I'm cheap. Also, none of the data on this site is of a sensitive nature, so encryption isn't a big deal.  If, however, I decide to ever host sensitive data the first thing I'll do is lock everything down over SSL.[/ref]  The document will be passed over an encrypted connection and eavesdroppers won't grab anything.  The images, however, <em>could</em> be passed over HTTP and can be viewed by anyone intercepting network traffic.  If the browser is passing a Referrer header, eavesdroppers will now know exactly what page you're viewing, can see any cookies on the site, and can see your GET parameters - your username and password.[ref]Good browsers are now locking down on this and beginning to omit the Referrer header when making an http asset request on an https page. But there's no guarantee here, and you'll never know what browser your visitors are using.  If the page needs to be secure, make sure your assets are secure as well or you'll be leaking information to would-be attackers![/ref]</p>
+<h2>The Results</h2>
+<p>After making the request and taking a look in Wireshark, it was fairly easy to find an image request on the page.[ref]Remember, we're taking the example of an SSL site that contains a vanilla HTTP image in its body.[/ref]</p>
+<p><a href="http://eamann.com/wp-content/uploads/2014/01/Screenshot-Request.jpg"><img class="aligncenter size-large wp-image-6045" alt="Screenshot-Request" src="{{ site.baseurl }}/assets/2014/01/Screenshot-Request-1024x212.jpg" width="1024" height="212" /></a></p>
+<p>If this were truly an SSL site, the other requests in this image wouldn't appear (I'm filtering on HTTP requests only), but the GET for the image would still be present and (in most browsers) would still contain the same headers.  The image itself is an innocuous request.  It doesn't expose anything vital.</p>
+<p>The <em>headers</em> are a different story:</p>
+<p style="text-align: center;"><a href="http://eamann.com/wp-content/uploads/2014/01/Screenshot-Referrer.jpg"><img class="aligncenter  wp-image-6046" alt="Screenshot-Referrer" src="{{ site.baseurl }}/assets/2014/01/Screenshot-Referrer-1024x319.jpg" width="717" height="223" /></a></p>
+<p style="text-align: left;">I've highlighted the referral header in the example above.  In plain text, it would be [cci]Referer: http://eamann.com/biz/does-the-fold-still-matter/?username=testing&password=1234[/cci].  Here we have, exposed for all the world to see, the original web url and it's plaintext GET parameters.[ref]I want to point out once more this will still be exposed on most SSL-secured websites if the image is requested over HTTP.  I requested the page over HTTP because my site doesn't currently have an SSL certificate.  However, I wanted to present a <em>real</em> demonstration from a <em>real </em>website with data captured <em>live</em> over an open WiFi network.  This is a real request, captured remotely, using readily-available tools and eavesdropping over a real network.  I used my own site as an example so no one can accuse me of hacking their data.[/ref]</p>
+<h2>The Implications</h2>
+<p>Honestly, few of us are ever going to send a username and password pair via GET parameters.  But there are situations where this could still cause an issue.</p>
+<p>I use a plugin on my WordPress site called "<a title="Share a Draft plugin" href="http://wordpress.org/plugins/shareadraft/">Share a Draft</a>."  This plugin allows me to very easily draft a post, and share a private link for that post with peers to review content before publishing anything.  This private link contains a hash, affixed to the URL via a GET parameter, that tells WordPress to give a visitor access to a not-yet-published post.</p>
+<p>Again, my site doesn't contain any sensitive information - but what if it did.  What if, instead of blogging about personal topics, I was writing news articles about major international affairs for a news media organization?  What if I sent a Share a Draft link to a colleague to proofread a post on not-yet-public international policy decisions?  What if my colleague read the post in a Starbucks over open WiFi?</p>
+<p>Even if the site itself is encrypted and transferred over SSL, any non-SSL images in the post body can be intercepted by anyone else on that network, potentially revealing the referrer URL, exposing the GET parameter, and allowing an eavesdropper access to sensitive news data before it's available to the public.</p>
+<p>Is this a major security flaw?  No.  But it's a flaw nonetheless and something security-minded developers and publishers should keep in mind.  I'll be among the first to admit that thinking about security in this way is extremely paranoid.  I'd also like to point out, though, that <a title="Professional Paranoia" href="http://www.onlamp.com/pub/a/onlamp/2001/07/12/prof_paranoia.html">professional paranoia</a> is the mark of a good security engineer.</p>
+<p>Have I convinced you that "mixed content" warnings are a valid security concern yet?</p>

@@ -1,0 +1,71 @@
+---
+layout: post
+title: The Value of HTTPS Everywhere
+date: 2015-08-21 09:49:28.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+- vpn
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: The Value of HTTPS Everywhere
+  _yoast_wpseo_metadesc: GoGo Inflight is eavesdropping on your traffic!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/108
+  _wpghs_github_path: _posts/2015-08-21-the-value-of-https-everywhere.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/the-value-of-https-everywhere/"
+excerpt: GoGo Inflight is eavesdropping on your traffic!
+---
+<p>When I travel, I use a VPN whenever I connect to any network. Frankly, I don't trust people I don't know to protect my information or respect my privacy. Ironically, this seems to be a controversial viewpoint these days.</p>
+<p>So let me re-frame the arguments for encrypting everything all the time.</p>
+<h2>Proper Behavior</h2>
+<p>At a very high level, the Internet works with a simple set of <em>verbs</em> for doing things and <em>status codes</em> to indicate the relative success of communications. When you request a web page, for example, you send a GET request (verb) to a web server. If everything's OK, the server sends back the page with a 200 status code. If the page has moved, the server sends back a 300 status code and instructions on where to find the new location.</p>
+<p>If a user makes a mistake - requesting a secure page without security, requesting a page that doesn't exist, etc. - the server responds with a 400 status code to indicate the error (and usually a helpful page explaining what happened and how to fix it). If the <em>server</em> makes a mistake, it sends out a 500 status code and some instructions on how to contact support.</p>
+<p>I'm skipping over a bunch of details here, but the key point is that the Internet works based on much of the above information. Applications (not just your browser) use the standard verbs to request, create, delete, update, and verify information. They also depend on servers communicating back the right status code so they know how to behave.</p>
+<h2>Poor Behavior</h2>
+<p>When a developer builds an application, they treat these communication standards as a contract. Just like while driving down the street you expect drivers you've never met to obey stop lights and speed zones, developers expect servers they've never met to obey the same contract as the rest of the Internet.</p>
+<p>But sometimes, a provider doesn't follow the rules.</p>
+<p>While working with Vagrant today, I ran into an issue. My automation scripts run on boot to make sure my virtual machine is up-to-date and attempts to verify certain application keys with an Ubuntu keyserver before proceeding. My tools <em>expect</em> that these keys are non-existent: they <em>expect</em> the request to result in a 404 Not Found error from the server.</p>
+<p>While flying to Boston, my tools failed.</p>
+<p>As it turns out, the GoGo Inflight Internet tries to be a bit too helpful and <em>breaks the contract</em> my application expected the Internet to follow. My tools expected to see:</p>
+<p><code>HTTP/1.1 404 Not Found<br />
+Date: Fri, 21 Aug 2015 16:14:09 GMT<br />
+Server: Apache/2.2.22 (Ubuntu)<br />
+Vary: Accept-Encoding<br />
+Content-Type: text/html; charset=iso-8859-1<br />
+</code></p>
+<p>Instead, they saw:</p>
+<p><code>HTTP/1.0 302 Moved Temporarily<br />
+Server: squid/3.1.20<br />
+Mime-Version: 1.0<br />
+Date: Fri, 21 Aug 2015 16:13:21 GMT<br />
+Content-Type: text/html<br />
+Content-Length: 0<br />
+Location: http://airborne.gogoinflight.com/abp/squidError.do<br />
+X-Squid-Error: 403 Access Denied<br />
+X-Cache: MISS from 172.19.134.2<br />
+X-Cache-Lookup: MISS from 172.19.134.2:3128<br />
+Via: 1.0 172.19.134.2 (squid/3.1.20)<br />
+Connection: keep-alive<br />
+</code></p>
+<p>GoGo Inflight is using a transparent proxy to <a href="http://ttmm.io/tech/wireless-safety/">intercept</a>, inspect, and process <em>all traffic being sent from the airplane</em>. On the one hand, this means they can return custom error pages like the one above in an attempt to "help" customers find the right information.</p>
+<p>On the other hand, it means they make it impossible for developers to know what to expect when our customers are using our tools over their network connection. My tools expect a 404 error. GoGo Inflight thinks it knows better and, rather than returning the 404 as expected, redirects the user to a separate page that, in turn, sends a 200 OK status code.</p>
+<h2>Beyond Contracts</h2>
+<p>This is hugely detrimental to the proper behavior of the Internet, but it also goes much deeper than that. In order to capture 404 errors and return custom error pages, GoGo Inflight needs to <em>inspect every piece of content traversing the network!</em></p>
+<p>Again, I highly advise using a VPN whenever you travel (i.e. are not connected to a trusted network over a hardline). When it comes to airlines, though, that's not always an option. I have an AnyConnect VPN, an OpenVPN, and an IP2Sec connection available - none of them work over GoGo Inflight's network. This means the only traffic I can send <em>securely</em> while in the air is over SSL-protected connections.</p>
+<p>I'm disappointed that the endpoints my tools use are HTTP and not HTTPS, but thanks to endeavors like HTTPS Everywhere, some day soon they might be properly secure. It's not a matter of just ensuring that our tools work properly and that the Internet follows the contract we expect it to. Having secure connections <em>everywhere</em> means we can use these tools and the Internet in general safe in the knowledge that no one is eavesdropping on or interfering with our communications.</p>
+<p>Even when intentions are honorable - I have no doubt GoGo Inflight is trying to be a helpful vendor here - any sort of interference in network communications is dangerous.</p>

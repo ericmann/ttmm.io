@@ -1,0 +1,63 @@
+---
+layout: post
+title: 'Behind the Scenes: Modular Code'
+date: 2014-10-30 08:00:48.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- functionality plugin
+- library
+- modularity
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1414656158;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'Behind the Scenes: Modular Code'
+  _yoast_wpseo_metadesc: We no longer have to worry about name collisions between
+    differing versions of the same utility library within WordPress.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zd
+  _wpghs_github_path: _posts/2014-10-30-behind-scenes-modular-code.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/behind-scenes-modular-code/"
+excerpt: We no longer have to worry about name collisions between differing versions
+  of the same utility library within WordPress.
+---
+<p>I've <a title="Modular Code" href="https://eamann.com/tech/modular-code/">already written</a> on how I want to use more modular code in WordPress, but I haven't really expounded much on why or really shown an example of how it will work. This leads many in the WordPress world scratching their heads as to what's going on, since the kind of modularity I'm after is more rooted in the world of <em>compiled</em> code than interpreted PHP.</p>
+<h2>Modules and Libraries</h2>
+<p>Most developers in our community are sold on the idea of maintaining modularity in their theme designs. The idea of bundling functional code (CPT definitions, systems-level architecture, etc) is frowned upon. Instead we've been encouraging people for ages to build <em>functionality plugins</em> that contain this code, leaving the theme free to focus on presentation and styling.</p>
+<p>I was once sold on this idea. In practice, I think it's a bad one.</p>
+<p>I've seen themes decoupled from plugins only to gradually become <em>recoupled</em> over time as developers continue to add features. As the themes and their supporting functionality plugins are closely related, a common mistake is to make direct invocations of plugin functions from the theme (or vice versa).</p>
+<p>So long as both stay active, this isn't an issue. Deactivate one or the other, and the site explodes.</p>
+<p>Instead, I think of plugins more like packaged, standalone extensions for WordPress. The kinds of functionality packages used by themes (the aforementioned "functionality plugins") are really just reusable code that needs to live alongside the theme. Often it's not standalone, but we decouple things anyway so the code can be easily recycled amongst other projects.</p>
+<p>If you come from a compiled world, this sounds a lot like the way libraries (the DLLs of old) work. A particular library is a separate project entirely that's compiled and then referenced (or "linked") within your larger project. Version updates can happen separately and, in many well-constructed situations, different versions of the same library can live alongside each other in harmony.</p>
+<p>It feels like this is the system we're trying to move towards, even in the interpreted world of PHP. <strong>That's exciting!</strong> I also think I know how just to do this.</p>
+<p>Instead of pre-compiled <em>libraries</em> think of your PHP code as a collection of modular projects that each expose public, documented, <em>tested</em> interfaces. By keeping our namespaces smart, we can also run projects with multiple versions of the same library/module side by side without breaking anything.</p>
+<h2>Example</h2>
+<p>One of the most frustrating issues with PHP is testing, particularly since so much PHP code lives in the global namespace. Certain functions (like [cci]header()[/cci]) aren't easily mocked or written in such a way as to leverage dependency injection.</p>
+<p>Several months ago, I wrote a quick header class and some supporting functions that allow me to completely sidestep calling PHP's [cci]header()[/cci] function within my WordPress code. Instead, I just reference [cci]HTTP\Header\add()[/cci] to add a header - and can add headers through key-value pairs rather than as dumb strings.</p>
+<p>Furthermore, I can also <i>inspect</i> the contents of my header array without needing PHP to dump the request. It makes for much easier testing in the themes where I use the code - so I wanted to keep things modular for easier reusability.</p>
+<p>Over the past month or two, I've been experimenting with the concept of a WordPress "library." Basically, a library is a modular chunk of code, complete with its own test suite, that can be pulled into a theme or plugin project using Composer. For development purposes, the libraries are all Git-ignored, but a Grunt build task can easily bundle everything together for shipping a completed project.</p>
+<p>Last night, I pulled my HTTP library together into such a library to act as an example: <a title="HTTP" href="https://github.com/10up/http">https://github.com/10up/http</a></p>
+<p>New projects (themes, plugins, other libraries) can reference this project in their [cci]Composer.json[/cci] file (as it's hosted on Packagist). They can then utilize the new header mechanisms either directly or by passing a [cci]Header[/cci] object as a parameter (i.e. dependency injection) that can be mocked in their own test suite.</p>
+<p>The project itself is entirely tested using WP_Mock, meaning you can move forward without worrying about the integrity of the code.[ref]As bugs will inevitably be found in the project, I'll keep updating things by adding new tests and patching so we maintain a robust system.[/ref]</p>
+<h2>Versioning</h2>
+<p>The namespace for the project is straight-forward: [cci]TenUp\HTTP\v1_0_0[/cci]. It includes a [cci]Header[/cci] object and namespace so everything stays nice and consistent. Projects including this library can reference it based on the versioned namespace, meaning subsequent updates can live alongside one another just fine.</p>
+<p>One module in a project might reference the current v1.0.0 namespace. A few months from now when I release an inevitable maintenance release, other modules (on the same site!) can reference the newer v1.0.1 namespace. Both namespaces will live in the same project, and if you really wanted you could use reflection to see which versions are active.</p>
+<p>The bottom line is that we no longer have to worry about name collisions between differing versions of the same utility library.</p>
+<h2>Future</h2>
+<p>My hope is to build out a few more of these functionality "plugins" so I can reuse code quickly and efficiently across projects. Inclusion is simple, thanks to tools like Composer and the automated bootstrap file I include within each project.</p>
+<p>I've even gone so far as to build a rough <a title="generator-wplib" href="https://github.com/ericmann/generator-wplib">Yeoman generator</a> to help kickstart such projects.[ref]This generator is unversioned and should be taken as a <strong><em>very rough</em></strong> alpha of a working project template. I make no promises that it will stay the same in the future.[/ref]</p>
+<p>Is this a step in the right direction for the future of functionality plugins? What would you change about the overall approach?</p>

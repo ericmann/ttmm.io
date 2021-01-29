@@ -1,0 +1,156 @@
+---
+layout: post
+title: WordPress XML-RPC – MetaWeblog API
+date: 2010-10-08 08:00:37.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+- xmlrpc
+meta:
+  yourls_shorturl: http://eam.me/b
+  aktt_notify_twitter: 'no'
+  wpbook_fb_publish: 'yes'
+  _edit_last: '2'
+  _installment: '3'
+  _wp_old_slug: wp-xmlrpc-blogger
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409923172;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:2770;}i:1;a:1:{s:2:"id";i:2811;}i:2;a:1:{s:2:"id";i:5995;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '9'
+  keen_postview_count_this_30_days: '34'
+  _wpghs_github_path: _posts/2010-10-08-wp-xmlrpc-metaweblog.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wp-xmlrpc-metaweblog/"
+---
+<p>As odd as it may sound, WordPress' XML-RPC system is built on others.  This makes sense from a development standpoint - why reinvent the wheel when others have done such a great job?  But it can be incredibly confusing and downright frustrating when you start working with the WordPress API and have to turn to metaWeblog's or Blogger's documentation to figure something out.</p>
+<p>The fragmentation of the API documentation is what turns many off from XML-RPC development at first.  That said, the APIs are stitched together quite elegantly when you look at the server code.  To make things simpler, we'll deal with one set of API calls at a time.  The most basic are the <a href="http://www.xmlrpc.com/metaWeblogApi" target="_blank">metaWeblog calls</a>, so we'll start there.</p>
+<h2 id="newPost">metaWeblog.newPost</h2>
+<p><strong>Function:</strong> Creates a new post on your blog.</p>
+<p><strong>Parameters: </strong></p>
+<ul>
+<li>Blog ID - For use in multisite installations, typically 0 for single sites</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+<li>Content - Your blog post defined as an associate array with the following fields
+<ul>
+<li>'post_type' - 'post' or 'page'</li>
+<li>'wp_slug' - Post slug (optional)</li>
+<li>'wp_password' - Post password (optional)</li>
+<li>'wp_page_parent_id' - ID of the parent post (optional)</li>
+<li>'wp_page_order' - Menu order (optional)</li>
+<li>'wp_author_id' - Identify an author other than the user posting the request (optional)</li>
+<li>'title' - Post title</li>
+<li>'description - Post body content</li>
+<li>post-type_status - Set the post/page/custom status to <em>draft</em>, <em>private</em>, <em>publish</em>, <em>publish</em>, or <em>pending</em></li>
+<li>'mt_excerpt' - Post excerpt</li>
+<li>'mt_text_more' - Text for the Read More link</li>
+<li>'mt_keywords' - Tags</li>
+<li>'mt_allow_comments' - Set whether comments are <em>open</em> or <em>closed</em></li>
+<li>'mt_allow_pings' - Same settings as 'mt_allow_comments'</li>
+<li>'mt_tb_ping_urls' - An array of the URLs you want to ping on publication</li>
+<li>'date_created_gmt' - The publication date for the post</li>
+<li>'dateCreated' - Same as above ... use one or the other</li>
+<li>'categories' - An array of categories for the post.</li>
+</ul>
+</li>
+<li>Publish - The status you want the post to have, either <em>publish</em> or <em>draft</em></li>
+</ul>
+<p><strong>Returns:</strong> ID of the post you just created</p>
+<h2 id="editPost">metaWeblog.editPost</h2>
+<p><strong>Function:</strong> Allows you to update the content of a published post.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>ID of the post you want to edit</li>
+<li>WordPress username</li>
+<li>WordPress password</li>
+<li>Post content (same as for <a href="#newPost">metaWeblog.newPost</a>) - Only send the parameters you want to change.</li>
+<li>Publish - The status you want the post to have, either <em>publish</em> or <em>draft</em></li>
+</ul>
+<p><strong>Returns:</strong> True - yup, that's it.  Just the Boolean value <em>true</em>.</p>
+<h2 id="getPost">metaWeblog.getPost</h2>
+<p><strong>Function:</strong> Gets the value of a given post on the blog.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>ID of the post you want to retrieve</li>
+<li>WordPress username</li>
+<li>WordPress password</li>
+</ul>
+<p><strong>Returns:</strong> An associative array of the post content.</p>
+<ul>
+<li>'dateCreated' - Post publication date</li>
+<li>'userid' - ID of the post author</li>
+<li>'postid' - ID of the post itself</li>
+<li>'description' - Post content</li>
+<li>'title' - Post title</li>
+<li>'link' - Post permalink</li>
+<li>'permaLink' - Post permalink</li>
+<li>'categories' - Array of post categories</li>
+<li>'mt_excerpt' - Post excerpt</li>
+<li>'mt_text_more' - Read More text</li>
+<li>'mt_allow_comments' - Whether comments are open or closed</li>
+<li>'mt_allow_pings' - Whether pings are open or closed</li>
+<li>'mt_keywords' - Array of post tags</li>
+<li>'wp_slug' - Post slug</li>
+<li>'wp_password' - Post password</li>
+<li>'wp_author_id' - ID of the post author</li>
+<li>'wp_author_display_name' - Display name of the post author</li>
+<li>'date_created_gmt' - Post publication date (as GMT time)</li>
+<li>'post_status' - Post publication status</li>
+<li>'custom_fields' - Array of custom fields</li>
+<li>'sticky' - Whether or not the post is marked as "sticky"</li>
+</ul>
+<h2>metaWeblog.getRecentPosts</h2>
+<p><strong>Function:</strong> Gets an array of recent posts on the blog - similar to <a href="#getPost">metaWeblog.getPost</a>, but it returns <em>as many posts as you want</em>.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>ID of the blog you're working with (usually 0 for a single site)</li>
+<li>WordPress username</li>
+<li>WordPress password</li>
+<li>Number of posts you want to return</li>
+</ul>
+<p><strong>Returns:</strong> An array where each element of the array is itself an array containing the content of a post.  See <a href="#getPost">metaWeblog.getPost</a> for a description of the post content array.</p>
+<h2>metaWeblog.getCategories</h2>
+<p><strong>Function:</strong> Gets a list of categories used by the blog.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>ID of the blog you're working with (usually 0 for a single site)</li>
+<li>WordPress username</li>
+<li>WordPress password</li>
+</ul>
+<p><strong>Returns:</strong> Returns a simple array, where each element is an associate array defining the category:</p>
+<ul>
+<li>'categoryID' - ID of the category</li>
+<li>'parentID' - ID of the category's parent</li>
+<li>'description' - Name of the category</li>
+<li>'categoryDescription' - Description of the category</li>
+<li>'categoryName' - Name of the category</li>
+<li>'htmlUrl' - Category permalink</li>
+<li>'rssUrl' - RSS feed for the category</li>
+</ul>
+<h2>metaWeblog.newMediaObject</h2>
+<p><strong>Function:</strong> Uploads a media file to your blog, based on your media settings.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>ID of the blog you're uploading to (usually 0 for a single site)</li>
+<li>WordPress username</li>
+<li>WordPress password</li>
+<li>Upload data (array)
+<ul>
+<li>Upload name</li>
+<li>File type</li>
+<li>File bit data (the file itself)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns: </strong>An array with elements <em>file</em> (file name), <em>url</em> (file url), and <em>type</em>.</p>

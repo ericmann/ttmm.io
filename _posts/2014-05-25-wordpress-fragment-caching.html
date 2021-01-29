@@ -1,0 +1,87 @@
+---
+layout: post
+title: Fragment Caching in WordPress
+date: 2014-05-25 08:00:08.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- cache
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1401022891;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Fragment Caching in WordPress
+  _yoast_wpseo_metadesc: One of the easiest ways to optimize a WordPress installation
+    is to selectively cache various output components. It's not tricky, either.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/v1
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409915641;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6248;}i:1;a:1:{s:2:"id";i:6366;}i:2;a:1:{s:2:"id";i:5518;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '5'
+  keen_postview_count_this_30_days: '20'
+  _wpghs_github_path: _posts/2014-05-25-wordpress-fragment-caching.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-fragment-caching/"
+excerpt: One of the easiest ways to optimize a WordPress installation is to selectively
+  cache various output components. It's not tricky, either.
+---
+<p>Often, when someone asks how they could make their WordPress implementation faster, the first optimization target is the database.</p>
+<p>MySQL is slow, so if we can avoid using it everything will be faster.</p>
+<p>The <em>second</em> target, however, is markup optimization and sometimes is closely coupled with MySQL optimization. One way to solve this problem is with full page caching - storing the entire output of a page in some sort of highly responsive caching system (like in-memory Memcached).</p>
+<p>The other way is to selectively store <em>fragments</em> of this generated output in the cache. Full page generation can be sped up when database-intensive lookups no longer need to hit the database, but use an already-rendered piece of markup.</p>
+<h2>The Secret Sauce</h2>
+<p>In WordPress, fragment caching is straight-forward. Consider the following (uncached) function for generating markup.</p>
+<p><code lang="php">function generate_output() {<br />
+  $output = '
+<div id="awesomesauce">';</p>
+<p>  $output .= get_header_from_db();<br />
+  $output .= '<span class="title">';<br />
+  $output .= get_title_from_db();<br />
+  $output .= '</span>';</p>
+<p>  foreach ( get_items_from_db() as $item ) {<br />
+    $output .= render_item( $item );<br />
+  }</p>
+<p>  $output .= '</p></div>
+<p>';</p>
+<p>  return $output;<br />
+}</code></p>
+<p>This function could be used to generate a piece of markup in a widget, in a template part, or in a template tag used by a plugin. <em>Where</em> the code exists isn't important - the fact that the code has to make several round-trips to the database to generate content <em>is</em> important.</p>
+<p>Each round trip is added latency for your visitors - if you can't consolidate queries to alleviate the issue, skipping the database entirely is your next option.</p>
+<p>The code above could be refactored to cache a fragment of markup as follows:</p>
+<p><code lang="php" height="445">function generate_output() {<br />
+  // Attempt to get our markup from the cache<br />
+  $output = wp_cache_get( 'my_output' );</p>
+<p>  if ( false === $output ) {<br />
+    $output = '
+<div id="awesomesauce">';</p>
+<p>    $output .= get_header_from_db();<br />
+    $output .= '<span class="title">';<br />
+    $output .= get_title_from_db();<br />
+    $output .= '</span>';</p>
+<p>    foreach ( get_items_from_db() as $item ) {<br />
+      $output .= render_item( $item );<br />
+    }</p>
+<p>    $output .= '</p></div>
+<p>';</p>
+<p>    // Cache our markup for an hour<br />
+    wp_cache_set( 'my_output', $output, 'fragment_cache', 60 * 60 );<br />
+  }</p>
+<p>  return $output;<br />
+}</code></p>
+<h2>Notes</h2>
+<p>The code above is using WordPress' [cci]wp_cache_set()[/cci] (and its family of caching functions) based on the assumption that you have an advanced object cache available. If no such cache is installed (or if you're building code in a plugin for general release), you'll want to instead use WordPress' transients API to store your data.</p>
+<p>The advanced object cache will still run - the code won't error. But cached data will only live for <em>the current request</em>, making your cached function no more performant than its uncached equivalent. Transients will store data in the database by default, but use a persistent object cache if available.</p>

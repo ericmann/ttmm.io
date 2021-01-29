@@ -1,0 +1,85 @@
+---
+layout: post
+title: YouTube and postMessage
+date: 2014-04-13 08:00:35.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+- postMessage
+- Vimeo
+- YouTube
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: YouTube and postMessage
+  _yoast_wpseo_metadesc: When content creators embed YouTube and Vimeo media in content,
+    these videos need to automatically pause when they pass out of the viewport.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/tw
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409887452;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3438;}i:1;a:1:{s:2:"id";i:5823;}i:2;a:1:{s:2:"id";i:104;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '6'
+  keen_postview_count_this_30_days: '33'
+  _wpghs_github_path: _posts/2014-04-13-youtube-postmessage.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/youtube-postmessage/"
+excerpt: I'm working on a project that allows content creators to embed YouTube and
+  Vimeo media within otherwise non-video content.  The trick is that the videos need
+  to automatically pause when they pass out of the viewport.
+---
+<p>I'm <a title="seoslides" href="https://github.com/alorum/seoslides">working on a project</a> that allows content creators to embed YouTube and Vimeo media within otherwise non-video content.  The trick is that the videos need to automatically pause when they pass out of the viewport.</p>
+<p>When I first added the feature, both players seemed to do this automatically.  Over the past few weeks, however, we've noticed a change that for whatever reason keeps the videos playing when they pass out of scope.</p>
+<p>Playing videos that cannot be stopped or controlled by the site visitor is a <em>huge</em> failure of UX, so I wanted to nip it in the bud.</p>
+<h2>Vimeo</h2>
+<p>Controlling Vimeo videos is relatively easy.  <a title="Vimeo API" href="http://developer.vimeo.com/player/js-api">According to their API</a>, you can select a video player by its iFrame ID, then use the Froogaloop library to wrap the iFrame in a controllable Vimeo object.  The library gives you access to a convenient [cci].pause()[/cci] method, which I can call automatically when the player passes out of the viewport.</p>
+<p>Unfortunately, Froogaloop doesn't contain any sort of "ready" event, so detecting when the library (added to the page dynamically) is ready to receive commands was a bit problematic.  I instead followed their "Calling the API Manually" instructions and coded up a simple, 2-part [cci]postMessage[/cci] routine.</p>
+<p>After the page loads, all Vimeo videos are added to an array.  When the page transitions and the video moves out of scope, I fire a JavaScript [cci]postMessage[/cci] routine to tell all of the videos, playing or not, to pause.</p>
+<p><code lang="js">$( 'iframe[src*="vimeo.com"]' ).each( function( i, el ) {<br />
+  vimeo_players.push( el );<br />
+} );</p>
+<p>// ... elsewhere<br />
+function kill_videos() {<br />
+  var vimeo_command = window.JSON.stringify( { method: 'pause' } );</p>
+<p>  $.each( vimeo_players, function( i, player ) {<br />
+    if ( null === player.contentWindow ) {<br />
+      return;<br />
+    }</p>
+<p>    player.contentWindow.postMessage( vimeo_command, 'https://player.vimeo.com' );<br />
+  } );<br />
+}</code></p>
+<h2>YouTube</h2>
+<p>YouTube was a bit trickier.</p>
+<p><a href="https://developers.google.com/youtube/iframe_api_reference" title="YouTube Player API Reference for iframe Embeds">The YouTube documentation</a> presents an asynchronous script that fires a global callback once it's loaded.  This is convenient, as it presents developers with a way to identify and wrap all of their YouTube videos <em>after</em> the script has fully loaded.</p>
+<p>Unfortunately, it results in a <em>lot</em> of extra code.</p>
+<p>Take the Vimeo example above.  Detecting the videos is 3 lines of code.  Pausing the videos is 6 lines of code.</p>
+<p>In comparison, detecting, wrapping, and pausing YouTube videos using their API is a <strong>total of 53 lines of code</strong>!  That's more than five times the work to accomplish <em>the exact same task</em>.  There must be a better way.</p>
+<h2>YouTube and postMessage</h2>
+<p>As it turns out, YouTube videos <em>also</em> support [cci]postMessage[/cci] commands.  The syntax is slightly different than Vimeo's API, but thanks to [cci]postMessage[/cci] I was able to consolidate the 53-line YouTube monstrosity into a lightweight 9-line call nearly identical to the Vimeo one above:</p>
+<p><code lang="js">$( 'iframe[src*="youtube.com"]' ).each( function( i, el ) {<br />
+  youtube_players.push( el );<br />
+} );</p>
+<p>// ... elsewhere<br />
+function kill_videos() {<br />
+  // ... vimeo code</p>
+<p>  var youtube_command = window.JSON.stringify( { event: 'command', func: 'pauseVideo' } );</p>
+<p>  $.each( youtube_players, function( i, player ) {<br />
+    if ( null === player.contentWindow ) {<br />
+      return;<br />
+    }</p>
+<p>    player.contentWindow.postMessage( youtube_command, 'https://www.youtube.com' );<br />
+  } );<br />
+}</code></p>
+<h2>Proceed with Caution</h2>
+<p>Using [cci]postMessage[/cci] for YouTube videos is dangerous because it's not a documented system.  I'm comfortable using this method because I've used [cci]postMessage[/cci] before, I know the drawbacks of the API, and I know I can step in and fix code should YouTube every change their system.</p>
+<p>If you elect to use a variation of the code I outlined above, keep in mind that it won't work in older versions of Internet Explorer (&lt;IE7) and might have issues with cross-<em>domain</em> messaging in some scenarios.  For now, things work as expected, but there's no guarantee the browser vendors will stay the course and <em>not</em> break things with a future update.</p>

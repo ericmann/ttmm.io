@@ -1,0 +1,95 @@
+---
+layout: post
+title: PHP Output Parameters
+date: 2014-05-28 08:00:25.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- output parameter
+- pass by reference
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: PHP Output Parameters
+  _yoast_wpseo_metadesc: One of the things I miss most from my C# coding days is output
+    parameters.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/v4
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407973042;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5472;}i:1;a:1:{s:2:"id";i:3071;}i:2;a:1:{s:2:"id";i:3055;}}}}
+  _wpghs_github_path: _posts/2014-05-28-php-output-parameters.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/php-output-parameters/"
+excerpt: One of the things I miss most from my C# coding days is output parameters.
+---
+<p>One of the things I miss most from my C# coding days is output parameters.</p>
+<p>For those of you who haven't seen them before, output parameters are relatively simple. They're parameters that you pass&nbsp;<em>in</em> to a function that are modified by the function itself, essentially allowing you to return multiple values from a single function.</p>
+<p>I often used these to pass in and return flags relating to the relative success of the internals of a function in C#. Usually, my functions were built in such a way that they&nbsp;<em>always</em> returned a value (usually a fallback), so as to allow the program to continue in the event of remote API failures.</p>
+<p>Passing a [cci]flags[/cci] parameter allowed me to programatically check whether or not the API call was successful, which in turn informed how I cached the function's return value.[ref]In most cases, API failures would be retried on a parallel thread so end users were more likely to see cached data on their second attempt.[/ref]</p>
+<h2>A WordPress Problem</h2>
+<p>The other day, I found myself needing a similar feature in a WordPress project. I was building code that would automatically generate a shortlink via a remote API - the problem was the function would be used on&nbsp;<em>front-end</em> requests and needed to&nbsp;<em>always</em> return something useful.</p>
+<p>I originally wrote a function very similar to the code below:</p>
+<p><code lang="php">function get_shortlink( $post_id ) {<br />
+  // Get a cached shortlink<br />
+  $shortlink = get_post_meta( $post_id, 'shortlink', true );</p>
+<p>  if ( false === $shortlink ) {<br />
+    $longlink = get_the_permalink( $post_id );<br />
+    $shortlink = generate_shortlink( $longlink );</p>
+<p>    // generate_shortlink() will always return a link of some sort, usually<br />
+    // the full URL if there was a failure.<br />
+    if ( $shortlink !== $longlink ) {<br />
+      add_post_meta( $post_id, 'shortlink', $shortlink, true );<br />
+    }<br />
+  }</p>
+<p>  return $shortlink;<br />
+}</code></p>
+<p>My issue is that there's no simple/effective way to tell the difference between a shortened URL and a regular post/page URL.[ref]In the code above, I just assume they're different. However, you can have minor differences in your links that trigger an in-code inequality but still map to the same path. The project I was working with, for example, was erroneously returning the canonical ([cci]?p=XXX[/cci]) URLs in a [cci]get_the_permalink()[/cci] inside the [cci]get_shortlink()[/cci] function and assuming success. This led to several hundred URLs being inaccurately mapped ... a serious issue for the site in question.[/ref] I&nbsp;<em>really</em> wanted to add an output parameter to the function so I could test whether or not it had successfully generated (and cached) the short URL.</p>
+<p>So I added one.</p>
+<h2>Pass by Reference</h2>
+<p>PHP supports passing parameters by reference. It might not be&nbsp;<em>called</em> an output parameter, but you can fairly easily create something that will serve the same purpose.</p>
+<p>My function turned out looking something like:</p>
+<p><code lang="php" height="415">function generate_shortcode( $longurl, &$created ) {<br />
+  // Assume failure from the beginning<br />
+  $created = false;</p>
+<p>  $path = add_query_arg(<br />
+    array(<br />
+      'u' => $longurl,<br />
+    ),<br />
+    'http://someurlshortener.com'<br />
+  );</p>
+<p>  $request = wp_remote_get( $path );</p>
+<p>  if ( is_wp_error( $request ) ) {<br />
+    return $longurl;<br />
+  }</p>
+<p>  // If not an error, then the URL was shortened.<br />
+  $created = true;</p>
+<p>  return wp_remote_retrive_body( $request );<br />
+}</code></p>
+<p>And I can&nbsp;invoke it like:</p>
+<p><code lang="php">function get_shortlink( $post_id ) {<br />
+  // Get a cached shortlink<br />
+  $shortlink = get_post_meta( $post_id, 'shortlink', true );</p>
+<p>  if ( false === $shortlink ) {<br />
+    $longlink = get_the_permalink( $post_id );<br />
+    $shortlink = generate_shortlink( $longlink, $created = false );</p>
+<p>    // If the flag is true, then the function worked.<br />
+    if ( $created ) {<br />
+      add_post_meta( $post_id, 'shortlink', $shortlink, true );<br />
+    }<br />
+  }</p>
+<p>  return $shortlink;<br />
+}</code></p>
+<p>After invocation, I can test the value of [cci]$created[/cci] in my other code and immediately know whether or not I should cache the return of the function.</p>
+<p>How else might you use output parameters (or an implementation thereof) in your code?</p>

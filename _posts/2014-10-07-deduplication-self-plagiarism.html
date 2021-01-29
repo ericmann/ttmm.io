@@ -1,0 +1,48 @@
+---
+layout: post
+title: Deduplication and Self-Plagiarism
+date: 2014-10-07 08:00:03.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Creative Writing
+tags: []
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Deduplication and Self-Plagiarism
+  _yoast_wpseo_metadesc: There is no faster way to drive content away from your site
+    than self-plagiarism.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yr
+  _wpghs_github_path: _posts/2014-10-07-deduplication-self-plagiarism.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/writing/deduplication-self-plagiarism/"
+excerpt: There is no faster way to drive content away from your site than self-plagiarism.
+---
+<p>Occasionally, I'm working n a client site that requires some sort of "featured article" feature. The idea is that editors can flag a handful of content pieces as more important than most and bump them up to the front of the queue for an otherwise chronological listing.</p>
+<p>It's a great idea, but sometimes there's a minor detail in implementation that we miss: deduplication.</p>
+<h2>Pagination</h2>
+<p>WordPress ships automatically with a "sticky posts" feature that helps deal with featured content and automatically handles deduplication. Editors can flag a post as being sticky, and WordPress will automatically pull it out of the chronological feed and dump it at the top of the queue.</p>
+<p>The catch: your first page of queried posts will now have n + m elements: the standard [cci]posts_per_page[/cci] amount <em>plus</em> all of your sticky content. The advantage, though, is that your sticky posts won't show up twice as readers page through content.</p>
+<p>Sticky posts are great for featured content if you can solve the pagination problem.</p>
+<h2>Deduplication</h2>
+<p>If you roll your own featured post functionality, you can more easily solve the pagination problem ([cci]posts_per_page[/cci] is respected automatically), but you're left determining a better way to de-duplicate your post content. There isn't much of a problem with a post showing up on page 1 (featured) and then later on page 50 - readers don't often get that deep into pagination unless they're looking for something, and it's <em>rarely</em> the content they already had on page 1.</p>
+<p>But when a <em>new</em> post is also featured, the chances of it showing up twice within the first few pages of your chronological feed are high. You never want readers to see this, for example:</p>
+<p><img class="aligncenter size-large wp-image-6600" src="{{ site.baseurl }}/assets/2014/10/Screenshot-2014-10-07-06.20.50-1024x558.png" alt="CNN Duplicate Article" width="1024" height="558" /></p>
+<p>CNN wrote a great article about HP - but there's absolutely no reason to list the same coverage of the same story <em>twice</em>. These links appear to be for different articles, given their differing images, update times, and Facebook share counts. The links go through to <em>nearly identical </em>articles - with the similarity down to a 1-day difference in publication date. The first article was a solo post; the second a collaboration that re-uses the majority of the content from the first <em>verbatim</em>.</p>
+<p>This is an attempt by CNN to make it feel to readers that there's more coverage on an event than really exists.</p>
+<h2>The Consequence</h2>
+<p>A reader coming to your site is looking for unique content - your personal take on an event or idea, breaking coverage of some interesting news, or just prose that's unique from what they've read elsewhere. Seeing the same content on pages 1 and 50 of your feed is disconcerting if anyone notices.</p>
+<p>Seeing duplicated content on page 1 of your site is frustrating and demonstrates a failure on your part to understand the goals and interests of your customers.</p>
+<p>There is no faster way to drive content <em>away</em> from your site than self-plagiarism. Pointing two different snippets (excerpts, links, etc) to the same content is a fantastic way to make it <em>appear</em> like you have more content than you do. It's also a great way to tell your readers you care more about traffic than providing value to them, a message they'll understand loud and clear when they leave you for another source of information.</p>

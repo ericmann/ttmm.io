@@ -1,0 +1,53 @@
+---
+layout: post
+title: Professional Paranoia
+date: 2014-11-24 08:00:56.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- paranoia
+- security
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Professional Paranoia
+  _yoast_wpseo_metadesc: Cultivate a certain level of professional paranoia and you'll
+    be able to anticipate many software and system attacks before they occur.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-1
+  _wpghs_github_path: _posts/2014-11-24-professional-paranoia.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/professional-paranoia/"
+excerpt: If you can get in, someone else can (and will) find a way to get in without
+  your permission. If your software and systems can be used for good, someone can
+  (and will) find a way to exploit the same for ill.
+---
+<p>The more I learn about development and security, the less confident I feel about working online. It's not that I can't keep up with the trends running through the market, it's that I can <em>see</em> those trends and they terrify me.</p>
+<p>In the world of digital security, it's valuable to develop a certain level of professional paranoia. Essentially, even if no one is actively trying to hack or exploit your system, always assume that nefarious individuals exist and will attack you in the future.</p>
+<h2>Open Relays</h2>
+<p>Once upon a time, I was tasked with taking an existing server infrastructure, modifying it to work on a distributed cloud network, and redeploying it on that same distributed system. For the most part, there were very minor changes required. A few libraries had changed versions in the past. I also needed to move some of our data processing from one server to another since our data was now coming from a remote cloud database rather than a database server co-located with the webserver.</p>
+<p>In a few days, I had our code switched over and deployed to the new system.</p>
+<p>Then our sales team called me to complain.</p>
+<p>In addition to some of the security and distribution changes on the server, we were now running on a system that lacked SMTP (Simple Mail Transfer Protocol) support. In short, our sales team stopped getting leads.</p>
+<p>I worked hard to try to route things instead through Gmail - the server was so locked down I couldn't offload the SMTP process. I tried to implement a message queue tied to a traditional mail-server - the message queue service wasn't quite ready, though, and dropped 80% of our messages before delivery.</p>
+<p>So I instead set up an SMTP relay on a local machine in our office. I used a non-standard port to confuse would-be hackers and hoped my minimal attempt at security-by-obscurity would keep things safe long enough for me to flesh out a better solution.</p>
+<p>The open relay ran for 2 days before our company's domain name was blacklisted. Though we didn't use the relay server for email, the fact that DNS mapped a subdomain of our company domain to the server made it <em>look</em> like our mail domain was being used to send spam - on the order of 5,000 spam messages a minute.</p>
+<p>I was devastated. We'd never been hacked before. We'd had our fair share of vulnerabilities, but <em>no one</em> had ever targeted any of our systems. I just assumed I could get away with my setup for a week or two while I built out the permanent solution.</p>
+<p>I assumed wrong.</p>
+<h2>Paranoid</h2>
+<p>My biggest failure at the time was not understanding how much I was inadvertently trusting strangers. I was broadcasting an open, easily-exploited network. I was using a non-standard port to protect my system, but naively ignored the fact that attackers might use simple port scanning to detect the open door I'd left for them.</p>
+<p>Since then, I always use the old mantra: "hope for the best, but expect the worst."</p>
+<p>If you can get in, someone else can (and will) find a way to get in without your permission. If your software and systems can be used for good, someone can (and will) find a way to exploit the same for ill.</p>
+<p>Cultivate a certain level of professional paranoia and you'll be able to anticipate many of these attacks. Some can be actively mitigated, others can be planned for (and have a remediation plan likewise set and waiting for use).</p>

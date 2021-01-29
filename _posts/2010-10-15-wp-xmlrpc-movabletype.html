@@ -1,0 +1,101 @@
+---
+layout: post
+title: WordPress XML-RPC — MovableType API
+date: 2010-10-15 08:00:05.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+- xmlrpc
+meta:
+  yourls_shorturl: http://eam.me/1
+  aktt_notify_twitter: 'no'
+  wpbook_fb_publish: 'yes'
+  _edit_last: '2'
+  _installment: '4'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409850832;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3055;}i:1;a:1:{s:2:"id";i:2482;}i:2;a:1:{s:2:"id";i:6366;}}}}
+  _wpghs_github_path: _posts/2010-10-15-wp-xmlrpc-movabletype.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wp-xmlrpc-movabletype/"
+---
+<p>Those of you paying close attention probably noticed that I neglected to list a couple of the MetaWeblog API calls last week.  That's because they're duplicated by calls in the "wp" namespace, and I want to keep everything you can call with a "native" WordPress method in one group.  Luckily, none of the MovableType API calls are duplicated, so I can do them all in one pass.</p>
+<h2>mt.getCategoryList</h2>
+<p><strong>Function: </strong>Retrieve a list of all categories on the blog.</p>
+<p><strong>Parameters: </strong></p>
+<ul>
+<li>Blog ID - For use in multisite installations, typically 0 for single sites</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+</ul>
+<p><strong>Returns: </strong>An array of categories with the fields "categoryID" and "categoryName."</p>
+<h2>mt.getRecentPostTitles</h2>
+<p><strong>Function:</strong> Retrieve the post titles of recent posts.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Blog ID - For use in multisite installations, typically 0 for single sites</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+<li>Number of post titles to return</li>
+</ul>
+<p><strong>Returns:</strong> An array of recent posts:</p>
+<ul>
+<li>'dateCreated' - Post publication date</li>
+<li>'userid' - ID of the post author</li>
+<li>'postid' - ID of the post itself</li>
+<li>'title' - Post title</li>
+<li>'date_created_gmt' - Post publication date (as GMT time)</li>
+</ul>
+<h2>mt.getPostCategories</h2>
+<p><strong>Function: </strong>Retrieve categories for a specific post.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Post ID - The post for which you want a list of categories</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+</ul>
+<p><strong>Returns: </strong>An array of categories attached to the post with the fields "categoryName," "categoryID," and the Boolean value "isPrimary."</p>
+<h2>mt.setPostCategories</h2>
+<p><strong>Function: </strong>Sets the categories for a post.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Post ID - The post for which you want to set the categories</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+<li>Array of category IDs you want set on the post</li>
+</ul>
+<p><strong>Returns: </strong>True - nothing fancy, just an "OK, we're done doing what you wanted us to do."</p>
+<h2>mt.supportedMethods</h2>
+<p><strong>Function: </strong>Retrieve an array of methods supported by this server.</p>
+<p><strong>Parameters: </strong>Nothing whatsoever.  Just call the method without any authentication and you'll still get a response.</p>
+<p><strong>Returns: </strong>An array of the method names you can call on the server - including any custom method calls added by plug-ins.</p>
+<h2>mt.supportedTextFilters</h2>
+<p><strong>Function: </strong>Not actually implemented ... we don't support per-post text filters in WordPress, but we kept the method call around because the MovableType API defines it.</p>
+<p><strong>Parameters: </strong>Don't bother sending anything ... the method does nothing.</p>
+<p><strong>Returns: </strong>All you'll ever get back is an empty array ... unless a plug-in has hooked onto the "xmlrpc_text_filters" filter for some strange reason.</p>
+<h2>mt.getTrackbackPings</h2>
+<p><strong>Function: </strong>Retrieve trackbacks sent to a given post.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Post ID - The post for which you want to get a list of trackbacks</li>
+</ul>
+<p><strong>Returns: </strong>An array of trackbacks that have been sent to that post, including the fields "pingTitle," "pingURL," and "pingAuthor."</p>
+<h2>mt.publishPost</h2>
+<p><strong>Function:</strong> Sets a post's publish status to 'publish'.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li>Post ID - The post you want to publish</li>
+<li>Username - WordPress username</li>
+<li>Password - WordPress password</li>
+</ul>
+<p><strong>Returns: </strong>An integer value of 0 if publishing fails, otherwise it returns the ID of the new post.</p>

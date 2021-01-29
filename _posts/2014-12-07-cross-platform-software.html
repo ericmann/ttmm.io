@@ -1,0 +1,52 @@
+---
+layout: post
+title: Cross-Platform Software
+date: 2014-12-07 08:00:19.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Windows
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Cross-Platform Software
+  _yoast_wpseo_metadesc: Can one operating system really span multiple devices and
+    bring true device interoperability to consumers?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-e
+  _wpghs_github_path: _posts/2014-12-07-cross-platform-software.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cross-platform-software/"
+excerpt: One operating system that runs on all classes of devices. The app you build
+  for your phone can run on your desktop. The program you write for task management
+  on a laptop can run on the phone. It's the first real cross-platform system we've
+  seen.
+---
+<p>When I started learning C#, a few hard-core developers gave me a hard time for not starting with C or Assembly instead. My arguments for C# were rooted in the desire to write new Windows applications. Their counter-arguments were rooted in performance concerns.</p>
+<p>Yes, an application written in C <em>can</em> be faster than one written in a higher-level language like C#. But there's one incredible significant trade-off you make when you use a lower-level language: ease-of-installation.</p>
+<h2>End-Users</h2>
+<p>The first program I ever wrote was in Microsoft QBasic.[ref]QBasic was a freeware version of QuickBasic, which came pre-installed on many systems. The primary difference between the two: QuickBasic could compile executables. QBasic could not.[/ref] My aunt had asked me to write her a simple Rolodex program so she could keep track of an ever-growing list of email contacts. I wrote a program that read and displayed data from a text file, recording changes and new entries back to the same file.</p>
+<p>I shipped it to her on a floppy disk. There was a [cci].bas[/cci] source file, the QBasic runtime, and a [cci].bat[/cci] file that ran the source via the runtime. She couldn't figure it out. Three files to run one application violated the concept of "simple" and she kept using a legal pad next to the computer instead.</p>
+<p>Whenever I work with server software today, I feel the same way. Installing a program is often as easy as running [cci]apt-get install ____[/cci]. Sometimes, though, the version of the program I need isn't available through a stock repository. I instead have to download the source and compile it so the new program matches the architecture I'm using.</p>
+<p>I can often use the same software on Windows, too, but I first have to download the source and re-compile it for Windows. It works, but isn't a very intuitive or user-friendly process.</p>
+<p>I write programs that aim to help non-technical users interact with technology without needing to learn the inner workings of a computer to do so. WordPress lets anyone run a website or publish content without forcing them to learn hosting, networking, database infrastructure, or PHP. It's a beautiful thing.</p>
+<h2>Cross-Platform Utilization</h2>
+<p>When Apple first announced iOS, I was ecstatic. The early reports called it a "scaled down version of OSX" that targeted mobile devices. The promise of the platform was essentially one operating system that ran on separate devices.</p>
+<p>For a developer, this means you can write code <em>once</em> to target an operating system, and so long as it uses that OS' exposed APIs, it will run on any compatible system. In a world of desktops, laptops, tablets, and smartphones, the "write once, run anywhere" idea appeared to be the holy grail of development.</p>
+<p>Imagine my disappointment when iOS turned out to <i>not</i> be this holy grail.</p>
+<p>Imagine my disappointment when Microsoft introduced Windows RT as its version of Windows specific for tablets.[ref]Win RT was functionally equivalent to regular Windows, but apps only had one-way compatibility. RT applications could run on regular Windows (using the Metro interface) but not the other way around.[/ref]</p>
+<p>Imagine my excitement, though, with the announcements surrounding Windows 10 (due out in early 2015). One operating system that runs on <em>all</em> classes of devices. The app you build for your phone can run on your desktop. The program you write for task management on a laptop can run on the phone. It's the first <em>real</em> cross-platform system we've seen.</p>
+<p>And it promises to be amazing.</p>
+<p>I might need to start brushing up on my C# to get ready for this beautiful future.</p>

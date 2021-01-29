@@ -1,0 +1,70 @@
+---
+layout: post
+title: WordPress Database Encryption
+date: 2014-09-26 08:00:09.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- database
+- encryption
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1411728316;s:6:"status";s:6:"pushed";}
+  _wpas_mess: How reasonable is the suggestion that WordPress encrypt its database?
+    Really?
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress Database Encryption
+  _yoast_wpseo_metadesc: How reasonable is the suggestion that WordPress encrypt its
+    database? Really?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yg
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-09-26-wordpress-database-encryption.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-database-encryption/"
+excerpt: How reasonable is the suggestion that WordPress encrypt its database? Really?
+---
+<p>Every time we round out a WordPress development cycle, new ideas begin to surface. Some of these ideas, though, are less "new" than others.</p>
+<p>A perennial idea, that's often rejected year after year, is the idea that WordPress should encrypt its database. Up 'til now, I've agreed with the consensus that this encryption isn't really necessary and have rejected the idea outright. With recent security revelations - <a title="Heartbleed" href="http://heartbleed.com/">Heartbleed</a>, <a title="Shellshock" href="http://www.theguardian.com/technology/2014/sep/25/shellshock-bug-heartbleed">Shellshock</a>, etc - coming to light, I've begun to re-evaluate my position.</p>
+<h2>Arguments Against</h2>
+<p>Let's start with the reasons why encrypting the database would be a bad idea:</p>
+<h3>Usability</h3>
+<p>Like many other developers, I often log in to my database directly to make changes. There are a few UI panels in WordPress that are more of a hassle than I want to deal with; I'll log in instead and run some direct queries on the database. It's quick, powerful, and entirely outside the feature set of WordPress to begin with.</p>
+<h3>Legacy Code</h3>
+<p>WordPress boasts a mature, well-documented database access layer. Core uses this access to grab data. Themes use this access to build layouts. Plugins use this access to build interfaces. The issue, though, is that a large number of database touchpoints within WordPress are <em>outside</em> of this database access layer. Some functions, rather than falling back to a common abstraction interface, run queries directly.</p>
+<p>It would be a monumental undertaking to refactor WordPress itself to use a proper abstraction layer - a single point of communication with the database. Not to mention the number of themes and plugins already bypassing WordPress and hitting the database directly.</p>
+<h3>Backwards Compatibility</h3>
+<p>Closely related to the point above, any plugin or theme that interfaces with the database directly rather than using WordPress APIs to fetch and persist data will need to be rewritten. Additionally, a robust upgrade script would need to dynamically encrypt <em>all</em> data in the existing database - this could be literally <em>millions</em> of rows of data. Once encrypted, older tools (plugins, CLI tools, older versions of WordPress itself) will be rendered inoperable since they can't read the data.</p>
+<h3>Performance</h3>
+<p>Running encryption/decryption routines on all of your site's content will be taxing for the server. It's a few more cycles of processing that, while cacheable, still mean some pages and UI elements will be slower to render without a rewrite.</p>
+<h2>Arguments For</h2>
+<h3>Security</h3>
+<p>This is really the only one that matters.</p>
+<p>Someone once explained encryption to me as a way for two parties to pass information to one another securely - without anyone eavesdropping on the conversation or changing the content of the messages exchanged. Often, though, the two parties involved are "you today" and "you tomorrow." This is the principal at play with encrypted hard drives, backups, flash disks, etc.</p>
+<p>Encrypting the WordPress database allows the application today (as you write data) to communicate with the application tomorrow (as you read data) in a secure fashion. Even if someone manages to grab a connection to the database itself, they can't modify the information it contains.</p>
+<p>With so many servers set up in a distributed system - the web server is on one machine, the database on another - the chances that an attacker could infiltrate your data server but still <em>not</em> have the ability to decrypt its data are pretty good. Yes, WordPress (and anyone who infiltrates the server and application) can still decrypt the data at will, but you've isolated and protected against at least one avenue of attack.</p>
+<h3>Countering Opposition</h3>
+<p>Each of the arguments against can be pretty easily countered.</p>
+<p>It's bad form to allow direct database access in the first place - <a title="Security, Legal Bypass, Warrants, and Apple" href="https://eamann.com/tech/security-and-apple/">if you can get in</a>, you're creating a potential avenue through which an attacker could also get in. With tools like <a title="WP-CLI" href="http://wp-cli.org/">WP-CLI</a> and the <a title="JSON REST API" href="https://wordpress.org/plugins/json-rest-api/">JSON REST API</a> at your disposal, the need for direct DB access to get your job done is minimized. Instead, just use the available APIs, which should have access to the database <em>through</em> its layer of encryption in the first place.</p>
+<p>WordPress' database abstraction layer sorely needs some developer attention. At the moment, even with a vanilla install, it is absolutely impossible to replace WordPress' DB layer ([cci]wpdb[/cci]) with an alternative implementation targeting a different data system. Most of the code does live in the global object yes, but there are a number of direct database queries littered throughout core that will give anyone attempting an alternative implementation a headache. Even if we <em>don't</em> encrypt the database, we should focus on cleaning up data access for the sake of interoperability alone.</p>
+<p>With a rewritten infrastructure, plugins or themes <em>not</em> using WordPress' APIs will break. There's no way around that. Then again, there's also zero guarantee that any other changes in WordPress' API will be backwards compatible with systems bypassing that API in the first place. In my mind, this is a minor concern.</p>
+<p>Performance, in any arena, is the one place where it's difficult to give a bit of room. Will queries against an encrypted data store be slower? Yes. Is that minor loss of speed worth the enhanced security and peace of mind? I would say yes. So would anyone who's taken the time to implement SSL on their website - it likewise sacrifices a modicum of performance and speed in exachange for security and data safety.</p>
+<h2>In Summary</h2>
+<p>Could WordPress encrypt the contents of its database? Absolutely.</p>
+<p>Would this be a significant change to the software? Not really; only the data access layers (i.e. anything interpreting a raw query) would have to change.</p>
+<p>Will the development community revolt if "system encryption" makes it beyond a blog post and becomes an actual, in-progress, "blessed" ticket on Trac? I'd be willing to bet on it.</p>
+<p>Is database encryption a good idea for WordPress?</p>
+<p>You tell me ...</p>

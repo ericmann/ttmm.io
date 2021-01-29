@@ -1,0 +1,73 @@
+---
+layout: post
+title: Be Aware of Context
+date: 2014-09-24 08:00:59.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Business
+tags:
+- CloudFlare
+- customer service
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _oembed_c316c499fb28ce367b433d5b6f9aa613: <blockquote class="twitter-tweet" width="500"><p>Well
+    that&#39;s embarrassing ... /cc <a href="https://twitter.com/CloudFlare">@CloudFlare</a>
+    <a href="http://t.co/juIcXvMqa3">pic.twitter.com/juIcXvMqa3</a></p>&mdash; Eric
+    Mann (@EricMann) <a href="https://twitter.com/EricMann/status/514520685725511680">September
+    23, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_c316c499fb28ce367b433d5b6f9aa613: '1411528186'
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Be Aware of Context
+  _yoast_wpseo_metadesc: Nothing is more annoying than a customer service representative
+    responding out of context to a customer concern.
+  _oembed_6cb4705b42e481bbec89bf8044a4bab1: <blockquote class="twitter-tweet" width="500"><p><a
+    href="https://twitter.com/EricMann">@EricMann</a> That doesn&#39;t sound right.
+    We can take a deeper look with a support ticket. Can you please create one?</p>&mdash;
+    CloudFlare (@CloudFlare) <a href="https://twitter.com/CloudFlare/status/514548452533882880">September
+    23, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_6cb4705b42e481bbec89bf8044a4bab1: '1411528655'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ye
+  _wpghs_github_path: _posts/2014-09-24-aware-context.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/biz/aware-context/"
+excerpt: Nothing is more annoying than a customer service representative responding
+  out of context to a customer concern.
+---
+<p>I had a few website problems yesterday - not on this website, but on one belonging to a client.</p>
+<p>Like my site, this particular client is making use of CloudFlare for content delivery and rapidly-resolved DNS. Unfortunately, this site has had some issues with the service that raised a particularly sticky business issue.</p>
+<p>If you're responding to a customer, you <em>must</em> be aware of context.</p>
+<h2>The Problem</h2>
+<p>Due to a few timing issue with the site, we'd configured DNS prematurely within CloudFlare and the <em>actual</em> domain DNS lagged a bit behind. By the time the domain DNS was actually set, CloudFlare had already wiped out our initial settings and reset itself.[ref]I don't fault CloudFlare one bit for this. It took us two weeks to actually configure DNS on the system, so seeing our settings disappear yesterday, while a major inconvenience, was not entirely a shock.[/ref]</p>
+<p>This means I had to set the domain up again. No big deal, except we'd already pointed our nameservers at CloudFlare, so when the system scanned existing DNS records to pull them to the new system, it got stuck in a loop. CloudFlare was scanning nonexistent DNS records, and ported over an entirely blank ruleset.</p>
+<p>As a result, the site went down.</p>
+<p>I jumped on the issue and immediately tried to reconcile the server's configuration and get things back up and running. Then <em>CloudFlare itself went down</em>.</p>
+<p>Ironically, CloudFlare presented its own "can't talk to the server" error message - CloudFlare couldn't talk to CloudFlare. Frustrated, I grabbed a screen capture and posted it to Twitter.</p>
+<p>https://twitter.com/EricMann/status/514520685725511680</p>
+<h2>The <em>Real</em> Problem</h2>
+<p>My issue here wasn't just that a client site was down - as the network resolved itself later we were able to port all the necessary DNS records and reestablish a stable system. My issue was the response from customer service.</p>
+<p>As CloudFlare's site was down, I had:</p>
+<ol>
+<li>No way to check on system status. CloudFlare's status page is hosted on www.cloudflare.com, which was giving me an error.</li>
+<li>No way to submit a support request. I was logged in the administrative dashboard - where I would submit support tickets from in the first place - when the system started kicking out errors.</li>
+</ol>
+<p>My screenshot above isn't of <em>my</em> site being down. It's of CloudFlare's administrative panel being down and rendering the service inaccessible to both me and my client.</p>
+<p>When CloudFlare representatives attempted to help later in the Twitter conversation, I was beside myself ...</p>
+<p>https://twitter.com/CloudFlare/status/514548452533882880</p>
+<p>I started the thread on Twitter because the administrative system was down. Our issues managing the website originated from the system being down. I couldn't submit a support request and turned to Twitter because the system was down.</p>
+<p>The response: submit a support request through the system that's been going down.</p>
+<p>If you're going to respond to customer support requests in any medium, you <em>absolutely must</em> be aware of the context within which you're responding. If you're commenting on an existing thread, read all the way to the beginning of the thread to respond. If you're the second level of support on a call, read back through your predecessors' notes before asking the customer to explain their situation yet again.</p>
+<p>Context is key to being able to understand and resolve any conflict or situation. Without context, you're wasting both our time.</p>

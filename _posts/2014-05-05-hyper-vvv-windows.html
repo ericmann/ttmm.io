@@ -1,0 +1,69 @@
+---
+layout: post
+title: Hyper-VVV on Windows
+date: 2014-05-05 08:00:52.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Hyper-V
+- Vagrant
+- VirtualBox
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Hyper-VVV on Windows
+  _yoast_wpseo_metadesc: This weekend I managed to port my entire WordPress development
+    stack not just to a new machine, but also to a new virtualization provider - Hyper-V.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/uh
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409874435;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6123;}i:1;a:1:{s:2:"id";i:6338;}i:2;a:1:{s:2:"id";i:6414;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '15'
+  keen_postview_count_this_30_days: '68'
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-05-05-hyper-vvv-windows.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/hyper-vvv-windows/"
+excerpt: It took me a little trial and error to set up, but this weekend I managed
+  to port my entire WordPress development stack not just to a new machine, but also
+  to a new virtualization provider - Hyper-V.
+---
+<p>I'm a huge fan of streamlined development environments. I started out using XAMPP because it was self-contained (or so I thought).</p>
+<p>As I continued to build up my environment, I upgraded to <a title="Varying Vagrant Vagrants" href="https://github.com/Varying-Vagrant-Vagrants/VVV">Varying Vagrant Vagrants</a>  (VVV) - a virtual machine-based PHP development environment catered specifically to WordPress development. For the longest time, VVV was more than enough for my development needs.</p>
+<p>But things often change.</p>
+<h2>Windows Development</h2>
+<p>From time to time, I've been known to take a break from PHP development to hack on code for Windows devices. I enjoy writing C#, and the intuitive nature of Visual Studio is something open source IDEs are still struggling to emulate.</p>
+<p>A few weeks ago, I tried my hand at Windows <em>Phone</em> development.[ref]Actually, I was trying to debug a website and just needed a Windows Phone emulator since mocking a phone environment in Internet Explorer wasn't quite cutting it.[/ref] Unfortunately, there was a conflict between VirtualBox - the virtualization tool of choice for VVV - and Windows development.</p>
+<p>The Windows emulators use Hyper-V, the virtualization tool built into Windows Professional. <em>You cannot run two virtualization stacks in parallel</em>.</p>
+<p>At the time, this meant I had to enable Hyper-V and reboot (or disable Hyper-V and reboot) every time I wanted to switch from WordPress to Windows development. Considering I use these tools to <em>optimize</em> my workflow, the endless rebooting became annoying.</p>
+<p>I wanted something smoother.</p>
+<h2>Hyper-VVV</h2>
+<p><a title="Feature Preview: Hyper-V, SMB Synced Folders, Windows" href="http://www.vagrantup.com/blog/feature-preview-vagrant-1-5-hyperv.html">As of version 1.5</a>, Vagrant supports using Hyper-V as a provider (and as a drop-in replacement for VirtualBox). It took me a little trial and error to set up, but this weekend I managed to port my entire WordPress development stack not just to a new machine, but also to a new virtualization provider.</p>
+<h3>Step 1</h3>
+<p>The first step is to swap out the provider itself. In VVV's Vagrantfile, we define the provider on line 14. Just replace [cci]:virtualbox[/cci] with [cci]:hyperv[/cci] and you're good.</p>
+<p>To be extra safe (sometimes Vagrant ignores the setting), I also add a [cci]--provider=hyperv[/cci] flag when I [cci]vagrant up[/cci] for the first time. Once provisioned, the flag is unnecessary; but it's a good sanity check to be explicit with what you're doing.</p>
+<p>You'll also want to remove the [cc]v.customize[/cci] lines beginning around line 15 (i.e. [cci]v.customize ["modifyvm", :id, "--memory", 512][/cci]) entirely as they will break Hyper-V (and have no effect in the first place).</p>
+<h3>Step 2</h3>
+<p>There isn't a precise32 box for Hyper-V[ref]I realize that VVV is now using Trusty 64, but the older version used Precise 32, so I'm sticking with that branch for now. Once someone produces a Hyper-V box for Trusty 64 I'll upgrade to that.[/ref], so I upgraded to the 64-bit version provided by Hashicorp.  First, you'll need to use [cci]vagrant box add hashicorp/precise64[/cci] to cache the virtual machine in your system. Then you'll need to update line 29 of the Vagrant file to reference "hashicorp/precise64" as well.</p>
+<p>When you add the box, Vagrant may or may not ask you which provider to download. Remember, we're working with HyperV, so select appropriately.</p>
+<h3>Step 3</h3>
+<p>The biggest thing people have complained about regarding VVV is the slowness of the database, so the major change I've made is to <em>not</em> mount the [cci]/data[/cci] directory to my local system. Data will stay entirely within the virtual machine and there's no file sharing slowness associated with reading/writing MySQL.</p>
+<p>I also updated the bundled [cci]my.cnf[/cci] to add [cci]innodb_file_per_table=1[/cci]. This isn't required for Hyper-V at all, but I've noticed that MySQL creates a large system tablespace file for <em>all the things</em> by default. I create (and delete) rather large databases for client testing and want to be able to reclaim that space once tables and databases disappear. Without this setting, that becomes ... difficult.</p>
+<h3>Step 4</h3>
+<p>The Hyper-V provider uses SMB shares to mount local directories within the virtual machine. This is similar to NFS on non-Windows systems, but comes with a couple of unique differences.</p>
+<p>Primarily, the [cci]:mount_options[/cci] in our Vagrantfile will cause the SMB share to fail. Delete these extra entries and everything will proceed as expected.</p>
+<p>Also know that, while provisioning, Vagrant will need your Windows credentials to make the share. For the moment, there's a bug somewhere that makes Windows password containing exclamation points (!) fail. The team is working on a patch, but for now it's just easier to change your password.</p>
+<h3>Other Notes</h3>
+<p>The only thing lacking from the Hyper-V setup today is the ability to bind a static IP address. During setup, you have to tell Vagrant which network adapter to use and Hyper-V automatically provisions a <em>dynamic</em> IP address. I've <a title="Hostsupdater pull request" href="https://github.com/cogitatio/vagrant-hostsupdater/pull/41">written and submitted a patch</a> to the <a title="Vagrant Hostsupdater" href="https://github.com/cogitatio/vagrant-hostsupdater">Hostsupdater</a> project; just waiting for it to get bundled with the core plugin for future use.</p>

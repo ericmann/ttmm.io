@@ -1,0 +1,77 @@
+---
+layout: post
+title: How to Contribute to WordPress Core
+date: 2012-05-22 09:00:32.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- open source
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/ho
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: contribute
+  _yoast_wpseo_metadesc: Many WordPress developers want to contribute to the core
+    project. Here's how a recent patch made it in - and how you can get started.
+  _yoast_wpseo_linkdex: '76'
+  _wpghs_github_path: _posts/2012-05-22-contribute-to-wordpress.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/contribute-to-wordpress/"
+---
+<p>My first ever contribution to WordPress was trimming whitespace from keys stored in the WordPress options table.</p>
+<p>Basically, I removed a space.</p>
+<p>But since then, I've contributed quite a few other patches to the <a title="WordPress" href="http://wordpress.org">project I love</a>.  Eleven of them have actually made it in to the core codebase!</p>
+<p>At the <a title="Portland WordPress User Group" href="www.meetup.com/pdx-wp/">Portland WordPress User Group</a> meetup <a title="Demo Night!" href="http://www.meetup.com/pdx-wp/events/52552672/">a few weeks ago</a>, I gave a <a title="Contributing to Core" href="http://www.slideshare.net/ericmann/contributing-to-core">5-minute presentation</a> explaining how <em>everyone</em> could get involved with WordPress; both developers and non-developers.  Still, people ask all the time how they can see their changes reflecting in WordPress core.</p>
+<p>So here's an example of how a recent contribution I wrote made its way into the yet-to-be-released WordPress 3.4.<!--more--></p>
+<h2>The Idea</h2>
+<p>I am on just about <a title="Twitter" href="http://twitter.com/ericmann">every</a> <a title="Facebook" href="https://www.facebook.com/eric.a.mann">social</a> <a title="Google+" href="https://plus.google.com/111597115655849308724/posts">networking</a> site possible.  Each site adds its own features, and one I really love on Google+ is the ability to scroll back to the top of the page by clicking an empty spot on their top-level toolbar.</p>
+<p>I love this feature so much, I find myself clicking on <em>every</em> top-level toolbar in the vain hope that someone has knocked off Google's code.  Unfortunately, this usually leads to nothing more than a few seconds of confusion before I manually scroll to the top.</p>
+<p>With WordPress 3.4, though, I was told that the "admin bar" was being converted to a more generic "toolbar."  It no longer represents just administrative functions, but can be wholly integrated into the theme to present a better customer experience.</p>
+<p>This announcement came with a tweet from a friend suggesting we roll our own version of Google's scroll-to-top feature.</p>
+<p>I was hooked.</p>
+<h2>The Ticket</h2>
+<p>I spent my lunch break reading through the JavaScript in WordPress that controls the toolbar.  Apparently it loads two sets of functions—one that uses jQuery and one that doesn't.</p>
+<p>Build a jQuery scroll-to-top feature was easy.  That change amounted to a whopping single line of code:</p>
+<p><code>$('html, body').animate({ scrollTop: 0 }, 'fast');</code></p>
+<p>I generally try to avoid jQuery dependency in my client projects, though, so building out a version that worked <em>in the absence</em> of jQuery was vital.  Sure, the jQuery version works fine on the administrative side of WordPress, but for the toolbar to be a front-end tool as well, I needed to port the feature there.</p>
+<p>My lunch break work evolved into some after-dinner work as I took a look at some stock "scroll to top" scripts I found on Google and some scrolling features I'd built out for past client projects.  Eventually, I had a working script, so I created a new ticket on Trac to host my work:</p>
+<blockquote><p><strong><a title="Ticket #19534" href="https://core.trac.wordpress.org/ticket/19534">Ticket #19534</a></strong></p>
+<p>Google+ introduced a fantastic feature with their toolbar. If you're scrolled far down a page, clicking any non-link in the toolbar automatically scrolls back to the top of the page.</p>
+<p>When viewing a very long WordPress front-end (or a long list of comments/large settings page on the WordPress back-end), this would be a fantastic tool. It's also better to have a consistent UX control built in to the system rather than the various spin-your-own hacks different developers have built over the years.</p>
+<p>I propose we add this "back to top" functionality to the WordPress toolbar. It should necessarily work with or without jQuery (in situations where themes don't enqueue jQuery on the front-end but still display the toolbar).</p></blockquote>
+<p>It didn't take long for some others to test my code and verify that it did work as advertised.  After a day or so, though, someone pointed out that my cursory Trac search failed to pull up an <a title="Ticket #18758" href="https://core.trac.wordpress.org/ticket/18758">even older ticket</a> requesting the same feature.  So my ticket was closed as a duplicate and I made my way over to the original post.</p>
+<h2>The Patch Process</h2>
+<p>After transporting my initial patch to the <em>right</em> Trac ticket, I asked the community for some additional feedback.</p>
+<p>The first feedback, ironically, was my own.  I tried cleaning up some of the stylistic elements of my code (I'm a stickler for elegant code structures) and hit a snag with some single-line logic statements.  I fixed my patch and submitted a new copy.</p>
+<p>Then <a title="Daryl Koopersmith" href="http://profiles.wordpress.org/users/koopersmith">Daryl Koopersmith</a> took a look and cleaned up my code a bit more.  His code was definitely cleaner, but didn't seem to work on some older versions of IE due to an inconsistency with those versions' implementation of JavaScript.</p>
+<p>I took another look (since I debug IE issues daily) and found the particular elements that needed fallbacks for the older browsers.  A few quick changes took us to a third version of the patch.</p>
+<p>While I was making these changes, though, someone proposed the idea of just loading jQuery on the front end of the site by default.  I'm very much opposed to this, and made that clear in the comments, but the discussion continued beyond just the ticket.  Most of the WP team is fairly active on Twitter and in IRC as well, so we hash out debates in multiple locations.</p>
+<p>The final patch came from <a title="Andrew Ozz" href="http://profiles.wordpress.org/azaozz/">Andrew Ozz</a>.  It was nearly identical to my last patch, except it removed some redundant logic checks.  Sometimes it's just not necessary to verify that [cci]true === true[/cci].</p>
+<h2>A New Feature</h2>
+<p>After this final patch, now that the feature had been properly reviewed by the community and tested independently in multiple browsers, it was committed to Core.  Andrew Ozz tagged the commit with "props ericmann" to give me credit, and my name will be forever inscribed in the list of WordPress contributors.</p>
+<p>Today, you can click an empty spot on the toolbar of all my sites to scroll to the top of the page (I'm running 3.4-beta everywhere).  You can also use this feature on <a title="WordPress.com" href="http://wordpress.com">WordPress.com</a> as they run several pre-release features on their network, too.</p>
+<h2>How You Can Get Involved</h2>
+<p>So how do <em>you</em> get involved with WordPress core development?  It's an easy, X-step process:</p>
+<ol>
+<li><strong>Decide what you want to change.</strong> You might have found a bug in WP, there might be a feature you want added, or you might find an unpatched ticket on <a title="WordPress Trac" href="http://core.trac.wordpress.org">Trac</a> that appeals to you.  If there isn't a Trac ticket for the bug/feature already, create one.</li>
+<li><strong>Check out WordPress via Subversion.</strong> You'll need <a title="Using Subversion" href="http://codex.wordpress.org/Using_Subversion">a local copy of the WordPress codebase</a> to make changes.  Check out a fresh copy of WordPress <em>trunk</em> so you're up-to-date with the latest changes.</li>
+<li><strong>Make your changes.</strong>  Then, using Subversion, <a title="Save a Patch" href="http://codex.wordpress.org/Using_Subversion#Saving_patch.2Fdiff_files">export a patch</a> that shows what you've changed.  Upload this patch file to the Trac ticket you made the changes for.</li>
+<li><strong>Engage the community.</strong>  Take some time to talk about your change on Twitter, in IRC, on your blog, etc.  If the community doesn't know you're making changes, the changes will never happen.  Be sure to explain why you think the change is important or valuable, and be ready to collaborate with other developers to make it happen.</li>
+</ol>
+<h3>Disclaimers</h3>
+<p>Not every patch you submit to Trac will make it in to WordPress core.  Some changes affect too narrow an audience to belong in the core codebase.  If someone claims "that's plugin territory" it's because they think the number of users will benefit is just too small to warrant rolling your change in with the core project.</p>
+<p><em>Don't take this personally.</em></p>
+<p>You can always write a plugin that extends the same functionality.  Use the plugin to prove your code and try to convince the community that your changes belong in core.  If you're persistent, you will be heard.  Just don't overdo it.</p>
+<p>Also, keep in mind that the WordPress community operates as a meritocracy - those who have contributed the most are listened to the most.  If you're new to the project, it might take some time for you to earn your place at the table.  Keep writing good code and contributing in meaningful ways to the project and your voice will be heard.</p>

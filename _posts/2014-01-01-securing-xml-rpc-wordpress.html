@@ -1,0 +1,67 @@
+---
+layout: post
+title: Securing XML-RPC for WordPress
+date: 2014-01-01 08:00:42.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+- WordPress
+- XML-RPC
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: Securing XML-RPC for WordPress
+  _yoast_wpseo_metadesc: WordPress' default XML-RPC implementation is insecure. I
+    want to fix that.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/r2
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409876063;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:2770;}i:1;a:1:{s:2:"id";i:6374;}i:2;a:1:{s:2:"id";i:1424;}}}}
+  keen_postview_count_this_24_hours: '5'
+  keen_postview_count_this_7_days: '25'
+  keen_postview_count_this_30_days: '132'
+  _wpghs_github_path: _posts/2014-01-01-securing-xml-rpc-wordpress.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/securing-xml-rpc-wordpress/"
+excerpt: If you use WordPress, you've probably used one of the mobile apps for it.  If
+  you've used one of these mobile apps, then you've used XML-RPC.  If you've used
+  XML-RPC, then you've sent your username and password - in plain text - across the
+  Internet.  This is hugely unsafe, and I want to work to make a safer Internet.  This
+  is my proposal for more secure XML-RPC in WordPress.
+---
+<p>You've probably never heard of XML-RPC.  But I can almost guarantee you've used it.</p>
+<p>If you're a WordPress fan like me, and you've ever used <a title="WordPress Apps" href="http://en.support.wordpress.com/apps/">one of the mobile apps</a> to publish, check comments, or view your stats, then you've used XML-RPC.  If you've used Microsoft Word or any of the plethora of desktop blogging apps to write to your site, you've used XML-RPC.  If you've ever installed and activated the Jetpack plugin, then you've used XML-RPC.[ref]I want to quickly point out that Jetpack itself never exposes your username or password. I inky mention the plugin as an example of how you might already be using XML-RPC; even if you've never heard of it.[/ref]</p>
+<p>My point: it's everywhere.</p>
+<h2>XML-RPC is Insecure</h2>
+<p>By itself, I would allege that WordPress' XML-RPC interface is the most insecure part of the platform.  Not due to the way it's designed - the interface is just as secure as the rest of the product - but in the way it's used.</p>
+<p>Every request is authenticated on the user level - meaning you are logging back in to your site <em>every time you send off a request to it</em>.  You've probably never profiled a remote interaction with your site; I have, and it's frightening.</p>
+<p>I sometimes write posts using Windows Live Writer, a popular desktop blogging app for Windows.  Whenever it pushes content out to my site, it runs through a total of 4 XML-RPC requests.  One to send the content, one to send tags, one to send categories, and one to verify the post is published as intended.  If I add media to a post, there are <em>even more</em> requests created.</p>
+<p>Why is this bad? Because every request contains both my username and my password. In plain text.</p>
+<p>Every time you pull out your phone to check you blog stats, you're sending your username and password across the wire.  Every time you moderate a comment.  Every time you jot down a quick post title.  Every time you refresh a post status.  Your username. Your password. Out there for the world to see.</p>
+<p>If we all browsed the Internet exclusively over HTTPs, this wouldn't be an issue.  I don't want to configure (and pay for) an SSL certificate just so I can blog on my personal site.  Many of you likely feel the same way; all of us are vulnerable to being hacked as a result.[ref]I'm using harsh, scary language here to make a point.  Truthfully, if you're on a private, home network or using a mobile app over a 4G network you are much more secure.  It's only when you're on coffee shop WiFi or some other open network when things become vulnerable.  In that situation, there's little you can do to make things safer - so I'd suggest buying an SSL certificate or investing in a VPN if open networks are your sole means of connecting to the Internet.[/ref]</p>
+<h2>A Way Forward</h2>
+<p>I'm working on a few newer XML-RPC-based applications, and the thought of having usernames and password spewed out on the net for the world to see worries me.  I've taken the time to come up with a more secure method for WordPress apps and users to use XML-RPC, and today I want to share it with you.</p>
+<p>Today I'm introducing <a title="Secure XML-RPC" href="https://github.com/ericmann/secure-xmlrpc">Secure XML-RPC</a>, an experimental plugin for WordPress.  This plugin sits atop WordPress' standard XML-RPC implementation, remains 100% backwards compatible, but extends a <em>new</em> method for authenticating without exposing your sensitive information to the world.</p>
+<h3>How It Works</h3>
+<p>Once you're logged in to WordPress, you have access to a new section on your profile: "Remote Publishing Permissions."  This section lists out any applications that have permission to interact with WordPress on your behalf, along with their public and secret keys.</p>
+<p>You will take both of these keys and give them to your application (the client) - be it a desktop program, an Android app, a remote webpage, whatever.</p>
+<p>When the client wants to send a request, it will build the XML document it normally builds (leaving the username and password fields blank).  Then it will create a <a title="SHA256" href="http://en.wikipedia.org/wiki/Sha256">SHA256</a> hash of its secret key and the XML document.  The client will then pass its public key and this hash in the [cci]Authorization[/cci] header of the request to WordPress.</p>
+<p>WordPress will, in turn, use the client's public key to look up the user with whom it is associated.  WordPress will then independently compute the SHA256 hash of the secret key + request document and compare it to the hash provided in the request.  If they match, then we have an authentic request and things move forward.</p>
+<h3>Why It Works</h3>
+<p>Both username/password authentication and <a title="Shared Secret Authentication" href="http://en.wikipedia.org/wiki/Shared_secret">public/secret key authentication</a> work on a simple principal - there is some secret information shared by both the client and the server that's used to authenticate a request.  In password-based authentication (at least with WordPress), this secret information has to be sent to the server for verification - which means it's no longer secret.</p>
+<p>With key-based authentication, the secret key is <em>never</em> sent across the wire.  Someone intercepting the request can't pretend to be the user in order to make a different request since the [cci]Authorization[/cci] hash is dependent both on the secret key <em>and</em> the body of the request.  While key-based authentication won't protect against replay attacks (password-based authentication won't either), it does protect against impersonation and request forgery.</p>
+<h2>How You Can Help</h2>
+<p>As the use of WordPress grows worldwide, the need for more sophisticated security is obvious.  Key-based authentication can be applied to any sort of API exposed by WordPress, so even if you think XML-RPC is antiquated, you can still help validate the model so we can apply it elsewhere.</p>
+<p>What we need now is involvement and contribution.  We need testers.  We need proof-of-concept apps that use the new authentication model.  We need UX attention on the administrative interfaces.  We need devils' advocates pointing out the flaws in the system so it can be improved.</p>
+<p>I want to see non-password-based authentication in WordPress core.  If not in the next version, then at least in the near-term foreseeable future.  You can submit pull requests or issues <a title="Secure XML-RPC" href="https://github.com/ericmann/secure-xmlrpc">on GitHub</a>.  You can discuss the idea in the <a title="Comments" href="#respond">comments below</a>.  You can <a title="Secure XML-RPC on WordPress.org" href="http://wordpress.org/plugins/secure-xml-rpc/">install the plugin</a> on your own site and give it a whirl.</p>
+<p>Let's work together to make better security a reality.</p>

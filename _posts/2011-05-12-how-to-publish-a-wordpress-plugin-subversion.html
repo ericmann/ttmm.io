@@ -1,0 +1,95 @@
+---
+layout: post
+title: How to Publish a WordPress Plugin - Subversion
+date: 2011-05-12 08:00:01.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- subversion
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/f5
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: subversion
+  _yoast_wpseo_title: How to Publish a WordPress plugin using Subversion
+  _yoast_wpseo_metadesc: Here's a step-by-step tutorial on using Subversion to publish
+    your plugin to the WordPress Plugin Repository.
+  _yoast_wpseo_metakeywords: wordpress, subversion, svn, plugin, plug-in
+  _yoast_wpseo_newssitemap-include: 'on'
+  _yoast_wpseo_newssitemap-genre: blog
+  _yoast_wpseo_newssitemap-original: ''
+  _yoast_wpseo_newssitemap-stocktickers: ''
+  yourls_tweeted: '1'
+  _yoast_wpseo_linkdex: '84'
+  _zem_rp_image: '3396'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409903343;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3405;}i:1;a:1:{s:2:"id";i:6002;}i:2;a:1:{s:2:"id";i:6049;}}}}
+  keen_postview_count_this_24_hours: '5'
+  keen_postview_count_this_7_days: '21'
+  keen_postview_count_this_30_days: '167'
+  _wpghs_github_path: _posts/2011-05-12-how-to-publish-a-wordpress-plugin-subversion.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/how-to-publish-a-wordpress-plugin-subversion/"
+---
+<p>After a discussion on the <a href="http://wordpress.stackexchange.com/q/16951/46" target="_blank">WordPress Answers Stack Exchange yesterday</a>, I thought it would be a good idea to explain the different ways you can develop plugins for WordPress.  Since the official plugin repository uses Subversion for version control, that's the obvious first choice when you're just starting your development stack.  So here is, step-by-step, a tutorial on how to get started using Subversion to track changes in and eventually publish your WordPress plugin.</p>
+<p>Things you'll need to follow along:</p>
+<ul>
+<li>A WordPress plugin to write</li>
+<li>TortoiseSVN (Mac users see my <a href="#mac-note">note about SCPlugin</a>)</li>
+<li>A WordPress.org account</li>
+</ul>
+<h2><!--more-->First and Foremost</h2>
+<p>The very first step is to create an account on WordPress.org.  You'll use this account to control your plugin, post to the support forum, and edit the Codex.  Chances are that you already have an account.  But if you don't, it would be a good idea to <a href="http://wordpress.org/support/register.php" target="_blank">create one</a>.</p>
+<h2>Get Hosted</h2>
+<p>Next, you'll need to <a href="http://wordpress.org/extend/plugins/add/" target="_blank">ask the WordPress.org team to host</a> your snazzy new plugin.  All you need at this point is a name and an idea.  It can take anywhere from an hour to a few days to get your application approved, so don't worry if you don't have any code written yet.</p>
+<h2>Using Subversion</h2>
+<p>Using version control is the first lesson every developer <em>should</em> learn, unfortunately it's often a lesson learned through painful experience when something goes wrong.  Let me tell you this, being able to "undo" a bunch of changes you've made over several folders is an ability worth its weight in gold - assuming it weighed the same as a 600-lb gorilla.</p>
+<p>If you haven't used version control yet, you should start.  Now.  <strong>Right now.</strong>  Which is convenient, because we're going to!</p>
+<p>If you haven't done so already, download <a href="http://tortoisesvn.net/" target="_blank">TortoiseSVN</a>.  It's a Windows GUI for Subversion that allows you to do all the fancy version control you need to without ever having to touch the command line.  Purists might tell you to start with the command line first, but I know how intimidating that can be ... so we'll start with the easy-to-use GUI instead.<br />
+<a name="mac-note"></a></p>
+<blockquote><p><strong>A Note for Mac Users</strong></p>
+<p>Unfortunately, I don't have a Mac, so I can't give you screenshots or a guided walkthrough of a commit process.  However, I have it on good authority that <a href="http://scplugin.tigris.org/" target="_blank">SCPlugin</a> provides the same functionality with a very similar UI.  The pictures won't look the same, but you should be able to follow the same steps as outlined below.</p></blockquote>
+<h2>Check Out the Repository</h2>
+<p>Let's say your plugin application has been approved and you've finally received the "go ahead and get started" email from the WordPress team.  Great!  Find a place on your computer where you want to keep your plugin, and create a new folder for it - I keep most of my stuff inside a "/WP-Plugins" folder.</p>
+<p>Right click inside the folder and select "SVN Checkout" from the dropdown menu.  Put the URL for your repository in the first box and make sure you have a folder name specified in the second box.  Most likely something like "/WP-Plugins/my-cool-plugin."</p>
+<p><a href="http://ttmm.wpengine.com/wp-content/uploads/2011/05/checkout.png"><img class="aligncenter size-full wp-image-3396" title="Subversion Checkout" src="{{ site.baseurl }}/assets/2011/05/checkout.png" alt="" width="468" height="363" /></a></p>
+<p>Now you'll have an empty repository ready and waiting for your plugin.  If you open the folder, you'll see three sub-folders: <strong>branches</strong>, <strong>tags</strong>, and <strong>trunk</strong>.  We're going to do all of our development in <strong>trunk</strong>.</p>
+<h2>Create a First Version</h2>
+<p>If you've already got your plugin ready to go, great!  It's actually easier to start using the repository for version control <em>after</em> you submit a first version.  So let's assume that you've finished your first beta release (version 0.1) and are ready to release it.</p>
+<p>Copy your entire plugin into the <strong>trunk</strong> folder.  All of your PHP files, your images, your stylesheets, your JavaScript, and your readme file.  <em>Everything</em>.  Then right-click anywhere in the folder and select "SVN Commit" from the TortoiseSVN menu.</p>
+<p>You'll be presented with the commit window.  Enter "First commit of My Cool Plugin" for a commit message, select the checkbox next to each of the new files, and click OK.</p>
+<p><a href="http://ttmm.wpengine.com/wp-content/uploads/2011/05/commit.png"><img class="aligncenter size-full wp-image-3397" title="SVN Commit Dialog" src="{{ site.baseurl }}/assets/2011/05/commit.png" alt="" width="519" height="513" /></a></p>
+<p>Tortoise will think for a few seconds while it talks to the WordPress server.  Then it will ask for your WordPress.org username and password (to make sure you have the right to commit to your plugin).  Enter these and click OK.  Then, voila!  Your plugin is in the repository.  Well ... almost ...</p>
+<h2>Tag Your Release</h2>
+<p>The WordPress.org plugin repository uses version tags to control everything.  Basically, the engine looks at the readme file in <strong>/trunk</strong>, reads the "stable tag" out of the file, then loads the rest of the plugin from that tag in the <strong>/tags</strong> folder.  So until you tag your release, you haven't really published your plugin.</p>
+<p>Right-click in the folder again and select "Branch/Tag" from the TortoiseSVN menu.  This brings up the tag dialog window.</p>
+<p><a href="http://ttmm.wpengine.com/wp-content/uploads/2011/05/tag1.png"><img class="aligncenter size-full wp-image-3399" title="SVN Branch/Tag Dialog" src="{{ site.baseurl }}/assets/2011/05/tag1.png" alt="" width="468" height="511" /></a></p>
+<p>The first line in the dialog should indicate that you're in the <strong>/trunk</strong> folder (the last word in the URL should be "trunk."  In the "To URL:" field, change "trunk" to "tags/0.1" assuming you're releasing version 0.1 of your plugin.  Enter a commit message - along the lines of "Tagging version 0.1" - in the big box at the bottom and click OK.</p>
+<p>A window will pop up explaining that you'll need to switch to the new branch to work on it.  Ignore this message, you won't need to switch to anything.</p>
+<p>Now right-click in the folder one more time and select SVN Update from the TortoiseSVN menu.  This will update your local <strong>/tags</strong> directory with the tag folder you've just created.</p>
+<p>That's it.  You're done.  Your plugin is published.  But what comes next?</p>
+<h2>Making Changes</h2>
+<p>From here on out, you can change anything you want in the <strong>/trunk</strong> directory and commit it <em>except for the readme file</em>.  You can update the readme file, but <strong><em>do not change the "stable tag" reference until you're ready to release!</em></strong></p>
+<p>Let's say you need to add a new JavaScript file to your plugin, but it needs a lot of work.  Go ahead and add it to <strong>/trunk</strong> and commit the changes (you'll be asked for your WordPress.org credentials again to commit).  Do some more work on the plugin, update some stylesheets, whatever.</p>
+<p>Then, when you're ready to release version 0.2, you need to do three things:</p>
+<ol>
+<li>Update the "stable tag" reference in the readme file.</li>
+<li>Update the version number in your plugin's main PHP file.</li>
+<li>Tag the new release.</li>
+<li>Commit the new release.</li>
+</ol>
+<p>Updating the stable tag is easy.  Just change it in Notepad and save the file.  Then right-click in the folder and select "Branch/Tag" as before ... with one difference:</p>
+<p>TortoiseSVN will warn you about taging your local version that's not a HEAD revision.  So to keep from making an out-of-sync branch, be sure to check the "Working copy" option in the "Create copy in the repository from:" section.  Then tag as a new version just like you did with 0.1 above.</p>
+<p>This will create a new folder in the <strong>/tags</strong> folder for your new version and copy the latest changes you've made over to it.  But you're not done yet!</p>
+<p>Now, right-click and select SVN Commit to commit your changes to <strong>/trunk</strong></p>
+<h2>Why Did We Tag First?</h2>
+<p>Remember, the WordPress repository looks at the readme file to find the right version, then looks for that version in the <strong>/tags</strong> folder.  By committing our tag before committing the changes in the readme file, we guarantee that the right version of the plugin will be there before WordPress needs it.  Basically, you made sure <strong>/tags/0.2</strong> existed before submitting a readme file that told WordPress to look for it.</p>

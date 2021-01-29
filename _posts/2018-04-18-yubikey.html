@@ -1,0 +1,223 @@
+---
+layout: post
+title: Configuring Yubikeys, GPG, and Keybase
+date: 2018-04-18 20:33:12.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Yubikey
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw_text_input: Yubikey
+  _yoast_wpseo_focuskw: Yubikey
+  _yoast_wpseo_linkdex: '71'
+  _yoast_wpseo_content_score: '90'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+  _wpas_skip_1588752: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/yubikey/"
+---
+<p>Rather than use GPG and SSH keys housed on individual machines, I embed my GPG private keys on <a href="https://amzn.to/2HefHC7">Yubikeys</a> by default. This allows me to keep my keys somewhat portable (i.e. I can use them on <em>multiple</em> devices) while preventing my keys from leaking if anyone accesses my machine without my permission.</p>
+<p>This is the same workflow I use with my team to enforce various cryptographic controls with our projects. A specific encryption key manages email encryption and access to <a href="https://www.agwa.name/projects/git-crypt/">git-crypt</a>-protected credentials. A signing key manages email and Git commit signing. A separate authentication key manages SSH access.</p>
+<p>It's a strong way to protect our identities within the various tools we use, and one I recommend for just about <em>any</em> development team. To that end, a version of this article appeared in the <a href="https://www.phparch.com/magazine/2018-2/march/">March 2018 issue of php[architect]</a>, and I have an even longer version I distribute in person to developers.</p>
+<h2>Setting up your Yubikey</h2>
+<p>The goal of this walkthrough is to help you configure your GPG identity and port your keys to a secure hardware token - I recommend a Yubkey 4 (as it supports 4096-bit RSA keys). You can also use a Yubikey Neo, but this will only work with <em>2048-bit</em> keys.</p>
+<p>The basics we're going to set up:</p>
+<ul>
+<li>A 4096-bit master key that will be kept offline</li>
+<li>A revocation certificate that will <em>also</em> be kept offline</li>
+<li>4096-bit sub-keys for encryption, signing, and authentication</li>
+<li>Publication of keys to <a href="https://keybase.io/">Keybase</a> and other directories</li>
+<li>Automatic signing of Git commits with the GPG key</li>
+<li>Configuring gpg-agent to act as ssh-agent for remote access</li>
+</ul>
+<blockquote><p>I'd love to recommend everyone use the newer elliptic curves available in GPG as they're powered by Libsodium and rapidly becoming a new industry standard. Unfortunately, the Yubikey hardware doesn't yet support this family of cryptography, so we've got to stick with battle-tested RSA for now. Using a 4096-bit key size with RSA gives us equivalent protection to a 256-bit elliptic curve key, so it's "good enough" for the moment.</p></blockquote>
+<h2>Installing GPG</h2>
+<p>The following instructions require some format of GnuPG installed locally to behave. On Mac, this is as simple as running:</p>
+<pre><code>$ brew install gnupg2</code></pre>
+<p>On Windows, this requires installing <a href="https://www.gpg4win.org/download.html">GPG4Win</a>.</p>
+<blockquote><p>If you're running things on Windows, I'd highly recommend you reference <a href="https://www.hanselman.com/blog/HowToSetupSignedGitCommitsWithAYubiKeyNEOAndGPGAndKeybaseOnWindows.aspx">Scott Hanselman's amazing walkthrough</a> as well. The instructions that follow are more targeted towards *NIX environments, but Scott's article deals with some of the various edge cases that might pop up during Windows use.</p></blockquote>
+<p>Once installed, you can use either <tt>gpg2</tt> or <tt>gpg</tt> from the command line to interact with the system (I'll use <tt>gpg2</tt> below as it refers explicitly to the version of GPG we just installed).</p>
+<h2>Creating the Keys</h2>
+<h3>Master Key</h3>
+<p>To begin generating keys, start with:</p>
+<pre><code>$ gpg2 --full-generate-key</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select (4) RSA (sign only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+<li>Set your real name</li>
+<li>Use your email address</li>
+<li>Leave the comment blank</li>
+<li>Use a strong passphrase - but make sure it's easy enough to remember/type (you'll need it later)</li>
+</ul>
+<p>Make a note of the generated key fingerprint and key ID. The key ID will be used in subsequent steps.</p>
+<h3>Sub-keys</h3>
+<p>Start adding sub-keys by editing the key we just created. Make sure to substitute your real key ID when you see KEYID in the steps that follow:</p>
+<pre><code lang="bash">$ gpg2 --expert --edit-key KEYID
+
+$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 4 - RSA (sign only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 6 - RSA (encrypt only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 8 - RSA (own capabilities)</li>
+<li>Press s to toggle signing</li>
+<li>Press e to toggle encryption</li>
+<li>Press a to toggle authentication</li>
+<li>Press q to save settings and create an auth-only key</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ save</code></pre>
+<h3>Publishing the Keys</h3>
+<p>If no one has your public key, they can't verify your identity. Upload your public key to a keyserver with:</p>
+<pre><code>$ gpg2 --keyserver hkps://hkps.pool.sks-keyservers.net --send-key KEYID</code></pre>
+<p>If you're using Keybase, you can also add your key quickly with:</p>
+<pre><code>$ keybase pgp select --multi</code></pre>
+<p>Then select the appropriate key.</p>
+<h2>Add Additional Identities</h2>
+<p>It's often more trouble than you care to deal with to manage multiple identities and keys. Instead, it's easier to add secondary identities to the key we created above (i.e. your personal <em>and</em> professional email addresses). For example, <a href="https://keybase.io/eamann">my keys</a> are bound to <em>all</em> of my online identities to make it easier for people to find me.</p>
+<p>If you need to use GPG keys for personal emails/identities as well, you can add them with the following steps:</p>
+<pre><code lang="bash">$ gpg2 --expert --edit-key KEYID
+
+$ adduid</code></pre>
+<p>On the menus that follow, provide your real name, your email address, and an optional comment. You can add as many secondary IDs as you need. Once you're done, commit the changes with:</p>
+<pre><code>$ save</code></pre>
+<h2>Generate a Revocation Certificate for the Master Key</h2>
+<p>If your keys are ever compromised, you will need to revoke them with the public keyserver. Remember, if you lose your private key there is no way to revoke a key from the server so keeping a revocation certificate is a necessary step to proactively protect your security.</p>
+<p>Generate the key easily with:</p>
+<pre><code>$ gpg2 --output KEYID.asc --gen-revoke KEYID</code></pre>
+<p>Specify the revocation reason that "key has been compromised" and store the generated certificate in a safe, secure, and preferably offline location. You might not ever need this certificate, but if you do having it in a trustworthy place is critical.</p>
+<h2>Transfer Keys to the Yubikey</h2>
+<h3>Configuring the Yubikey</h3>
+<p>The Yubikey ships with two default PINs, one for administrative use and one for daily use (i.e. unlocking your key for signing/decryption).</p>
+<ul>
+<li>Default PIN = 123456</li>
+<li>Default Admin PIN = 12345678</li>
+</ul>
+<p>We need to change both of these to non-default values:</p>
+<pre><code lang="bash">$ gpg2 --card-edit
+
+gpg/card> admin
+
+gpg/card> passwd</code></pre>
+<p>First change the PIN (remember it needs to be 6-digits long).</p>
+<p>Now change the Admin PIN (needs to be 8-digits lon)</p>
+<p>Press Q to save and quit the password menu. Type quit and press enter to exit the card editing screen.</p>
+<h2>Export Backups</h2>
+<p>Exporting your secret key to a backup is vital if you ever need to recreate your Yubikey for any reason. Preferably, this storage location is encrypted and offline (i.e. an encrypted USB stick) and in a safe, secure location.</p>
+<pre><code lang="bash">$ gpg2 -a --export-secret-key KEYID >> /some/secure/location/KEYID.master.key
+
+$ gpg2 -a --export-secret-subkeys KEYID >> /some/secure/location/KEYID.sub.key</code></pre>
+<blockquote><p>I have <em>two</em> Yubikeys configured with the same keys. One is the primary I use day-to-day, the other is a backup in case of emergency. By exporting your keys, you can re-import a key to another Yubikey if necessary.</p></blockquote>
+<p>You won't likely need the backed-up subkeys any time soon, but if you ever want to sign someone else's keys you'll need the master key to do so. It's a good idea to <em>not</em> keep your master key available - think of it like root access to your identity. Instead, using your master key should require intentionality - like getting something out of a vault across town.</p>
+<p>It's <em>incredibly</em> powerful; you should take care to protect it.</p>
+<h2>Actually Transfer the Keys</h2>
+<p>If you have other keys stored on your Yubikey, the following steps will overwrite them. It is impossible to extract a key from a Yubikey once it is there, so the previous step of exporting backups is <em>vital</em> if you ever need to recover a lost key or recreate your Key.</p>
+<p>The following steps assume you created subkeys in the order specified above (signing first, then encryption, then authentication). If you followed a different order, your selections below might vary.</p>
+<pre><code lang="bash">$ gpg2 --edit-key KEYID
+
+gpg> toggle
+
+gpg> key 1
+
+gpg> keytocard
+
+Please select where to store the key: 1 (Signing)
+
+gpg> key 1
+
+gpg> key 2
+
+gpg> keytocard
+
+Please select where to store the key: 2 (Encryption)
+
+gpg> key 2
+
+gpg> key 3
+
+gpg> keytocard
+
+Please select where to store the key: 3 (Authentication)
+
+gpg> save</code></pre>
+<p>Once your keys are exported to the Yubikey they <em>will no longer be present on your machine</em>. Be sure to remove your master key (assuming it's properly backed-up) as well to make sure your machine is safe.</p>
+<h2>Configure GitHub Commit Signing</h2>
+<h3>Export a Public Key</h3>
+<p>To export the public signing key for use with GitHub, merely ask GPG to export it to a file (the key will have ASCII armor so it will remain human-readable):</p>
+<pre><code>$ gpg2 -a --export KEYID > KEYID.asc</code></pre>
+<h3>Configure GitHub</h3>
+<ul>
+<li>Log in to <a href="https://github.com/">GitHub</a></li>
+<li>Go to <a href="https://github.com/settings/profile">your settings</a> by selecting Settings from the dropdown by your avatar</li>
+<li>Select <a href="https://github.com/settings/keys">SSH and GPG keys</a></li>
+<li>Add a new GPG key, coping in the ASCII armored text exported in the step above</li>
+</ul>
+<h3>Configure Git</h3>
+<p>Adding a default signing key is straight-forward. Merely run:</p>
+<pre><code>$ git config --global user signingkey KEYID</code></pre>
+<p>This sets your key, but commits will not be signed by default (you must manually specify -S when committing to sign). To sign by default, run the following:</p>
+<pre><code>$ git config --global commit.gpgsign true</code></pre>
+<p>From this point forward, every commit you make will be signed with your GPG key (and will appear as "Verified" on GitHub). This has the advantage of proving that you and only you authored the commit (i.e. no one spoofed your identity in the commit logs).</p>
+<p>[caption id="attachment_7997" align="aligncenter" width="744"]<img class="size-full wp-image-7997" src="{{ site.baseurl }}/assets/2018/04/Screen-Shot-2018-04-18-at-8.21.05-PM.png" alt="Verified commit" width="744" height="458" /> GPG commit signature on GitHub[/caption]</p>
+<p>If for any reason you want to create an unsigned commit, add --no-gpg-sign in the command line when authoring your commit. This is useful if you're working remotely and temporarily lack access to your Yubikey.</p>
+<h2>Configure SSH Authentication</h2>
+<p>SSH will still use your default <tt>id_rsa.pub</tt> key for authentication at this point. We have to tell the machine how to use GPG instead and, conveniently, GPG agent has a flag to do just that:</p>
+<pre><code>$ gpg-agent --daemon --enable-ssh-support --write-env-file ~/.gpg-agent-info</code></pre>
+<p>This command generates the environment variables necessary for SSH to use GPG for authentication and writes them to <tt>~/.gpg-agent-info</tt> for future use. It's easier, though, to add them directly to <tt>~/.bash_profile</tt> for consumption with the following block:</p>
+<pre><code># GPG Agent
+
+if test -f ~/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
+  source ~/.gpg-agent-info
+  export GPG_AGENT_INFO
+  export SSH_AUTH_SOCK
+  export SSH_AGENT_PID
+else
+  eval $(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)
+fi</code></pre>
+<p>This code will test for the file first and regenerate it if it doesn't exist - if it does exist, it loads everything for you. From here on out, if you execute <tt>ssh-add -L</tt> to list out your loaded SSH keys, you will see one reported as an identity with your Yubikey's card number instead of an email address or path name. If you want to grab your public key directly, run:</p>
+<pre><code>$ gpg2 --export-ssh-key SUBKEYID</code></pre>
+<p>Where SUBKEYID is the ID of the third sub-key you generated earlier. (This will often be the last key in the list if you run <tt>gpg2 --list-secret-keys</tt> as well.)</p>
+<h2>Next Steps</h2>
+<p>This walkthrough just covers the GPG features of your Yubikey. The hardware can <em>also</em> be used as a <a href="https://developers.yubico.com/yubico-piv-tool/YubiKey_PIV_introduction.html">PIV card</a> to house X509 certificates. It's also a great 2FA device, supporting both <a href="https://www.yubico.com/products/services-software/personalization-tools/yubikey-otp/">OTP generation</a> <em>and</em> <a href="https://www.yubico.com/solutions/fido-u2f/">FIDO's universal second factor</a> (U2F) spec.</p>
+<p>I use my Yubikey <em>daily</em> to:</p>
+<ul>
+<li>GPG-sign every email I send from my workstation</li>
+<li>GPG-sign every Git commit</li>
+<li>Authenticate to remote SSH servers</li>
+<li>Encrypt/decrypt sensitive credentials on my machine</li>
+<li>Respond to U2F challenges from services like GitHub and Gmail</li>
+</ul>
+<p>How will you use <em>your</em> Yubikey?</p>

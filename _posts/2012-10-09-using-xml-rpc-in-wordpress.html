@@ -1,0 +1,272 @@
+---
+layout: post
+title: Using XML-RPC in WordPress
+date: 2012-10-09 08:00:13.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- WordPress
+- XML-RPC
+meta:
+  yourls_shorturl: http://eam.me/id
+  _oembed_6ccb38673b0e71a90674c4403f69773b: <blockquote class="twitter-tweet" data-width="500"><p
+    lang="en" dir="ltr">looks like I’m mostly on my own when it comes to digging deep
+    on XML-RPC in WordPress</p>&mdash; curtismchale (@curtismchale) <a href="https://twitter.com/curtismchale/status/254356464154574848">October
+    5, 2012</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_6ccb38673b0e71a90674c4403f69773b: '1496517842'
+  _wpcom_is_markdown: '1'
+  _yoast_wpseo_metadesc: You can control almost everything on a WordPress site using
+    XML-RPC. But how exactly do you make an XML-RPC request? I'll show you ...
+  _yoast_wpseo_focuskw: xml-rpc
+  _yoast_wpseo_title: Using XML-RPC in WordPress
+  _edit_last: '2'
+  _oembed_db99896c4d2b141c2718454519cc7393: <blockquote class="twitter-tweet" width="550"><p>looks
+    like I’m mostly on my own when it comes to digging deep on XML-RPC in WordPress</p>&mdash;
+    curtismchale (@curtismchale) <a href="https://twitter.com/curtismchale/status/254356464154574848"
+    data-datetime="2012-10-05T23:04:41+00:00">October 5, 2012</a></blockquote><script
+    src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  yourls_tweeted: '1'
+  _oembed_a125e77d11d190b92d146078666f432b: <blockquote class="twitter-tweet" width="550"><p>looks
+    like I’m mostly on my own when it comes to digging deep on XML-RPC in WordPress</p>&mdash;
+    curtismchale (@curtismchale) <a href="https://twitter.com/curtismchale/status/254356464154574848"
+    data-datetime="2012-10-05T23:04:41+00:00">October 5, 2012</a></blockquote><script
+    async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+  _scribe_content_analysis: O:8:"stdClass":7:{s:8:"docScore";s:3:"100";s:9:"docScoreE";a:0:{}s:11:"fleschScore";s:14:"very
+    difficult";s:8:"keywords";a:7:{i:0;O:8:"stdClass":12:{s:3:"kwc";s:1:"5";s:3:"kwd";s:4:"5.61";s:3:"kwe";a:0:{}s:3:"kwf";s:2:"16";s:3:"kwl";s:1:"1";s:7:"kwlText";s:7:"Primary";s:3:"kwo";s:1:"A";s:4:"kwod";s:109:"Congratulations,
+    this term strikes a good balance between search optimization and copywriting best
+    practices.";s:3:"kwp";s:9:"Very High";s:3:"kwr";s:1:"1";s:3:"kws";s:2:"10";s:4:"text";s:9:"wordpress";}i:1;O:8:"stdClass":12:{s:3:"kwc";s:1:"5";s:3:"kwd";s:4:"4.91";s:3:"kwe";a:0:{}s:3:"kwf";s:2:"14";s:3:"kwl";s:1:"1";s:7:"kwlText";s:7:"Primary";s:3:"kwo";s:1:"C";s:4:"kwod";s:139:"While
+    your copywriting is strong, consider writing more about this topic on your site
+    and/or use this term more frequently in your content.";s:3:"kwp";s:9:"Very High";s:3:"kwr";s:1:"2";s:3:"kws";s:1:"0";s:4:"text";s:7:"xml
+    rpc";}i:2;O:8:"stdClass":12:{s:3:"kwc";s:4:"1.22";s:3:"kwd";s:4:"0.35";s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";s:1:"1";s:3:"kwl";s:1:"4";s:7:"kwlText";s:14:"Not
+    Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work
+    for this term, including improving your copywriting and writing more about this
+    topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";s:1:"4";s:3:"kws";s:1:"0";s:4:"text";s:10:"rpc
+    server";}i:3;O:8:"stdClass":12:{s:3:"kwc";s:4:"1.22";s:3:"kwd";s:4:"0.35";s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";s:1:"1";s:3:"kwl";s:1:"4";s:7:"kwlText";s:14:"Not
+    Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work
+    for this term, including improving your copywriting and writing more about this
+    topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";s:1:"5";s:3:"kws";s:1:"0";s:4:"text";s:22:"wordpress
+    installation";}i:4;O:8:"stdClass":12:{s:3:"kwc";s:4:"1.22";s:3:"kwd";s:4:"1.05";s:3:"kwe";a:2:{i:0;s:4:"KwET";i:1;s:4:"KwEM";}s:3:"kwf";s:1:"3";s:3:"kwl";s:1:"4";s:7:"kwlText";s:14:"Not
+    Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work
+    for this term, including improving your copywriting and writing more about this
+    topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";s:1:"7";s:3:"kws";s:1:"0";s:4:"text";s:14:"xml
+    rpc client";}i:5;O:8:"stdClass":12:{s:3:"kwc";s:1:"2";s:3:"kwd";s:4:"1.05";s:3:"kwe";a:0:{}s:3:"kwf";s:1:"3";s:3:"kwl";s:1:"4";s:7:"kwlText";s:14:"Not
+    Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work
+    for this term, including improving your copywriting and writing more about this
+    topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";s:1:"3";s:3:"kws";s:1:"0";s:4:"text";s:3:"xml";}i:6;O:8:"stdClass":12:{s:3:"kwc";s:4:"1.22";s:3:"kwd";s:3:"0.7";s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";s:1:"2";s:3:"kwl";s:1:"4";s:7:"kwlText";s:14:"Not
+    Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work
+    for this term, including improving your copywriting and writing more about this
+    topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";s:1:"6";s:3:"kws";s:1:"0";s:4:"text";s:13:"use
+    wordpress";}}s:11:"scribeScore";s:2:"58";s:4:"tags";a:17:{i:0;s:9:"wordpress";i:1;s:7:"xml
+    rpc";i:2;s:10:"rpc server";i:3;s:22:"wordpress installation";i:4;s:14:"xml rpc
+    client";i:5;s:3:"xml";i:6;s:13:"use wordpress";i:7;s:23:"commodity channel index";i:8;s:21:"remote
+    procedure call";i:9;s:12:"web services";i:10;s:18:"internet protocols";i:11;s:16:"markup
+    languages";i:12;s:9:"using xml";i:13;s:11:"rpc library";i:14;s:3:"rpc";i:15;s:8:"pingback";i:16;s:7:"xml-rpc";}s:7:"request";O:8:"stdClass":4:{s:10:"html_title";s:26:"Using
+    XML-RPC in WordPress";s:11:"description";s:134:"You can control almost everything
+    on a WordPress site using XML-RPC. But how exactly do you make an XML-RPC request?
+    I'll show you ...";s:7:"content";s:6205:"<p>It was brought to my attention last
+    week that there aren't very many good tutorials on the web regarding the use of
+    XML-RPC in WordPress.  Sure, there are plenty that talk about how easy it is to
+    use and how great of a tool it can be, but few examples explaining just <em>how</em>
+    it can be used.</p><p>https://twitter.com/curtismchale/status/254356464154574848</p><p>I
+    use WordPress for just about everything.  For websites, for forums, for ebook
+    sales, <a title="WordCamp Seattle" href="http://eam.me/wcsea12">for presentations</a>,
+    and most recently for <a title="Eric in Haiti" href="http://ericinhaiti.wordpress.com/">an
+    SMS gateway to a travel blog</a>.  The thing is, I can't always post to WordPress
+    the way I want to.  I will be in Haiti next week and won't have access to a computer
+    or a laptop, but I still want to update my blog so I can communicate with friends
+    and family at home.  XML-RPC to the rescue!<!--more--></p><p>Well, not exactly.</p><p>The <em>first</em>
+    part of my application is actually a custom handler for SMS messages that I set
+    up on my server.  I won't get into that part of the system for now; instead, I'll
+    explain how the system updates a remote blog hosted on WordPress.com using XML-RPC.</p><h2>The
+    Tools</h2><p>There is just about no limit to what you can do with WordPress through
+    XML-RPC calls.  You can add posts, edit comments, upload images, manage taxonomies,
+    and even configure site options.  If there's something you want to do that's not
+    exposed through the API, you can add your own calls with a simple filter.</p><p>From
+    the receiving end of things, the XML-RPC system in WordPress is fantastic.  All
+    of the ugly XML is converted to native PHP objects (and arrays and strings) so
+    you can program along without needing to worry about content structs, unclosed
+    tags, or remembering whether to use [cci]&lt;int&gt;[/cci] or [cci]&lt;i4&gt;[/cci]
+    to mark a number.</p><p>The heavier part of the API is the <em>sending</em> end
+    of things.  How do you get your data into that scary-looking content struct?  How
+    do you structure your XML so WordPress can read it?  How do you interpret errors
+    thrown by the server?</p><p>Luckily, these questions are already answered for
+    you.</p><p>Most systems support their own XML-RPC library - WordPress is no different.
+     While there is a robust server library available, there is also a robust <em>client</em>
+    library available as well.  You can use this library to execute XML-RPC requests
+    from within WordPress to interact with or consume data from any XML-RPC server
+    you like.</p><h2>The Framework</h2><p>In the case of my SMS link, I need to pass
+    a "new post" request to WordPress.com.  I could simply use an existing service
+    like <a title="If This Then That" href="https://ifttt.com/">IFTTT</a> to trigger
+    post creation[ref]They're using an XML-RPC client under the surface as well![/ref],
+    but their system doesn't support post formats.  I want to keep my regular posts
+    separate from my SMS updates, so I'll be using the "status" post format for these
+    separate updates.</p><p>Creating a post with a specified post format requires
+    a custom call through my own, self-hosted XML-RPC client.  Luckily, I'm already
+    using WordPress to host the SMS gateway, so I can use WordPress to push the update
+    to the server as well.</p><p>Just include the Incutio XML-RPC library that ships
+    with WordPress to get base functionality and WordPress' internal HTTP XML-RPC
+    client library to get started.  The first is the workhorse that translates native
+    PHP objects and collections back and forth into XML-RPC structures.  The second
+    is a beautiful abstraction of the request/response process that makes live so
+    much easier.</p><p>... libraries</p><h2>Walking Through a Request</h2><p>Every
+    WordPress installation ships with a default XML-RPC endpoint.[ref]This will be
+    customizable with a filter in an upcoming version of WordPress, but even when
+    filtered the endpoint will still be available somewhere.[/ref]  In most cases,
+    it's discoverable as well - just check for the [cci]&lt;link rel="pingback ...&gt;[/cci]
+    tag in your site's header to see where it's at.  Probably something like [cci]http://yoursite.com/xmlrpc.php[/cci].</p><p>We'll
+    start building our request by creating a new client pointed at that endpoint.</p><p>...
+    client</p><p>Now let's make a call.  For this specific request, we want to call
+    [cci]wp.newPost[/cci] to create the new post.  We'll pass in an array of arguments
+    <a title="XML-RPC API Documentation" href="http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.newPost">based
+    on the API</a> that WordPress presents:</p><ul><li>0 - The blog ID, but it's not
+    really used.</li><li><strong>ericmann</strong> - My WordPress username for the
+    site.</li><li><strong>.....</strong> - My WordPress password[ref]You didn't really
+    think I'd give you my password, did you?[/ref]</li><li><strong>array()</strong>
+    - The content structure. An associative array of the fields I want set for the
+    newly created post.</li></ul><p>... Request</p><p>Nothing really fancy is happening
+    here.  You <em>could</em> think of this as simply invoking [cci]wp_insert_post()[/cci]
+    on a remote site.  Really, that<em> is</em> what you're doing.  When WordPress
+    receives the request, it sanitizes the data (to make sure you aren't sending garbage),
+    calls [cci]wp_insert_post()[/cci], and returns the ID of the newly created post.</p><p>Now
+    on the client side, you check to see if the request was successful.  If it was,
+    you'll get an ID back.  If it wasn't, you'll get back [cci]false[/cci] as a result
+    and can check the [cci]error[/cci] property of your client object to see what
+    all happened.</p><p>... Error</p><h2>What's Next?</h2><p>Making requests is pretty
+    simple, but if you want to get started and are worried about corrupting your database,
+    WordPress ships with two test methods in its XML-RPC server:</p><ul><li>[cci]demo.sayHello[/cci]
+    - Returns a standard "Hello!" message.</li><li>[cci]demo.addTwoNumbers[/cci] -
+    Accepts an array containing two numbers and returns the sum.</li></ul><p>So to
+    get started, you can merely create a request using one of these test messages:</p><p>...
+    demo</p>";s:3:"url";s:25:"https://jumping-duck.com/";}}
+  _yoast_wpseo_linkdex: '83'
+  _wpghs_github_path: _posts/2012-10-09-using-xml-rpc-in-wordpress.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/using-xml-rpc-in-wordpress/"
+---
+<p>It was brought to my attention last week that there aren't very many good tutorials on the web regarding the use of XML-RPC in WordPress. &nbsp;Sure, there are plenty that talk about how easy it is to use and how great of a tool it can be, but few examples explaining just&nbsp;<em>how</em> it can be used.</p>
+<p>https://twitter.com/curtismchale/status/254356464154574848</p>
+<p>I use WordPress for just about everything. &nbsp;For websites, for forums, for ebook sales, <a title="WordCamp Seattle" href="http://eam.me/wcsea12">for presentations</a>, and most recently for <a title="Eric in Haiti" href="http://ericinhaiti.wordpress.com/">an SMS gateway to a travel blog</a>. &nbsp;The thing is, I can't always post to WordPress the way I want to. &nbsp;I will be in Haiti next week and won't have access to a computer or a laptop, but I still want to update my blog so I can communicate with friends and family at home. &nbsp;XML-RPC to the rescue!<!--more--></p>
+<p>Well, not exactly.</p>
+<p>The&nbsp;<em>first</em> part of my application is actually a custom handler for SMS messages that I set up on my server. &nbsp;I won't get into that part of the system for now; instead, I'll explain how the system updates a remote blog hosted on WordPress.com using XML-RPC.</p>
+<h2>The Tools</h2>
+<p>There is just about no limit to what you can do with WordPress through XML-RPC calls. &nbsp;You can add posts, edit comments, upload images, manage taxonomies, and even configure site options. &nbsp;If there's something you want to do that's not exposed through the API, you can add your own calls with a simple filter.</p>
+<p>From the receiving end of things, the XML-RPC system in WordPress is fantastic. &nbsp;All of the ugly XML is converted to native PHP objects (and arrays and strings) so you can program along without needing to worry about content structs, unclosed tags, or remembering whether to use [cci]<int>[/cci] or [cci]<i4>[/cci] to mark a number.</p>
+<p>The heavier part of the API is the&nbsp;<em>sending</em> end of things. &nbsp;How do you get your data into that scary-looking content struct? &nbsp;How do you structure your XML so WordPress can read it? &nbsp;How do you interpret errors thrown by the server?</p>
+<p>Luckily, these questions are already answered for you.</p>
+<p>Most systems support their own XML-RPC library - WordPress is no different. &nbsp;While there is a robust server library available, there is also a robust <em>client</em> library available as well. &nbsp;You can use this library to execute XML-RPC requests from within WordPress to interact with or consume data from any XML-RPC server you like.</p>
+<h2>The Framework</h2>
+<p>In the case of my SMS link, I need to pass a "new post" request to WordPress.com. &nbsp;I could simply use an existing service like <a title="If This Then That" href="https://ifttt.com/">IFTTT</a> to trigger post creation[ref]They're using an XML-RPC client under the surface as well![/ref], but their system doesn't support post formats. &nbsp;I want to keep my regular posts separate from my SMS updates, so I'll be using the "status" post format for these separate updates.</p>
+<p>Creating a post with a specified post format requires a custom call through my own, self-hosted XML-RPC client. &nbsp;Luckily, I'm already using WordPress to host the SMS gateway, so I can use WordPress to push the update to the server as well.</p>
+<p>Just include the Incutio XML-RPC library that ships with WordPress to get base functionality and WordPress' internal HTTP XML-RPC client library to get started. &nbsp;The first is the workhorse that translates native PHP objects and collections back and forth into XML-RPC structures. &nbsp;The second is a beautiful abstraction of the request/response process that makes live so much easier.</p>
+<p><code lang="php"><br />
+include_once( ABSPATH . WPINC . '/class-IXR.php' );<br />
+include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );<br />
+</code></p>
+<h2>Walking Through a Request</h2>
+<p>Every WordPress installation ships with a default XML-RPC endpoint.[ref]This will be customizable with a filter in an upcoming version of WordPress, but even when filtered the endpoint will still be available somewhere.[/ref] &nbsp;In most cases, it's discoverable as well - just check for the [cci]&lt;link rel="pingback ...>[/cci] tag in your site's header to see where it's at. &nbsp;Probably something like [cci]http://yoursite.com/xmlrpc.php[/cci].</p>
+<p>We'll start building our request by creating a new client pointed at that endpoint.</p>
+<p><code lang="php"><br />
+$client = new WP_HTTP_IXR_CLIENT( 'http://yoursite.com/xmlrpc.php' );<br />
+</code></p>
+<p>Now let's make a call. &nbsp;For this specific request, we want to call [cci]wp.newPost[/cci] to create the new post. &nbsp;We'll pass in an array of arguments <a title="XML-RPC API Documentation" href="http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.newPost">based on the API</a> that WordPress presents:</p>
+<ul>
+<li>0 -&nbsp;The blog ID, but it's not really used.</li>
+<li><strong>ericmann</strong> - My WordPress username for the site.</li>
+<li><strong>.....</strong> - My WordPress password[ref]You didn't really think I'd give you my password, did you?[/ref]</li>
+<li><strong>array()</strong> - The content structure. An associative array of the fields I want set for the newly created post.</li>
+</ul>
+<p><code lang="php"><br />
+$result = $client->query( 'wp.newPost', array(<br />
+    0,<br />
+    "ericmann",<br />
+    "....",<br />
+    array(<br />
+        'post_status'  => 'publish',<br />
+        'post_title'   => 'SMS Update',<br />
+        'post_content' => $_REQUEST['text'],<br />
+        'post_format'  => 'status',<br />
+        'terms_names'  => array(<br />
+            'category' => array(<br />
+                'Field Update'<br />
+            ),<br />
+            'post_tag' => array(<br />
+                'mobile',<br />
+                'update'<br />
+            )<br />
+        )<br />
+    )<br />
+) );<br />
+</code></p>
+<p>Nothing really fancy is happening here. &nbsp;You <em>could</em> think of this as simply invoking [cci]wp_insert_post()[/cci] on a remote site. &nbsp;Really, that<em> is</em> what you're doing. &nbsp;When WordPress receives the request, it sanitizes the data (to make sure you aren't sending garbage), calls [cci]wp_insert_post()[/cci], and returns the ID of the newly created post.</p>
+<p>Now on the client side, you check to see if the request was successful. &nbsp;If it was, you'll get [cci]true[/cci]. &nbsp;If it wasn't, you'll get back [cci]false[/cci] as a result and can check the [cci]error[/cci] property of your client object to see what all happened.</p>
+<p><code lang="php"><br />
+if ( $result ) {<br />
+    update_post_meta( $new_post_id, 'posted', 'Success' );<br />
+} else {<br />
+    $error = $client->error->message;<br />
+    update_post_meta( $new_post_id, 'posted', 'Failed: ' . $error );<br />
+}<br />
+</code></p>
+<p>If you absolutely need the ID back as well, you can set the [cci]debug[/cci] flag to [cci]true[/cci] on the client object and it will record both the method call and the method response.</p>
+<h2>What's Next?</h2>
+<p>Making requests is pretty simple, but if you want to get started and are worried about corrupting your database, WordPress ships with two test methods in its XML-RPC server:</p>
+<ul>
+<li>[cci]demo.sayHello[/cci] - Returns a standard "Hello!" message.</li>
+<li>[cci]demo.addTwoNumbers[/cci] - Accepts an array containing two numbers and returns the sum.</li>
+</ul>
+<p>So to get started, you can merely create a request using one of these test messages:[ref]Yes, I have tested this <em>exact</em> code. It works just fine.[/ref]</p>
+<p><code lang="php"><br />
+include_once( ABSPATH . WPINC . '/class-IXR.php' );<br />
+include_once( ABSPATH . WPINC . '/class-wp-http-ixr-client.php' );</p>
+<p>$client = new WP_HTTP_IXR_CLIENT( 'http://wordpress.com/xmlrpc.php' );<br />
+$client->debug = true;</p>
+<p>$hello = $client->query( 'demo.sayHello' );</p>
+<p>$addition = $client->query( 'demo.addTwoNumbers', array( 55, 17 ) );<br />
+</code></p>
+<p>These commands should give you these blocks of XML:</p>
+<p><code lang="xml"><br />
+<?xml version="1.0"?><br />
+<methodcall><br />
+<methodname>demo.sayHello</methodname></p>
+<params>
+</params></methodcall><br />
+<?xml version="1.0" encoding="UTF-8"?><br />
+<methodresponse></p>
+<params>
+<param />
+      <value><br />
+      <string>Hello!</string><br />
+      </value></p>
+</params>
+</methodresponse></p>
+<p><?xml version="1.0"?><br />
+<methodcall><br />
+<methodname>demo.addTwoNumbers</methodname></p>
+<params>
+<param /><value><array><data><br />
+  <value><int>55</int></value><br />
+  <value><int>17</int></value><br />
+</data></array></value>
+</params></methodcall><br />
+<?xml version="1.0" encoding="UTF-8"?><br />
+<methodresponse></p>
+<params>
+<param />
+      <value><br />
+      <int>72</int><br />
+      </value></p>
+</params>
+</methodresponse><br />
+</code></i4></int></p>

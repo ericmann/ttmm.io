@@ -1,0 +1,52 @@
+---
+layout: post
+title: 'A Tale of Two Package Managers: Composer and NPM'
+date: 2014-10-16 08:00:12.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Composer
+- Node
+- NPM
+- package management
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'A Tale of Two Package Managers: Composer and NPM'
+  _yoast_wpseo_metadesc: How Composer and NPM do things wrige and, at the same time,
+    very very wrong.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/y-
+  _wpghs_github_path: _posts/2014-10-16-tale-of-two-package-managers.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/tale-of-two-package-managers/"
+excerpt: How Composer and NPM do things wrige and, at the same time, very very wrong.
+---
+<p>If you've followed my various projects at all, it's apparent just how much I enjoy working with <a title="Modular Code" href="https://eamann.com/tech/modular-code/">modular code</a>.</p>
+<p>Unfortunately, when you're working with modules and packages it's often a question of <em>which</em> kinds of packages to use. Various packages utilize different package managers, and there's quite a bit of confusion about which managers do what and which you actually need for a project.</p>
+<p>Composer, for example, primarily manages PHP projects. NPM primarily manages Node packages - and can even be used to update both Node and NPM under the right circumstances. Bower is used to manage front-end packages and, sadly enough, is installed using NPM.[ref]The irony of using a package manager to install yet another package manager is not lost on me.[/ref]</p>
+<p>In general, though, let's talk about Composer and NPM. Both package managers do some things right; they also both do some things horribly wrong.</p>
+<h2>Composer</h2>
+<p>I like Composer because it turns my PHP applications into new versions of the C# projects I used to work on. Where, when a library was included, you just added a simple reference and the library and its APIs were magically available to you. In the interpreted world of PHP, Composer is comfortably close to dynamic library references.</p>
+<p>Unfortunately, managing a Composer-powered project can be a bit tricky. Your [cci]composer.json[/cci] project needs to be set up <em>just right</em> and you have to use a web-based interface to submit to Packagist (the hosted Composer package library). Learning Composer (at least for me) is a bit of trial and error, but it does synchronize nicely with GitHub.</p>
+<p>Like GitHub, packages are namespaced, which is a <em>major</em> value add for a large, very active development community.</p>
+<h2>NPM</h2>
+<p>NPM, however, is <em>not</em> namespaced. Once a package is published to the NPM repository, that name is taken. Forever. Even if the package is unpublished. This leads some developers to publish throwaway packages with marketable names just to park on the registry. <em>I hate that</em>.</p>
+<p>Unlike Composer, though, NPM is easily (and primarily) managed through the command line. I can push a new release of a package to both GitHub and the NPM repository with a quick command.</p>
+<p>Frankly, the lack of namespacing and utter inability to release old/deprecated packages is a major limitation of NPM, so use it judiciously (and be smart about your names).</p>
+<h2>What Next?</h2>
+<p>On the one hand, some might be tempted to create a <em>new</em> package manager that encapsulates all of the good with none of the bad. Unfortunately, the reason we have so many package managers in the first place is because different developers have different strategies for how they'd fix the problem.</p>
+<p>Ask 3 engineers to solve a problem and you'll get four different solutions.</p>
+<p>As much as I'd like a concise, singular solution to the problem at hand, there isn't one. Instead, there's an obvious use for each package manager, giving way to a simple way to keep the different requirements of each in check. It <em>also</em> gives a way for each community to embrace and learn from the other's strengths, hopefully making each package manager stronger in the end.</p>

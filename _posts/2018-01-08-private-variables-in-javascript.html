@@ -1,0 +1,142 @@
+---
+layout: post
+title: Private Variables in JavaScript
+date: 2018-01-08 08:00:33.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- JavaScript
+- Technology
+- Tutorials
+tags: []
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/private-variables-in-javascript/"
+excerpt: ES6 gave us classes and object inheritance in JavaScript. However, it's still
+  missing any concept of "privacy" in OO terms. Here's a hacky workaround to, maybe,
+  make things work.
+---
+<p><!-- wp:core/paragraph --></p>
+<p>I love writing in JavaScript. It&#x27;s a flexible, dynamic language with a lot of nifty features and a great, evented runtime. JS gets a bad rep because of how often people use it <em>poorly</em>﻿, and I think that&#x27;s a very deserved reputation. Still, it&#x27;s fun to work with and one of the first tools I reach for when fleshing out a quick proof-of-concept in code.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Working on larger codebases, however, means I want to have a prettier setup. I configure Babel so I can write the latest, greatest version of JS and have it automatically transpiled to work with older engines. I lint my code. I configure specific types for data encapsulation and force strict typing.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This all results in clean, maintainable, (usually) highly-documented libraries for my personal use and for work. However, there&#x27;s one feature I&#x27;m used to in other languages that&#x27;s missing in JS.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Privacy.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>JavaScript Classes</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>ECMAScript 2015 (aka ES6) introduced <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"><em>classes</em></a> to JavaScript. Older versions of the language would allow you to define an object type directly using function constructors, but didn&#x27;t truly support object-oriented inheritance the way developers are used to.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Part of this is due to the fact that JavaScript is a <em>prototypal</em>﻿ language, not an object-oriented language. Or at least older versions weren&#x27;t.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>ES6 gave us classes with proper constructors, methods, properties, and inheritance. Instead of defining a rough object-like function in old-school JS:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="js">function Rect(height, width) {
+  this.height = height;
+  this.width = width;
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>You could define a <em>real</em>﻿ class in ES6 and reuse it the same way you would a type in any other language:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="js">class Rectangle {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The biggest unfortunate element of this class definition, though, is that there are no privacy modifiers. The constructor, methods, and properties of a JS class <em>are all public</em>﻿ by default. There&#x27;s no nature of a protected method or a private property. At all.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>A First Attempt</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>At one point in time, though, I discovered a quirky artifact of the way ES6 modules are defined. If it&#x27;s not exposed directly, any &quot;global&quot; function or variable is really private to the module itself! The following code, for example, would expose a client instance for use elsewhere, but keep a database handle <em>private</em>﻿.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="js">let db = null;
+
+class Client {
+  constructor(dbHandle) {
+    db = dbHandle
+  }
+
+  doQuery(query) {
+    db.exec(query)
+  }
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The <tt>db</tt> variable inside this module is completely inaccessible to any code outside the module, yet it allows us to keep track of our database handle directly. This is exactly what we want, right?</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Nope.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Since it&#x27;s outside the class definition, this variable is treated as a <em>static</em>﻿ property. Yes, it&#x27;s private to our module, but there&#x27;s only one copy available. If we make multiple instances of our <tt>Client</tt> above, we&#x27;ll overwrite <tt>db</tt> each time; the last instantiation will win and define the database handle used by <em>all</em>﻿ of the instances.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>That&#x27;s <em>not</em>﻿ what we want at all.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>A Hacky Solution</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>While we don&#x27;t necessarily want a shared database handle, the idea of a private, static property in our class definition does give us something to work with. Instead of defining our private properties <em>directly</em>﻿ within the module, we can define a container to house them and access it instead.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code lang="js">let container = {}
+
+class Client {
+  constructor(dbHandle) {
+    this._id = Math.random().toString(36).substr(2, 9)
+    container[this._id] = {}
+    container[this._id].db = dbHandle
+  }
+
+  doQuery(query) {
+    let db = container[this._id].db
+    db.exec(query)
+  }
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Now, the <em>container</em>﻿ is a shared object between instances of our class. Instances can then look up their own &quot;private&quot; properties housed within this container and use them during runtime.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The biggest drawbacks of this approach are:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/list --></p>
+<ul>
+<li>The syntax isn&#x27;t the prettiest</li>
+<li>Every instance can, really, access the &quot;private&quot; data of any other instance of the class</li>
+<li>JavaScript doesn&#x27;t feature the notion of class <em>destructors</em>, so you&#x27;ll have to implement your own garbage collection routine to clean up and stored data when a class is destroyed</li>
+</ul>
+<p><!-- /wp:core/list --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>What other solutions have you implemented for class privacy in JavaScript?</p>
+<p><!-- /wp:core/paragraph --></p>

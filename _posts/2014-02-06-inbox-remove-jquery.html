@@ -1,0 +1,54 @@
+---
+layout: post
+title: 'Inbox: How do I remove jQuery'
+date: 2014-02-06 08:00:41.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- jQuery
+- WordPress
+meta:
+  _edit_last: '2'
+  _wpas_mess: How to make jQuery disappear on the WordPress front-end =>
+  _yoast_wpseo_title: 'Inbox: How do I Remove jQuery'
+  _yoast_wpseo_metadesc: You might need jQuery; if you don't, here's how to make it
+    disappear.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/s1
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409701686;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5489;}i:1;a:1:{s:2:"id";i:6458;}i:2;a:1:{s:2:"id";i:5905;}}}}
+  _wpghs_github_path: _posts/2014-02-06-inbox-remove-jquery.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/inbox-remove-jquery/"
+excerpt: A message in my inbox this week asked for help removing jQuery from the front-end
+  of a site.  In this particular case, jQuery wasn't being used and just slowed down
+  the page.
+---
+<p>After writing an article on how unenqueuing the jQuery that ships with WordPress core is <a title="Don’t Dequeue WordPress’ jQuery" href="http://eamann.com/tech/dont-dequeue-wordpress-jquery/">a bad idea</a>, I've received quite a bit of hate mail.  I still stand by my points in that article, and fully expect to write a followup on properly offloading static assets to a CDN.</p>
+<p>Today, though, I want to address a different jQuery-related issue: how do you <em>remove</em> the library from a site if you're not using it?  From my inbox this week:</p>
+<blockquote><p>How do I remove jQuery? I've removed it from my template files but it still persists. I can't seem to find a need for it on my site but it calls for it anyway. I tried deactivating the 3 plugins I'm using, but it still won't go away. I'm basically using WordPress to post articles on my site and I'm not allowing posts from users so I can't see where jQuery would be required.</p></blockquote>
+<h2>How jQuery Makes it on the Page</h2>
+<p><a title="You Might Not Need jQuery" href="http://youmightnotneedjquery.com/">Not every site needs jQuery</a> for the front-end.  If you're just handling a single form, one or two animated elements, or listening for events in one sidebar module, jQuery could be overkill.  It's a rather large library that definitely makes scripting easier, but if you're only using it for one feature I'd urge you to reconsider.</p>
+<p>Once you've removed the jQuery dependency from your scripts, though, you'll often still see WordPress loading up the library anyway.  Why won't it go away?</p>
+<p>There are actually a few things that might keep jQuery around:</p>
+<ol>
+<li><strong>The toolbar</strong> - If you're logged in to the site, whether your theme uses jQuery or not is inconsequential.  That little toolbar at the top of the page?  Yeah, it uses jQuery.  I have it on good authority that the toolbar doesn't <em>always</em> require jQuery[ref]The toolbar itself is just HTML and CSS.  The only real scripted part is the scroll-to-top feature, which I wrote, and I know for a fact that it will work even in the absence of jQuery.[/ref], but some plugins you have installed will force it to load jQuery.  If you have Jetpack installed, the comments notification and stats feature will use jQuery and require it, even on the front-end, to make the toolbar functional.</li>
+<li><strong>Plugins</strong> - If you're not careful, you might have a plugin that still loads jQuery on the front-end.  More developers are including AJAX routines in their form submission plugins these days.  Poorly-coded plugins might still enqueue jQuery even if the AJAX features are disabled.</li>
+<li><strong>Theme enqueues</strong> - Even if you've removed the jQuery dependency in your <em>code</em>, you'll also need to remove it from your <em>enqueue</em>.  The [cci]wp_enqueue_script()[/cci] function accepts a dependency parameter, which is an array of scripts that must be loaded before your script will work on the page.  Even if your script never references jQuery, leaving [cci]array( 'jquery' )[/cci] in the function call will still force jQuery to be loaded on the page.</li>
+</ol>
+<h2>jQuery's Disappearing Act</h2>
+<p>First, you'll need to find out <em>where</em> jQuery is loading on the page.  I recommend viewing your site in a new browser session - like Chrome's incognito mode - to make sure jQuery isn't appearing just for you as a site editor.  You can right-click and view the page's source, searching for 'jquery' to find where it lives on the page.</p>
+<p>If you don't find it, you're done!</p>
+<p>If you do find it, take note of which scripts follow jQuery on the page.  There's a good chance those scripts declare jQuery as a dependency.  Take some time to look at them again and see if they really <em>do</em> need jQuery.</p>
+<p>Plugin scripts you should leave be.  Core scripts you should leave be as well.  Don't hack a 3rd party distribution over which you yield no control when it comes to updates.</p>
+<p>Theme scripts - if it's your custom theme - are A-OK.  If it's a 3rd party theme, try building a child theme on top of it and make the necessary script/enqueue changes in the child theme.  This way, you'll still benefit from updates.</p>
+<p>The bottom line: you might actually need jQuery, so be absolutely sure you don't before you try to get rid of it.  If you <em>really</em> don't need it on the front end, make sure you don't have a script somewhere on your site claiming otherwise.</p>

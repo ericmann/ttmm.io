@@ -1,0 +1,66 @@
+---
+layout: post
+title: Variable Coalescing
+date: 2014-07-18 08:00:55.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Variable Coalescing
+  _yoast_wpseo_metadesc: I wanted to take a moment to un-obfuscate a technique of
+    mine for others so I can continue to use it in my code.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wi
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407884147;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6382;}i:1;a:1:{s:2:"id";i:6275;}i:2;a:1:{s:2:"id";i:2630;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '2'
+  keen_postview_count_this_30_days: '67'
+  _wpghs_github_path: _posts/2014-07-18-variable-coalescing.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/variable-coalescing/"
+excerpt: I wanted to take a moment to un-obfuscate a technique of mine for others
+  so I can continue to use it in my code.
+---
+<p>I used a technique in my code the other day to work around a browser issue.  A colleague informed me during code review that the technique wasn't immediately obvious and possible violated our "no clever code" standard.  We kept it in for other specific reasons, but I wanted to take a moment to un-obfuscate the technique for others.</p>
+<h2>The Issue</h2>
+<p>I've actually used this technique in two places: JavaScript and PHP.</p>
+<p>In JavaScript, there's a bug in Internet Explorer 9 that will crash your script if any calls are made to [cci]window.console[/cci] while the developer tools are closed. Other browsers ignore the call (including other versions of IE), but version 9 will die gloriously.</p>
+<p>The easiest fix is to, of course, <em>not</em> ship debugging calls in production code.</p>
+<p>In situations where you absolutely need to leave this debugging code in place, however, it's often useful to create your own version of the console logger if it doesn't exist. Within a closure, I'll sometimes place code like the following:</p>
+<p>[cc lang="js"]var console = window.console || { log: function() {} };[/cc]</p>
+<p>Inside the closure, this defines a <em>local</em> console object that will either default to the global one (if available) or a custom short-circuit. We're using the falsey nature of [cci]undefined[/cci] here to provide the fallback, but this is <em>not</em> what I mean by variable coalescing.</p>
+<h2>JavaScript</h2>
+<p>The above approach works well for single scripts. If your application has multiple scripts (ideally inside separate closures), it becomes redundant as you need to repeat <em>the same code</em> inside <em>every closure</em>.</p>
+<p>It's an easy line of code to forget; particularly if you're used to following the "don't ship debugging statements" rule. Instead of building a short circuit, it's often better to just check for the existence of the console object before using it.</p>
+<p><code lang="js">if ( undefined !== window.console ) {<br />
+    window.console.log( 'some error.' )<br />
+}</code></p>
+<p>This works, but turns every debugging line into 3.[ref]Yes, you could put the entire conditional and brackets on one line, but that also violates coding standards and many formatting tools will automatically re-align things anyway.[/ref] The situation that warranted this change I mentioned above was in a <em>vendor</em> script, and I didn't want to change the line numbering in the file. My change instead was to use:</p>
+<p><code lang="js">window.console && window.console.log( 'some error.' );</code></p>
+<p>Again, we're using the falsey nature of [cci]undefined[/cci] to our advantage here. If the console object doesn't exist, the [cci]&&[/cci] operation will prevent execution of the following statement. If the object <em>is</em> available, then the method call will fire as expected.</p>
+<h2>PHP</h2>
+<p>When I build tasks for WordPress' CLI system, I use a similar approach. I usually create a [cci]--verbose[/cci] flag for my scripts that prints more detailed messages to the interface. Inside my script, this means I have to wrap calls to [cci]WP_CLI::line[/cci] in checks for whether or not the flag is set.</p>
+<p>Using variable coalescing, my more verbose calls become:</p>
+<p><code lang="php">$verbose && WP_CLI::line( 'Some message.' );</code></p>
+<p>When I add a progress bar to my scripts, I usually store it inside a variable called [cci]$notify[/cci]. Like the verbosity flag above, I can use variable coalescing to fire the progress bar only in situations where it actually exists:</p>
+<p><code lang="php">$notify && $notify->tick();</code></p>
+<h2>Clever Code</h2>
+<p>Does this qualify as a clever trick? If I were the one who'd come up with it, I'd probably say "yes" just to appease my ego. I <em>didn't</em> invent the technique, though, and from an outside perspective I don't see it as being more clever than things like closures returning functions or type coercion in cache lookups.</p>
+<p>It <em>is</em>, however, an underused technique that many could stumble over the first time they see it. That's partly the reason I want to document both the technique and a couple of use cases here.</p>
+<p>The more developers using a technique, the better the documentation around it becomes, and the easier it is to justify its use in your own code.</p>

@@ -1,0 +1,154 @@
+---
+layout: post
+title: 'JavaScript: Read Only Attributes'
+date: 2014-06-12 08:00:00.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- attributes
+- javascript
+- visibility
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'JavaScript: Read Only Attributes'
+  _yoast_wpseo_metadesc: Sometimes you want a property of an object in JavaScript
+    to be read-only. Thanks to newer language features, this is pretty easy to set
+    up!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vj
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409873503;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6392;}i:1;a:1:{s:2:"id";i:3124;}i:2;a:1:{s:2:"id";i:6232;}}}}
+  _wpghs_github_path: _posts/2014-06-12-javascript-read-attributes.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/javascript-read-attributes/"
+excerpt: Sometimes you want a property of an object in JavaScript to be read-only.
+  Thanks to newer language features, this is pretty easy to set up!
+---
+<p>Every now and then, I come across a coding pattern that's more hack than it is design. One that I despise the most is the use of pseudo read-only properties in JavaScript.</p>
+<p>At some point in your coding career, you've probably seen a method masquerading as a property. I'm talking about things like [cci]object.get_property()[/cci]. It works, but it's a <em>method call</em>, not a real property.</p>
+<p>The code to set up an object like this would probably look something like:</p>
+<p><code lang="js" height="580">/**<br />
+ * Represent a used car.<br />
+ *<br />
+ * @constructor<br />
+ */<br />
+function Car() {<br />
+  var SELF = this,<br />
+      odometer = 0;</p>
+<p>  /**<br />
+   * Increment the odometer<br />
+   *<br />
+   * @param {Number} miles<br />
+   */<br />
+  SELF.drive = function( miles ) {<br />
+    odometer += Math.abs( miles );<br />
+  };</p>
+<p>  /**<br />
+   * Get a protected odometer reading<br />
+   *<br />
+   * @return {Number}<br />
+   */<br />
+  SELF.get_odometer = function() {<br />
+    return odometer;<br />
+  };<br />
+}</p>
+<p>var subaru = new Car();<br />
+subaru.drive( 500 );<br />
+subaru.get_odometer(); // 500</code></p>
+<p>Again, it works, but it's a hack. It's ugly code. It's unintuitive.  It has no place in a well-structured application.</p>
+<h2>The Problem</h2>
+<p>Code should be somewhat self-documenting. Object methods and properties should be clearly named in such a way that developers will immediately know what the method does and the object contains. When methods are used as accessors for properties, objects become that much more cryptic to the next developer that comes along.</p>
+<p>Functions like [cci]get_data()[/cci] make sense - it's a function that retrieves (and possibly returns) information. On an object, methods like [cci]object.save_data()[/cci] make sense - it's a function that saves (possibly to an external data store) some piece of information.</p>
+<p>Properties like [cci]object.name[/cci] are static things. They're <em>properties</em> of the object, not functionality that should be invoked. At times, though, properties need to be read-only (i.e. exposing the status of a database connection) and that can be a confusing scenario in vanilla JavaScript. The easiest way is to use the hack above to hide the variable itself within a closure and make it read-only through an accessor method.</p>
+<p>But this method begins to look like the data manipulation methods referenced above, forcing new developers to look deeper at the code to figure out what's going on. <em>Making the person who has to support your code think is a bad idea;</em> particularly if they expect your code to "just work."</p>
+<h2>The Solution</h2>
+<p>Thanks to ECMAScript 5, you can now programatically define the properties of your objects. This means you can define a property that has a getter - allowing you to read [cci]object.property[/cci] directly - but that lacks a setter - triggering an error when attempting to set [cci]object.property[/cci].</p>
+<p>The code below is the same as before, but refactored to expose a <em>read-only</em> property on our object:</p>
+<p><code lang="js" height="650">/**<br />
+ * Represent a used car.<br />
+ *<br />
+ * @constructor<br />
+ */<br />
+function Car() {<br />
+  var SELF = this,<br />
+      _odometer = 0;</p>
+<p>  /**<br />
+   * Increment the odometer<br />
+   *<br />
+   * @param {Number} miles<br />
+   */<br />
+  SELF.drive = function( miles ) {<br />
+    _odometer += Math.abs( miles );<br />
+  };</p>
+<p>  /**<br />
+   * Get a protected odometer reading<br />
+   *<br />
+   * @return {Number}<br />
+   */<br />
+  Object.defineProperties( this, {<br />
+    "odometer": {<br />
+      "get": function() { return _odometer; }<br />
+    }<br />
+  } );<br />
+}</p>
+<p>var subaru = new Car();<br />
+subaru.drive( 500 );<br />
+subaru.odometer;     // 500<br />
+subaru.odometer = 0; // does nothing<br />
+subaru.odometer;     // 500</code></p>
+<h2>Other Uses</h2>
+<p>Another edge case that defined getters and setters satisfies is when setting a property must update an object's internal state. <strong>This is a rare use case</strong> and obscures the functionality of your application. Be very careful using anything that looks like the code below:</p>
+<p><code lang="js" height="890">/**<br />
+ * Represent an elementary particle.<br />
+ *<br />
+ * @constructor<br />
+ */<br />
+function Fermion() {<br />
+  var SELF = this,<br />
+      _position = [100, 200],<br />
+      _speed    = 50;</p>
+<p>  /**<br />
+   * Get the particle's position<br />
+   *<br />
+   * @return {Array}<br />
+   */<br />
+  Object.defineProperties( this, {<br />
+    "position": {<br />
+      "get": function() {<br />
+        _speed = undefined;</p>
+<p>        return _position;<br />
+      }<br />
+    }<br />
+  } );</p>
+<p>  /**<br />
+   * Get the particle's current speed<br />
+   *<br />
+   * @return {Number}<br />
+   */<br />
+  Object.defineProperties( this, {<br />
+    "speed": {<br />
+      "get": function() {<br />
+        _position = undefined;</p>
+<p>        return _speed;<br />
+      }<br />
+    }<br />
+  } );<br />
+}</p>
+<p>var electron = new Fermion();<br />
+electron.position; // [100, 200]<br />
+electron.speed;    // Undefined</p>
+<p>electron = new Fermion();<br />
+electron.speed;    // 50<br />
+electron.position; // Undefined</code></p>

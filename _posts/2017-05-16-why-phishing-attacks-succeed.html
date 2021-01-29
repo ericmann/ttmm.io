@@ -1,0 +1,89 @@
+---
+layout: post
+title: Why Phishing Attacks Succeed
+date: 2017-05-16 05:00:57.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- email
+- phishing
+- security
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Why Phishing Attacks Succeed - A Case Study with Chase Bank
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_focuskw_text_input: phishing
+  _yoast_wpseo_focuskw: phishing
+  _yoast_wpseo_linkdex: '85'
+  _yoast_wpseo_metadesc: It's impossible to train consumers on appropriate security
+    behavior when the real ways of interacting with a bank so closely resemble phishing
+    attacks.
+  yourls_shorturl: http://eam.me/10x
+  _wpas_done_all: '1'
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _wpghs_github_path: _posts/2017-05-16-why-phishing-attacks-succeed.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/why-phishing-attacks-succeed/"
+excerpt: It's impossible to train consumers on appropriate security behavior when
+  the real ways of interacting with a bank so closely resemble phishing attacks.
+---
+<p>The first time I received a "secure" email message from my bank, I was a bit suspicious of what I was actually seeing. It looked too much like a phishing attempt for my comfort. The message in my inbox was from my banker's email address, not from Chase[ref]My banker uses an <tt>@chase.com</tt> address, but it was still troubling to receive a "please open the attached file and click the links to log in" from an address not directly tied to Chase's secure email center.[/ref] directly. It also included an attached HTML page and instructions to "open the attached page in an browser for instructions on how to proceed."</p>
+<p>This immediately raised some red flags for me.</p>
+<p><img src="{{ site.baseurl }}/assets/2017/05/Screen-Shot-2017-05-15-at-9.50.26-AM-300x201.png" alt="Chase Secure Email that looks like a phishing attempt" width="300" height="201" class="aligncenter size-medium wp-image-6983" /></p>
+<p>First of all, email itself is inherently insecure. Yet here was my bank allegedly sending me a "secure" message with an attachment. This looked like a textbook phishing attack, so I picked up the phone and called my banker directly.</p>
+<p>"No, it's legitimate. I need you to print out and sign some documents."</p>
+<p>I pointed out how troubling this email really was and even references back to Chase's own "how to spot a suspicious email" documentation:</p>
+<blockquote><p>
+  Such emails might also ask you to look at an attachment or click a link and then give your personal information on a Web page or in a form. Or the sender’s email address might look suspicious.[ref]<a href="https://www.chase.com/digital/resources/privacy-security/security/suspicious-emails">https://www.chase.com/digital/resources/privacy-security/security/suspicious-emails</a>[/ref]
+</p></blockquote>
+<p>"I understand, it's confusing. But really, I did just send this request. I can resend it if you'd like."</p>
+<p>The resent email looked exactly the same, but as I had my banker on the phone at the time I followed through and opened the attachment. It had links to "Click to Read Message" that legitimately took me to Chase's secure email portal. But the entire workflow felt off and I voiced my concern to my banker, his supervisor, and to Chase customer support.</p>
+<p>It's impossible to train consumers on appropriate security behavior when the <i>real</i> ways of interacting with a bank so closely resemble phishing attacks.</p>
+<h2>The Attack</h2>
+<p>Recently, I received a phishing email that looked mysteriously similar to the legitimate one above. It came from <tt>chase.online@chasee.com</tt>, which is obviously phoney, but would be easy to miss. The email itself claimed that there is increased error activity with my account and, like the <i>real</i> email case above, prompts me to open an attached HTML file in a browser to continue.</p>
+<p>Thankfully, I know better than that.</p>
+<p>I instead downloaded the HTML file to disk and pulled it up in a code inspection window. Instead of a raw HTML file, I was greeted with a script executing:</p>
+<p><code><br />
+window.location="data:text/html;base64,PCFET0NUWVBFIEhUTUwg...<br />
+</code></p>
+<p>The page dumps a massive Base64-encoded blob into the address bar. Decoding the obfuscated script directly <i>does</i> yield real HTML, but with a couple of ... unexpected additions.</p>
+<p>The code itself includes Chases's actual scripts, images, and even links to legitimate "Report Abuse" pages just like a normal Chase login page. However, it also include yet another obfuscated script that adds a custom form action to the login page:</p>
+<p><code><br />
+document.write(unescape('%3C%66%6F%72...<br />
+</code></p>
+<p>Once de-obfuscated, it's apparent that this is the markup for a real Chase login page, with the <tt>action</tt> attribute of the submission form redirected to an attacker's server.</p>
+<pre><code>
+form action="http://191..." class="button" method="post" name="submit" id="submit">
+</code></pre>
+<p>If an unwary user were to <i>actually</i> open this page in their browser, they would see a Chase-branded page asking for them to confirm:</p>
+<ol>
+<li>Account login information</li>
+<li>Contact information</li>
+<li>Card information</li>
+<li>Routing and account number information</li>
+<li>Even their SSN, driver's license, mother's maiden name, and DoB</li>
+</ol>
+<p>All of this data is submitted <i>not</i> to Chase, but to the attacker's own server! The attacker's server, after successfully phishing the data, redirects to Chase's online login page, so it looks like nothing at all is going on. It's a horrible attack on users who have been, unfortunately, trained by <i>Chase</i> to trust the validity of attachments asking for authentication information.</p>
+<h2>Protecting Yourself</h2>
+<p>Unless Chase takes a hard stand at never asking customers to log in via HTML pages emailed directly from staff, protecting average users from phishing will be incredibly difficult. There are few, if any, broad steps the community at large can take. However, there are several things <i>you</i> can do to ensure you never fall into a trap like this yourself.</p>
+<p>First and foremost, <i>never</i> open webpages attached to emails. Even if you know the person who sent them and trust that everything is OK.</p>
+<p>Never give up your account information to an online page someone else has asked you to fill out. Unless you've requested the form yourself or initiated the submission, always assume that an illegitimate attacker is on the other side of the site.</p>
+<p>If anyone from your bank ever contacts you asking for information, refuse to comply. Never give out your data in response to a request. If they really do need your information, tell them you'll submit it through proper, direct channels instead. Go to https://chase.com and log in to the <i>real</i> Secure Email center and draft your own message conveying the data. Don't <i>ever</i> click a link provided by someone else - not even me - to get there. Literally type the address in your browser and go there directly.</p>
+<p>This extends to phone calls. Never provide your information to anyone over the phone unless <i>you</i> initiated the phone call. If Chase (or anyone) calls you asking for data, hang up and instead call the number on the back of your debit card or on your account statement. It's next to impossible to trust that a stranger calling (or emailing) you is really who they say they are.</p>
+<p>Finally, report <i>every violation you see.</i>[ref]I reported both the legitimate emails <i>and</i> all of the phishing attempts I've received to Chase. To date, this is several dozen reports over two years with zero followthrough. Reports usually receive a "Thank you" and a later "You're right, we didn't send this" from customer support. The thanks feels good, but this does nothing to protect less tech-savvy customers from being targeted and exploited.[/ref] Every time you get a bogus email or phone call from someone trying to steal information, report it. Every time you get a <i>legitimate</i> email or phone call from someone asking for your information, report it. Institutions with whom we trust our personal data should know better than to imitate identity thieves when they communicate. Unfortunately, it's up to <i>us</i> to keep them honest.</p>

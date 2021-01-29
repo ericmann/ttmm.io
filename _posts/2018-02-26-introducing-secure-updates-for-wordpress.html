@@ -1,0 +1,127 @@
+---
+layout: post
+title: Introducing Secure Updates for WordPress
+date: 2018-02-26 05:00:53.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Technology
+tags:
+- security
+- WordPress
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _edit_last: '2'
+  _yoast_wpseo_content_score: '30'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _yoast_wpseo_focuskw_text_input: secure updates for wordpress
+  _yoast_wpseo_focuskw: secure updates for wordpress
+  _yoast_wpseo_linkdex: '63'
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/introducing-secure-updates-for-wordpress/"
+excerpt: 'Today I introduce the a new plugin that provides secure updates for WordPress:
+  DGXPCO.'
+---
+<p><!-- wp:paragraph {"align":"center"} --></p>
+<p style="text-align: center;"><em><a href="#announcement">Skip to the announcement ...</a></em></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+One of the earliest conversations I had in the WordPress community almost saw me immediately leave and never return. I'd released some code in a few plugins and was just finally starting to get ramped up as a (very sub-par) developer. I hung around on IRC, subscribed to the various mailing lists, and tried my hardest to learn, improve, and contribute.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Then someone pointed out that I'd never internationalized my plugins. Then they proceeded to go on a rant about how any developer who <em>didn't</em> internationalize their UI was doing a disservice to the community and was betraying their personal bias against and hatred towards non-English speakers.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+I was horrified.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+I came to the development world from marketing. I used Windows. I was very comfortable with graphical (often skeuomorphic) interfaces and could work my way around things easily with a mouse. I didn't understand the command line. I <em>barely</em> understood code. It took me months (and several misfires) just to learn enough Subversion to get my plugins out in the first place.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+All of the tools for internationalizing a plugin were, at the time, heavy into a command line that I didn't understand and couldn't use.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+I took a break and, ironically, this experience is what started me blogging. My break let me get some distance and gave me the chance to connect with other developers who <em>did</em> understand the command line tools. They taught me things I didn't know and I came back a much stronger dev.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+One of <a href="https://ttmm.io/tech/how-to-publish-a-wordpress-plugin-subversion/">my most popular blog posts</a> today is an old introduction I wrote for developers who wanted to use GUI tools to publish a WordPress plugin. Honestly, though, I wrote the walk through more to remind myself how to do things than anyone else ... and that's how I got started with most of my blogging work.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+A topic I've focused on more recently has been cryptography. More specifically, using cryptographic tools to ensure the integrity of various packages and messages. It's a heady topic, and a lot of the tools available for end users are painfully focused on power users who fully understand command line utilities.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+I want to change this.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --><br />
+<a name="announcement"></a></p>
+<h2>Code Signing</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --><br />
+There's been a lot of talk about the security of the WordPress updater. Primarily, the updater checks the MD5 hash of a package's contents before proceeding to ensure its integrity, but that's the <em>only</em> test it runs.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Consider what might happen if a malicious party were able to somehow breach the WordPress.org update server and present their own download package. This could potentially inject malicious code onto more than a quarter of the Internet all at once! Considering such a breach has happened with a few plugins in the past, it's not outside the realm of possibility.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Now imagine if a hacker were able to drop themselves somehow between your server and the WordPress.org update system. Such an attacker could impersonate the updater and serve you whatever package they want. Your system wouldn't know the difference.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+<a href="https://ttmm.io/tech/world-domination-wordpress-security/">In the middle of last year</a>, I said I was working on a solution to bring formal code signing to WordPress. I held off for a while because it looked like the WordPress community might bring this feature to core.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+That didn't happen.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+So today, I'm proud to announce the release of <a href="https://wordpress.org/plugins/dgxpco/">DGXPCO: Digital Guarantees for eXplicitly Permitted Core Operations</a>. This plugin integrates directly with the WordPress core updater and <em>requires</em> that any core package have a valid signature in order for installation.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+For the moment, I am personally signing the contents of every core package distribution and maintaining the collection of signatures <a href="https://github.com/DisplaceTech/release-hashes">in a separate repository</a> that I serve through a secure CDN powered by Amazon Web Services.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Every WordPress release includes both the core download for<em>new</em> installations as well as "partial" upgrade packages for anyone coming from an older install. I'm signing <em>all</em> of these and keeping a record in one spot so that everything from new installs to partial minor updates to major updates can benefit from the added security of checking a signature.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+The signatures are leverage an Ed25519 public/private keypair and <a href="https://github.com/jedisct1/libsodium">Libsodium</a> to sign the files' contents. I keep the <em>private</em> key offline, but have published the <em>public</em> key so everyone can keep an eye on things. <em>This key will not change</em>, and if anything is signed by a different key, you can be sure something is amiss.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+That public key, encoded in Hex, is <strong>5d4c696e571307b4a47626ae0bf9a7a229403c46657b4a9e832fee47e253bc5b</strong>.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Every commit to the release hashes repository is also signed with <a href="https://keybase.io/eamann">my personal PGP key</a> so you can verify that I'm the one who added the new code.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Next Steps</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --><br />
+Is this fool-proof? Probably not. It is, however, a huge step forward in terms of WordPress security. There's quite a bit more we can do, and I want to outline some of my grand plan here.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+The first release of the plugin checks signatures upon update only, but WordPress will still tell you about an update even if the signature check fails. <strong>The next release</strong> will not even surface an update unless a signature is available.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+At the moment, this plugin only secures WordPress core updates. <strong>A future release</strong> will also secure plugin updates as well, in an opt-in fashion. I'll start by securing <em>my own</em> plugins as a proof of concept, then allow for other developers to opt-in to the stronger security moving forward.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+Today, I am the only one allowed to sign release packages. This is OK for the short term, but is not a sustainable model. <strong>As I prove out the update system</strong>, I'll also begin adding sets of public keys that are scoped to specific sets of packages. This will, for example, allow me to whitelist a small number of trusted developers to also sign core packages. It might also empower plugin developers to sign their own releases (but not anyone else's).<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+At the end of the day, I'm looking now for feedback. We don't have this functionality in WordPress core <em>yet</em>, but DGXPCO is evidence that we can add it. We should add it. So let's work on the feature together.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+As I mentioned in my initial post last year, if you want to help with this endeavor, please let me know! If you want to contribute financially,<a href="https://www.paypal.me/eam">donations are always gladly accepted</a>.<br />
+<!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --><br />
+This is the <em>first</em> project I'm launching under the name of my new WordPress-related business, <a href="https://displace.tech/">Displace Technologies, LLC</a>.<br />
+<!-- /wp:paragraph --></p>

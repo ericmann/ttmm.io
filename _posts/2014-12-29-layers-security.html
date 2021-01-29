@@ -1,0 +1,54 @@
+---
+layout: post
+title: Layers of Security
+date: 2014-12-29 08:00:43.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_mess: There are many layers to any notion of security. How well do you understand
+    each?
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Layers of Security
+  _yoast_wpseo_metadesc: There are many layers to any notion of security. How well
+    do you understand each?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/--
+  _wpghs_github_path: _posts/2014-12-29-layers-security.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/layers-security/"
+excerpt: There are many layers to any notion of security. How well do you understand
+  each?
+---
+<p>A few years ago, I was enthralled by the Dan Brown thriller, <em>Digital Fortress</em>. To be honest, that's actually the book that spiked my interest in security and cryptography in the first place.</p>
+<p>One of the key points of the novel has the heros racing against the clock to crack a worm placed by a former NSA engineer before outside hackers breach the final layer of security around the network. At one point they even visualize the network's security as a layer of concentric rings being constantly attacked by "snakes" from the outside.</p>
+<p>A great visualization for a sci-fi thriller. Not so much for a book explaining digital security.</p>
+<h2>Cybersecurity</h2>
+<p>This year I started challenging myself by taking a Coursera series on cybersecurity. It's a combination of four classes and a capstone to pull everything together. The courses themselves cover:</p>
+<ul>
+<li>Usable security (i.e. making secure systems not easily compromised by lazy users)</li>
+<li>Software security (understanding things like memory leaks and injection attacks)</li>
+<li>Cryptography (explaining the core principles of secure communication)</li>
+<li>Hardware security (explaining and protecting against certain side-channel attacks)</li>
+</ul>
+<p>It's been a fantastic run thus far. Challenging, engaging, enlightening.</p>
+<p>Among other things, the courses have shown me the different <em>layers</em> of security present in modern web applications and how to better understand and work with each.</p>
+<p>Much of the software that runs the framework of my sites is built on top of C and C++. There are certain aspects to these languages that make them ideal for such a purpose - namely, speed. There are other aspects that make them somewhat dangerous to use in a distributed context. Take for example the recent <a href="http://heartbleed.com/">Heartbleed</a> memory overflow attack. Or the <a href="http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29">Shellshock</a> code injection attack.</p>
+<p>Dealing with networked software means we also have to understand and protect against untrusted data introducing potential side-effects; we have to <em>sanitize</em> data inputs to prevent remote code/data injection.</p>
+<p>The fact that products are used by humans means we need to code with the end-users in mind. A system that forces users to change their passwords to a unique, "strong" password every three months might <em>feel</em> secure; the chances administrators will re-use passwords across applications (or render them insecure through some other means) are so high as to destroy any security this might present.</p>
+<p>My only complaint about these courses thus far is that we haven't gone far enough into network security. Every course has explicitly stated that students aren't expected to understand networking and just teaches the primitives involved with the various topics. To be sure this is very useful, but in a world of increasingly remote communication, it's not going to continue to take us that far.</p>
+<p>There are many layers to any notion of security. How well do you understand each?</p>

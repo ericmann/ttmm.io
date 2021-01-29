@@ -1,0 +1,63 @@
+---
+layout: post
+title: Vagrant, Hyper-V, Dynamic Hosts
+date: 2014-05-12 08:00:56.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Hyper-V
+- Vagrant
+- Windows
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1399888908;s:6:"status";s:6:"pushed";}
+  _yoast_wpseo_title: Vagrant, Hyper-V, Dynamic Hosts
+  _yoast_wpseo_metadesc: 'Solving the two outstanding issues I had running VVV on
+    Hyper-V: symlinks and dynamic hosts.'
+  _wpas_mess: 'Windows users can hack WordPress with the best of ''em. Resolving the
+    final 2 issues with VVV and Hyper-V:'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/uo
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409874255;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6329;}i:1;a:1:{s:2:"id";i:6414;}i:2;a:1:{s:2:"id";i:6123;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '18'
+  keen_postview_count_this_30_days: '35'
+  _wpghs_github_path: _posts/2014-05-12-vagrant-hyper-v.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/vagrant-hyper-v/"
+excerpt: 'Solving the two outstanding issues I had running VVV on Hyper-V: symlinks
+  and dynamic hosts.'
+---
+<p>Not that long ago, I moved my development setup from one Windows machine to another.[ref]Don't worry, I still use my Mac on a regular basis as well. I value my ability to work across and between both systems, so while my Mac is my primary out-of-office machine, I use a Windows PC regularly in my home office.[/ref] Since I wanted the ability to easily develop for Windows Phone and WinRT, I made sure to set up Windows 8.1 Pro and its built-in Hyper-V provider.</p>
+<p>This also meant I had to move my <a title="VVV" href="https://github.com/Varying-Vagrant-Vagrants/VVV">VVV</a> setup away from VirtualBox and on to Hyper-V. <a title="Hyper-VVV on Windows" href="http://eamann.com/tech/hyper-vvv-windows/">Doable</a>, but with a couple of issues.</p>
+<h2>Directory Mapping</h2>
+<p>The first issue I faced was with symlinks.</p>
+<p>For several of my projects, I set up a unit test repository that includes the main project as a Git submodule. This test repo is entirely separate from WordPress, so I need to symlink the main project to either the [cci]/themes[/cci] or [cci]/plugins[/cci] directory to get things to work right.</p>
+<p>In my old VirtualBox setup, this involved creating a symlink inside the virtual machine itself. The link showed as broken in Windows, but was traversed properly within the host. A minor inconvenience, but it worked.</p>
+<p>Once I swapped to Hyper-V, though, the link was entirely broken.</p>
+<p>The Hyper-V setup with Vagrant uses <a title="Samba" href="https://www.samba.org/">Samba (SMB)</a>, a protocol fairly similar to NFS, to mount and share host directories within the guest. <a title="Symlink attack" href="http://www.samba.org/samba/news/symlink_attack.html">For security reasons</a>, Samba explicitly disables symlinks. For a few days, I thought I was sunk.</p>
+<p>Then I remembered <a title="Hard Links and Junctions" href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa365006(v=vs.85).aspx">how directory junctions work</a> in Windows and tried setting the link through the <em>host</em><em>'s </em>file system.</p>
+<p>Voila! Success. Paths within the guest OS now appear as expected, and Linux has no idea it's following a phony link and everyone's happy.</p>
+<h2>Dynamic Hosts File</h2>
+<p>In a vanilla VVV setup, all of your new domains are mapped to a static IP address - hard coded into the Vagrantfile and pretty easy to remember. If you have <a title="Vagrant::Hostsupdater" href="https://github.com/cogitatio/vagrant-hostsupdater">Vagrant's Hostsupdater</a> plugin installed, then these domains (and the static IP they map to) are all automatically added to your system's [cci]hosts[/cci] file upon starting the machine.</p>
+<p>Hyper-V, however, does things a bit differently.</p>
+<p>While creating, the system will ask you which network adapter to use for the virtual machine (unlike VirtualBox, it doesn't create its own adapter). If you select your real adapter - the only way for the guest to access the network - then your virtual machine will be granted a <em>dynamic</em> IP address on your network.</p>
+<p>The machine will work just fine. You can add entries to your hosts file just fine. But the Hostsupdater plugin will add a bunch of entries for the (now invalid) hard-coded IP address in the Vagrantfile.</p>
+<p>Luckily, the plugin is written in Ruby (a language I know and love), so I was able to hack around a bit to get the plugin to work with Hyper-V's dynamic IP address. <a title="Allow Dynamic IP Addresses #41" href="https://github.com/cogitatio/vagrant-hostsupdater/pull/41">A pull request I submitted</a> last week makes my modifications available to everyone.</p>
+<h2>VVV Works with Windows</h2>
+<p>The WordPress community tends to come down pretty hard on developers using Windows. Too often the answer to "how do I set up X on Windows" is "go buy a Mac, then come ask again."</p>
+<p>Hopefully my <a title="Vagrant and Windows" href="http://eamann.com/tech/vagrant-windows/">initial work with Windows, Vagrant, and VirtualBox</a> helps to solve some of these issues. If you'd rather work with Windows' native virtualization (Hyper-V), then this article and <a title="Hyper-VVV on Windows" href="http://eamann.com/tech/hyper-vvv-windows/">my previous walk-through</a> should help get you started.</p>
+<p>Let's stop bickering over our toolkits and go build something awesome!</p>

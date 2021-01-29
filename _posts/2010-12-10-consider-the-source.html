@@ -1,0 +1,46 @@
+---
+layout: post
+title: Consider the Source
+date: 2010-12-10 08:00:15.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/cu
+  wpbook_fb_publish: 'yes'
+  _edit_last: '2'
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2010-12-10-consider-the-source.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/consider-the-source/"
+---
+<p>Open source is fantastic because you can build upon the code of others.  It's also horrible because you can build upon the code of others.  This means someone can take a well-developed plug-in, make one or two minor changes, and redistribute an almost identical system to yours while taking all of the credit.  So, as <a href="http://www.bloggingpro.com/archives/2010/12/07/why-wordpress-bloggers-need-to-choose-premium-plugins-over-free/#comment-235544">many of us have said</a> over the past week, whenever evaluating any open source system (whether it's free or paid), you need to consider the source.</p>
+<p>Do you know of the developer?  Do you know of the distributor?  Have you seen good work from them in the past?  Do you <em>trust</em> them?</p>
+<p>Yesterday, a well-known theme developer named <a href="http://www.chipbennett.net/">Chip Bennett</a> (<a href="http://twitter.com/#!/chip_bennett/status/12902307389771777">@chip_bennett</a>) discovered that someone was distributing his themes with an embedded worm.  I was quick to tear the worm apart and figure out how it worked, so was <a href="http://otto42.com/8m">one of WordPress' core developers</a>.</p>
+<h2>The Website</h2>
+<p>The website distributing the hacked theme is called top-themes.com.  A deep <a href="http://www.fabulous.com/whois/index.htm?q=top-themes.com">whois</a> search shows the domain is registered to a developer in the Ukraine who, as far as I can tell, has no relation to the WordPress project.  However, he is distributing several themes from well-known WordPress developers on his site.</p>
+<h2>The Worm</h2>
+<p>Every one of the themes on this site comes pre-installed with a worm that's very difficult to find.  This worm is a ZIP file that's hidden inside the theme's <em>screenshot.png</em> file.  The themes' <em>functions.php</em> file is appended with a function that splits the actual screenshot image apart from the ZIP file, expands the contents of the archive, and places them inside a separate directory inside your theme.</p>
+<p>Then, the worm adds some code to the top of the <em>functions.php</em> file to load a file from this new directory.  Finally, having set up your site to automatically launch the files it contained, the worm removes itself from your site.</p>
+<h2>The Backdoor</h2>
+<p>The files the worm placed in your site expose a PHP shell utility to the author of the worm.  They can now log in to a backdoor of your site using a username and password known only to them.  It gives the user free reign over your files, your settings, and your content.  They can do whatever they want and leave you to clean up afterwards.</p>
+<p>The backdoor files also automatically contact the worm author to let you know there's a site open and ready to be violated.</p>
+<h2>The Point</h2>
+<p>Chip builds great themes and websites.  As a true open source contributer, he gives away much of his work for free.  Another developer has taken advantage of Chip's hard work and is using it to distribute insecure, harmful systems that, sadly enough, still bear Chip's name as the developer.</p>
+<p>It's hack developers like those at top-themes.com that give free WordPress systems a bad name.  But keep in mind that several paid systems also have worms.  I've had to remove quite a few from client sites, so paid-versus-free is <em>not</em> a good indicator of the safety of any one plug-in or theme.</p>
+<h2>Protect Yourself</h2>
+<p>To protect your site, always always <em>always</em> verify that your download is actually coming from where it's supposed to.  If I wrote it, it will only be available on my website, from the official WordPress repositories, or from projects I manage on Google Code.  If you find my system on a website run by a guy in Ukraine, it might have a worm.  Just stop there and download it somewhere else.</p>
+<p>The only real way to combat hacks is to ignore them.  Download from legitimate sources, and <em>consider the source</em> you're downloading from.  Make sure, whether it's a free or paid solution, that you're getting the genuine article.</p>

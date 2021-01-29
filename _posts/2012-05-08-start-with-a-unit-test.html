@@ -1,0 +1,199 @@
+---
+layout: post
+title: Start with a Unit Test
+date: 2012-05-08 09:00:18.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- C#
+- Tutorials
+tags:
+- Unit Test
+meta:
+  yourls_shorturl: http://eam.me/hj
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: unit test
+  _yoast_wpseo_metadesc: Before you write new code, you should always write a unit
+    test first. It makes development so much easier!
+  _yoast_wpseo_linkdex: '33'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_focuskw_text_input: unit test
+  _yoast_wpseo_content_score: '30'
+  _wpghs_github_path: _posts/2012-05-08-start-with-a-unit-test.md
+  _publicize_twitter_user: "@EricMann"
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tutorial/start-with-a-unit-test/"
+---
+<p>Not everyone is a fan of <a title="Test Driven Development" href="http://c2.com/cgi/wiki?TestDrivenDevelopment">test-driven development</a>.</p>
+<p>Writing unit tests for your code can be a&nbsp;laborious&nbsp;task, and it has no immediate benefit to your customers. &nbsp;So why waste any time writing the tests, right?</p>
+<p>This past week, a colleague of mine summed up the problem pretty well:</p>
+<blockquote><p>I've finished writing the code for that feature. &nbsp;Now I just need to take some time to sit down and write some unit tests for it.</p></blockquote>
+<p>[caption id="attachment_245" align="alignright" width="224" caption="Unit Test Results in Visual Studio"]<img src="{{ site.baseurl }}/assets/2012/05/unittestrun-224x300.png" alt="" title="Unit Test Run" width="224" height="300" class="size-medium wp-image-245" />[/caption]He's not following test-<em>driven</em>&nbsp;development. &nbsp;Instead, his tests come in as an afterthought. &nbsp;Actually, most of us code this way.</p>
+<p>We write a chunk of code to perform a task. &nbsp;Then a customer asks for a new feature, so we write some more code. &nbsp;Then a new hire comes in to the company demanding we take some time to go back and document our existing code base with unit tests.</p>
+<p>It's not fun. It's not&nbsp;glamorous. &nbsp;It feels like a waste of time.</p>
+<p>But I still feel it's the way things <em>should</em>&nbsp;be done.</p>
+<h2>The Advantage</h2>
+<p>If you write your unit tests first, it actually saves you time.</p>
+<p>Now, instead of a long specifications document written in English and littered with biases and assumptions about functionality, you have a concise definition of what the code in your application must do.  It doesn't need to <a title="How a Web Design Goes Straight to Hell" href="http://theoatmeal.com/comics/design_hell">"flash," "pop," or "zing."</a>  It just needs to pass the test.</p>
+<p>If you just start writing code, I guarantee the client or your boss will come back halfway through the project and change the requirements on you.  Even if they promise not to, they will.</p>
+<p>Perceived needs change.  Requirements change.  If they do, write another test to include the new conditions – as a developer, your <em>only</em> concern should be writing code that passes the test.</p>
+<h2>Case Study</h2>
+<p>I wrote some code for a custom content management system.  Since I didn't want to be solely responsible for user management, I added some dynamic user creation capabilities.  I wrote my tests, I wrote code that passed the tests, and I thought everything was peachy.</p>
+<p>This is the basic function that creates a new user account on the server.  It takes in an object that contains the username, their password, and their email address.  It returns a JSON object containing all of the users in the database.</p>
+<pre><code lang="csharp">
+public JsonResult CreateUser(PostedUserModel post)
+{
+  if (post == null) throw new ClientException("Invalid data.");
+  MembershipCreateStatus status;
+  var user = Membership.CreateUser(
+    post.UserName, 
+    post.PlainTextPassword, 
+    post.Email, 
+    post.PasswordQuestion, 
+    post.PasswordAnswer, 
+    true, 
+    out status);
+
+  // If the account wasn't created, we need to throw an 
+  // exception to alert the user.
+  if (user == null)
+  {
+    // Default error message
+    string errorMessage = "Error: Unable to create user.";
+    switch (status)
+    {
+      case MembershipCreateStatus.DuplicateEmail:
+        errorMessage = "Email address is in use.";
+        break;
+      case MembershipCreateStatus.DuplicateUserName:
+        errorMessage = "Username is in use.";
+        break;
+      case MembershipCreateStatus.InvalidEmail:
+        errorMessage = "Email address is invalid.";
+        break;
+      case MembershipCreateStatus.InvalidPassword:
+        errorMessage = "Password is invalid.";
+        break;
+    }
+
+    throw new ClientException(errorMessage);
+  }
+  Roles.AddUserToRole(user.UserName, post.UserRole);
+  return this.Json(this.Users);
+}
+</code></pre>
+<p>Then the QA team kicked the project back.</p>
+<p>It turned out, you could create a user with all sorts of invalid characters in their name.  My function allowed for [cci]test\user[/cci], [cci]test<script>user[/cci], and quite a few other names that should never be used.</p>
+<p>If I were the only one using this function, this wouldn't be an issue.  But as I open the new administrative features to a team of 40+ it becomes a <em>major</em> problem.</p>
+<p>To fix this, I first wrote a unit test to check that my method returned an error if any of these invalid characters were used:</p>
+<pre><code lang="csharp">
+[TestMethod]
+public void CreateUser_Requires_Valid_Username()
+{
+  PostedUserModel post = new PostedUserModel();
+  List<string> userNamesToTest = new List<string>()
+  {
+    @"test|",  // Test | character
+    @"test/",  // Test / character
+    @"test\",  // Test \ character
+    @"test?",  // Test ? character
+    @"test&lt;",  // Test &lt; character
+    @"test>",  // Test > character
+    @"test'",  // Test ' character
+    @"test"""  // Test " character
+  };
+
+  foreach (string userName in userNamesToTest)
+  {
+    try
+    {
+      post.UserName = userName;
+      var result = ac.CreateUser(post);
+    }
+    catch (ClientException clientException)
+    {
+      Assert.AreEqual(
+        "Username contains invalid characters.", 
+        clientException.Message);
+    }
+  }
+}
+</code></pre>
+<p>What do you know?  My function now <em>fails</em> the test–which is exactly what we want it to do.</p>
+<p>Armed with this new end-user requirement, I was able to go back in to my code and refactor it.  Now, it checks for invalid characters and returns an error if the username is invalid:</p>
+<pre><code lang="csharp" lines="61">
+public JsonResult CreateUser(PostedUserModel post)
+{
+  if (post == null) throw new ClientException("Invalid data.");
+  MembershipCreateStatus status;
+  MembershipUser user;
+  List<char> invalidCharacters = new List<char>() { 
+    '|', '/', '&#92;', '?', '&lt;', '>', '\'', '"'
+  };
+
+  if (invalidCharacters.Any(s => post.UserName.Contains(s)))
+  {
+    user = null;
+    status = MembershipCreateStatus.InvalidUserName;
+  }
+  else
+  {
+    user = Membership.CreateUser(
+      post.UserName, 
+      post.PlainTextPassword, 
+      post.Email, 
+      post.PasswordQuestion, 
+      post.PasswordAnswer, 
+      true, 
+      out status);
+  }
+
+  // If the account wasn't created, we need to throw an 
+  // exception to alert the user.
+  if (user == null)
+  {
+    // Default error message
+    string errorMessage = "Error: Unable to create user.";
+    switch (status)
+    {
+      case MembershipCreateStatus.DuplicateEmail:
+        errorMessage = "Email address is in use.";
+        break;
+      case MembershipCreateStatus.DuplicateUserName:
+        errorMessage = "Username is in use.";
+        break;
+      case MembershipCreateStatus.InvalidEmail:
+        errorMessage = "Email address is invalid.";
+        break;
+      case MembershipCreateStatus.InvalidPassword:
+        errorMessage = "Password is invalid.";
+        break;
+      case MembershipCreateStatus.InvalidUserName:
+        errorMessage = "Username contains invalid characters.";
+        break;
+    }
+
+    throw new ClientException(errorMessage);
+  }
+  Roles.AddUserToRole(user.UserName, post.UserRole);
+  return this.Json(this.Users);
+}
+</code></pre>
+<h2>What We Gain</h2>
+<p>Unit testing makes code more robust.  Not only does it function, but other developers can look at even the most complex code and know exactly what it is and is not supposed to do.</p>
+<p>If requirements change down the road, just write a new test and refactor your code to pass.  Having a large suite of unit tests also insulates you from inadvertent breaking changes down the road–run all of your unit tests after every change.  If any fail, you broke something.</p>
+<p>If you run into a bug while using the application, write a new test to reproduce the situation.  Refactor your code to pass, and you've fixed the bug.  Not only is it fixed now, but when you release the next version in the future, you can automatically re-test to make sure the bug didn't reappear.</p>
+<p>What other benefits can be gained by starting development with a unit test?</script></p>

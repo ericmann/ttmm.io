@@ -1,0 +1,52 @@
+---
+layout: post
+title: How Local Development has Failed
+date: 2014-07-02 08:00:16.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Network
+- offline first
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: How Local Development has Failed
+  _yoast_wpseo_metadesc: I've discovered that many of the tools and tricks we're using
+    to optimize websites are making it impossible to work truly offline.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/w2
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408790313;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6329;}i:1;a:1:{s:2:"id";i:5905;}i:2;a:1:{s:2:"id";i:6272;}}}}
+  _wpghs_github_path: _posts/2014-07-02-local-development-failed.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/local-development-failed/"
+excerpt: I've discovered that many of the tools and tricks we're using to optimize
+  websites are making it impossible to work truly offline.
+---
+<p>I'm a huge proponent of working <a title="Network Dependency" href="http://eamann.com/tech/network-dependency/">unplugged</a>. I use Vagrant for my local development environment, which gives me the ability to work without running either a remote server or (usually) a network connection.</p>
+<p>Unfortunately, I've discovered that many of the tools and tricks we're using to optimize websites are making it impossible to work truly offline.</p>
+<h2>Network Dependency</h2>
+<p>We had some network issues during WordCamp Romania which rendered the Internet inaccessible to my machine for a number of hours. When I tried to take advantage of some downtime to hack on code, I realized a significant issue:</p>
+<p>Even on my local system, WordPress was requesting a <em>ginormous</em>[ref]Technical term. Look it up.[/ref] number of external resources. Both the front-end and the admin would sit and spin for up to 10 minutes before the remote requests all timed out and the page loaded.</p>
+<p>I quickly realized that, even though I used a local Vagrant box for development, my local development was <em>still</em> dependent on an active network for some sites.</p>
+<h2>The Offenders</h2>
+<p>Every image loaded through a CDN fails when running things locally. Every script include from sources like Google fail to download. Any UI logic that depends on the callbacks triggered by these scripts fails.</p>
+<p>Advertising fails. User tracking fails. Social network integrations fail. <a title="Server-Side Device Detection With JavaScript" href="http://www.smashingmagazine.com/2014/07/01/server-side-device-detection-with-javascript/">Server-side device optimizations</a> fail.</p>
+<p>The majority of the tricks we use to load a site quickly - offloading assets to a CDN, lazy-loading scripts based on the callbacks fired by other scripts, etc - fail to take into account what happens when a site is partially offline. Sure, your visitor will likely not run into this problem, but there are situations that resemble working locally.</p>
+<p>I once had a major client experience massive outages from <em>just</em> their CDN. Accessing the main site worked fine, but the DNS mappings for their CDN domains were broken so a total of zero assets loaded on their site. It was a horrible experience.</p>
+<h2>A Way Forward</h2>
+<p>The first tool I turned to in attempts to combat this problem is the <a title="Airplane Mode" href="https://github.com/norcross/airplane-mode">Airplane Mode plugin</a> for WordPress by <a title="Andrew Norcross" href="https://twitter.com/norcross">Andrew Norcross</a>. It's a fantastic plugin, but only helps with the <em>serve</em><em>r</em> side. The project I was working with uses several cron jobs to sync remote data, and this plugin was invaluable to cleaning up PHP processes on the back-end.</p>
+<p>But the front end is still pulling in remote scripts/images/assets that are inaccessible over a compromised network.</p>
+<p>Projects like <a title="Hoodie" href="http://hood.ie/">Hoodie</a> help promote an offline-first development experience by syncing data to local storage so there's no UX interruption. Unfortunately, this tool only addresses <em>data</em>, not things like script and image tags and asynchronous operations.</p>
+<p>Is there a way forward? Likely, but it will probably take the format of a browser plugin that detects network outages and responds with similar or cached versions of the unavailable scripts. If such a tool existed, <em>true</em> offline development would be possible - though it would come with its own set of design challenges.</p>

@@ -1,0 +1,60 @@
+---
+layout: post
+title: Surprising Search Results
+date: 2014-06-06 08:00:28.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- logging
+- search
+- security
+meta:
+  eamann: '1'
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _genesis_custom_body_class: eamann
+  _genesis_custom_post_class: eamann
+  _yoast_wpseo_title: Surprising Search Results
+  _yoast_wpseo_metadesc: I found out that my top referrer so far this week is the
+    search result page for "decrypt wordpress password hash online." What's going
+    on?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vd
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409755637;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6091;}i:1;a:1:{s:2:"id";i:5826;}i:2;a:1:{s:2:"id";i:5518;}}}}
+  _wpghs_github_path: _posts/2014-06-06-surprising-search-results.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/surprising-search-results/"
+excerpt: I found out that my top referrer so far this week is the search result page
+  for "decrypt wordpress password hash online." What's going on?
+---
+<p>A few weeks ago, a typo in a file on a client side resulted in every unique URL request being logged to the database.</p>
+<p>This included broken post URLs, every paginated tag archive page, search results listings, and even 404 errors. It was a colossal mess, but thanks to the way page caching had been set up, it didn't impact the performance of the site's front end.</p>
+<p>It <em>was</em> an educational opportunity, though. In addition to our regular page view counts, we now had a discrete log of every URL visitors <em>tried</em> to use on the site. Some were innocent mistakes - possibly due to line breaks in emails or text documents breaking links. Others were due to code errors where characters were double escaped[ref]Or triple, or quadruple escaped. A few URLs even appeared to escape a character up to 15 times. It was pretty funny.[/ref]</p>
+<p>Some logged URLs revealed <strong>active attempts to exploit vulnerabilities in the site</strong>.</p>
+<h2>Someone, somewhere wants to kill your site</h2>
+<p>We knew the site had come under attack in the past. We knew it was attacked daily based on traffic logs on the server.[ref]Our CDN alone showed several failed DOS attempts against large media assets.[/ref] We didn't really understand the <em>scale</em> at which the site was being targeted, though.</p>
+<p>To be clear, the site runs on WordPress and is completely up to date (including all plugins and libraries bundled with the theme). At the moment, there are no known exploits for the combination of software running on the server.</p>
+<p>But that doesn't stop hackers from trying.</p>
+<p>I saw attempts to leverage the old Tim Thumb vulnerability - with no Tim Thumb on the server (vulnerable or otherwise), I found this highly amusing. There were attempts to access the admin account of some ASPX app allegedly installed on the server - we're running Linux, and there's not a single .aspx file on the server to begin with.</p>
+<p><a title="xkcd: Exploits of a Mom" href="http://xkcd.com/327/">Little Bobby Tables</a> even made a cameo.</p>
+<p>The lesson here: there is always <em>someone</em> who will try <em>something</em> to break in to your site.</p>
+<h2>Questionable search history.</h2>
+<p>I write about WordPress a lot, and I often find myself defending it against its various detractors.  Yes it's secure. Yes it's scalable. Yes it can run an enterprise-level infrastructure. Yes it can do more than host cat pictures.</p>
+<p>Working with WordPress and security has led me to one of my other passions - digital security and safety. I'm a huge proponent of data encryption, and I love to write articles explaining both the how and the why behind various cryptographic systems. Lately, I've written a few articles specific to hashing - which, to be clear, is a <em>one way algorithm</em>. Hashed data cannot be restored to its unhashed state.</p>
+<p>So when I found out that my top referrer so far this week is the search result page for "decrypt wordpress password hash online," I had to ask myself ... what's going on?</p>
+<p>It's no surprise there are actually sites wholly dedicated to helping people[ref]I'm being explicitly vague here. "People" could be hackers bent on wreaking havoc online. It could also be honest business owners who forgot the password to their site. Either way, "people" are trying to bypass your security.[/ref] crack various hashing algorithms. Luckily, most of the automated tools can only handle unsalted phrases - so if you haven't generated random security salts for your WordPress site, <a title="WordPress Secret Key" href="https://api.wordpress.org/secret-key/1.1/">do so now</a>.</p>
+<p>My overall point here is not that WordPress is unsafe. Quite the contrary, WordPress is very safe and secure.</p>
+<p>Today.</p>
+<p>My point is that, also today, there are countless individuals trying to compromise that security. <em>Tomorrow</em> could yield a completely different story. Stay on top of the game, keep your site up-to-date (and backed up regularly), and help to thwart this constant threat before it becomes an active concern.</p>

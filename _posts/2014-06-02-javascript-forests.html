@@ -1,0 +1,70 @@
+---
+layout: post
+title: JavaScript and Smart Forests
+date: 2014-06-02 08:00:27.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Arduino
+- education
+- javascript
+- Raspberry Pi
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1401696055;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: JavaScript and Smart Forests
+  _yoast_wpseo_metadesc: I've come up with a fun way to teach both programmable hardware
+    and forest ecology - but I need your help to flesh it out!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/v9
+  _wpghs_github_path: _posts/2014-06-02-javascript-forests.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/javascript-forests/"
+excerpt: I've come up with a fun way to teach both programmable hardware and forest
+  ecology - but I need your help to flesh it out!
+---
+<p>I love JavaScript, and the idea of using it to program hardware is just that much more exciting. I've been looking for an embeddable runtime on which I can hack that doesn't require learning something like Assembly; with <a title="Espruino" href="http://www.espruino.com/">Espruinos</a> and tools like <a title="Johnny Five" href="https://github.com/rwaldron/johnny-five">Johnny Five</a> for Arduino, this is fast becoming a possibility.</p>
+<p>Unfortunately, I've had a bit of trouble justifying the expense of purchasing the wide array of programmable circuits and sensors that exist on the market. They're cool, and I'd love to play with them - but I want that play to be productive, too. I've had some problems coming up with a good reason to get started.</p>
+<p>Until last week.</p>
+<h2>The Background</h2>
+<p>This weekend, I had the chance to visit a good friend at Camp Cooper in the Pacific coast range. Cooper is a Boy Scout camp located about 17 miles from the nearest sign of civilization. It's nestled in between several tracts of BLM (Bureau of Land Management) land and home to a wide variety of plant and animal life. Due to its location in the temperate rain forest region of the Oregon coast range, Cooper contains <em>several</em> distinct micro-climates.</p>
+<p>I've once witnessed extreme heat, fog, torrential rain, and frost <em>at the same time</em> in different areas of the small camp. It's a very unique place!</p>
+<p>Cooper is also a working tree farm. Only about a quarter of the property is used for the camp itself, the rest of the property is managed to grow a mix of fir, hemlock, and alder, which is harvested and replanted on a regular schedule. Watching how the ecology of the area changes between plantings and harvesting is interesting - it in many ways mimics the changes that follow a fire, but is in other ways very different.</p>
+<p>My friend at the camp earned a degree studying forests and related ecosystems. He wrote a book cataloguing and describing the unique mix of plant-life in the camp as well. Both my friend and I have been looking for a way to build an educational program about forest management and conservation for some time.</p>
+<h2>The Idea</h2>
+<p>Last week I was watching a TV special about interactive farming.[ref]I know, I know. There was nothing else on.[/ref] The premise was that sensors installed around a farm could track statistics like humidity, atmospheric pressure, ambient temperature, soil acidity, etc. Farmers could then, from a tablet in their kitchen, see the exact health of their crops and the farm as a whole from an interactive chart.</p>
+<p>It turned out the technology is fairly experimental, but it piqued my interest nonetheless.</p>
+<p>I had to wonder - could this same concept be applied to <em>forest</em> monitoring and management?</p>
+<h2>The Details</h2>
+<p>What I have in mind is a wireless mesh network of interconnected monitoring devices. Each device would monitor several physical characteristics about the forest:</p>
+<ul>
+<li>Temperature</li>
+<li>Relative Humidity</li>
+<li>Atmospheric Pressure</li>
+<li>Soil acidity</li>
+<li>Soil moisture</li>
+<li>CO<sub>2</sub> concentration</li>
+</ul>
+<p>These are just some elements I can pull off the top of my head. If we move forward with this project, the list of measurements would likely increase. I'd also like to add an ambient noise meter to the list.[ref]For once and for all we might finally be able to answer the infamous "if a tree falls in the forest" question![/ref]</p>
+<p>Each device would be built on top of some sort of programmable platform - Arduino, Raspberry Pi, Spark Core, Espruino, there are a lot to choose from and I'm not sure right now <em>which</em> platform would be the best fit because I'm not too experienced with any of them.</p>
+<p>A summer program would teach teens about the forest itself and how different factors affect the health of the ecosystem. The program would also teach programming skills as the students would be tasked both with developing the software to gather data from sensors <em>and</em> the software that analyzes and aggregates this data.[ref]The software layer that manages the mesh network that connects all of the devices would be outside the scope of the program, but a great learning opportunity for super ambitious students as well.[/ref]</p>
+<h2>The Request</h2>
+<p>I don't know too much about any of the devices above, but I'm willing to learn. Where should I set my starting point, though? Building a remote sensor can be fairly straight-forward (there are loads of tutorials online), but networking that sensor with others is fairly hardware-intensive and I know that (for now at least) this kind of interaction isn't supported by Espruino. Is it supported elsewhere?</p>
+<p>I've seen a handful of available sensors online, but I'm not sure if all of the sensors I need are a) already available or b) compatible with the platform we'll end up building this on top of. I'm willing to invest the money to build a few proof-of-concept devices, but I don't want to get hundreds of dollars in before I realize one system is incompatible with a CO<sub>2</sub> concentration sensor.</p>
+<p>Finally, while I'm sure this is teachable technology, I'm a bit wary about funding the endeavor. A single device will likely cost $100-200 once the base platform and various sensor components are pulled together. Covering an entire working forest with devices to present a rich picture of the environment will likely require several dozen devices.[ref]For those having trouble visualizing, a conservative estimate would set aside $200 for each device and assume ~50 devices. That means a $10,000 investment in <em>just</em> the hardware.[/ref] Add to this the cost of staff, running the camp, and providing some sort of computer (Chromebook anyone) the students can use to program devices and the cost of the program quickly adds up.</p>
+<p>Are there organizations/businesses willing to sponsor/donate for youth technology education, I'm just not sure where to start seeking funds - where should I start? This is a significant investment, but it trains both the next generation of developers <em>and</em> the next generation of forest conservation experts at the same time. I, for one, think that's a fair trade.</p>
+<p>Is this a project you would <em>personally</em> support? In terms of financial support, marketing support, volunteer instructor support, or even just student code review support? If not, I'm curious: why not?</p>
+<p>Do you feel this project is worthwhile? It might not be as hands-on and demonstrable as building a Node-powered helicopter or boat, but I think a Node-powered "smart forest" is infinitely cooler.</p>
+<p>I would like to see this project become a reality, so my request to you is simple: feedback. What looks good? What looks bad? What advice can you provide for me to kick things off?</p>

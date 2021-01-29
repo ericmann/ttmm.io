@@ -1,0 +1,140 @@
+---
+layout: post
+title: JavaScript Event Bus
+date: 2010-07-09 08:00:58.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+meta:
+  yourls_shorturl: http://eam.me/1j
+  _edit_last: '2'
+  aktt_notify_twitter: 'yes'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409863527;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6129;}i:1;a:1:{s:2:"id";i:3124;}i:2;a:1:{s:2:"id";i:6552;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '16'
+  keen_postview_count_this_30_days: '77'
+  _wpghs_github_path: _posts/2010-07-09-javascript-event-bus.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/javascript-event-bus/"
+---
+<p>I was taught some time ago to always focus on decoupling my code.  Your server and the client (browser) should not need to know anything about the structure of one another.  They can pass information back and forth, but that should be the full extent of their integration.  There are several reasons for this, but the most important of which is modularity - you can drop features or entire sections of code from one without damaging the other.</p>
+<p>Once your server-side and client-side code is decoupled, you can start packaging your <a href="http://en.wikipedia.org/wiki/Object-oriented_programming" target="_blank">object-oriented code</a> in each module.  This way, you can plug-and-play with different processes and you don't have to worry about breaking your code.  The easiest way to do this is by breaking up your code and having each object listen for and respond to global events rather than trying to interact with other objects in your code.</p>
+<p>You can do this by building an event bus - rather than communicating directly with other objects on the page, each object communicates with this central event management system.  An object asks the event bus to notify it when something happens.  It also tells the event bus whenever it does something important so other listeners can respond in turn.  JavaScript is easily given to this kind of event-driven architecture, so I thought it would be easy to find a pre-built event bus.</p>
+<p>I was wrong.</p>
+<p>Some systems, like <a href="http://jquery.com/" target="_blank">jQuery</a>, have very advanced event handlers built in to the library.  Unfortunately, many of these are focused on DOM-related events (when things change in the document itself) rather than scripting events (when things happen in different JavaScript functions).  As much as I tried, it turned out none of the pre-existing event management systems did what I wanted them to do.  So I wrote my own.</p>
+<p>This is a <em>very</em> rough framework that I expect to spend the next month or so refining and developing as a full library.  At the moment, it satisfies very basic needs - you can register an event listener, you can trigger custom events, and you can remove an event listener if needed.  The <em>full</em> system will feature live debugging features that can be built in to any page - basically, you'll be able to watch as events fire, modify which listeners are registered, and modify page behavior on the fly in real time.  Not there yet, but here's the basic skeleton:</p>
+<p>[cc lang="javascript"]<br />
+// Register the namespace<br />
+var parseNamespace = parseNamespace || function(root, ns) {<br />
+var nsParts = ns.split(".");</p>
+<p>for (var i = 0; i &lt; nsParts.length; i++) {<br />
+if (typeof root[nsParts[i]] == "undefined")<br />
+root[nsParts[i]] = new Object();<br />
+root = root[nsParts[i]];<br />
+}<br />
+}<br />
+parseNamespace(window, "JDM.EventBus");</p>
+<p>// Main namespace and class<br />
+JDM.EventBus = {<br />
+// Listener object, contains actual listener references and methods for adding/removing listeners as well as binding the listeners to their appropriate<br />
+// triggers at run-time.<br />
+Listeners: {<br />
+// Instantiates the listener object - every event handler is registered and listed in this object.<br />
+List: {},</p>
+<p>// Adds a function with an associated handler nickName and execution priority to the list of listeners.<br />
+Add: function (eventName, funcName, fn, priority) {<br />
+parseNamespace(this.List, eventName + "." + priority + "." + funcName);<br />
+this.List[eventName][priority][funcName] = fn;<br />
+},</p>
+<p>// Removes the function associated with a particular event listener nickName. The event listener will still be registered with the system,<br />
+// but the trigger function will be triggering a null function, so it won't do anything.<br />
+Remove: function (eventName, nickName) {<br />
+for (var priority in this.List[eventName]) {<br />
+this.List[eventName][priority][id] = null;<br />
+}<br />
+}<br />
+},</p>
+<p>// Checks for priority settings, if none given, add a listener to the list with a very low priority<br />
+Subscribe: function (eventName, functionName, fn, priority) {<br />
+if (!priority)<br />
+priority = 10;<br />
+this.Listeners.Add(eventName, functionName, fn, priority);<br />
+},</p>
+<p>// Trigger an event<br />
+Broadcast: function (eventName, args) {<br />
+if (!this.Listeners.List[eventName]) return;<br />
+for (var i = 0; i &lt;= 10; i++) {<br />
+var funcHolder = this.Listeners.List[eventName][i];<br />
+if(funcHolder)<br />
+for (var fn in funcHolder) {<br />
+if (funcHolder[fn])<br />
+if(args) {<br />
+funcHolder[fn](args.eventArgs);<br />
+} else {<br />
+funcHolder[fn]();<br />
+}<br />
+}<br />
+}<br />
+},</p>
+<p>// Remove an event listener<br />
+Unsubscribe: function (eventName, nn) {<br />
+this.Listeners.Remove(eventName, nn);<br />
+}<br />
+}<br />
+[/cc]</p>
+<p>This JavaScript class will allow you to create a custom event listener tied directly to a named custom event. For example, you can set the page to display an alert every time an image loads on the page. First, specify your listener:</p>
+<p>[cc lang="javascript"]<br />
+JDM.EventBus.Subscribe('customEvent', 'functionNickName', function() { alert('Image Loaded'); });<br />
+[/cc]</p>
+<p>Simple enough. This creates an anonymous function that the EventBus names as "functionNickName" and will call whenever the "customEvent" event is triggered. You can use a system like jQuery to fire the new event whenever an image loads like so:</p>
+<p>[cc lang="javascript"]<br />
+$('img').load(function() {<br />
+JDM.EventBus.Broadcast('customEvent');<br />
+});<br />
+[/cc]</p>
+<p>This code snipped adds the custom event trigger to the load() event of every &lt;img&gt; tag on the page. Now, you'll see a custom alert whenever an image finishes loading ... and if you're using AJAX to dynamically load images you'll see the event then as well.</p>
+<p>Wiring a custom alert to an image load is a trivial example of this system's power. In reality, you can now add custom events to the entire lifecycle of your page, your AJAX calls, and any partial postbacks your page makes during typical use. This allows you to tie functions in one object to functions in another <strong><em>without the two objects knowing anything about one another</em><span style="font-weight: normal;">.</span></strong></p>
+<p><strong><span style="font-weight: normal;">Can't see how that could be useful?  Take this illustration for example:</span></strong></p>
+<p><strong><span style="font-weight: normal;">You build a website that has a standard DOM setup and uses several jQuery-dependent functions to control an animated menu at the top of the page.  The thing is, you have a second menu in your sidebar, and clicking elements in one should change the display of elements in the other.  The old way of doing things was to tie mouseclick events in the sidebar directly to the display functions of the top menu.  But let's say, for some reason, you decide to remove your top navigation menu on one page to display a special movie.</span></strong></p>
+<p><strong><span style="font-weight: normal;">Your site breaks, chaos ensues, and no one's happy.</span></strong></p>
+<p><strong><span style="font-weight: normal;">With an event bus, both menu systems are 100% isolated.  Your sidebar menu publishes events, and your top-level navigation menu listens for events.  If the events aren't there, no one cares.  Nothing breaks, the world keeps spinning, and you can now add or subtract your menus at will without breaking anything.</span></strong></p>
+<p>For anyone who wants to use this script in their own systems, please remember that it is copyrighted material and must be accompanied by this notice:<br />
+[cc lang="javascript"]<br />
+/*!<br />
+* JDM EventBus Library<br />
+*<br />
+* Copyright 2010, Eric Mann<br />
+*<br />
+* Permission is hereby granted, free of charge, to any person obtaining<br />
+* a copy of this software and associated documentation files (the<br />
+* "Software"), to deal in the Software without restriction, including<br />
+* without limitation the rights to use, copy, modify, merge, publish,<br />
+* distribute, sublicense, and/or sell copies of the Software, and to<br />
+* permit persons to whom the Software is furnished to do so, subject to<br />
+* the following conditions:<br />
+*<br />
+* The above copyright notice and this permission notice shall be<br />
+* included in all copies or substantial portions of the Software.<br />
+*<br />
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,<br />
+* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF<br />
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND<br />
+* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE<br />
+* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION<br />
+* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION<br />
+* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<br />
+*/<br />
+[/cc]</p>

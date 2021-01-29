@@ -1,0 +1,50 @@
+---
+layout: post
+title: Interesting Hacking Attempts
+date: 2014-08-11 08:00:23.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- hack
+- nginx
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_metadesc: When someone hacks a plugin or theme, it's bad. When someone
+    hacks WordPress, it's worse. When someone hacks the software running WordPress,
+    it's tragic.
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409737057;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3893;}i:1;a:1:{s:2:"id";i:3111;}i:2;a:1:{s:2:"id";i:5905;}}}}
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/x6
+  _wpghs_github_path: _posts/2014-08-11-interesting-hacking-attempts.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/interesting-hacking-attempts/"
+excerpt: When someone hacks a plugin or theme, it's bad. When someone hacks the foundation
+  of those systems (WordPress), it's worse. When someone hacks the base upon which
+  WordPress is built (Apache, Nginx, or whatever server you use), it's tragic.
+---
+<p>I saw a new hack last week, and it scared me quite a bit.</p>
+<p>Usually, I see hacks along the lines of compromised files. An attacker gains access to your site, uploads a file to the server, and uses that compromised file to hijack your site and do whatever they want.</p>
+<p>I've seen compromised PHP files, compromised JavaScript, compromised HTML. Once I even saw a PHP file tacked on to the end of a PNG - the image looked fine, but loading its contents as a string and [cci]eval()[/cci]ing them to execute a payload.</p>
+<p>It's frustrating to see <em>any</em> hack on your site, but the variety above are fairly straight-forward, both to detect and to fix. It can take a long time to clear out all of the corrupt files, but with automated tools that verify checksums of, say, WordPress' PHP files against a vanilla distribution, you have at least some help.</p>
+<h2>The Hack from Hell</h2>
+<p>Last week's hack, though, was a different variety.</p>
+<p>The first time I visited my compromised site,[ref]Note, it was not <em>this</em> site that was compromised but another one I host elsewhere. I'm 100% confident in the security backing this site. The site in question was on a new host with whom I had little previous experience.[/ref] I was redirected by way of a hidden iframe to some sort of spammy ad site. Inspecting the HTML of the compromised site showed some script injected into the body just below the footer.</p>
+<p>I dug in, but nothing was wrong in WordPress. No compromised files existed in any plugins or the theme. Nothing looked wrong in our log files. Confused is an apt but insufficient term.</p>
+<p>Add to this the fact that the exploit only affected first-time viewers - hitting the site a second time didn't redirect the page. It didn't even inject code into the footer.</p>
+<p>It turns out the exploit was actually far deeper in the system than WordPress. Someone somewhere had gained access to <em>another</em> account on the same <em>physical</em> machine and used that access to push sideways into the <em>virtual</em> machine running the site. They replaced the Nginx binaries with one of their own design that kept track of visitor IPs and, when a new IP was detected, automatically injected a script tag after an HTML comment in the site's output stream.</p>
+<p>I've since changed all of my server passwords, regenerated SSH keys, and invalidated old ones. I've further locked down SSH access to my sites to a specific range of IPs, and also contacted my various hosts to help harden their security as well.</p>
+<p>When someone hacks a plugin or theme, it's bad. When someone hacks the foundation of those systems (WordPress), it's worse. When someone hacks the base upon which WordPress is built (Apache, Nginx, or whatever server you use), it's tragic.</p>

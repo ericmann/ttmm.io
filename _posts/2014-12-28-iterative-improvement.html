@@ -1,0 +1,56 @@
+---
+layout: post
+title: Iterative Improvement
+date: 2014-12-28 08:00:28.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- development
+- independence
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _oembed_a1c82adb4dfb7ee8ff656d32decddd5b: <blockquote class="twitter-tweet" width="500"><p>How
+    to build a Minimum Viable Product. Amazing. <a href="http://t.co/5qKGzPKJHU">pic.twitter.com/5qKGzPKJHU</a></p>&mdash;
+    Ryan Robinson (@TheRyanRobinson) <a href="https://twitter.com/TheRyanRobinson/status/548901195574943745">December
+    27, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_a1c82adb4dfb7ee8ff656d32decddd5b: '1419712616'
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Iterative Improvement
+  _yoast_wpseo_metadesc: Fundamentally, though, your application should always be
+    broken up into separate components - each should be capable of functioning somewhat
+    on its own.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-z
+  _wpghs_github_path: _posts/2014-12-28-iterative-improvement.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/iterative-improvement/"
+excerpt: Fundamentally, though, your application should always be broken up into separate
+  components - each should be capable of functioning somewhat on its own.
+---
+<p>The first time I sat down to write a book, things went horribly. I tried to piece together an entire story in my head and write it down, from start to finish, all at once. I kept up the charade for a month or so, then burned myself out and gave up part way through.</p>
+<p>The second time, I didn't plan anything out and wrote an entire story from start to finish in three weeks. It was a complete story, but rambles at parts and loses its ability to make any sort of sense less than a quarter of the way in.</p>
+<p>This third time, I carefully planned out components and broke the larger narrative into smaller stories. Each of the smaller components stood on its own and could be written, polished, and rewritten independently. Subsequent stories added to the overall narrative and enhanced the feel of each. It was the first time I felt I'd been successful, and it gave me a great sense of pride to be finished with something worthwhile.</p>
+<p>It also gave me a new perspective on modular development in software.</p>
+<h2>Decoupled Development</h2>
+<p>The failing of test driven development is that it requires you to have a well-thought-out architecture in mind before you ever begin writing real code. If you're following a traditional "waterfall" development method, this is fairly straight forward. Unfortunately it also means your entire application must be completely planned out and documented before you can write tests. As such, you risk <a title="Death by Documentation" href="https://eamann.com/biz/death-documentation/">death by documentation</a> and are better suited for a different paradigm.</p>
+<p>Instead, I would encourage you use test <em>informed</em> development. As you build each component, write tests for that component at the same time. Your tests serve as further functional documentation for your new code and, honestly, no one will know the difference if you commit both at the same time.</p>
+<p>Fundamentally, though, your application should always be broken up into separate components - each should be capable of functioning somewhat on its own. The independent functionality makes for better, more decoupled unit testing. It also make for easy substitution when a newer component is available. Finally, independent modularization means you can partition out development of the larger project to disparate teams.</p>
+<p>Unlike the waterfall method, completion of each independent component can be demonstrated to stakeholders before shipping. Under a waterfall scheme, you often must wait for larger milestones before an incremental demonstration can be made - with this more agile scheme you can demo each component independently.</p>
+<p>It powers more iterative improvements on your product, taking you from planning to MVP in no time.</p>
+<p>https://twitter.com/TheRyanRobinson/status/548901195574943745</p>
+<p>Often times, the projects I try to build are too much like that first book - or like the car in the first example above. I have a grand idea, and I build tiny pieces that don't quite do anything on their own. I end up failing around step 3 and never ship a final product because I never reached a stage at which my product was usable.</p>
+<p>The second example fits a more refined and productive development pattern. The wheels built in step 1 might not power a car, but they provide a model essential for building wheels to come - and still help power a minimally useful first release. Iterative improvements beyond add new functionality; again, iteratively adding components that still create a functional intermediate product.</p>
+<p>Break development apart and you're left with components that function on their own, components that can be tested/replaced/refactored independently, and a working product after each addition of a new component. It's a wonder we don't run all development this way.</p>

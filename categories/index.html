@@ -1,0 +1,32 @@
+---
+layout: default
+title: Post list
+---
+
+<main id="main" class="site-main">
+    <div class="post-full inner">
+        <header class="post-header">
+            <h1 class="post-title">{{ page.title }}</h1>
+        </header>
+        <div class="post-content inner">
+            <div class="post-cats">
+                {% capture categories %}{% for category in site.categories %}{{ category | first }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endcapture %}
+                {% assign sortedCats = categories | split:',' | sort %}
+                {% for category in sortedCats %}
+                <a href="#{{ category | cgi_escape }}">{{ category }} </a>
+                {% endfor %}
+            </div><!-- .post-cats -->
+            {% for category in sortedCats %}
+            <h2 id="{{ category | cgi_escape }}">{{ category }}</h2>
+            <ul class="archive-posts-list">
+                {% for post in site.categories[category] %}
+                <li><a href="{{ site.baseurl }}{{ post.url }}" rel="bookmark">{{ post.title }}</a>
+                    <span class="post-meta"> — <time class="published" datetime="{{ post.date | date: "%Y-%m-%d" }}">{{ post.date | date: "%B %-d, %Y" }}</time></span>
+                </li>
+                {% endfor %}
+            </ul>
+            <p><a href="#page" class="tag-top-link">Return to top </a></p>
+            {% endfor %}
+        </div><!-- .entry-box -->
+    </div><!-- .inner -->
+</main><!-- .site-main -->

@@ -1,0 +1,52 @@
+---
+layout: post
+title: WordPress XML-RPC - Using the API
+date: 2010-09-24 08:00:14.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+- xmlrpc
+meta:
+  yourls_shorturl: http://eam.me/5
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  _installment: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409728494;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5995;}i:1;a:1:{s:2:"id";i:2770;}i:2;a:1:{s:2:"id";i:1424;}}}}
+  keen_postview_count_this_30_days: '9'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2010-09-24-wpxmlrpc-using-the-api.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wpxmlrpc-using-the-api/"
+---
+<p>The most important thing to know about WordPress' XML-RPC interface is how to send and receive data through it.  The interface is turned off by default for security purposes, so when you're ready to start using it, you'll have to manually turn it on.  Go to Settings » Writing and look for the XML-RPC option under "Remote Publishing."  Turn this on and you're ready for the next step.</p>
+<p>Next, you need to make a point of knowing the address of your XML-RPC server.  This is really complicated.  You might not be able to find it.  But take your blog url and add "xmlrpc.php" to the end of it.  See, that was incredibly difficult, wasn't it?  :-)  WordPress makes it very easy to find and use the XML-RPC interface, so just make sure you're always pointing your server at the right address.  Most of the issues I'm emailed about when people are asking for help with their XML-RPC-powered plug-in are because their system is pointed at the blog URL rather than the xmlrpc.php file sitting at the blog URL.  Make sure you point at the right file and everything else will work just fine.</p>
+<p>The first step to making a request via XML-RPC is setting up your server object.  You initialize the object with this code:</p>
+<p>[cc lang="php"]<br />
+$server = IXR_Client("http://myblogaddress.com/xmlrpc.php");<br />
+[/cc]</p>
+<p>Now that your object is set up, let's send a couple of commands to it.  WordPress ships with two basic "demo" commands you can send through the API: One that says "hello" and one that adds two numbers.  Let's try saying "hello."</p>
+<p>The following command will send the "sayHello" demonstration request to the server.  If things are set up properly, the server will return the string "Hello!"</p>
+<p>[cc lang="php"]<br />
+$client->query("demo.sayHello", "");<br />
+[/cc]</p>
+<p>You can see that the query method accepts two arguments, the name of the method you're calling remotely and the arguments you wish to pass into it. If you want to pass multiple arguments into the remote method, you do so with an array:</p>
+<p>[cc lang="php"]<br />
+$client->query("demo.addTwoNumbers", array(5, 10));<br />
+[/cc]</p>
+<p>This method call will remotely add the numbers 5 and 10. The server will pull the array apart, add the two arguments together, and return the sum. Simple, straightforward, easy to test.</p>
+<p>Keep in mind that some of the more advanced API calls <em>will</em> require you to authenticate against your WordPress account. This is for security purposes so that not everyone can spontaneously post articles to your blog, moderate comments, or delete content. It keeps your site safe and secure. We'll cover authentication while we cover the method calls that require it. But to give you a preview ... all authentication requires is that you pass your username and password in addition to any other arguments. Not really too difficult, but if you forget it will cause a whole slew of problems.</p>

@@ -1,0 +1,59 @@
+---
+layout: post
+title: Google Reader - Revisited
+date: 2010-07-16 08:00:22.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- API
+- Google
+meta:
+  yourls_shorturl: http://eam.me/6
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2010-07-16-google-reader-revisited.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/google-reader-revisited/"
+---
+<p><a href="http://mindsharestrategy.com/google-reader-api-a-brief-tutorial/" target="_self">A few weeks ago</a>, I published a tutorial regarding using the Google Reader API in PHP projects.  Since that time, Google has changed the authentication portion of their API somewhat, so I need to revise my instructions just a bit.  And some day in the future, I'll even post a tutorial on how to use <a href="http://oauth.net/" target="_blank">oAuth </a>with the Google API as well.</p>
+<p>Initially, you need to request an SID from Google.  You pass your Google username and password in a standard HTTP POST and the response contains a string that looks something like this:</p>
+<blockquote><p>SID=DQAAAAAB8P9jygcxbrTzYknOWDDKZPSQbb8YJq30PDpbo2h-pPUrcODSbudpBK7rZjfjRU1rr___orLDYqcBX3ycBIKL5F20tv2hLyI_1k_iCsuRr82fORPIcxSm<br />
+Yhs31A_5wKViHlXZ7HSoWcVFLZUqHyAdLBI3jDR7UkXJtX0-5LH6EBb_95DCPFchXbVDtuS<br />
+YYWuyGmXo-EKvaPlTT-c<br />
+LSID=DQAoAAAAySoTyd8B7uQ138aJTHjWdRtScsjuQJBQhkAuCqd0SJbgRCGXql6DgP_dw<br />
+tTy1kKa1iKaNeXcCtNExYpE1FSeV2Xb1_JlWcowYhU5PVNNHtoTgqMMdtaNudNom1-Snh4Nz4O6ZXE8VG9cxxLx379_yjNuZip4orXHNwg7jT9oEq4F8yFWBTD7DejKpnY8n3PEJg<br />
+bc5_9mqjewjVRQG0<br />
+Auth=DQAAAAAAySoTyd8B7uQ138aJTHjWdRtScsjuQJBQhkAuCqd0SJbgRCGXql6DgP_dw<br />
+tTy1kKZeUIOuqdQ-Dt0kKMCzDMXnxS3BSTUEPiC3wBis6xoUiQS8_o0_9osTqoXTr3iO0Nwn-ZPrn_ZiLX198Wyn7lkQLp5T1gpahnjO58csk0NtwGfElre2log6nx3AcSbwWfey_TrxWzCSgn6<br />
+i-9</p></blockquote>
+<p>You see three named keys there: SID, LSID, and Auth.  In the old days, all you needed was the SID to create an authentication token.  Then you passed this token in a cookie with every POST or GET request to the API.  Though I always wondered why Google generated those other values if they weren't used.  Failing to use them, though, broke my PHP class for connecting to Google Reader ... and upset quite a few users of my WordPress plug-in.</p>
+<p>After some research, I found that Google now wants you to send the Auth key in the headers of your requests.  Instead of setting the cookie as a cURL variable, you add an HTTP header "Authorization: GoogleLogin auth=" with your Auth key.  Here's the new _getToken() method from my Google Reader class:</p>
+<p>[cc lang="php"]<br />
+private function _getToken() {<br />
+$this-&gt;_getSID();<br />
+$this-&gt;_cookie = "SID=" . $this-&gt;_sid . "; domain=.google.com; path=/";</p>
+<p>$url = "http://www.google.com/reader/api/0/token";</p>
+<p>$ch = curl_init();<br />
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded', 'Authorization: GoogleLogin auth=' . $this-&gt;_auth));<br />
+curl_setopt($ch, CURLOPT_URL, $url);</p>
+<p>ob_start();</p>
+<p>curl_exec($ch);<br />
+curl_close($ch);</p>
+<p>$this-&gt;_token = ob_get_contents();</p>
+<p>ob_end_clean();<br />
+}<br />
+[/cc]</p>
+<p>Compare this with the <a href="http://mindsharestrategy.com/google-reader-api-a-brief-tutorial/" target="_self">_getToken() function from my last tutorial</a>.</p>
+<p>The class itself now sets this header with every HTTP GET and POST request before passing them to the server rather than setting the cookie like we did last time.  For the time being, this new method works.  But I'm still working on an oAuth version to take its place for the long run.</p>

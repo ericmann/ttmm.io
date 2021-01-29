@@ -1,0 +1,60 @@
+---
+layout: post
+title: jQuery and Cross-site Scripting
+date: 2014-10-02 08:00:03.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+- jQuery
+- XSS
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1412273575;s:6:"status";s:6:"pushed";}
+  _wpas_mess: Dissecting a jQuery-based XSS vulnerability =>
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: jQuery and Cross-site Scripting
+  _yoast_wpseo_metadesc: Never trust user input, even if it's coming from an allegedly
+    trustworthy source.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ym
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-10-02-jquery-xss.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/jquery-xss/"
+excerpt: Never trust user input, even if it's coming from an allegedly trustworthy
+  source.
+---
+<p>I ran into an interesting issue yesterday related to the use of jQuery and a potential XSS (cross-site scripting) vulnerability. It was an easy mistake to make, and one I unfortunately see (and occasionally make myself) all too often.</p>
+<p>So let's break things down and prevent this bug from coming up again!</p>
+<h2>The Attack</h2>
+<p>A casual reader reported the attack. It seems they could append some seemingly arbitrary text to a visible URL and cause the page to trigger an alert. Digging deeper, they also pointed out that a similar attack could redirect the page to any URL they wanted.</p>
+<p>For example, [cci]https://eamann.com/#"><img src="{{ site.baseurl }}/assets/2014/10/M" onerror="alert('test');" />[/cci] would cause the page to post an alert of "test."[ref]<b>Note:</b> I'm using my domain in these examples, but this site was <em>not</em> affected by this vulnerability.[/ref] Similarly, [cci]https://eamann.com/#"><img src="{{ site.baseurl }}/assets/2014/10/M" onerror="window.location.replace('http://facebook.com');" />[/cci] would force the browser to automatically redirect to Facebook.</p>
+<p>On the surface, this seems like a non-issue - an attacker could display an alert or force a page to redirect.[ref]Typically, redirections are a negative thing. But if you're clicking on a link like this in the first place, you should be aware that something is up.[/ref]</p>
+<p>The attack itself, though, goes much deeper and has much more nefarious implications. Essentially, this vulnerability allows an attacker to execute any arbitrary JavaScript they want, from the user's own context. An alert or redirect to Facebook is trivial - POSTing the current user's cookies to a 3rd-party site, though, is not.</p>
+<p>If a site is vulnerable to this attack, I could craft a URL that would grab the contents of the page's cookies and send them to anyone I desire. Once I have your cookies, I can spoof your logged-in session <em>even if you logged in via HTTPS</em>.</p>
+<p>Doesn't seem like a non-issue any more, does it?</p>
+<h2>The Cause</h2>
+<p>It turns out, a 4-line script on the page was at fault. Some fancy tab switching going on in an internal page required JavaScript to read the current URL hash (the component after the # sign) and use it in an element selector to help the page know which tab to load. Like many developers, jQuery was used to build a quick proof-of-concept of the feature - and ended up being shipped to production in finished code.</p>
+<p>The prototype looked something like: [cci]if ( $( '.class .' + window.location.hash + ' ul' ) ) { ...[/cci]</p>
+<p>On the surface, this looks just fine. Until, that is, you remember what jQuery does behind the scenes with selectors. First, jQuery will attempt to parse the selector as a selector - the intended use case. If the selector fails to validate, jQuery assumes the string passed in is instead a block of HTML, and subsequently attempts to parse it.</p>
+<p>[cci].class ."><img src="{{ site.baseurl }}/assets/2014/10/M" onerror="alert('test');" /> ul[/cci] will force jQuery to attempt to create an image tag, with a broken source attribute, and an error handler containing the attacker's desired script package. Since the source is broken (in this case just an "M"), the error handler triggers immediately and executes whatever script the attacker wants.</p>
+<p>It could display an alert. It could redirect the page. It could grab the browser's cookies (including your authenticated session cookie) and send them to a remote party.</p>
+<p>It's a pretty significant bug, and was created merely because someone failed to recognize the security implications of a quick proof-of-concept script and shipped it to production as-is.</p>
+<h2>The Solution</h2>
+<p>Instead of jQuery, the selector should be parsed using native DOM methods. [cci]document.querySelectorAll()[/cci] serves the same purpose here. Unlike jQuery, it throws a syntax exception if you attempt to pass the broken image tag used in the attack - an exception that is easily caught and discarded.</p>
+<p>[cci]if ( 0 < document.querySelectorAll('.class .' + window.location.hash + ' ul' ).length ) { ...[/cci] serves the same purpose in this conditional. Wrapped in a try/catch block, it completely plugs the hole and keeps the site's naive selector logic from opening a door to an attacker.</p>
+<p>The original site hosting the vulnerable code has been patched, and everyone involved learned a helpful lesson[ref]I never fault anyone for making a mistake like this. After seeing this bug, I went back through my own code and found numerous examples that might present similar vulnerabilities. Coding is a collaborative and iterative process, so the fact that someone caught the bug and that it was fixed <em>quickly</em> speaks volumes about the success of the development team involved. I measure success not in the amount of bug-free code produced, but in a team's overall ability to learn from and correct their mistakes.[/ref] about their code: never trust any form of user input, even if it's coming from an allegedly trustworthy source. Referencing properties on the global [cci]window[/cci] object <em>feels</em> safe because it's not coming directly from the user; just always keep in mind where the values in those properties come from.</p>
+<p>The recent discovery of the bash-related <a title="Inside Shellshock: How hackers are using it to exploit systems" href="http://blog.cloudflare.com/inside-shellshock/">Shellshock</a> bug reminds us just how important it is to always identify the source of parameters and, even if they're a trusted source, to be skeptical of what data is passed in regardless.</p>

@@ -1,0 +1,84 @@
+---
+layout: post
+title: WordPress Portland
+date: 2011-11-28 18:56:44.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/gx
+  _edit_last: '2'
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2011-11-28-wordpress-portland.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-portland/"
+---
+<p>As promised, here is the code for my demo of adding feature pointers to WordPress in version 3.3</p>
+<p>And again, <em><strong>please do not use these in distributed plugins/themes</strong></em>.  They're only slated for Core at the moment, but if you feel that they'll help in your custom theme/plugin development with clients, feel free!</p>
+<p>[cc lang="php" width="580"]<br />
+<!--?php <br ?--> /*<br />
+Plugin Name: WordPress Portland Meetup Pointer Demo<br />
+Plugin URI:<br />
+Description: Demonstrate feature pointers in WP 3.3<br />
+Author: Eric Mann<br />
+Version: 1.0<br />
+Author URI: http://eamann.com<br />
+*/</p>
+<p>add_action( 'admin_enqueue_scripts', 'pdxwp_pointers_header' );<br />
+function pdxwp_pointers_header() {<br />
+$enqueue = false;</p>
+<p>$dismissed = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );</p>
+<p>if ( ! in_array( 'pdxwp_pointer', $dismissed ) ) {<br />
+$enqueue = true;<br />
+add_action( 'admin_print_footer_scripts', 'pdxwp_pointers_footer' );<br />
+}</p>
+<p>if ( $enqueue ) {<br />
+// Enqueue pointers<br />
+wp_enqueue_script( 'wp-pointer' );<br />
+wp_enqueue_style( 'wp-pointer' );<br />
+}<br />
+}</p>
+<p>function pdxwp_pointers_footer() {<br />
+$pointer_content = '</p>
+<h3>Welcome WordPress Portland!</h3>
+<p>';<br />
+$pointer_content .= '</p>
+<p>This is an example of an admin pointer.</p>
+<p>';<br />
+$pointer_content .= '</p>
+<p>You can use it in your <a href="http://wordpress.org/extend/themes">themes</a> ';<br />
+$pointer_content .= 'and <a href="http://wordpress.org/extend/plugins">plugins</a>.</p>
+<p>';<br />
+?&gt;<br />
+<script type="text/javascript">// <![CDATA[<br />
+jQuery(document).ready(function($) {<br />
+	$('#menu-comments').pointer({<br />
+		content: '<?php echo $pointer_content; ?>',<br />
+		position: {<br />
+			edge: 'left',<br />
+			align: 'center'<br />
+		},<br />
+		close: function() {<br />
+			$.post( ajaxurl, {<br />
+				pointer: 'pdxwp_pointer',<br />
+				action: 'dismiss-wp-pointer'<br />
+			});<br />
+		}<br />
+	}).pointer('open');<br />
+});<br />
+// ]]></script><br />
+<!--?php <br ?--> }</p>
+<p>?&gt;<br />
+[/cc]</p>

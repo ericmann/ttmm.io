@@ -1,0 +1,79 @@
+---
+layout: post
+title: Data versus Meaning
+date: 2012-02-08 13:00:37.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- concept
+- data
+- mapping
+- relationship
+meta:
+  yourls_shorturl: http://eam.me/h5
+  _edit_last: '2'
+  yourls_tweeted: '1'
+  _zem_rp_image: '5577'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_content_score: '30'
+  _wpcom_is_markdown: '1'
+  _wpghs_github_path: _posts/2012-02-08-data-versus-meaning.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/data-versus-meaning/"
+---
+<p>At a conference last week, I was subjected to all kinds of talks on data, data integrity, data storage, data <em>in the cloud</em>, and data-centered design patterns.  One speaker summed things up perfectly:</p>
+<blockquote><p>If you make the center of your world <em>data</em>, then everything else becomes easy.</p></blockquote>
+<p>This got me thinking.  From a computer-centric viewpoint it all makes sense.  Our machines are built specifically to store data, crunch data, and present that data to the user.</p>
+<p>But I don't <em>just</em> work with computers.  I also <a href="http://www.librarything.com/profile/EricMann">read a lot</a>.  And I <a href="http://prosepainting.com">write a lot</a>.  And I publish books.  And even in the computer world I spend <a href="http://profiles.wordpress.org/users/ericmann/profile/public/">a great deal of time working on WordPress</a> - a tool used primarily for writing.</p>
+<p>From the <em>media</em>-centric viewpoint, this argument stops making sense.  The most important piece of this blog, for example, is the content.  And that content is stored, essentially, as blobs in the database.  The <em>data</em> on my server consists of titles, keywords, post dates, views, comments, and other meta information that adds little value to the content itself.</p>
+<p>This meta doesn't provide any <em>meaning</em> to the data/content it's meant to represent.  And that, is a huge failure on our part as developers.</p>
+<h2>Carlos</h2>
+<p>My freshman year in college, I took Poetry 101.  It was a great class, filled with roundtable discussions, interesting reading assignments, and daily tear-your-work-apart sessions intended to help us become better writers.</p>
+<p>One of the best poets in our class was an older student named Carlos.  He and I shared a couple of classes, actually, so we got to know one another's work fairly well.  He was a huge Shakespeare fan, but avoided allusions to the Bard's work in his own. He thought it was too cliche.</p>
+<p>His final poem for the class was particularly interesting.  It was an artistic rant against the <em>rules</em> of writing.  It called out the authors of the various writing guides we'd studied and criticized their narrow views of art.</p>
+<p>One of these authors was named Mary Oliver - I checked, I still have her book on the mechanics of poetry.</p>
+<p>In Carlos' poem, he lays out great arguments both for and against using Shakespeare references in modern poetry - and slams Oliver pretty hard for how she claimed <em>all</em> poems were somehow a reference to Shakespeare.  At the closing of that stanza, it almost looked like Carlos made a mistake.</p>
+<p>On a single line he wrote: "Marry Oliver."</p>
+<p>Then went on to give up on respecting outside opinions and went on to his next artistic target.</p>
+<p>Most of the class - including the professor - missed the reference.  "<a href="http://www.nosweatshakespeare.com/shakespeare-dictionary/">Marry</a>" was an often used curse in Shakespeare's writing.  Using it as part of Oliver's name was a sideways jab at her, and quite artistic in a sense.  Berating someone for overusing Shakespearean references <em>using</em> a Shakespearean reference.</p>
+<p>But if you didn't know Carlos, you would have seen a typo.  I guarantee that I took away a completely different reading of that poem than the rest of the class because I understood the context from which it was written.<br />
+<img class="alignright size-medium wp-image-3961" style="border-style: initial; border-color: initial;" title="Data Cloud" src="{{ site.baseurl }}/assets/2012/02/4406466341_9bb8a6e314-237x300.jpg" alt="" width="237" height="300" /></p>
+<h2>Context</h2>
+<p>How do you store this kind of data about a story?  With a typical WordPress/Tumblr/MovableType/etc website, you'd put the poem in as a content string, Carlos in as the author, and 2002 as the year of publication.  You might throw in a few keywords - Shakespeare, Mary Oliver, art critique.  You might even tag it with the name of the class and professor.</p>
+<p>Where is the context stored?</p>
+<p>Where is Carlos' backstory?</p>
+<p>So much of the poem's meaning was not actually in the poem itself, but in the story of the author who penned it and the circumstances surrounding its writing.  None of that can be categorized as meta information in a data-centric database, though.</p>
+<h2>The Problem</h2>
+<p>I can't say I have a solution to this problem.  At least, not yet.  But I can characterize the problem fairly well at this point.</p>
+<p>Every story is made of discrete parts.  A logical idea would be to split it up into its relative parts - each sentence then becomes a piece of data.  But sentences alone are not sufficient vehicles to convey meaning.  For example, look at the sentence "Jesus wept."  Now look at these two possible contexts:</p>
+<blockquote><p>When Mary reached the place where Jesus was and saw him, she fell at his feet and said, "Lord, if you had been here, my brother would not have died."</p>
+<p>When Jesus saw her weeping, and the Jews who had come along with her also weeping, he was deeply moved in spirit and troubled. "Where have you laid him?" he asked.</p>
+<p>"Come and see, Lord," they replied.</p>
+<p><strong>Jesus wept.</strong></p></blockquote>
+<p>Compare that with this:</p>
+<blockquote><p>Jesus Torez was an energetic child. He loved to ride his bike around the neighborhood and play make believe in the alleyways down the street from his school.</p>
+<p>One day, Jesus found the door open to the abandon building he liked to think of as his "Intergalactic Headquarters."  He didn't even hesitate when the idea occurred that it would be more fun <em>indoors</em> that outside.</p>
+<p>He crept inside and surveyed the rundown plank flooring.  There was a light on upstairs, so Jesus tiptoed in that direction to investigate.</p>
+<p>Just as he shifted his weight to the first step, the plank broke and dropped him through the floor into the basement.</p>
+<p>His leg was broken.  <strong>Jesus wept.</strong></p></blockquote>
+<p>Different contexts, different characters, different stories.  In one, you're dealing with Christ and the phrase "Jesus wept" brings up questions of his humanity, his relationship to the deceased in the story, and how these events fit in with the rest of his story.  In the other, you're dealing with a young boy in an awkward - albeit self-induced - horrific situation.  The phrase "Jesus wept" conveys a different kind of pain, and possibly even some panic.</p>
+<p>You can't separate stories into mere sentences and work with those building blocks as discrete items - in isolation a sentence means <em>nothing</em>.</p>
+<p>A story is, at best, compared to a woven cloth.  Hundreds and thousands of discrete threads are woven together to create a large picture.  It might be a tapestry, a mono-color sheet on a bed, or even a random smattering of color in a carpet block.  In each case, the cloth is greater than the sum of its parts.</p>
+<p>And a story is greater than the collection of sentences that comprise it.</p>
+<p>The problem is that it can't be properly understood as <em>just </em>a story.</p>
+<p>Data structures today give us one world or another - either a story is one, monolithic data element or it's a set of discrete, related, but independent data points.  I say it's more, and current data structures fail to properly catalog stories, articles, news feeds, blog posts, and the like.</p>
+<p>Distilling any piece of art into the data we catalog today robs us of its <em>meaning</em>.  I think we should take this as a challenge and see if we can do better.</p>

@@ -1,0 +1,58 @@
+---
+layout: post
+title: Don't Delay Dirty Dishes
+date: 2014-05-21 08:00:45.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Journal
+- Technology
+tags:
+- code cleanup
+- janitorial
+- refactoring
+- Unit Test
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1400659297;s:6:"status";s:6:"pushed";}
+  _yoast_wpseo_title: Don't Delay Dirty Dishes
+  _yoast_wpseo_metadesc: The worst thing I remember about my old habits with dishes
+    (or bad code) was how long it would take to do/fix them when I finally got around
+    to it.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/uy
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409135098;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6255;}i:1;a:1:{s:2:"id";i:5499;}i:2;a:1:{s:2:"id";i:6459;}}}}
+  keen_postview_count_this_7_days: '4'
+  _wpghs_github_path: _posts/2014-05-21-dont-delay-dirty-dishes.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/journal/dont-delay-dirty-dishes/"
+excerpt: The worst thing I remember about my old habits with dishes was how long it
+  would take to do them when I finally got around to it.
+---
+<p>I'm lazy.</p>
+<p>I'll grab a plate from the cabinet, fill it up with left overs, nuke my food, eat, and drop the plate in the sink when I'm done. It sits there, on top of cereal bowls, travel mugs from the day before, and perhaps a pot left to soak over night.</p>
+<p>It's disgusting, but I leave it there telling myself, "I'll clean it up later."</p>
+<p>In college, "later" was "in a panic before my parents arrive for a visit in 2 weeks." Leaving dishes in the sink was almost a sport to see how high I could stack things before the threat of dumping soggy toast on the carpet forced me to clean things up.</p>
+<h2>Growing Up</h2>
+<p>The worst thing I remember about my old habits with dishes was how long it would take to do them when I finally got around to it. What should have been several 3-5 minute tasks snowballed into an hour or more of scrubbing, scalding, and sanitizing.</p>
+<p>Knowing how long the task would really take was one of the reasons I kept putting it off; this only made things worse.</p>
+<p>A lot of things have changed since college. For one, I own my house - it's no longer a college/parent-owned living space that someone else will eventually clean when I let laziness get the best of me. I also share this space with someone else, and I'd be stupid to force the chore onto her instead.</p>
+<p>Rather than letting the dishes pile up, I clear out the sink <em>every single day</em>.</p>
+<p>On the up side, I have plenty of clean dishes available when it's time to make lunch or dinner. On the down side, it means I'm keeping my kitchen much cleaner than ... wait, how is that the down side?</p>
+<p>The other advantage to doing dishes frequently is that it takes much less time than you'd think. A matter of a minute or two here and there as I pass through the kitchen keeps things clean and prevents a potentially problematic pileup.</p>
+<h2>Cleanliness is a Lifestyle</h2>
+<p>I have yet to figure out how to make dishes that are automatically clean once they've been used - there will <em>always</em> be a mess to clean up later. Likewise, I have yet to figure out how to write bug free code that can ship without follow-up support or refactoring.</p>
+<p>Like my college kitchen, many of my development projects have their own kitchen sink overflowing with moldy leftover logic trees or soaked in untestable code. A few are lucky enough to have <em>teams</em> supporting them as opposed to just me, so keeping the pile of putrid PHP from falling over and crashing the system is a bit easier.</p>
+<p>All of us grumble about how much we'd like to go back and clean things up. None of us ever do. Instead we write workarounds to allow the program to function <em>desipte</em> the heaps of month-old spaghetti at its core.</p>
+<p>Cleaning up (or testing) our code in huge chunks isn't a sustainable workflow. You can't defer quality, smaller steps are required to keep things moving forward efficiently.</p>
+<p>I once worked at a company that took almost 2 months off active development in the middle of a release cycle to find, document, and patch bugs in their codebase. It was an effective bug scrub (closing out several <em>hundred</em> potentially fatal issues), but that kind of effort is unsustainable. Imagine how that workflow would cripple a project like WordPress with its well-advertised 4-releases-per-year goal.</p>
+<p>Instead, take a more measured approach to bug scrubbing. In addition to your [cci]master[/cci] and [cci]staging[/cci] branches, keep a [cci]janitorial[/cci] branch around. If a developer working on feature A sees an obvious (and fixable) bug in the feature, she can switch to the [cci]janitorial[/cci] branch, patch it, and go back to work. Like any other development branch, [cci]janitorial[/cci] can and should be frequently merged back into the project to keep life moving forward.</p>
+<p>Complaining about dishes overflowing the sink doesn't get them clean. Griping about untested, unoptimized, or undocumented code in a project doesn't refactor anything. Taking a few minutes here and there to clean up what you see covered with grime, though, will bring measurable progress to the project.</p>

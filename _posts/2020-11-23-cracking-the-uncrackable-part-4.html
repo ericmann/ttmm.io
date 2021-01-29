@@ -1,0 +1,81 @@
+---
+layout: post
+title: Cracking the Uncrackable - Hashing Setup
+date: 2020-11-23 07:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Bitcoin
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cracking-the-uncrackable-part-4/"
+---
+<p><!-- wp:paragraph --></p>
+<p>If like <a href="https://ttmm.io/tech/cracking-the-uncrackable-part-3/">last week</a> simply guessing a password is insufficient, then you can bring out the big guns. I'm talking about <a href="https://hashcat.net/hashcat/">Hashcat</a>, and advanced system that allows you to automate the cracking of passwords using optimized GPU code.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of <tt>password</tt> is unique from one of <tt>P@s$w0rd1</tt>. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>It's also easily paired with a centralized command server like <a href="https://github.com/s3inlc/hashtopolis">Hashtopolis</a>, that allows you to spread the hashing job out over <em>multiple</em> servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Any way you slice it, Hashcat allows you to attempt several <em>thousand</em> passwords per second. Hashtopolis further allows you to do so on several <em>machines</em> at the same time.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Hashcat Setup</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. <a href="https://ttmm.io/tech/cracking-the-uncrackable-part-2/">Your private key is symmetrically encrypted</a> with a random master key, and that master key is subsequently encrypted with a user-defined password.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>We don't want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The <a href="https://www.openwall.com/">Openwall Project</a> maintains a tool called <a href="https://github.com/openwall/john">John the Ripper</a> that is somewhat similar to Hashcat. The advantage of their tool is that it's open source and includes various additional utility scripts that make our job easier. The <a href="https://github.com/openwall/john/blob/bleeding-jumbo/run/bitcoin2john.py"><tt>bitcoin2join</tt> script</a>, for example, takes a <tt>wallet.dat</tt> file and converts it to a string that's easily processed by either hashing system.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Running this script alone won't crack your wallet. What it <em>will</em> do is convert a large binary blob (your wallet) into a string like <tt>$bitcoin$64$f6f42a9e0cb0eda2669fa8...</tt>. This string, when provided to Hashcat, is the foundation of our next cracking attempt.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Hashcat Setup</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Hashcat has <a href="https://hashcat.net/wiki/doku.php?id=hashcat">various attacks and hashing </a>modes. Since we're specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a "straight" attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don't have a wordlist to start from, this is a good place to begin.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In our case, we put the hash generated from <tt>bitcoin2john</tt> above in <tt>hash.txt</tt> and a list of possible passwords into <tt>wordlist.txt</tt>. Our execution of Hashcat would then look like:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>That Takes Forever ...</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I've seen folks complain that Hashcat reports "the next big bang" as the expected completion date for a cracking run. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there <em>are</em> ways we can make things go faster.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing <tt>a</tt>s with <tt>@</tt>s or <tt>0</tt>s with <tt>O</tt>s, for example. But still, this doesn't speed things up on your machine.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In fact, the problem is often that you're trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you'll likely be overloading the system if you try to crack a password <em>and</em> run a display at the same time. Running things locally means you're limited to that one machine's hardware as well.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next week we'll cover an approach to farm the cracking job out to <em>multiple</em> cracking machines in hopes we can expedite the job.</p>
+<p><!-- /wp:paragraph --></p>

@@ -1,0 +1,37 @@
+---
+layout: post
+title: XML-RPC
+date: 2010-03-03 09:00:05.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+- xmlrpc
+meta:
+  yourls_shorturl: http://eam.me/31
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407877804;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5995;}i:1;a:1:{s:2:"id";i:2770;}i:2;a:1:{s:2:"id";i:6374;}}}}
+  _wpghs_github_path: _posts/2010-03-03-xml-rpc.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/xml-rpc/"
+---
+<p>Just to forewarn you, this might come across as a more technical post than I normally throw at you.  Still, I did something exciting last night that I wanted to share and perhaps educate you about.</p>
+<p>I built a custom XML-RPC server.</p>
+<p>And with that statement I know I've already lost most of you.  Rather than get too much into the details, XML-RPC stands for <em>XML Remote Procedure Call</em>.  It's a way for one server to send information to another for processing - like posting inter-office mail to another department.</p>
+<p>XML is just a way to code information.  You split up the message into chunks and label it.  For example, you can send a message via XML-RPC that asks to multiply two numbers together.  You'd code a 2 as <code>&lt;int&gt;2&lt;/int&gt;</code> to mark it as an integer.  This way the server knows what kind of information it's reading and what to do with it.</p>
+<p>My particular server is meant to handle and report errors created by <a href="http://wordpress.org/extend/plugins/profile/ericmann" target="_blank">my open source WordPress plug-ins</a>.  I write more than one, and several hundred websites use them.  Unfortunately, when they break for whatever reason I rarely hear about it ... so I can't fix it.  Hopefully this new system will give me a way to monitor my own performance and step it up a bit.</p>
+<p>I'm calling the system "Elliot" after the main character in <em><a href="http://www.imdb.com/title/tt0083866/" target="_blank">E.T the Extra-Terrestrial</a></em>.  I was inspired by the thought of my plug-ins "phoning home" to tell me whether or not they're working.</p>
+<p>Will this make things better for me?  Time will tell, and I'll definitely keep you apprised of my progress!</p>

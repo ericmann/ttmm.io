@@ -1,0 +1,70 @@
+---
+layout: post
+title: The Birthday Paradox
+date: 2014-09-08 08:00:18.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- hash collision
+- statistics
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_mess: You're in a room with 22 other people. What are the odds someone else
+    in the room has the same birthday as you?
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: The Birthday Paradox
+  _yoast_wpseo_metadesc: There’s a paradox in statistics that states, in a group of
+    23 people, the chance that two people having the same birthday is 50%.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/xz
+  _wpghs_github_path: _posts/2014-09-08-birthday-paradox.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/birthday-paradox/"
+excerpt: There’s a paradox in statistics that states, in a group of 23 people, the
+  chance that two people having the same birthday is 50%.
+---
+<p>Last week I briefly mentioned the idea of hash collisions, using the likelihood of <a title="Playing the Lottery" href="http://eamann.com/tech/playing-lottery/">multiple lottery winners</a> as an example. Let's take some time to build up some more rigorous background in statistics to support that discussion.</p>
+<h2>The Birthday Paradox</h2>
+<blockquote><p>There’s a paradox in statistics that states, in a room of 23 people, the chance that two people have the <em>same birthday</em> is 50%.</p></blockquote>
+<p>It's a non-intuitive statement, and was one of the first problems I was assigned when studying statistics in college.[ref]I was taking a course on political analysis. Understanding basic statistics was a prerequisite to running more advanced regressions and analyses on polling data.[/ref] Our assignment seemed simple:</p>
+<p>"How many students do you need to gather in a room such that the probability that two of them share the same birthday reaches 50%?"</p>
+<p>Well, it <em>seemed</em> simple.</p>
+<p>I might have a math degree, but this problem still took me a week to figure out. It's fairly straight-forward once you've solved the problem once, but for first-time approaches it becomes tricky.</p>
+<h2>How it Works</h2>
+<p>Let's walk through an example.</p>
+<p>If only one person is in a room, we don't care about probabilities (the chance they share a birthday with themselves is a nonsensical thing to calculate). Let's move on instead.</p>
+<p>The chances that the second person shares a birthday with the first is $latex \frac{1}{365}$. Not very high.</p>
+<p>Add a third person, and things begin to become confusing. The chances that any two people share the same birthday becomes $latex \frac{1}{365}+\frac{1}{365}+\frac{1}{365}=\frac{3}{365}=0.82\%$. This is the sum of the chances of each <em>permutation</em> of potentially shared birthdays: Persons 1 &amp; 2, Persons 1 &amp; 3, Persons 2 &amp; 3.[ref]For a more rigorous calculation, we also have to factor in the probability that all of the participants share the same birthday. My point here isn't to provide a solid additive solution, but to illustrate the snowballing complexity of calculating our probabilities in this fashion.[/ref]</p>
+<p>Continuing on with this pattern becomes unnecessarily cumbersome very quickly as the available permutations add up. Instead, it's easier to calculate the probability instead that, among all members of the group, there are <em>no</em> shared birthdays.</p>
+<h3>Exclusivity</h3>
+<p>Assuming there are 365 available birthdays in a year,[ref]We're ignoring leap years for simplicity.[/ref] if a person is alone in their room we calculate the exclusivity of their birthday as $latex \frac{365}{365} = 100\%$.</p>
+<p>When a second person enters the room, there are now only 364 birthdays remaining for theirs to be exclusive. This means the probability of mutually exclusive birthdays in a population of two is $latex \frac{365}{365}\times\frac{364}{365}=99.73\%$.</p>
+<p>The pattern continues with a third person: $latex \frac{365}{365}\times\frac{364}{365}\times\frac{363}{365}=99.20\%$.</p>
+<p>And a fourth: $latex \frac{365}{365}\times\frac{364}{365}\times\frac{363}{365}\times\frac{362}{365}=98.36\%$.</p>
+<p>When we reach 10 people in a room, the probability that none of them share a birthday becomes $latex 88.31\%$.</p>
+<p>Fifteen people becomes $latex 74.71\%$.</p>
+<p>By the time twenty people have entered the room, the probability that their birthdays are all unique has already dropped to $latex 58.86\%$. It's not much more of a jump to $latex 49.27\%$, the probability of having absolutely unique birthdays among a group of 23 people.</p>
+<p>Flipping the probability back around to our original question (looking at the probability at least two people <em>share</em> a birthday) shows that, once the population reaches 23, the likelihood that two people in the group share a birthday is $latex 50.73\%$.</p>
+<p>My politics professor would be proud.</p>
+<h3>Extending the Pattern</h3>
+<p>What's more, we can <em>extend</em> the pattern a bit, and quickly see that the likelihood of duplicate birthdays grows rapidly as the population increases. In fact, we reach a probability where it's nearly certain that two people share a birthday. With just 50 people in a population, there's an insanely high chance two of them share a birthday: $latex P(50) = 1-\frac{365}{365}\times\frac{364}{365}\times\cdots\times\frac{316}{365}=97.04\%$.[ref]Remember, our original exclusivity approach calculates the probability of having completely <em>unique</em> birthdays in a group. To find the probability of a collision, we have to subtract from 1.[/ref]</p>
+<p>In a population of 70, the probability is so close to 100%, I'd be surprised if you <em>didn't</em> find two people with the same birthday.</p>
+<p>Think about this the next time you're at a WordCamp ...</p>
+<h2>Implications in Computing</h2>
+<p>When we deal with security, we aren't talking in terms of <em>birthdays</em> but in terms of <em>hashes</em>.</p>
+<p>Hash functions, whether they're cryptographically secure or not, are merely functions that map an infinite set of potential inputs to a finite space of potential outputs.</p>
+<p>MD5, for example, only presents 120,892,581,961,462,917,4706,176 different potential hashes (that's $latex 32^{16}$ combinations). This might seem like a rather large number, but when you take the statistics above into account, the complexity for generating a collision is only $latex 2^{64}$.</p>
+<p>Put another way, generating a collision for MD5 "is the equivalent of an exhaustive key search of 64 bits."[ref]<a title="MD5 Discussion on Information Security Stack Exchange" href="http://security.stackexchange.com/q/57562">MD5 Discussion on Information Security Stack Exchange</a>[/ref]</p>
+<p>In order for a one-way hash to be secure, it needs to derive a <em>very large</em> key set, otherwise a <a title="Birthday attack" href="http://en.wikipedia.org/wiki/Birthday_attack">birthday attack</a> (looking for potential collisions as a way to crack the hash) renders it useless.</p>

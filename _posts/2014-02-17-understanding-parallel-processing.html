@@ -1,0 +1,89 @@
+---
+layout: post
+title: Understanding Parallel Processing
+date: 2014-02-17 08:00:51.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- asynchronous
+- background
+- C#
+- javascript
+- parallel
+- PHP
+- thread
+meta:
+  _edit_last: '2'
+  _wpas_mess: What is parallel processing? Why does it matter?
+  _yoast_wpseo_title: Understanding Parallel Processing
+  _yoast_wpseo_metadesc: 'I often say I enjoy C# more than PHP. My biggest reason:
+    I really enjoy working with parallel processing.'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sc
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409905602;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6130;}i:1;a:1:{s:2:"id";i:6081;}i:2;a:1:{s:2:"id";i:2433;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '6'
+  keen_postview_count_this_30_days: '16'
+  _wpghs_github_path: _posts/2014-02-17-understanding-parallel-processing.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/understanding-parallel-processing/"
+excerpt: "When I explain to people that I enjoy writing code in C# more than PHP,
+  they scratch their collective heads and, with a quizzical look, always respond,
+  \"why?\"\r\n\r\nMy biggest reason: I really enjoy working with parallel processing."
+---
+<p>When I explain to people that I enjoy writing code in C# more than PHP, they scratch their collective heads and, with a quizzical look, always respond, "why?"<em><br />
+</em></p>
+<p>My biggest reason: I really enjoy working with parallel processing.</p>
+<h2>Multitasking</h2>
+<p>Before I get to computers, lets use humans as a model for understanding what's going on.  Humans are really bad at multitasking.[ref]Some people will claim they're actually very good multitaskers.  I say they're lying.  I have not ever met anyone who's actually good at multitasking. Ever.[/ref]  There are studies that disprove claims of being good at this, so lets accept for now that humans are a good model for something that can only do one thing at a time.</p>
+<p>The only problem, humans are <em>also</em> expected to perform multiple tasks in parallel all the time.  Take for example a developer - call him Bob - who runs a 1-man agency.<em><br />
+</em></p>
+<p>Bob is doing very well for himself.  He has 3 steady clients and is making a high enough margin to keep the bills paid and still have a life outside of his 9-5.  Except, Bob wants to expand.  He wants to grow his little agency out of the home office - but he's not bringing in enough capital to hire a contractor just yet.</p>
+<p>Instead, Bob takes on 2 more clients.  Unfortunately, having <em>five</em> clients demand Bob's time leads to chaos.  He's still expected to perform the same work for the existing 3 clients, but is now demanded to switch contexts from one client to another more frequently just to keep up.</p>
+<p>Bob is a single-threaded application.  He can only do one thing at a time, so managing 5 different workloads requires constant shuffling of priorities.  Deliverable ship more slowly and Bob has trouble keeping up with demand.</p>
+<p>Finally, there's enough money in the bank for Bob to hire Cindy.  The two of them split the workload fairly evenly: Bob keeps the original 3 clients, Cindy takes the 2 newer ones.  Both developers have to switch contexts less frequently, so they're more efficient with their deliverables and start shipping code on-time once again.</p>
+<h2>Computer Applications</h2>
+<p>Back in the day, computers had a single physical core - the CPU - with which to handle any instructions they were tasked to process.  The advent of personal computers brought along with it the demand that a computer do two things at once.</p>
+<p>Tasks on a computer are split across <a title="Thread (computing)" href="http://en.wikipedia.org/wiki/Thread_(computing)"><em>threads</em></a>.  Each thread corresponds roughly to a single thread, and a traditional CPU core can only process one thread at a time.  If you have a newer machine with multiple physical cores, then your machine is capable of processing multiple threads at the same time.</p>
+<p>Newer technologies like <a title="Hyper-threading" href="http://en.wikipedia.org/wiki/Hyper-threading">hyper-threading</a> allow for virtual threads to run on a machine that otherwise couldn't handle the additional workload.  These technologies make our machines faster and, like Bob hiring Cindy, equate to managing many simultaneous tasks more efficiently.</p>
+<h2>On the Web</h2>
+<p>Unfortunately for WordPress developers, our jobs consist of working with PHP and JavaScript.  Neither language supports threading - that is both are single-threaded languages that, like humans, suck at multitasking.</p>
+<p>In JavaScript, we can fake threading using [cci]setTimeout[/cci] to break out of the current execution cycle and <em>simulate</em> the effect of doing something in the background.  Unfortunately, this isn't really a threaded task.  The browser (that is the UI <em>and</em> the JavaScript engine) all works on 1 thread inside your machine.  If you've ever had a script crash a browser because it took too long, you've run into this limitation head-on.</p>
+<p>With PHP, we can attempt to fork the process by, usually, spinning up a separate PHP instance and offloading some of our data processing to that process.  Again, this isn't real threading - you're using a separate process to handle the processing rather than juggling multiple threads <em>within</em> your application.</p>
+<p>I enjoy working with C# (and all of the .Net family, actually) because it natively supports threading.  C# natively supports a thread <em>pool</em>, which allows our application to:</p>
+<ol>
+<li>Offload certain tasks to a background process</li>
+<li>Register a callback function within the application that is invoked when processing is complete</li>
+</ol>
+<p>Item #2 is what's lacking in the PHP spin-off-a-separate-process world.  We can offload tasks to another process, but we are blind to when that processing is complete.[ref]Ultimately, you <em>could</em> hack something here with shared memory between the processes and just monitor things to see when the processing is finished.  This is a sloppy approach to parallel processing.[/ref]</p>
+<p>JavaScript will actually allow you to do both - achieving real parallel processing - but this requires use of the new <a title="Web worker" href="http://en.wikipedia.org/wiki/Web_worker">Web Worker API</a> and has a few other caveats as well.[ref]I <a title="jQuery and Web Workers" href="http://eamann.com/slides/jqcon-russia-2013/title-3/">presented on this topic</a> at jQuery Russia, and hope to keep talking about it at JavaScript conferences to come.  The discussion on Web Workers is a bit heavy for this particular post, though.[/ref]</p>
+<h2>Practical Solutions</h2>
+<p>As much as I like C# for its native support, I still use PHP in my day job and am reduced to using some of the hacks I list above to work around its lack of any real support.  The most straight-forward approach I've worked with thus far is a message queue.</p>
+<p>The main application needs to process a lot of data using a long-running process.  It takes this data and segments it down to the smallest units of work that can conceivably be processed in parallel and adds each to a queue.[ref]I use a library called <a title="Gearman" href="http://gearman.org">Gearman</a> to power this particular part of the process.[/ref]</p>
+<p>A separate pool of worker tasks - each a separate instance of a single application - is listening for when new jobs are added to the queue.  When data is present, the next available worker grabs it from the queue and goes to work.  When everything's done, I have the worker process write to a log - often just recording execution time and some ID for the job performed - so the parent application can keep track of what's been done, when.</p>
+<p>It's not as elegant as [cci]ThreadPool.QueueUserWorkItem()[/cci], but it gets the job done.</p>
+<h2>Limitations</h2>
+<p>Once you start working with parallel processing, there are several things you should keep in mind.</p>
+<p>First, you're essentially managing <em>several</em> applications at the same time now.  Many of these applications are completely isolated from the main thread's workflow and won't automatically stop execution if the main thread closes things down early.  If you don't closely manage how worker processes are created, queued, and destroyed your system will quickly grind to a halt under the burden of rogue processes.</p>
+<p>Second, communication between functions is drastically different.  In the WordPress world, we often trigger events and pass data using actions, filters, and even global variables.  Function calls (actions and filters) in one process, however, will not affect any others.  Likewise, every new worker process possesses a completely siloed scope (global variables are meaningless).</p>
+<p>Finally,[ref]I say finally because these are the three biggest "gotchas" for developers new to using parallelism in their workflow.  There are several other, more nuanced obstacles to cleanly implementing code in parallel that would take another hundred posts to cover.[/ref] the law of diminishing returns comes into play quite quickly depending on your system architecture.  Said another way, just queueing up a hundred new worker threads <em>will not</em> make your application run a hundred times more quickly.</p>
+<p>Think back to Bob and Cindy.  Both of them are, essentially, separate worker threads in an application (their agency) managing some long-running data processing (client work).  They have a fairly small office that suits the two of them quite nicely.  Assume, however, that Bob gets really excited about a new contract and goes to hire another 20 developers.  They all start at the same time and now there are 22 developers sharing the same workspace.</p>
+<p>Elbows bump.  Papers are lost.  Client work grinds to a halt as the new developers fight over workspace.</p>
+<p>Your threads - your worker processes - will behave the same way.  Spin up more workers than you have real threads available on your machine and you begin to lose the benefit of partitioning work out among workers in the first place.  It's not a hard-and-fast rule, though.  You will need to tweak your application and its use of background processes to make the best use of the resources you have available.</p>
+<p>As an example, consider the chart below (taken from <a title="parallel processing" href="http://stackoverflow.com/a/10670440/326224">a great discussion</a> about parallel processing on Stack Overflow):</p>
+<p><img class="alignnone" alt="" src="{{ site.baseurl }}/assets/2014/02/svLOa.png" width="915" height="478" /></p>
+<p>This compares two dual-core processors against a quad-core processor, using a variable number of threads to process data in a single, large array (the time on the left is total time for the entire operation).  Note what happens as the number of threads (read: background processes) increases above the number of physical cores available.  If you're using background processing on your system, you will <em>definitely</em> want to run a similar profile to be sure your application is properly tuned.</p>
+<p>So why do I like C#?  Because it makes all of the above <em>easy</em>.  Why do I stick with PHP and JS?  Because I can still accomplish the same tasks - it just takes a bit more forethought before I kick off the project.</p>
+<p>Do you use parallel processing in any of your projects?  Have you considered all of the above?  What other advice would you add for developers trying to wrap their heads around it?</p>

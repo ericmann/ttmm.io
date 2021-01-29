@@ -1,0 +1,55 @@
+---
+layout: post
+title: WordPress, Security, and Member Management
+date: 2014-10-15 08:00:03.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- security
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1413360007;s:6:"status";s:6:"pushed";}
+  _wpas_mess: 'If you log in to WordPress as an admin just to write a post, you''re
+    #doingitwrong'
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress, Security, and Member Management
+  _yoast_wpseo_metadesc: If you're logging in to WordPress as an administrator just
+    to write a post, you're doing it wrong.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yz
+  _wpghs_github_path: _posts/2014-10-15-wordpress-security-member-management.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-security-member-management/"
+excerpt: If you're logging in to WordPress as an administrator just to write a post,
+  you're doing it wrong.
+---
+<p>When was the last time you logged into your WordPress site? What user level did you log in with?</p>
+<p>Is your default account an Administrator? Were you logging in to perform administrative actions or to write a post? To update user preferences or moderate comments?</p>
+<p>We're lazy, so once we have a single WordPress login, we tend to use it for everything. I'm no different - I often use the same login to draft posts on my site that I use to administer my site's settings. It's a bit of a security issue, actually.</p>
+<p>Imagine if every task you ran on your local machine was run with administrative privileges. For the most part, we understand this is a bad idea and hide our administrative accounts behind redundant password screens or [cci]sudo[/cci] access. It helps prevent unintended changes to the system and helps protect against hijacked sessions from being used to irreparably damage a machine.</p>
+<p>Why do we treat WordPress differently?</p>
+<h2>Poor Development Practices</h2>
+<p>Developers are often just as lazy as, if not lazier than, the users of their end product. As a result, we often take shortcuts - copy/paste code from one project to another, skip writing unit tests "just to get it done," use code generators to flesh out an application with methods and objects that aren't really necessary.</p>
+<p>We build code to do a job, but often want to complete it so quickly that we do, frankly, a crap job at writing our code.</p>
+<p>In the WordPress world, one of our biggest sins is the misuse and abuse of user permissions.</p>
+<p>How often have you written [cci]current_user_can( 'manage_options' )[/cci] when building out an administrative panel? This is a useful way to prevent subscribers - or any low-permission logged-in user - from seeing or manipulating your settings panel. But it <em>also</em> means you're locking things down to just Administrators by default.</p>
+<p>You're also encouraging your customers to log in to their administrator-level account whenever they need to do non-administrator things.</p>
+<p>Instead, we need to work harder as a community to:</p>
+<ol>
+<li>Understand the permissions we actually need to extend to customers to perform actions within our software</li>
+<li>Take the time to establish <em>new</em> capabilities within WordPress rather than blindly reusing some built for other purposes</li>
+<li>Train our customers to properly audit and account for permissions within their site</li>
+</ol>
+<p>We can build a better, more secure WordPress ecosystem. To do so, we need to stop being lazy about security.</p>

@@ -1,0 +1,49 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Portable Revisions'
+date: 2014-01-29 08:00:01.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- revisions
+- WordPress
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: 'WordPress Core Proposal: Portable Revisions'
+  _yoast_wpseo_metadesc: As cool as the new post revisions feature in WordPress might
+    be, the luster of the shiney new feature has begun to fade.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ru
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409888326;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3405;}i:1;a:1:{s:2:"id";i:626;}i:2;a:1:{s:2:"id";i:6239;}}}}
+  _wpghs_github_path: _posts/2014-01-29-portable-revisions.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/portable-revisions/"
+excerpt: As cool as the new post revisions feature might be, the luster of the shiney
+  new feature has begun to fade.
+---
+<p>One of the coolest features in WordPress is the ability to track document changes and compare documents from one revision to another.  If you haven't <a title="Revisions in WordPress 3.6 Explained" href="http://www.ostraining.com/blog/wordpress/revisions-wordpress/">played with this yet</a>, go and do it now.</p>
+<p>I'll wait.</p>
+<h2>The Luster Has Faded</h2>
+<p>As cool as the new revisions feature might be, the luster of the shiney new feature has begun to fade.  In short, there's a lot it doesn't do, and a lot it should.</p>
+<p>Consider this client story:</p>
+<p>Stacey has hired you to build a new theme for her WordPress site.  You work night and day to create the most stunning design imaginable and come in on-schedule and under-budget.  Stacey is thrilled and starts using the theme immediately.</p>
+<p>A week later, Stacey is presenting a new product at a trade show and calls to put you on retainer to fix any immediate issues that crop up.  You agree, and start watching your inbox to make sure you can fix any issues immediately - a happy client means ongoing business.</p>
+<p>On Friday, you get a cryptic email from Stacey, "everything has been find so far. Well, except for an image that broke the layout yesterday. I took a screenshot of the page so you can see what broke. For now, I've removed the image because it's my most highly-visited page and I can't leave the broken page up. Can you fix it?"</p>
+<p>Thanks to post revisions, you can go back in time and see the markup that Stacey was using.  You can see exactly where the image was placed and how it was wrapped with content.</p>
+<p>It would be really easy to copy that markup, paste it into your local environment, and hack away to fix the bug, right?</p>
+<p>Except it won't work.</p>
+<h2>The Fix</h2>
+<p>Right now, the post revisions page gives you a neat side-by-side comparison of each paragraph.  Due to the way the markup is built, though, you can't copy the old revision with the mouse - you have to copy each paragraph individually.  Moving content from a revision to a staging environment to debug live issues is ... time-consuming.</p>
+<p>The smallest fix here would be to change the markup - but that's not what I'm proposing.</p>
+<p>Instead, I think editors should be able to restore a revision <em>as a draft</em> on the site (rather than rolling back the live post to the revision).  This would allow content editing, exports, etc without affecting the state of the live post.</p>
+<p>This is a change to core - the ability to somehow export a specific revision - that would have drastically affected my editorial workflow over the past two weeks.</p>

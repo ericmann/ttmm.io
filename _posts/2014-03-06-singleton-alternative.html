@@ -1,0 +1,85 @@
+---
+layout: post
+title: 'Singleton: Alternative to the Anti-Pattern'
+date: 2014-03-06 08:00:53.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- anti-pattern
+- factory method pattern
+- singleton
+- Singleton Pattern
+- WordPress
+meta:
+  _edit_last: '2'
+  _wpas_mess: 'Revisiting the Singleton anti-pattern, and providing an alternative
+    #WordPress'
+  _yoast_wpseo_title: 'Singleton: Alternative to the Anti-Pattern'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/su
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409909359;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5472;}i:1;a:1:{s:2:"id";i:5469;}i:2;a:1:{s:2:"id";i:6130;}}}}
+  keen_postview_count_this_7_days: '13'
+  keen_postview_count_this_30_days: '33'
+  _wpghs_github_path: _posts/2014-03-06-singleton-alternative.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/singleton-alternative/"
+excerpt: There are valid reasons for using a Singleton in your design - these reasons,
+  however, are rare enough that many developers can avoid them entirely and still
+  have a full career.  If you find yourself using Singletons often, you're doing something
+  wrong.
+---
+<p>I made quite a splash when I advocated the <a title="The Case for Singletons in WordPress" href="http://eamann.com/tech/the-case-for-singletons/">use of Singletons</a> in WordPress development.</p>
+<p>I still stand by Singletons as a valid design pattern - and my method for <a title="Making Singletons Safe in PHP" href="http://eamann.com/tech/making-singletons-safe-in-php/">making them testable in PHP</a>.  At the same time, I recognize that Singletons are considered an anti-pattern for a specific reason.</p>
+<p>If you don't, then what follows is absolutely important for helping you understand why <em>not</em> to use Singletons.</p>
+<p>If you already agree, skip the next part and move on to the resolution.</p>
+<h2>The Dangers of Singletons</h2>
+<p>The entire point of a Singleton is to prevent multiple instances of your object from living together in the same context.  This is a valid concern when your object represents, say, a PHP header collection, the current request, or the final response being sent to the client.</p>
+<p>Single-instantiation, however, breaks the ability to test the object as, even in your test suite, you can only create one copy of the object.[ref]There are ways around this by using, for example, process isolation.[/ref]  If you're building a well-covered application - and you <em>are</em> building a well-covered application, right? - this particular limitation of Singletons will give you a headache.<em><br />
+</em></p>
+<p>Singletons are also inherently inextensible - you cannot subclass a Singleton.  As your application grows, however, the need to subclass an object can and will come up.</p>
+<p>Take my example above - that a Singleton could represent the response object being sent to the client.  What if you decide to extend a JSON API for your application?  The easiest way is to extend your general response object to create a JSON-specific one; if it started as a Singleton, however, you can't.</p>
+<p>There are valid reasons for using a Singleton in your design - these reasons, however, are rare enough that many developers can avoid them entirely and still have a full career.  If you find yourself using Singletons often, you're doing something wrong.</p>
+<h2>An Alternative</h2>
+<p>In the world of WordPress, developers will often use a Singleton to wrap some sort of god object[ref]The god object is another dangerous anti-pattern that I will address in the future.[/ref] that wires in all of their actions and filters.  The justification behind this pattern is extensibility - other developers will need an easy way to get a reference to your original instance so they can remove, reorder, or otherwise manipulate your chosen hooks.</p>
+<p>Kudos to developers wanting to make their code extensible.</p>
+<p>Boo to developers using Singletons to do so.</p>
+<p>Instead, developers should investigate and utilize a variation on the "<a title="Factory method pattern" href="http://en.wikipedia.org/wiki/Factory_method_pattern">factory method pattern</a>."  Thanks to static method variables in PHP, it's fairly straight-forward to expose a uniform access method on your object <em>that always returns the same instance of that object</em> or creates one if it doesn't exist.</p>
+<p>For example:</p>
+<p><code lang="php" width="620" height="470">class Example {<br />
+    public function __construct() {<br />
+        add_filter( 'the_content', array( $this, 'the_content' ) );<br />
+    }</p>
+<p>    public function the_content( $content ) {<br />
+        return $content;<br />
+    }</p>
+<p>    public function do_something() { }</p>
+<p>    public static function factory() {<br />
+        static $instance = false;<br />
+        if ( ! $instance ) {<br />
+            $instance = new self;<br />
+        }</p>
+<p>        return $instance;<br />
+    }<br />
+}</p>
+<p>// In your code elsewhere:<br />
+Example::factory()->do_something();</p>
+<p>remove_filter( 'the_content', array( Example::factory(), 'the_content' ) );</code></p>
+<p>Just be sure that, in your code that [cci]include()[/cci]s this file, you call [cci]Example::factory()[/cci] rather than instantiate the object directly.  Instantiating the object will <i>not</i> populate the factory's internal instance container - production code should avoid direct instantiation and <i>always</i> defer to the factory.</p>
+<p>To be even safer, you could move any hook wiring to a method other than the constructor - one that you invoke directly.  Then subsequent, accidental instantiations won't double-bind events.</p>
+<h2>How This Solves the Singleton Problem</h2>
+<p>Singletons are used in WordPress to provide universal access to an instantiated object without needing to pass a variable from one function to another.  The pattern above does the same.</p>
+<p>Singletons prevent an object from being instantiated more than once, breaking the ability of unit tests to isolate state from one another.  The pattern above allows tests to create as many copies as they need by <em>directly</em> firing the constructor and bypassing the factory method.</p>
+<p>Singletons prevent object sub-classing for new method implementations.  The pattern above allows subclassing <em>both</em> instance methods <em>and</em> the factory method being used.</p>
+<h2>Moving Forward</h2>
+<p>If you're using Singletons in your WordPress code, I <em>strongly</em> recommend you reconsider.  The above example is but one way to achieve the same universal access and functional single-instantiation Singletons provide, but without crippling your code's testability or extensibility.</p>
+<p>If you aren't convinced factory methods are better than Singleton accessors, I'd be interested to know why.</p>

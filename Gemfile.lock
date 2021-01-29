@@ -192,6 +192,9 @@ GEM
       jekyll (>= 3.3, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
+    jekyll_oembed (0.0.3)
+      jekyll (~> 3)
+      ruby-oembed (~> 0)
     jemoji (0.12.0)
       gemoji (~> 3.0)
       html-pipeline (~> 2.2)
@@ -231,6 +234,7 @@ GEM
     rouge (3.26.0)
     ruby-enum (0.8.0)
       i18n
+    ruby-oembed (0.15.0)
     ruby2_keywords (0.0.4)
     rubyzip (2.3.0)
     safe_yaml (1.0.5)
@@ -266,6 +270,7 @@ DEPENDENCIES
   jekyll-paginate
   jekyll-seo-tag
   jekyll-sitemap
+  jekyll_oembed
   tzinfo-data
 
 BUNDLED WITH

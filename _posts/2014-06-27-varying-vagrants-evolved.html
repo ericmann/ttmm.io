@@ -1,0 +1,55 @@
+---
+layout: post
+title: Varying Vagrants Evolved
+date: 2014-06-27 08:00:13.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- nfs share
+- osx
+- Vagrant
+- virtual machine
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Varying Vagrants Evolved
+  _yoast_wpseo_metadesc: I've cleared out my old Mac virtual machines and started
+    with Varying Vagrant Vagrants anew. Here's how!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vy
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409695634;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6123;}i:1;a:1:{s:2:"id";i:6329;}i:2;a:1:{s:2:"id";i:5905;}}}}
+  keen_postview_count_this_30_days: '15'
+  _wpghs_github_path: _posts/2014-06-27-varying-vagrants-evolved.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/varying-vagrants-evolved/"
+excerpt: I've cleared out my old Mac virtual machines and started with Varying Vagrant
+  Vagrants anew. Here's how!
+---
+<p>When we first started working on <a title="Varying Vagrant Vagrants" href="https://github.com/Varying-Vagrant-Vagrants/VVV">Varying Vagrant Vagrants</a>, the overarching goal was far different than it is now.</p>
+<p>Originally, we wanted to build a project template that could be easily customized to individual project needs. The idea was that a new project would consist of just a few configuration settings on top of an otherwise vanilla VVV install. You could ship your project configuration to a coworker and they could be up-and-running with a project-specific virtual machine in seconds.</p>
+<p>To this end, when I started coding on a Mac I set up individual Vagrant boxes for each and every project in the hope that our little templating system would continue to evolve. It did, but not how I expected it.</p>
+<p>Varying Vagrant Vagrants today is a much larger project sandbox than I originally thought it would be. The default box comes pre-installed with PHPUnit for testing, Grunt for building projects, Ruby for running Sass, and <em>three</em> separate instances of WordPress for core development. VVV has evolved into a suitable replacement for MAMP, Xampp, and Wamp, and most developers are using it that way.</p>
+<p>To be honest, I even use it this way on <a title="Hyper-VVV on Windows" href="http://eamann.com/tech/hyper-vvv-windows/">my Windows machine</a>. Granted, I have some customizations I've made over there that I finally decided to port over to my Mac environment.</p>
+<h2>Making Changes</h2>
+<p>The first change I made was to force MySQL to leave its data in the virtual machine. Trying to continually access the database across a shared connection was <em>slow</em>. I put up with it for a long time because I didn't realize just how slow it really was. Once I set up Hyper-V on my Windows machine, though, I realized it was a night and day difference.</p>
+<p>First, don't mount the [cci]/data[/cci] directory in your virtual machine. This prevents the directory from being mapped within the VM, so all databases and tables will live there rather than on the host machine.</p>
+<p>Second, edit [cci]my.conf[/cci] (in the MySQL part of the configuration settings) to include the following line: [cci]innodb_file_per_table=1[/cci].[ref]This prevents MySQL from dumping the <em>entirety</em> of its data store into one file. If you create, say, a 10GB client database, this file would expand to contain it. Deleting the database <em>would not free up harddisk space or contract the file</em>. Using this setting creates a new file for every table, so you can more easily clean up the database later.[/ref]</p>
+<p>Next, I forced the directory shares to use NFS. I use Samba on my Windows machine, and it's <i>incredibly</i> faster than VirtualBox's native file sharing setup. To use NFS, you'll need to add [cci]type: "nfs"[/cci] to each of your shared directory declarations. For example:</p>
+<p>[cc lang=ruby]config.vm.synced_folder "www/", "/srv/www/", type: "nfs"[/cc]</p>
+<p>You will also need to remove any owner or mount options (file-permissions) settings from your declaration since these aren't compatible with the way NFS will be mounting the drives.</p>
+<p>That's it!</p>
+<h2>Local Development <em>Evolved</em></h2>
+<p>I usually try to change as little as possible when I'm working with released software. What I do change I offer back to the community so others can iterate on any potential improvements I find (or can ridicule me for doing something wrong).</p>
+<p>Either way, the settings above were all I had to change to get my Mac environment to match my Windows one. VVV is far faster with these changes set up, and I'm super happy using a single environment for all of my projects rather than juggling multiple VVV installs.[ref]Each VVV setup was between 500MB and 10GB on its own. I was running a total of 7 environments on my machine, so it wasn't a trivial thing. Instead, I now have one environment that weighs in at 3GB. Still large, but not unmanageable.[/ref]</p>

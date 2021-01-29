@@ -1,0 +1,92 @@
+---
+layout: post
+title: Post Supplements - A Concept
+date: 2011-12-22 19:37:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- concept
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/h1
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: supplements
+  _yoast_wpseo_title: Post Supplements - A Concept for WordPress
+  _yoast_wpseo_metadesc: Is there a better way to add "things" below posts on a WordPress
+    blog? I think so. Here's how I would add "post supplements" to a theme ...
+  _yoast_wpseo_metakeywords: wordpress, post supplements, sharing icons, widgets
+  _blackbirdpie-149542531368095744: a:13:{s:2:"id";s:18:"149542531368095744";s:11:"screen_name";s:13:"helenhousandi";s:9:"real_name";s:15:"Helen
+    Hou-Sandi";s:10:"tweet_text";s:213:"@<a href="http://twitter.com/intent/user?screen_name=EricMann"
+    class="twitter-action">EricMann</a> Thinking in CMS-land, I could see using that
+    template tag for a lead form, or a gallery, or something not sharing.";s:6:"source";s:101:"<a
+    href="http://itunes.apple.com/us/app/twitter/id409789998?mt=12" rel="nofollow">Twitter
+    for Mac</a>";s:11:"profile_pic";s:72:"http://a2.twimg.com/profile_images/1447247882/flower-earrings_normal.jpg";s:16:"profile_bg_color";s:6:"ffffff";s:15:"profile_bg_tile";s:0:"";s:16:"profile_bg_image";s:67:"http://a1.twimg.com/profile_background_images/73603989/hyhprint.png";s:18:"profile_text_color";s:6:"2e1b08";s:18:"profile_link_color";s:6:"d66b00";s:10:"time_stamp";s:10:"1324488692";s:10:"utc_offset";s:6:"-18000";}
+  yourls_tweeted: '1'
+  _yoast_wpseo_linkdex: '91'
+  _zem_rp_image: '5583'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409932136;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6452;}i:1;a:1:{s:2:"id";i:5980;}i:2;a:1:{s:2:"id";i:6021;}}}}
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _oembed_86e3d71c55542e89b494e45ac489e076: <blockquote class="twitter-tweet" width="500"><p><a
+    href="https://twitter.com/EricMann">@EricMann</a> Thinking in CMS-land, I could
+    see using that template tag for a lead form, or a gallery, or something not sharing.</p>&mdash;
+    Helen Hou-Sandí (@helenhousandi) <a href="https://twitter.com/helenhousandi/status/149542531368095744">December
+    21, 2011</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_86e3d71c55542e89b494e45ac489e076: '1409889024'
+  _wpghs_github_path: _posts/2011-12-22-post-supplements-a-concept.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/post-supplements-a-concept/"
+---
+<p>A few months ago, WordPress UX Lead Jane Wells posted <a href="http://core.trac.wordpress.org/ticket/18561" target="_blank">a request to WordPress' Trac</a> ticketing system.  The idea was to find a better way to insert "stuff" below WordPress posts:</p>
+<blockquote><p>Inserting the sharing and like rows at the bottom of the post text before the byline/classification metadata seems wrong. It should go below that, so it is closely related to commenting, not part of the content itself. The plugin-generated widget is not "by" the post author, after all.</p></blockquote>
+<p>I haven't used very many social media plugins for exactly this reason.  Nor have I ever used a "related posts" plugin.  They always seem to conflict with one another and build up a bunch of unnecessary cruft below my content.</p>
+<p>So for the past few months, I've been thinking about different ways to handle this.</p>
+<p>[caption id="attachment_3933" align="alignright" width="300"]<a href="http://ttmm.wpengine.com/wp-content/uploads/2011/12/art-of-manliness.jpg"><img class="size-medium wp-image-3933" title="The Art of Manliness" src="{{ site.baseurl }}/assets/2011/12/art-of-manliness-300x296.jpg" alt="" width="300" height="296" /></a> The Art of Manliness adds an author box, a Facebook "like" button, a related content gallery, and a subscription feature to the bottom of each post.[/caption]</p>
+<h2>Template Parts</h2>
+<p>My first idea was to just use a template region within a WordPress theme.</p>
+<p>Each individual theme would call some variety of [cci]get_template_part()[/cci] to set up whatever region is being used.</p>
+<p>Plugins would then provide content for these templated regions.  So [cci]get_template_part('social_media')[/cci] and [cci]get_template_part('related')[/cci], for example.</p>
+<p>The problem with this, though, is one of <em>standards</em>.  What template regions will be supported?  How will new ones be developed?  After the battle over post formats, this isn't a particular standard I want to battle.</p>
+<h2>Post Intents</h2>
+<p>Another developer suggested modelling  system after the emerging <a href="http://webintents.org/" target="_blank">Web Intents</a> standard.</p>
+<p>Basically, a new function would be added to WordPress to output various registered post intents - share this, "like" this, subscribe to updates, etc.</p>
+<p>Individual plugins would then register these intents and their various actions, but leave it to the theme to style the presentation.</p>
+<p>I was entirely sold on this idea.  Well, until a long Twitter conversation with <a href="https://twitter.com/#!/helenhousandi" target="_blank">Helen Hou-Sandi</a>:</p>
+<p>https://twitter.com/helenhousandi/status/149542531368095744</p>
+<p>When you take things like photo galleries, related posts, and actions <em>other</em> than social media integration into account, the concept of post intents no longer makes sense.</p>
+<h2>New Action Hooks</h2>
+<p>[caption id="attachment_3937" align="alignright" width="300"]<a href="http://ttmm.wpengine.com/wp-content/uploads/2011/12/pearsonified.jpg"><img class="size-medium wp-image-3937 " title="Pearsonified" src="{{ site.baseurl }}/assets/2011/12/pearsonified-300x246.jpg" alt="" width="300" height="246" /></a> Chris Pearson add a personal "follow me" Twitter link, a "Tweet this" link, and several other action items below his posts.[/caption]</p>
+<p>I love having a large number of action hooks to use when I'm building a theme.  I can move content around, add custom views to my content, manipulate the display.  The sky's the limit.</p>
+<p>So when several developers suggested that we just add a few action hooks before and after the post content, I was intrigued.</p>
+<p>But really, this is what themes are already doing.  And merely adding a few extra action hooks just gives plugin authors the ability to inject their own markup into the flow of your otherwise well-built design.</p>
+<p>Considering some of these add-junk-to-the-bottom-of-my-content plugins already break the display, why would they function any different if I gave them a specific hook to tie in to?</p>
+<h2>My Proposal - Post Supplements</h2>
+<p>Instead, I have in mind a hybrid of a new action hook and registering a new object: <em>post supplements</em>.</p>
+<p>Think about widgets for a second.  There's a specific area to display widgets (the sidebar), each widget is registered with WordPress and placed in this area, and a well-coded widget leaves much of its markup to the theme ([cci]before_widget[/cci] and [cci]after_widget[/cci]).</p>
+<p>So think of two things:</p>
+<ol>
+<li>A new object defined by WordPress: [cci]WP_Supplement[/cci]</li>
+<li>A new action hook/function used by WordPress to output registered supplements in the theme</li>
+</ol>
+<p>The theme can register supplements (one for sharing, one for related posts, one for a photo gallery, one for an about-the-author box, etc).  Various plugins can also register supplements.</p>
+<p>Then, <em>just like with widgets</em>, these supplements can be added to the theme.</p>
+<p>Widgets use [cci]add_action( 'widgets_init', create_function( '', 'register_widget("Foo_Widget");' ) );[/cci]</p>
+<p>Supplements could use [cci]add_action( 'supplements_init', create_function( '', 'register_supplement("Foo_Supplement");' ) );[/cci]</p>
+<h3>Decisions, Not Options</h3>
+<p>I don't envision a UI for this feature.  Everything can be handled programatically - supplements appear on screen in the order in which they were added to the system.  Likewise, they can be unregistered the same way.</p>
+<p>This keeps the WP interface lean and mean, but still gives us a more efficient way to add content to a post <em>in exactly the place the theme designer intends:</em> [cci]do_action( 'post_supplements' )[/cci] or [cci]wp_post_supplements()[/cci].</p>
+<p>The theme designer would be in complete control of the position of these elements, what styling (if any) separates them from the content of the post, and what styling (if any) distinguishes them from one another.</p>
+<p>This would be non-trivial to build, so before I dig in to the code I want to solicit feedback on the idea.</p>
+<p>Does this make sense from a usability standpoint?</p>

@@ -1,0 +1,73 @@
+---
+layout: post
+title: Self-Hosted VPN
+date: 2014-07-10 08:00:16.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- encryption
+- networking
+- Raspberry Pi
+- security
+- vpn
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1404979253;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Self-Hosted VPN
+  _yoast_wpseo_metadesc: I'm a stickler for security, so how can I in good conscience
+    connect to a network I don't trust?
+  _oembed_19b3cc69049b8f5b2f98c993012057a8: <blockquote class="twitter-tweet" width="500"><p>WiFi
+    networks that disable the ports used for ssh and vpn tunneling are super shady.
+    Seriously folks, don&#39;t use &#39;em.</p>&mdash; Eric Mann (@EricMann) <a href="https://twitter.com/EricMann/statuses/485302296730173440">July
+    5, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wa
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409875942;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6272;}i:1;a:1:{s:2:"id";i:6104;}i:2;a:1:{s:2:"id";i:6113;}}}}
+  keen_postview_count_this_7_days: '7'
+  keen_postview_count_this_30_days: '101'
+  _wpghs_github_path: _posts/2014-07-10-self-hosted-vpn.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/self-hosted-vpn/"
+excerpt: I'm a stickler for security, so how can I in good conscience connect to a
+  network I don't trust?
+---
+<p>I travel a lot. Be it to foreign destinations like <a title="Monkeys in the Machine" href="http://eamann.com/tech/monkeys-machine/">Brazil</a> or <a title="Telling my story at WordCamp Romania" href="http://10up.com/blog/2014/wordcamp-romania/">Romania</a>, or to less exotic locales like the coffee shop down the street.</p>
+<p>In either case, I often end up connecting to the Internet through a less-than-trustworthy network connection. You should know by now that I'm a stickler for security, so how can I in good conscience connect to a network I don't trust?</p>
+<h2>Private Networking</h2>
+<p>I've written before about how <a title="Remote and Secure" href="http://eamann.com/tech/remote-secure/">I use a commercial VPN</a> for the majority of my on-the-go network access. The VPN allows me to open an encrypted tunnel to the Internet through an organization I trust. Traffic leaves my computer <em>encrypted</em>, goes to my VPN partner, is decrypted, then is passed anonymously to its destination.</p>
+<p>This makes browsing just about any site, SSL-secured or not, somewhat safe even if eavesdroppers and hackers are lurking on the open WiFi network I've connected to.</p>
+<p>Occasionally, though, I need <em>more</em> than just a secure connection - I need a secure connection to <em>my home network</em>.</p>
+<h2>Network Security</h2>
+<p>In addition to unique SSH keys for server access, some of the machines I manage also maintain IP address whitelists. Any traffic, authenticated or not, coming from an address not in the whitelist is rejected.</p>
+<p>It's an added level of security meant to protect against the accidental disclosure of SSH keys to an untrusted part. It also means our server is extra secure because, not only can few people reach it, those few people can only reach it from known, secure connections.</p>
+<p>If I need to manage such a server on the road, not even my commercial VPN can help. Yes, it ensures that my connection is secure, but I'm connected through whichever anonymized data center is the closest. What I need is a VPN that can connect me - securely - to my home network.</p>
+<h2>Self-Hosted VPN</h2>
+<p>Enter Raspberry Pi, the credit-card machine that (apparently) is the answer to everyone's problems.</p>
+<p>I purchased a Raspberry Pi last month with the sole purpose of turning the amazing low-power device into an in-home network server. I connected it directly to my router and, thanks to some <a title="Building A Raspberry Pi VPN Part One: How And Why To Build A Server" href="http://readwrite.com/2014/04/10/raspberry-pi-vpn-tutorial-server-secure-web-browsing">amazing</a> <a title="Building A Raspberry Pi VPN Part Two: Creating An Encrypted Client Side" href="http://readwrite.com/2014/04/11/building-a-raspberry-pi-vpn-part-two-creating-an-encrypted-client-side">tutorials</a>, converted it into a VPN provider using OpenVPN.</p>
+<p>The only real deviation from the tutorials I made was to enforce 4096-bit keys for encryption. This is more security than we rationally need now, but I fully expect computing and cryptography to change rapidly as more of the public becomes aware of the need. I also want everything I do between a remote connection and my home network to remain secure <em>for as long as possible</em>.</p>
+<p>To borrow from <em><a title="Cryptonomicon" href="http://www.amazon.com/gp/product/B000FC11A6/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=B000FC11A6&amp;linkCode=as2&amp;tag=mindshmarket-20&amp;linkId=WPSRFJZ6CZPI2MT4">Cryptonomicon</a></em>, I want my data to remain secure "for as long as men are capable of evil."</p>
+<p>Using 4096-bit keys does come at a bit of a price, though. The Raspberry Pi is a low-power device with just a 700-MHz processor. It ran continuously for 26 hours before it finished calculating the Diffie-Hellman key exchange. If you want a <em>quick</em> VPN, go with a less secure key. Just know that everything else about the tutorials linked above took only 15 minutes. Total.</p>
+<h2>Remote Networking</h2>
+<p>An in-home, Raspberry Pi-powered VPN won't always be the fastest thing in the world. I can connect to it over just about every connection I use, but my bandwidth is then limited by the network I'm on, my home network, and the speed of the Pi's encryption/decryption. I've discovered the combined bottleneck is somewhere around 10 MB/s both up and down, which is fairly respectable.[ref]If for some reason I need speeds faster than this, I still have a commercial VPN available. Won't give that up for the world![/ref]</p>
+<p>I'm willing to sacrifice a bit of speed in favor of security. Oh, and by connecting though a box in my home, I <em>also</em> have access to my entire home network.</p>
+<p>I have a network printer and even a 1TB <a title="How to Turn a Raspberry Pi into a Low-Power Network Storage Device" href="http://www.howtogeek.com/139433/how-to-turn-a-raspberry-pi-into-a-low-power-network-storage-device/">network storage device</a> attached to my Pi. This allows me to move from location to location without having to carry my entire iTunes library on my machine. I can back up photos on the go to my own, self-hosted "cloud" back at home. I can even print documents from the cafe and pick them up when I get back.</p>
+<h2>The Bottom Line</h2>
+<p>I have VPN clients set up on everything I use remotely - from my Mac to my smartphone. Even when I leave the house it's like I never left the house; my Internet activity and access is just as safe as it is in my office.[ref]Considering recent debates over net neutrality and the NSA it's debatable that even browsing from home is "safe." I'm speaking in relative terms here only.[/ref]</p>
+<p>If you don't pay attention to your security - if you connect to insecure wireless access points and leak your data online - then you're just asking to be hacked. Be smart about your digital presence and make sure you're a) always connecting from known/secure networks or at the very least b) only browsing encrypted (HTTPS) resources when you're on the go. Setting up an in-home VPN is relatively straight-forward given available tutorials, takes little time to configure,[ref]Outside of waiting for the key generation to complete, the entirety of my VPN setup took 15 minutes.[/ref] and can help keep you connected just about wherever you go.</p>
+<h3>Just about ...</h3>
+<p>There will always been networks that are more questionable than others. When I landed in the Dusseldorf airport last weekend, the first thing I wanted to do was check on a few things online. I discovered quite quickly, however, that their network was configured in such a way to <em>only</em> allow traffic over standard ports - 80 used for HTTP and 443 used for HTTPS.</p>
+<p>https://twitter.com/EricMann/status/485302296730173440</p>
+<p>I could not tunnel to either my personal VPN or the commercial one I use, so Dusseldorf was out for any sort of WordPress blogging or other Internet activity. Remember, protect yourself - if the network to which you have access makes you nervous, <em>don't use it</em>. I don't trust German airports any more than I trust American coffee shops.</p>

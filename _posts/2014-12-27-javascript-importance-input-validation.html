@@ -1,0 +1,49 @@
+---
+layout: post
+title: 'JavaScript: The Importance of Input Validation'
+date: 2014-12-27 08:00:23.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'JavaScript: The Importance of Input Validation'
+  _yoast_wpseo_metadesc: Always sanitize and/or validate the inputs of every function
+    before assuming the data is valid.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-y
+  _wpghs_github_path: _posts/2014-12-27-javascript-importance-input-validation.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/javascript-importance-input-validation/"
+excerpt: Always sanitize and/or validate the inputs of every function before assuming
+  the data is valid.
+---
+<p>I ran across a somewhat dangerous memory leak in an application the other day. We were using a grid system to plot the position of various elements, and the off-the-shelf system had a few critical issues with it.</p>
+<p>First and foremost, an internal method created a few objects and bound DOM events on every chance of the internal grid map. Whenever the grid map changed, the script created new objects and bound them to the DOM as well.</p>
+<p>Except it never <em>unbound</em> the old objects. The longer we ran the script, and the more changed we made to the grid, the more stale objects we had bound to the DOM. Our first order of business was actually invoking [cci].destroy()[/cci] methods presented on every element.</p>
+<p>The second issue was more problematic.</p>
+<h2>Casting Errors</h2>
+<p>Central to our script was a set of nested loops that would iterate across every cell in the table-like grid and bind drop listeners to each. It was a simple grid that simply iterated over the columns in the outer loop, then in each column iterated through every row.</p>
+<p>Assuming 12 columns and 16 rows, this would create 192 instances of the [cci]Coordinates[/cci] object, which internally tracked events. It's a <em>lot</em> of objects, but not too impactful on memory.</p>
+<p>However, the function that iterated across these objects did so based on passed-in counts of rows and columns. It worked under the assumption that both counts were passed as <em>integers</em> and began using them as such. A deeper investigation uncovered that they were being passed in as strings.</p>
+<p>The condition within the foreach, [cci]$column_count += 1[/cci] and [cci]$row_count += 1[/cci], forced the index to <em>append</em> 1 rather than increment by 1. For example, [cci]"15" += 1 = "151"[/cci] - The [cci]+=[/cci] operator does not cast the first element as an integer; it was casting the second operator as a string to match the first. This caused or script to create several <em>thousand</em> instances of the [cci]Coordinates[/cci] object, most of which represented inaccessible grid coordinates in the first place.</p>
+<p>It also caused our web page memory to balloon beyond a reasonable handful of megabytes into the realm of 1.5+ <em>gigabytes</em> in no time. It made our application unusable, and was a significant source of frustration just before the holidays.</p>
+<h2>Resolution</h2>
+<p>As with many other issues plaguing web development, the resolution here involves properly sanitizing function inputs.</p>
+<p>Our looping function worked under the assumption that the inputs were valid integers when, really, they were strings. Typically, JavaScript is smart enough to typecast when necessary - in this specific case, though, it was typecasting the <em>wrong</em> direction.</p>
+<p>Instead of just hoping that JavaScript will cast for you, or that developers will only ever pass you good data, you should <em>always validate the input to a function before working with said input</em>.</p>
+<p>In this case, passing both inputs through [cci]parseInt()[/cci] made sure we didn't need to depend on type coercion and had a much more performant, memory-friendly application.</p>

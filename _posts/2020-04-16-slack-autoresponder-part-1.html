@@ -1,0 +1,87 @@
+---
+layout: post
+title: Slack Autoresponder - Part I
+date: 2020-04-16 07:00:00.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- JavaScript
+- Technology
+- Tutorials
+tags:
+- AWS
+- Slack
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/slack-autoresponder-part-1/"
+---
+<p><!-- wp:paragraph --></p>
+<p>The impacts of <a href="https://en.wikipedia.org/wiki/Coronavirus_disease_2019">the COVID-19 pandemic</a> are legion; millions contracted the disease, hundreds of thousands have died, schools are closed, businesses are closed, the economy is in turmoil, and I'm working remotely once again. This last impact is the least concern, but as a software developer it's also the easiest thing for me to address in the immediate term.[ref]I am working hard to use my skills to affect positive change in as many areas as possible. Our company is still afloat and I'm still supporting my family. With what time I do have I'm donating to help other businesses and individuals stay afloat as well. This tutorial is meant to show the fruits of just one among many projects I have going.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I've worked remotely before. It's an enjoyable work experience to skip your morning commute, make as much coffee as you want, and even take a break to have lunch with your family <em>on a daily basis</em>. It's a wonder more people don't focus on work-from-home as a default.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Unfortunately, not everyone is as comfortable switching to a remote, asynchronous interaction style as I am. This is most evidenced by the number of random "hey, you there?" or "got a sec?" pings I'll get on Slack without context. It's a bit frustrating to come back to a message like this after being offline for an hour or two while taking care of my daughter only to see the person who asked is now also offline and left no further details to their problem.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In a nutshell: Slack is asynchronous. We don't have to both be online at the same time to communicate.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>How I Slack</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>In my career, I first used IRC. We had a dedicated, private channel for team communication and spun up one-off project channels when needed. Bots were used less for entertainment and more to keep a private channel private and controlled.[ref]Though once bot frameworks became a thing we totally started making our IRC bots smart![/ref] After IRC came HipChat with a strong integration into our other Atlassian-based tools. Now, though, my team is on Slack. It's still a great tool, but proper management of Slack requires a few specific things.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Firstly, I am strictly disciplined about my Slack status. I set an emoji to let you know if I'm home or (once this is all over?) in the office. If I'm out for childcare or family reasons I change my status. If I'm offline or at lunch I change my status.[ref]When I'm offline I also put my phone number in my status so my team can reach me in an emergency.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also update my Slack <em>presence</em> to let you know if I'm at my desk or not. If it says I'm here, I'm available. If it says I'm away - you can see where this is heading.[ref]Yes, I will sometimes be physically at my desk but marked "away." This is because I'm <em>not working</em>. I might be watching a video while eating lunch. Maybe I'm on a second computer checking my bank account. The point is that I'm unavailable.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Despite my status and presence being solid indicators of where I'm at, some of my peers still fall into the "are you there?" trap and shout into the void when I'm not around. I decided to fix that.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>The Slack Autoresponder</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Slack has an API - I use it to set my status/presence with several keyboard shortcuts already. But it <em>also</em> has an event notification API that will proactively send data to a server to allow the server to script a response. In my case, this is <em>exactly</em> what I want.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"center","id":8189,"sizeSlug":"large"} --></p>
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img src="{{ site.baseurl }}/assets/2020/04/autoresponder.png?fit=1024%2C549&amp;ssl=1" alt="Slack autoresponder in action" class="wp-image-8189" /><br />
+<figcaption>Slack autoresponder in action</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>In my situation, I want a Slack integration that:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Checks to see if this is an urgent message - if so, send me a text message</li>
+<li>Checks to see if I'm set to "away"
+<ul>
+<li>If I'm away, respond with a canned "I'm not here" response</li>
+<li>If I'm away but have sent a canned response in the past 10 minutes, ignore the message</li>
+</ul>
+</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>My tools of choice: <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>, the <a href="https://serverless.com/">Serverless Framework</a>, and <a href="https://www.ringcentral.com/">Ring Central.</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I'll use Serverless to build my application, listening to Slack events and responding when the conditions are right. Because I don't have time to stand up a server (and don't want my local machine handling the influx of Slack messages), I'll host my app as an AWS Lambda function. To power urgent messaging to alert me when I need to head back to my desk immediately, I'll integrate everything with Ring Central's SMS APIs.[ref]You can also use <a href="https://www.twilio.com/">Twilio</a> if you want and my app can actually use either.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that you know what tools I'll use and what I want to build, though, you'll have to wait until next time to see the secret sauce. Tune in tomorrow for Part II where I walk you through the app and the build.</p>
+<p><!-- /wp:paragraph --></p>

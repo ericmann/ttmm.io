@@ -1,0 +1,112 @@
+---
+layout: post
+title: Object-Oriented JavaScript
+date: 2010-12-17 08:00:34.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- javascript
+meta:
+  yourls_shorturl: http://eam.me/cx
+  wpbook_fb_publish: 'yes'
+  _edit_last: '2'
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409912650;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6232;}i:1;a:1:{s:2:"id";i:6552;}i:2;a:1:{s:2:"id";i:2630;}}}}
+  keen_postview_count_this_24_hours: '5'
+  keen_postview_count_this_7_days: '13'
+  keen_postview_count_this_30_days: '45'
+  _wpghs_github_path: _posts/2010-12-17-object-oriented-javascript.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/object-oriented-javascript/"
+---
+<p>First a caveat: JavaScript is a <em>prototype-based</em> language, not an object-oriented language.  Now that we have an understanding of that very important fact, let's learn how to use JavaScript as if it were object-oriented.</p>
+<p>A few weeks ago, I was asked to teach a couple of my colleagues how to code with JavaScript.  We're building a cross-browser plug-in that's meant to interface with an external device.  The plug-in itself is written in C++, but the entire API is written in JavaScript.  I was right at home, making API calls from within the scripts that drive the web-based UI.  But my colleagues weren't.  Their first pass at converting their code from a real object-oriented language to JavaScript was ... well ... frightening.</p>
+<p>Rather than just take over, though, I wanted to make it easier for them to work with the code.  The more they can write, the less I have to.  It's a winning scenario for me, but I needed to either break them of their stricter OOP paradigm or find a way to bend JavaScript to fit them.  In the end, it was easier to bend the tool to fit the person than to bend the person to fit the tool.</p>
+<p>So I built a base "class" through which I could make my UI-bound API calls.  Then I built a template for a set of "classes" that would "inherit" the base "class" to allow my colleagues to work.  They could still think in terms of OOP, while I could use my jQuery and regular JavaScript magic on the client side.  (I actually tried teaching jQuery first ... but apparently the jump from Pascal to jQuery is too big for most people to make.)</p>
+<h2>Class Structure</h2>
+<p>I put "class" in quotes because there aren't really any classes in JavaScript.  There are objects, which are defined by functions, and which can contain other functions.  Really, they can <em>almost</em> be considered classes, but not in the traditional sense of the term.  There's also no <em>real</em> inheritance between these pseudo-classes.  You can achieve something similar with the <strong>prototype</strong> property of an object, though.  And that's what we'll do.</p>
+<p>There are two ways you can structure an object so it will mimic a class.  One way uses JSON to construct the object.  The other uses a function constructor.  Both have their uses, but I've found the choice between which form to use is more a personal preference than anything else.</p>
+<h2>JSON</h2>
+<p>When you use JSON, you're basically writing the object out as an associative array.  Each entry is defined by a key-value pair: the keys define property and method names, the values define either properties or functions.  The simplest JSON-defined object takes a form like this:</p>
+<p><code lang="javascript">var MyJSONObject = {<br />
+  'HasProperty' : true,<br />
+  'SayHello': function() {<br />
+    alert('Hello!');<br />
+  }<br />
+}</code></p>
+<p>This defines an object with a single property, [cci lang="javascript"]HasProperty[/cci], and a single method, [cci lang="javascript"]SayHello[/cci], that just alerts "Hello" with a popup. Very basic, but where are our private variables? Where are our private methods?</p>
+<p>Remember, JavaScript doesn't understand public versus private, but it does understand <em>scope</em>. To have private variables and private methods, they must be defined <em>within the scope of the object itself</em> so that they don't clutter up the global namespace. To do this, we change our object slightly:</p>
+<p><code lang="javascript">var MyJSONObject = function() {<br />
+  var _privateVar = "This is private";</p>
+<p>  var _privateMethod = function() {<br />
+    alert('Privately say hello!');<br />
+  };</p>
+<p>  return {<br />
+    'HasProperty' : true,<br />
+    'SayHello': function() {<br />
+      _privateMethod();<br />
+    }<br />
+  };<br />
+}();</code></p>
+<p>We still have a public method and a public property, but both [cci lang="javascript"]_privateVar[/cci] and [cci lang="javascript"]_privateMethod[/cci] are within the local scope of the object - they can be invoked by other members of the object, but not by external methods or objects. They are private. Neat trick, huh?</p>
+<p>In both of these cases, the object is built automatically. You now have an object called [cci lang="javascript"]MyJSONObject[/cci] and can use it however you want. Or, you can create a new instance of the object by calling [cci lang="javascript"]var MyOtherObject = new MyJSONObject;[/cci].</p>
+<h2>Function Constructor</h2>
+<p>For developers transitioning from some other system, the function constructor can be a bit easier because it doesn't have the unfamiliar notation. Here's our same basic example, but using a function as the constructor instead:</p>
+<p><code lang="javascript">function MyConstObject() {<br />
+  this.HasProperty = true;<br />
+  this.SayHello = function() {<br />
+    alert('Hello!');<br />
+  }<br />
+}</code></p>
+<p>The [cci lang="javascript"]this[/cci] keyword in this situation is a reference to the object itself. So if you were to create an instance of this object ([cci lang="javascript"]var MyOtherObject = new MyConstObject;[/cci]) you would reference these properties and methods in a fashion familiar to anyone who's worked with .Net: [cci lang="javascript"]MyOtherObject.HasProperty[/cci].</p>
+<p>For those of you used to working with PHP, the . would be similar to a -&gt; when used to reference a member method or property of a class instance.</p>
+<p>Now, if you want to add private methods and properties, you once again pay attention to their <em>scope</em> and make them internal to the object:</p>
+<p><code lang="javascript">function MyConstObject() {<br />
+  var _privateVar = "This is private";</p>
+<p>  function _privateMethod() {<br />
+    alert('Privately say hello!');<br />
+  }</p>
+<p>  this.HasProperty = true;<br />
+  this.SayHello = function() {<br />
+    alert('Hello!');<br />
+  }<br />
+}</code></p>
+<p>Simple, huh?</p>
+<h2>Inheritance</h2>
+<p>As I mentioned before, there's no real <em>inheritance</em> model with JavaScript. However, there is a very handy <em>prototype</em> model.</p>
+<p>When you call a property of an object, the JavaScript engine first looks at that object. If the property isn't there, it then looks at the <em>prototype</em> property and tries to see if the object's prototype has the requested property. So if you really want to define a parent class, the closest you can get to "inherits" is assigning a prototype.</p>
+<p>Let's use cars as an example. First you have your "base class:"</p>
+<p><code lang="javascript">function car() {<br />
+  this.Wheels = 4;<br />
+  this.Doors = 4;<br />
+  this.Cylinders = 4;<br />
+  this.Start = function() {<br />
+    // Start the car!<br />
+  }<br />
+}</code></p>
+<p>This is a very basic class that defines a car with four wheels, four doors, and four cylinders. Really, just an average economy car. You can actually create an instance of this class and call it "Economy": [cci lang="javascript"]var Economy = new car;[/cci].</p>
+<p>But let's say we want to have a sportscar inherit this class. It will be mostly the same, but will only have two doors and will have eight cylinders. For all intents and purposes, though, everything else is the same. We need to define the sportscar class, but we also need to define its prototype:</p>
+<p><code lang="javascript">sportscar.prototype = new car;<br />
+sportscar.prototype.constructor = sportscar;<br />
+function sportscar() {<br />
+  this.Doors = 2;<br />
+  this.Cylinders = 8;<br />
+}</code></p>
+<p>Now we can create an instance of this class and call it "Mustang": [cci lang="javascript"]var Mustang = new sportscar;[/cci].</p>
+<p>If you run all of this on a page in your website (or in the console in Firebug), you'll see that Economy and Mustang are both objects with the same number of properties and methods, but the Economy car has more doors, and the Mustang has more cylinders.</p>
+<p>Both objects "inherit" from the same base class.</p>
+<p>Using this practice, you can dramatically increase code re-use and lower the learning curve for developers coming from more structured languages like C#. An exercise for you to complete on your own: what would you have to change with the prototypical inheritance model to support objects constructed using JSON? It's not much different, but I want you to work a little ...</p>

@@ -1,0 +1,58 @@
+---
+layout: post
+title: Automated WordPress Development
+date: 2013-06-08 09:00:33.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- automation
+- Grunt
+- WordPress
+meta:
+  _edit_last: '2'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ql
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409884336;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5924;}i:1;a:1:{s:2:"id";i:6324;}i:2;a:1:{s:2:"id";i:6049;}}}}
+  keen_postview_count_this_7_days: '10'
+  keen_postview_count_this_30_days: '44'
+  _wpghs_github_path: _posts/2013-06-08-automated-wordpress-development.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/automated-wordpress-development/"
+---
+<p>Whether or not you make it to <a href="http://2013.seattle.wordcamp.org/" title="WordCamp Seattle 2013">WordCamp Seattle</a>, you too can benefit from merging <a href="http://gruntjs.com" title="Grunt JS">Grunt</a> into your WordPress development workflow!</p>
+<p>A best-practice in web development is to keep JS and CSS to a minimum by merging multiple files and minifying that file so it downloads quickly. This is a tedious process for many, and easily forgotten during a manual release packaging process.</p>
+<p>Grunt is a local development tool that helps optimize this workflow, empowering developers and designers to focus on what they do best.  It streamlines both active development <em>and</em> the final release process when pushing code to production.</p>
+<p>Grunt plays well with WordPress - there are even tools available to kickstart your new project with minimum configuration.<!--more--></p>
+<p><script id="eab73c86d9ff" type="text/javascript" src="http://eamann.com/embed-script/automated-wordpress-development-with-grunt/automated-wordpress-development/"></script></p>
+<h2>Best Practices</h2>
+<p>There are a couple of best practices that apply to making both JavaScript and CSS performant for site visitors:</p>
+<ol>
+<li><a href="http://gtmetrix.com/parallelize-downloads-across-hostnames.html" title="Parallelize downloads across hostnames">Minimize the number of requests</a></li>
+<li>Minimize the size of downloaded files</li>
+</ol>
+<p>There are also some best practices for making scripts and styles easy for <em>developers</em> to work with:</p>
+<ol>
+<li>Make JavaScript function and variable names descriptive</li>
+<li>Keep code modular, rather than in one, large, monolithic file</li>
+<li>Include copious in-line documentation</li>
+</ol>
+<p>Unfortunately, these best practices are contradictory - which sucks.  Optimizing code for developers makes for a horrible visitor experience.  Optimizing for visitors makes continued development difficult.</p>
+<p>One workaround is to routinely minify and concatenate your source files, keeping both the original development files available but making optimized files available for release.  This works - except for the fact that it can be time consuming and is often a forgotten step in your release process.</p>
+<p>Grunt can make this development workflow far less sucky.</p>
+<h2>Grunt</h2>
+<p>Grunt is a task runner.  You queue up a series of tasks in JavaScript and Grunt runs them for you as often as necessary.  You can lint your script and stylesheet files.  You can concatenate and minify multiple files.  You can process Sass or LESS source files into CSS.  You can even run unit tests.</p>
+<p>There are hundreds of tasks in the average developer's workflow that eat 2 minutes here and 5 minutes there.  Many of these tasks can be scripted and handled and automated by Grunt, meaning you're free to <em>actually develop</em> rather than waste time doing busywork.</p>
+<h2>Moving Forward</h2>
+<p>To make WordPress development a bit easier, <a href="http://10up.com/" title="10up">the 10up team</a> has built a set of Grunt <a href="https://github.com/10up/grunt-wp-plugin" title="grunt-wp-plugin">project</a> <a href="https://github.com/10up/grunt-wp-theme" title="grunt-wp-theme">templates</a> to kickstart new themes and plugins.  These templates build out your project, setting up a standard directory structure, the initial file tree, and even creating a Gruntfile you can use to script further tasks within your project.</p>
+<p>This makes starting a new WordPress project a matter of answering a few questions, rather than remembering which files go where and how to configure Grunt to work with them.  The next step is to start building - with the enhanced ability to script various tasks within your project as you go.</p>

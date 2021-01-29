@@ -1,0 +1,312 @@
+---
+layout: post
+title: WordPress Plugin Structure
+date: 2012-12-27 08:00:34.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- Class
+- Class Format
+- Classes
+- Design Patterns
+- plugin
+- Plugin Development
+- singleton
+- Static Class
+- WordPress
+- Wordpress Plugin
+meta:
+  yourls_shorturl: http://eam.me/qk
+  _wpcom_is_markdown: '1'
+  _yoast_wpseo_linkdex: '77'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: singleton
+  _yoast_wpseo_title: Functions and Classes and Singletons, Oh My!
+  _yoast_wpseo_metadesc: The best plugin development pattern for WordPress is the
+    singleton. Here are three different ways to build a plugin, including a singleton
+    example.
+  _scribe_content_analysis: |-
+    O:8:"stdClass":7:{s:8:"docScore";i:94;s:9:"docScoreE";a:1:{i:0;s:8:"HyperLen";}s:11:"fleschScore";s:14:"very difficult";s:8:"keywords";a:13:{i:0;O:8:"stdClass":12:{s:3:"kwc";d:4.57000000000000028421709430404007434844970703125;s:3:"kwd";d:2.3300000000000000710542735760100185871124267578125;s:3:"kwe";a:1:{i:0;s:4:"KwET";}s:3:"kwf";i:11;s:3:"kwl";i:1;s:7:"kwlText";s:7:"Primary";s:3:"kwo";s:1:"A";s:4:"kwod";s:109:"Congratulations, this term strikes a good balance between search optimization and copywriting best practices.";s:3:"kwp";s:9:"Very High";s:3:"kwr";i:1;s:3:"kws";i:10;s:4:"text";s:9:"wordpress";}i:1;O:8:"stdClass":12:{s:3:"kwc";d:2.160000000000000142108547152020037174224853515625;s:3:"kwd";d:0.64000000000000001332267629550187848508358001708984375;s:3:"kwe";a:2:{i:0;s:4:"KwET";i:1;s:4:"KwEM";}s:3:"kwf";i:3;s:3:"kwl";i:3;s:7:"kwlText";s:11:"Significant";s:3:"kwo";s:1:"B";s:4:"kwod";s:91:"To improve the ranking for this term, correct the copywriting and/or document issues found.";s:3:"kwp";s:6:"Medium";s:3:"kwr";i:2;s:3:"kws";d:6.1699999999999999289457264239899814128875732421875;s:4:"text";s:16:"wordpress plugin";}i:2;O:8:"stdClass":12:{s:3:"kwc";d:2.529999999999999804600747665972448885440826416015625;s:3:"kwd";d:4.660000000000000142108547152020037174224853515625;s:3:"kwe";a:1:{i:0;s:4:"KwEM";}s:3:"kwf";i:22;s:3:"kwl";i:3;s:7:"kwlText";s:11:"Significant";s:3:"kwo";s:1:"C";s:4:"kwod";s:139:"While your copywriting is strong, consider writing more about this topic on your site and/or use this term more frequently in your content.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:6;s:3:"kws";i:0;s:4:"text";s:5:"class";}i:3;O:8:"stdClass":12:{s:3:"kwc";d:4.94000000000000039079850466805510222911834716796875;s:3:"kwd";d:2.3300000000000000710542735760100185871124267578125;s:3:"kwe";a:0:{}s:3:"kwf";i:11;s:3:"kwl";i:1;s:7:"kwlText";s:7:"Primary";s:3:"kwo";s:1:"C";s:4:"kwod";s:139:"While your copywriting is strong, consider writing more about this topic on your site and/or use this term more frequently in your content.";s:3:"kwp";s:4:"High";s:3:"kwr";i:3;s:3:"kws";i:0;s:4:"text";s:9:"singleton";}i:4;O:8:"stdClass":12:{s:3:"kwc";d:4.57000000000000028421709430404007434844970703125;s:3:"kwd";d:2.75;s:3:"kwe";a:1:{i:0;s:4:"KwET";}s:3:"kwf";i:13;s:3:"kwl";i:1;s:7:"kwlText";s:7:"Primary";s:3:"kwo";s:1:"C";s:4:"kwod";s:139:"While your copywriting is strong, consider writing more about this topic on your site and/or use this term more frequently in your content.";s:3:"kwp";s:4:"High";s:3:"kwr";i:4;s:3:"kws";i:0;s:4:"text";s:6:"plugin";}i:5;O:8:"stdClass":12:{s:3:"kwc";d:3.529999999999999804600747665972448885440826416015625;s:3:"kwd";d:0.419999999999999984456877655247808434069156646728515625;s:3:"kwe";a:1:{i:0;s:4:"KwEM";}s:3:"kwf";i:2;s:3:"kwl";i:2;s:7:"kwlText";s:9:"Important";s:3:"kwo";s:1:"C";s:4:"kwod";s:139:"While your copywriting is strong, consider writing more about this topic on your site and/or use this term more frequently in your content.";s:3:"kwp";s:9:"Very High";s:3:"kwr";i:5;s:3:"kws";i:0;s:4:"text";s:7:"classes";}i:6;O:8:"stdClass":12:{s:3:"kwc";d:1.1599999999999999200639422269887290894985198974609375;s:3:"kwd";d:0.2099999999999999922284388276239042170345783233642578125;s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";i:1;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:11;s:3:"kws";i:0;s:4:"text";s:15:"class reference";}i:7;O:8:"stdClass":12:{s:3:"kwc";d:1.1599999999999999200639422269887290894985198974609375;s:3:"kwd";d:0.419999999999999984456877655247808434069156646728515625;s:3:"kwe";a:2:{i:0;s:4:"KwET";i:1;s:4:"KwEM";}s:3:"kwf";i:2;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:9;s:3:"kws";i:0;s:4:"text";s:11:"constructor";}i:8;O:8:"stdClass":12:{s:3:"kwc";d:1.1599999999999999200639422269887290894985198974609375;s:3:"kwd";d:0.2099999999999999922284388276239042170345783233642578125;s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";i:1;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:10;s:3:"kws";i:0;s:4:"text";s:12:"class format";}i:9;O:8:"stdClass":12:{s:3:"kwc";d:1.1599999999999999200639422269887290894985198974609375;s:3:"kwd";d:0.2099999999999999922284388276239042170345783233642578125;s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";i:1;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:13;s:3:"kws";i:0;s:4:"text";s:15:"design patterns";}i:10;O:8:"stdClass":12:{s:3:"kwc";d:2.160000000000000142108547152020037174224853515625;s:3:"kwd";d:0.64000000000000001332267629550187848508358001708984375;s:3:"kwe";a:2:{i:0;s:4:"KwET";i:1;s:4:"KwEM";}s:3:"kwf";i:3;s:3:"kwl";i:3;s:7:"kwlText";s:11:"Significant";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:7;s:3:"kws";i:0;s:4:"text";s:12:"static class";}i:11;O:8:"stdClass":12:{s:3:"kwc";d:1.5700000000000000621724893790087662637233734130859375;s:3:"kwd";d:0.419999999999999984456877655247808434069156646728515625;s:3:"kwe";a:1:{i:0;s:4:"KwET";}s:3:"kwf";i:2;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:8;s:3:"kws";i:0;s:4:"text";s:18:"plugin development";}i:12;O:8:"stdClass":12:{s:3:"kwc";d:1.1599999999999999200639422269887290894985198974609375;s:3:"kwd";d:0.2099999999999999922284388276239042170345783233642578125;s:3:"kwe";a:3:{i:0;s:4:"KwET";i:1;s:4:"KwEM";i:2;s:5:"KwELF";}s:3:"kwf";i:1;s:3:"kwl";i:4;s:7:"kwlText";s:14:"Not Emphasized";s:3:"kwo";s:1:"D";s:4:"kwod";s:129:"You will need to do some work for this term, including improving your copywriting and writing more about this topic on your site.";s:3:"kwp";s:8:"Very Low";s:3:"kwr";i:12;s:3:"kws";i:0;s:4:"text";s:3:"php";}}s:11:"scribeScore";i:56;s:4:"tags";a:18:{i:0;s:9:"wordpress";i:1;s:16:"wordpress plugin";i:2;s:5:"class";i:3;s:9:"singleton";i:4;s:6:"plugin";i:5;s:7:"classes";i:6;s:15:"class reference";i:7;s:11:"constructor";i:8;s:12:"class format";i:9;s:15:"design patterns";i:10;s:12:"static class";i:11;s:18:"plugin development";i:12;s:3:"php";i:13;s:24:"software design patterns";i:14;s:19:"wordpress developer";i:15;s:13:"blog software";i:16;s:23:"cross-platform software";i:17;s:14:"the singletons";}s:7:"request";O:8:"stdClass":4:{s:10:"html_title";s:44:"Functions and Classes and Singletons, Oh My!";s:11:"description";s:147:"The best plugin development pattern for WordPress is the singleton. Here are three different ways to build a plugin, including a singleton example.";s:7:"content";s:9934:"The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;<em>plugins</em>. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed.
+
+    The official plugin repository on WordPress.org is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn't even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality.
+
+    Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. &nbsp;These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. &nbsp;Instead of focusing on the&nbsp;<em>what</em> for your plugins, this tutorial will focus on the&nbsp;<em>how</em>. &nbsp;Namely, the three different ways you can structure a WordPress Plugin.<!--more-->
+    <h2 id="functional">Functional</h2>
+    The quickest, easiest approach is to use standard functions to define your custom functionality. &nbsp;For simple plugins, this is actually the best and most straight-forward approach.
+
+    All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. &nbsp;Prefixing every function name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. &nbsp;It also makes it easy for other developers to remove and re-add action hooks and filters should they need to.
+
+    The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard:
+
+    <code lang="php">function myplugin_count_posts() {
+      $posts = wp_count_posts();
+
+      $num = number_format_i18n( $posts->draft );
+      $text = _n( 'Draft', 'Drafts', intval( $posts->draft ), 'myplugin_translate' );
+
+      if (  current_user_can( 'edit_posts' ) ) {
+        $num = "<a href='edit.php'>$num</a>";
+        $text = "<a href='edit.php'>$text</a>";
+      }
+
+      echo '<tr><td class="first b b">' . $num . '</td>';
+      echo '<td class="t">' . $text . '</td></tr>';
+    }
+    add_action( 'right_now_content_table_end', 'myplugin_count_posts' );
+    </code>
+
+    This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. &nbsp;Keep things consistent in your code, and things will work well for community involvement.
+
+    Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. &nbsp;Figuring out which functions are defined where in a large, monolithic file can be challenging. &nbsp;Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties.
+
+    For more complex plugins, you should begin structuring things in a class format.
+    <h2 id="static">Static Class</h2>
+    Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, "namespace" your plugin's functionality. &nbsp;After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure.
+
+    The trick is that action hooks and filters are now added using an array notation rather than a straight string. &nbsp;For example, instead of [cci]add_action( 'wp_head', 'myplugin_head' )[/cci], you would call [cci]add_action( 'wp_head', array( 'My_Plugin', 'head' ) )[/cci]. &nbsp;Similar notation, but it's important to include the class reference here, otherwise WordPress won't know where your code is defined.
+
+    Breaking your function up into several files is best done when each file represents a distinct class. &nbsp;It's easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. &nbsp;It's also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci].
+
+    Here is our functional example from above, but rewritten as a call from a static class:
+
+    <code lang="php">class My_Plugin {
+      static function count_posts() {
+        $posts = wp_count_posts();
+
+        $num = number_format_i18n( $posts->draft );
+        $text = _n( 'Draft', 'Drafts', intval( $posts->draft ), 'myplugin_translate' );
+
+        if (  current_user_can( 'edit_posts' ) ) {
+          $num = "<a href='edit.php'>$num</a>";
+          $text = "<a href='edit.php'>$text</a>";
+        }
+
+        echo '<tr><td class="first b b">' . $num . '</td>';
+        echo '<td class="t">' . $text . '</td></tr>';
+      }
+    }
+    add_action( 'right_now_content_table_end', array( 'My_Plugin', 'count_posts' ) );</code>
+
+    <a href="http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/" title="Enabling Action and Filter Hook Removal from Class-based WordPress Plugins">Some tutorials recommend</a> an instantiated class with some static elements for adding/removing action hooks and filters. &nbsp;Their code will work, but is a bit hacky. &nbsp;Particularly if you're ever in a place where the class can be instantiated more than once. &nbsp;With that in mind, I would never recommend that approach - either keep everything static, or go with my favorite pattern below.
+    <h2 id="singleton">Singleton</h2>
+    A singleton is a class that can only be instantiated once. &nbsp;Every other reference to the instantiated object is a reference to the&nbsp;<em>same</em> object. &nbsp;This is a pattern that works beautifully for plugins because, honestly, you only ever need to instantiate the plugin once. &nbsp;It's also the way I prefer to build plugins since it keeps things clean, avails private variables to the plugin, and is an easy pattern to follow.
+
+    Basically, a singleton is a class with a read-only static instance and a private constructor. &nbsp;When you attempt to get the class instance, it checks to see if the class has been instantiated - if not, it fires the constructor internally and stores the constructed object inside the static instance. &nbsp;Now, every request for the instance returns the same object. &nbsp;Here's a very basic example of a singleton class.
+
+    <code lang="php">class Singleton {
+      private static $instance = false;
+
+      public static function get_instance() {
+        if ( ! self::$instance ) {
+          self::$instance = new self();
+        }
+        return self::$instance;
+      }
+
+      private __construct() { }
+    }</code>
+
+    With a singleton class, you can have methods and members that are members of the class, can refer to each other, and can reference data (properties) which are private to the class itself. &nbsp;For example, if you build a singleton and populate it with certain properties that are meant to be read-only, you can store those values as private members of the class and expose public getter functions.
+
+    <code lang="php">class My_Class {
+      private $hidden_var; // Invisible outside of the class
+      var $visible_var; // Visible outside the class
+
+      public function get_hidden() {
+        return $this->hidden_var;
+      }
+
+      public function __construct() {
+        $this->hidden_var = 4;
+        $this->visible_var = 6;
+      }
+    }
+
+    $instance = new My_Class;
+    echo $instance->visible_var;  // Echos 6
+    echo $instance->hidden_var;   // Fatal Error
+    echo $instance->get_hidden(); // Echos 4
+
+    $instance->visible_var = 2;   // Works
+    $instance->hidden_var = 2;    // Fatal Error</code>
+
+    Removing action hooks and filters is straight forward because you always have access to the instance of the class that wired them up in the first place. &nbsp;This means it's easy for developers down the road to manipulate your code.
+
+    Here's the same plugin example from above, but rewritten as part of a singleton class:
+
+    <code lang="php">class My_Plugin {
+      private static $instance = false;
+
+      public static function get_instance() {
+        if ( ! self::$instance ) {
+          self::$instance = new self();
+        }
+        return self::$instance;
+      }
+
+      private __construct() {
+        add_action( 'right_now_content_table_end', array( $this, 'count_posts' ) );
+      }
+
+      public function count_posts() {
+        $posts = wp_count_posts();
+
+        $num = number_format_i18n( $posts->draft );
+        $text = _n( 'Draft', 'Drafts', intval( $posts->draft ), 'myplugin_translate' );
+
+        if (  current_user_can( 'edit_posts' ) ) {
+          $num = "<a href='edit.php'>$num</a>";
+          $text = "<a href='edit.php'>$text</a>";
+        }
+
+        echo '<tr><td class="first b b">' . $num . '</td>';
+        echo '<td class="t">' . $text . '</td></tr>';
+      }
+    }
+
+    $my_plugin = My_Plugin::get_instance();</code>
+
+    <h2 id="conclusion">Conclusion</h2>
+
+    Most developers are just beginning to embrace object-oriented design patterns with WordPress.  Unfortunately, few of us have enough experience with OOP to discern good versus bad programming patterns.  Many developers are using instantiated objects to encapsulate plugin functionality - and running the risk of multiple instances being created during a single request.  Others are properly using static classes and objects, then running afoul of global variables when attempting to pass data from one static method to another.
+
+    The most efficient pattern for WordPress plugin development is, hands down, the singleton.  It can only be instantiated once, and has the ability to store data internally for quick recall - meaning member functions can easily pass data back and forth without cluttering the global namespace.
+
+    Which patterns are you using for plugin development?  What other alternatives have you found?";s:3:"url";s:25:"https://jumping-duck.com/";}}
+  _scribe_link_building_info: O:8:"stdClass":2:{s:13:"internalLinks";a:5:{i:0;O:8:"stdClass":4:{s:18:"numberOfPagesToUrl";i:26;s:13:"pageAuthority";i:37;s:9:"pageTitle";s:30:"WordPress
+    - Jumping Duck Media";s:3:"url";s:35:"https://jumping-duck.com/wordpress/";}i:1;O:8:"stdClass":4:{s:18:"numberOfPagesToUrl";i:9;s:13:"pageAuthority";i:34;s:9:"pageTitle";s:56:"How
+    to Contribute to WordPress Core - Jumping Duck Media";s:3:"url";s:58:"https://jumping-duck.com/tutorial/contribute-to-wordpress/";}i:2;O:8:"stdClass":4:{s:18:"numberOfPagesToUrl";i:7;s:13:"pageAuthority";i:31;s:9:"pageTitle";s:63:"Theme-ready
+    Custom Post Types in WordPress - Jumping Duck Media";s:3:"url";s:77:"https://jumping-duck.com/tutorial/theme-ready-custom-post-types-in-wordpress/";}i:3;O:8:"stdClass":4:{s:18:"numberOfPagesToUrl";i:1;s:13:"pageAuthority";i:24;s:9:"pageTitle";s:53:"Theme-ready
+    Widgets in WordPress - Jumping Duck Media";s:3:"url";s:67:"https://jumping-duck.com/tutorial/theme-ready-widgets-in-wordpress/";}i:4;O:8:"stdClass":4:{s:18:"numberOfPagesToUrl";i:0;s:13:"pageAuthority";i:21;s:9:"pageTitle";s:50:"Why
+    Sponsor WordCamp Portland - Jumping Duck Media";s:3:"url";s:60:"https://jumping-duck.com/news/why-sponsor-wordcamp-portland/";}}s:8:"keywords";a:1:{i:0;s:9:"Wordpress";}}
+  _wpghs_github_path: _posts/2012-12-27-wordpress-plugin-structure.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/wordpress-plugin-structure/"
+---
+<p>The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;<em>plugins</em>. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed.</p>
+<p>The <a href="http://wordpress.org/extend/plugins/" title="WordPress Plugin Repository">official plugin repository on WordPress.org</a> is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn't even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality.</p>
+<p>Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. Instead of focusing on the <em>what</em> for your plugins, this tutorial will focus on the <em>how</em>. Namely, the three different ways you can structure a WordPress Plugin.<!--more--></p>
+<h2 id="functional">Functional</h2>
+<p>The quickest, easiest approach is to use standard functions to define your custom functionality. For simple plugins, this is actually the best and most straight-forward approach.</p>
+<p>All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. <a href="http://yoast.com/wp-best-practice/namespaces/" title="Using a namespace for your functions and classes">Prefixing every function</a> name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. It also makes it easy for other developers to remove and re-add action hooks and filters should they need to.</p>
+<p>The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard:</p>
+<p><code lang="php">function myplugin_count_posts() {<br />
+  $posts = wp_count_posts();</p>
+<p>$num = number_format_i18n( $posts->draft );<br />
+  $text = _n( 'Draft', 'Drafts', intval( $posts->draft ), 'myplugin_translate' );</p>
+<p>if (  current_user_can( 'edit_posts' ) ) {<br />
+    $num = "<a href="edit.php">$num</a>";<br />
+    $text = "<a href="edit.php">$text</a>";<br />
+  }</p>
+<p>echo '<br />
+<tr>
+<td class="first b b">' . $num . '</td>
+<p>';<br />
+  echo '
+<td class="t">' . $text . '</td>
+</tr>
+<p>';<br />
+}<br />
+add_action( 'right_now_content_table_end', 'myplugin_count_posts' );<br />
+</code></p>
+<p>This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. Keep things consistent in your code, and things will work well for community involvement.</p>
+<p>Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. Figuring out which functions are defined where in a large, monolithic file can be challenging. Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties.</p>
+<p>For more complex plugins, you should begin structuring things in a class format.</p>
+<h2 id="static">Static Class</h2>
+<p>Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, "namespace" your plugin's functionality. After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure.</p>
+<p>The trick is that action hooks and filters are now added using an array notation rather than a straight string. For example, instead of [cci]add_action( 'wp_head', 'myplugin_head' )[/cci], you would call [cci]add_action( 'wp_head', array( 'My_Plugin', 'head' ) )[/cci]. Similar notation, but it's important to include the class reference here, otherwise WordPress won't know where your code is defined.</p>
+<p>Breaking your function up into several files is best done when each file represents a distinct class. It's easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. It's also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci].</p>
+<p>Here is our functional example from above, but rewritten as a call from a static class:</p>
+<p><code lang="php">class My_Plugin {<br />
+  static function count_posts() {<br />
+    $posts = wp_count_posts();</p>
+<pre><code>$num = number_format_i18n( $posts-&gt;draft );
+$text = _n( 'Draft', 'Drafts', intval( $posts-&gt;draft ), 'myplugin_translate' );
+
+if (  current_user_can( 'edit_posts' ) ) {
+  $num = "&lt;a href='edit.php'&gt;$num&lt;/a&gt;";
+  $text = "&lt;a href='edit.php'&gt;$text&lt;/a&gt;";
+}
+
+echo '&lt;tr&gt;&lt;td class="first b b"&gt;' . $num . '&lt;/td&gt;';
+echo '&lt;td class="t"&gt;' . $text . '&lt;/td&gt;&lt;/tr&gt;';
+</code></pre>
+<p>}<br />
+}<br />
+add_action( 'right_now_content_table_end', array( 'My_Plugin', 'count_posts' ) );</code></p>
+<p><a href="http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/" title="Enabling Action and Filter Hook Removal from Class-based WordPress Plugins">Some tutorials recommend</a> an instantiated class with some static elements for adding/removing action hooks and filters. Their code will work, but is a bit hacky. Particularly if you're ever in a place where the class can be instantiated more than once. With that in mind, I would never recommend that approach - either keep everything static, or go with my favorite pattern below.</p>
+<h2 id="singleton">Singleton</h2>
+<p>A singleton is a class that can only be instantiated once. Every other reference to the instantiated object is a reference to the <em>same</em> object. This is a pattern that works beautifully for plugins because, honestly, you only ever need to instantiate the plugin once. It's also the way I prefer to build plugins since it keeps things clean, avails private variables to the plugin, and is an easy pattern to follow.</p>
+<p>Basically, a singleton is a class with a read-only static instance and a private constructor. When you attempt to get the class instance, it checks to see if the class has been instantiated - if not, it fires the constructor internally and stores the constructed object inside the static instance. Now, every request for the instance returns the same object. Here's a very basic example of a singleton class.</p>
+<p><code lang="php">class Singleton {<br />
+  private static $instance = false;</p>
+<p>public static function get_instance() {<br />
+    if ( ! self::$instance ) {<br />
+      self::$instance = new self();<br />
+    }<br />
+    return self::$instance;<br />
+  }</p>
+<p>private function __construct() { }<br />
+}</code></p>
+<p>With a singleton class, you can have methods and members that are members of the class, can refer to each other, and can reference data (properties) which are private to the class itself. For example, if you build a singleton and populate it with certain properties that are meant to be read-only, you can store those values as private members of the class and expose public getter functions.</p>
+<p><code lang="php">class My_Class {<br />
+  private $hidden_var; // Invisible outside of the class<br />
+  var $visible_var; // Visible outside the class</p>
+<p>public function get_hidden() {<br />
+    return $this->hidden_var;<br />
+  }</p>
+<p>public function __construct() {<br />
+    $this->hidden_var = 4;<br />
+    $this->visible_var = 6;<br />
+  }<br />
+}</p>
+<p>$instance = new My_Class;<br />
+echo $instance->visible_var;  // Echos 6<br />
+echo $instance->hidden_var;   // Fatal Error<br />
+echo $instance->get_hidden(); // Echos 4</p>
+<p>$instance->visible_var = 2;   // Works<br />
+$instance->hidden_var = 2;    // Fatal Error</code></p>
+<p>Removing action hooks and filters is straight forward because you always have access to the instance of the class that wired them up in the first place. This means it's easy for developers down the road to manipulate your code.</p>
+<p>Here's the same plugin example from above, but rewritten as part of a singleton class:</p>
+<p><code lang="php">class My_Plugin {<br />
+  private static $instance = false;</p>
+<p>public static function get_instance() {<br />
+    if ( ! self::$instance ) {<br />
+      self::$instance = new self();<br />
+    }<br />
+    return self::$instance;<br />
+  }</p>
+<p>private function __construct() {<br />
+    add_action( 'right_now_content_table_end', array( $this, 'count_posts' ) );<br />
+  }</p>
+<p>public function count_posts() {<br />
+    $posts = wp_count_posts();</p>
+<pre><code>$num = number_format_i18n( $posts-&gt;draft );
+$text = _n( 'Draft', 'Drafts', intval( $posts-&gt;draft ), 'myplugin_translate' );
+
+if (  current_user_can( 'edit_posts' ) ) {
+  $num = "&lt;a href='edit.php'&gt;$num&lt;/a&gt;";
+  $text = "&lt;a href='edit.php'&gt;$text&lt;/a&gt;";
+}
+
+echo '&lt;tr&gt;&lt;td class="first b b"&gt;' . $num . '&lt;/td&gt;';
+echo '&lt;td class="t"&gt;' . $text . '&lt;/td&gt;&lt;/tr&gt;';
+</code></pre>
+<p>}<br />
+}</p>
+<p>$my_plugin = My_Plugin::get_instance();</code></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Most developers are just beginning to embrace object-oriented design patterns with WordPress. Unfortunately, few of us have enough experience with OOP to discern good versus bad programming patterns.  Many developers are using instantiated objects to encapsulate plugin functionality - and running the risk of multiple instances being created during a single request.  Others are properly using static classes and objects, then running afoul of global variables when attempting to pass data from one static method to another.</p>
+<p>The most efficient pattern for WordPress plugin development is, hands down, the singleton. It can only be instantiated once, and has the ability to store data internally for quick recall - meaning member functions can easily pass data back and forth without cluttering the global namespace.</p>
+<p>Which patterns are you using for plugin development?  What other alternatives have you found?</p>

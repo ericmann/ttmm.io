@@ -1,0 +1,70 @@
+---
+layout: post
+title: Modular WordPress
+date: 2013-07-31 23:19:18.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- development
+- WordPress
+meta:
+  _yoast_wpseo_linkdex: '73'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: WordPress
+  _yoast_wpseo_title: Modular WordPress
+  _yoast_wpseo_metadesc: The future of WordPress lies in plugin development - so let's
+    make the core API more pluggable.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/qn
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409853336;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6472;}i:1;a:1:{s:2:"id";i:3395;}i:2;a:1:{s:2:"id";i:6021;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '2'
+  keen_postview_count_this_30_days: '21'
+  _wpghs_github_path: _posts/2013-07-31-modular-wordpress.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/modular-wordpress/"
+---
+<p>Last weekend, <a title="2013 State of the Word" href="http://wordpress.tv/2013/07/29/matt-mullenweg-state-of-the-word-2013/">Matt Mullenweg spoke at length</a> about what the future holds for WordPress development.  I took some time to share <a title="WordPress, Forking, and the Road to 4.0" href="http://eamann.com/tech/wordpress-forking-and-the-road-to-4-0/">a brief proposal</a> for one change that could be made farther down the road.  Today I'd like to share another - more in line with Matt's proposal that future WordPress development be focused around plugins.</p>
+<p>Make WordPress modular.<!--more--></p>
+<h2>Aren't Plugins Already Modular?</h2>
+<p>WordPress already implements a robust plugin framework.  Just about anyone can write code to extend the functionality of WordPress core by building a plugin that either hooks in to a WordPress action or modifies the return of a WordPress filter.</p>
+<p>It's immensely powerful, but still has limits.</p>
+<p>For one, plugins have an inherent dependency on the underlying WordPress plugin API.  This means the API has to be loaded <em>before</em> the plugins are loaded.  It also means that plugins can merely <em>extend</em> the default functionality of WordPress rather than replace it.</p>
+<h2>A Modular Framework</h2>
+<p>The idea behind a modular framework requires a couple of concepts that aren't implemented in WordPress just yet:</p>
+<ol>
+<li><span style="line-height: 13px;">Libraries as pluggable modules</span></li>
+<li>A dynamic module loader</li>
+</ol>
+<p>WordPress today uses blocks of <tt>require()</tt> and <tt>include()</tt> statements to load functionality, power up the API, and make the server ready for action.  This works, but it's not very flexible.</p>
+<p>A <em>modular</em> framework would first register a module loader, then register available modules, and finally load the modules as needed.</p>
+<p>A modular framework would permit developers to replace parts of the core WordPress API with newer implementations wholesale.</p>
+<h2>What We Gain</h2>
+<p>If the future of core WordPress development lies in plugins, then we would optimally need a way to not just extend the core API with these plugins but to replace parts of it with new functionality.  API refinements could then be tested by installing and activating a module rather than installing a new copy of WordPress.</p>
+<p>Developers could also build out core API implementations specific to differing versions of PHP, without needing to force these rewrites back to the core API.  Running PHP 5.5-optimized code then becomes a matter of installing a plugin rather than <a title="WordPress, Forking, and the Road to 4.0" href="http://eamann.com/tech/wordpress-forking-and-the-road-to-4-0/">forking WordPress</a>.</p>
+<h2>The Challenge</h2>
+<p>Right now, plugins are only loaded after the majority of the WordPress API.  To build out a modular system, we'd need to first add a module loader, then somehow load third-party modules alongside the core modules.</p>
+<p>One potential loading order would become:</p>
+<ul>
+<li>Load module platform</li>
+<li>Register core modules</li>
+<li>Detect and register pluggable modules</li>
+<li>Begin the WordPress API loading process</li>
+</ul>
+<p>This means we'd need to build a module loader that is added <em>before</em> WordPress core.  Then, rather than <tt>require()</tt>ing core modules, we would register them with the loader.  Next we would detect any plugin modules (perhaps drop-ins in a <tt>/wp-content/modules</tt> directory).  Finally we would process the rest of the API loading like normal.</p>
+<p>If we decide that a core API or a set of core PHP files need to be updated in a future version, we register the new version as a pluggable module and WordPress would automatically load them in place of the core files.</p>
+<h2>Will it Work</h2>
+<p>Rather than just spout off about an idea, I plan to actually implement a prototype of the module loader over the coming weeks.  As I do so though, I'm interested in what <em>you</em> think.</p>
+<p>Will this potentially help further WordPress core development?  If you could build a plugin that replaces a core API, which one would you work on?  Is this an idea we should pursue, or just an interesting talking point?</p>
+<p>Feel free to continue the conversation below.</p>

@@ -1,0 +1,61 @@
+---
+layout: post
+title: Why I Advocate "Anti-Patterns"
+date: 2014-03-07 08:00:06.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- anti-pattern
+- singleton
+meta:
+  _edit_last: '2'
+  _wpas_mess: Why I Advocate "Anti-Patterns"
+  _yoast_wpseo_title: Why I Advocate "Anti-Patterns"
+  _yoast_wpseo_metadesc: I want anyone using a Singleton to understand what they're
+    doing and why.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sv
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1394189873;s:6:"status";s:6:"pushed";}
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  keen_postview_count_this_30_days: '9'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409636995;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5469;}i:1;a:1:{s:2:"id";i:6129;}i:2;a:1:{s:2:"id";i:6367;}}}}
+  _wpghs_github_path: _posts/2014-03-07-advocate-anti-patterns.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/advocate-anti-patterns/"
+excerpt: When I ask developers, "why'd you use a Singleton here," more often than
+  not they reference a tutorial, another developer, or "that's how I've always done
+  it."  No one ever takes the time to learn about the patterns (or anti-patterns)
+  they're using so they can make informed decisions about software design.
+---
+<p>I am a self-educated software engineer.</p>
+<p>My first job developing websites was a spin off of a marketing job. I bought a book, read it over the weekend, and failed miserably at my first several attempts to build a website.</p>
+<p>I taught myself Visual Basic and C# entirely through books and online tutorials.</p>
+<p>I taught myself PHP by reading WordPress core code and fumbling to put together patches for the open source project.</p>
+<p>I taught myself JavaScript by printing out every visual quickstart guide I could find for YUI and jQuery and forcing myself to memorize them.</p>
+<p>I spent quite a few years copying and pasting really really bad code into my applications because I didn't understand what I was doing and needed to ship to keep my job.  I made mistakes.  I shipped bugs.  My bugs crashed entire servers and cost people money.</p>
+<p>But I learned from these mistakes - and I want to make the world a better place for new developers.</p>
+<h2>The Singleton</h2>
+<p>Every language and paradigm with which I've worked has used its own version of the Singleton.  Developers at every company I've been a part of have used Singletons.  Tutorials in every environment I've touched have advocated the use of the Singleton and, rather than explaining what it is and how it works, suggested just reusing the pattern for everything.</p>
+<p>Just about every WordPress plugin I come across these days - even those by some of the most accomplished developers in the community - has a Singleton lurking somewhere inside.</p>
+<p>When I ask developers, "why'd you use a Singleton here," more often than not they reference a tutorial, another developer, or "that's how I've always done it."  No one ever takes the time to learn about the patterns (or anti-patterns) they're using so they can make informed decisions about software design.</p>
+<p>The Singleton has a (incredibly rare) real use in software development.  As such, it's not something that's ever going to go away.  To many new developers, the <em>benefits</em> of a Singleton are more visible than the drawbacks - so they're quick to jump on and implement this dangerous pattern in their own code.  Why?  Because super-awesome-developer-X used it that one time in some code she posted to GitHub.</p>
+<p>I don't want everyone using Singletons.</p>
+<p>I want anyone using a Singleton to understand what they're doing and why.</p>
+<h2>The Cost of Education</h2>
+<p>Unfortunately, talking about anti-patterns in any sort of a positive light is frowned upon pretty universally in the community.  I'm insulted and derided for documenting a Singleton pattern.  Made fun of for demonstrating possible ways to work around the limitations of the pattern.</p>
+<p>I actually received death threats the first time I advocated the anti-pattern on this site.</p>
+<p>But the fact remains: Singletons exist, are documented in coding manuals, and are used in tutorials.  New developers <em>can and will</em> come across these patterns during their career and <em>will</em> end up using them without truly understanding the implications.</p>
+<p>I would much rather these developers find a handful of articles explaining how to safely use the pattern - and still urging them <em>not to</em> - when they search the Internet than find the kind of vitriol I've seen posted in the aftermath of my articles.</p>
+<p>Does it mean other developers will continue to hurl insults my way?  Probably.</p>
+<p>Will it stop me?  Absolutely not.</p>

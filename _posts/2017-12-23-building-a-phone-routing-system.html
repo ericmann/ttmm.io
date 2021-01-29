@@ -1,0 +1,219 @@
+---
+layout: post
+title: Building a Phone Routing System
+date: 2017-12-23 06:00:33.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+- Tutorials
+tags:
+- Twilio
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/building-a-phone-routing-system/"
+excerpt: In this walkthrough, I build a phone redirection system using Twilio to automatically
+  forward frequent wrong numbers to the business with a support line 2 digits transposed
+  from me.
+---
+<p><!-- wp:core/paragraph --></p>
+<p>For the longest time, I&#x27;ve used a Skype-powered VOIP phone number as my primary business line. It helps me keep phone calls separate - friends and family call my cell directly, business contacts call Skype. Because the number is virtual, I can disable it overnight to get some sleep (while allowing emergency calls from family to wake me if necessary.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The only problem - there&#x27;s a software company in town with a customer support line <em>two digits</em>﻿ transposed from mine. Their software must not be very good, because I get 3-4 wrong number calls <em>per week</em>﻿ from disgruntled customers looking for help or refunds or just to vent.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Some of the customers are getting downright abusive.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I <em>could</em>﻿ just change my phone number. But I&#x27;ve already printed business cards and, frankly, I&#x27;m too lazy to order new ones. Instead, I&#x27;m going to transfer the VOIP number to <a href="https://www.twilio.com/">Twilio</a> and program a service to re-route the wrong numbers to the right location.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>The Plan</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>At this year&#x27;s php[world], I spent a bunch of time working my way through Twilio Quest and learning about the neat features of the platform. One that stuck out to me was the ability to <em>forward</em>﻿ calls from a Twilio number to a cell.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Another feature was the ability to create a navigable menu system for callers. I can leverage <em>both</em>﻿ of these features to redirect erroneous numbers to the correct location.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>In the end, I want to move my Skype number over to Twilio and leverage the Programmable Voice API to allow callers to select out when they misdial. A message will prompt them to press one number to be connected to the other business (in the event of a misdial), while another will either forward them to my cell or prompt them to leave a voicemail (depending on the time of day).</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Skype Port</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>None of this will work so long as my number stays at Skype. Luckily, Twilio states clearly that you can <a href="https://support.twilio.com/hc/en-us/articles/223179788-Can-I-port-my-Skype-or-VoIP-number-">easily port another VOIP number</a> to their platform.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I started through the process, filling out the authorization forms and generating PDF printouts of my Skype bill for the number. It took about a week for the number to transfer over fully, but the process itself was rather painless.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph {"textColor":"#313131"} --></p>
+<p style="color:#313131"><strong>Note:﻿</strong> Skype won&#x27;t actually cancel your number for you. Unless you go into your Skype settings and <em>manually</em> cancel the subscription, you&#x27;ll get billed by both Twilio <em>and</em> Skype for the same thing!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>If you plan to do this yourself, make sure you set the incoming number up within Twilio first. I configured mine to handle both incoming calls <em>and</em>﻿ incoming texts by forwarding all traffic to my cell. This meant I wouldn&#x27;t lose any connections, even while still working on a proper call router.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Forwarding <em>voice</em>﻿ is simple with a TwiML Bin:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code><?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <dial timeout="10">555-123-4567</dial>
+</response></code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Forwarding <em>text</em>﻿ is just as simple with a TwiML Bin:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code><?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <message to="+15551234567">{{From}}: {{Body}}</message>
+</response></code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Using both of these forwarding systems, I can ensure I don&#x27;t miss any calls while I wait for things to switch over. It&#x27;s a solid way to keep track of any incoming messages. The only hitch is that I can&#x27;t make <em>outgoing</em>﻿ calls or <em>send</em>﻿ texts from the new number. But that&#x27;s perfectly OK with me.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>The Menu System</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Setting up a dynamic menu uses Twilio&#x27;s <a href="https://www.twilio.com/docs/glossary/what-is-ivr">Interactive Voice Response</a> (IVR) system. This allows callers to leverage <em>either</em>﻿ their touch-tone phone or their voice to navigate through the system.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>For my purposes, I wanted people to know they got a wrong number and automatically opt-out of bothering me. In my menu system, I prompt them to &quot;press or say 1&quot; if they wanted to reach the other business. As with the temporary forward above, this leverages TwiML, but using the &quot;<a href="https://www.twilio.com/docs/api/twiml/gather">gather</a>&quot; verb:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code><?xml version="1.0" encoding="UTF-8"?>
+<response>
+    <gather input="speech dtmf" timeout="3" numdigits="1">
+        <say>You've reached Eric Mann. If you're looking for [name redacted], you have a wrong number. Press 1 and I'll forward you. Otherwise, stay on the line to speak with Eric.</say>
+    </gather>
+    <dial>555-123-4567</dial>
+</response></code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The only problem here: the menu doesn&#x27;t actually handle the keypress. In order to do that, we need a dynamic application that can parse and handle the response then forward the call on to where it needs to go.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>AWS Lambda</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I <em>love</em>﻿ building tools atop Amazon Web Services. Their newer serverless offering, Lambda, lets me build one-off functions that run in the cloud and are only billed when they&#x27;re in use. In other words, you can write a JavaScript routine to handle the incoming request and send out a response; Amazon only bills you when the function is <em>invoked</em>﻿ and it only costs pennies.<em>﻿</em></p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The first step is to set up a function in the <a href="https://console.aws.amazon.com/lambda/home">AWS Lambda console</a>. Once logged in, we can create our first function. We&#x27;ll call it &quot;ivrRedirect,&quot; run it on the most modern version of Node available, with a newly-created custom role that just has the &quot;lambda_basic_execution&quot; permission.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":7199} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/assets/2017/12/Screenshot-2017-12-22-20.53.53.png?resize=720%2C300&amp;ssl=1" /></p>
+<figcaption>AWS Lambda Configuration</figcaption>
+</figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The next step is to parse the incoming request from Twilio so we can extract the digits pressed and act upon the user&#x27;s request. To keep things simple, we&#x27;ll keep the same order of options from our TwiML above for creating our first function:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code>console.log('Loading function');
+ 
+exports.handler = function(event, context) {
+    var output = {
+        message: "You've reached Eric Mann. If you're looking for [name redacted], you have a wrong number.",
+        options: [
+            "to have me forward you to [name redacted].",
+            "speak with Eric."
+            ]
+    }
+    context.succeed(output);
+};</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>We&#x27;ll also need to follow the same steps to create a <em>second</em>﻿ function to wire in the TwiML to make each of these options actually work:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code>console.log('Loading function');
+ 
+exports.handler = function(event, context) {
+    options = [
+           "<dial>+1-555-123-4567</dial>",
+           "<dial>+1-555-234-5678</dial>"
+        ]
+        
+   qryObject = parseQuery(event.reqbody);
+   
+   context.succeed(options[qryObject['Digits']-1]);
+};
+ 
+function parseQuery(qstr) {
+        var query = {};
+        var a = qstr.substr(0).split('&');
+        for (var i = 0; i < a.length; i++) {
+            var b = a[i].split('=');
+            query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+        }
+        return query;
+}</code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>These two functions give us everything we need to handle incoming Twilio requests and figure out what behavior to execute. Unfortunately, neither is directly callable from the web!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>API Gateway</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>To make our function callable from Twilio, we need to put an API in front of it. <a href="https://console.aws.amazon.com/apigateway/home">Amazon&#x27;s API Gateway</a> gives us all the functionality we need here. We can build a dynamic interface, expose it to Twilio, and route our incoming calls without ever building out a server! We&#x27;ll call our new API &quot;IVR Redirect&quot; and build it up from scratch:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":7213} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/assets/2017/12/Screenshot-2017-12-22-21.01.39.png?resize=720%2C300&amp;ssl=1" /></p>
+<figcaption>Create a new API Gateway project</figcaption>
+</figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Once we have the API created, we immediately add a new resource called &quot;prompt.&quot; This gives us a /prompt endpoint for the API, but otherwise won&#x27;t do anything on its own. We have to add an action of POST and wire in our lambda function from earlier:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":7218} --></p>
+<figure class="wp-block-image"><img src="{{ site.baseurl }}/assets/2017/12/Screenshot-2017-12-22-21.04.58.png?resize=720%2C300&amp;ssl=1" /></p>
+<figcaption>Configuring the POST action to invoke our lambda function.</figcaption>
+</figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Everything on the AWS side has dealt with JSON thus far. We need to convert our response to TwiML before we send things back to Twilio. Thankfully, we can do that with some handy <em>templates</em>﻿ on the service side:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --></p>
+<pre><code>#set($inputRoot = $input.path('$'))
+#set($i = 1)
+<response>
+    <gather numdigits="1" action="/dev/takeaction">
+        <say>$inputRoot.message</say>
+        #foreach($elem in $inputRoot.options)
+            <say>Press $i to $elem</say>
+            #set($i = $i + 1)
+        #end
+        <dial>+1-555-555-5555</dial>
+    </gather>
+</response></code></pre>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>If you look carefully, you&#x27;ll see this is almost the exact TwiML we started out with! We just use some Amazon magic to map through the various options returned by our lambda function. This will be super useful should we ever want to expand the system in the future!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>There is <em>a lot more work</em>﻿ that goes into fully fleshing out the templates and opening up API Gateway. <a href="https://www.twilio.com/blog/2015/09/build-your-own-ivr-with-aws-lambda-amazon-api-gateway-and-twilio.html">The Twilio team has already documented it</a>, so I won&#x27;t reproduce all of their work here. What I <em>will</em>﻿ do, however, is celebrate the chance that I&#x27;ll not get any more wrong calls intended for this other company!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The only thing I&#x27;m worried about now is the potential <em>cost</em>﻿ of actually forwarding traffic. The phone number costs $1/month. Incoming calls cost less than 1 cent per minute. I&#x27;m not anticipating this will become a <em>huge</em> expense (and will be far less than the loss of productivity when I&#x27;m constantly interrupted). If it becomes a problem, though, I&#x27;ll reach out to the other company and ask them to cover it.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>If they won&#x27;t, I stop forwarding customers. It&#x27;s simple.</p>
+<p><!-- /wp:core/paragraph --></p>

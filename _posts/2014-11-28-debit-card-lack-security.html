@@ -1,0 +1,60 @@
+---
+layout: post
+title: Debit Card (Lack of) Security
+date: 2014-11-28 08:00:17.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Business
+- Technology
+tags:
+- debit
+- security
+- visa
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Debit Card (Lack of) Security
+  _yoast_wpseo_metadesc: Debit card numbers have features to make them easy to produce,
+    easy to predict, and easy to steal. Protect yourself!
+  _wpas_mess: If you're shopping today, think twice about using a bank or debit card.
+    You might get robbed.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-5
+  _wpghs_github_path: _posts/2014-11-28-debit-card-lack-security.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/biz/debit-card-lack-security/"
+excerpt: Debit card numbers have certain features to make them easy to produce. It
+  also makes them easy to predict, allowing determined thieves to easily steal your
+  money if you're not careful.
+---
+<p>Two holiday seasons in a row, I worked in retail. One year I sold jewelry at a shopping mall retailer. The second year I sold clothing at an outlet in a strip mall.</p>
+<p>Neither was a particularly glamorous position, but they both taught me a great deal. I learned how to visually gauge the quality of diamonds. I learned how to flip sales pitches around from features to benefits and experiences. I learned how to better deal with disgruntled customers frantic for that perfect holiday gift.</p>
+<p>I also learned the inherent danger in using debit cards.</p>
+<h2>Security</h2>
+<p>Believe it or not, but debit cards are <em>incredibly</em> insecure.</p>
+<p>We look at debit cards as part of a 2-factor authorization scheme for spending. The first factor is the debit card number, the second is your unique PIN. Unfortunately, most debit cards can be run as credit instead, meaning you swipe the card and defer authorization to a signature (that may or may not be required/verified by a merchant).</p>
+<p>So our only defense against fraud is the 16-digit number used for our unique cards. A 16-digit number has $latex 10^{16}$ possible combinations,[ref]Actually, this will be a bit less since card numbers with leading 0s aren't necessarily valid, but for the sake of argument let's leave thos in place for now.[/ref] which feels like it should be somewhat secure. That is, $latex 10^{16}$ provides 53 bits of entropy,[ref]To calculate bits of entropy given a set number of possibilities, calculate $latex \log_2 x $. In this case, you'd be looking at $latex \log_2 10^{16} $.[/ref] meaning the ability of an attacker to guess <em>your</em> specific card number (i.e. to make a purchase with your name and card number for validation) is very unlikely.[ref]Specifically, if an attacker could guess (and validate) 1000 card numbers per second, it would take them <em>over 300,000 years</em> to guess your card number.[/ref]</p>
+<p>Unfortunately, debit cards aren't really this secure.</p>
+<p>I noticed a trend while working retail: people who banked with the same institutions tended to have the same first 8 digits on their Visa cards.[ref]The card format is such that the first digit is an industry identifier, the next 5 digits are an institution identifier, the following 6 identify an account, and the final digit is a checksum for ensuring validity. However many institutions pad their account numbers with the same padding digits, leading the first 8 digits to be identical for all of their card-holders.[/ref] In hindsight, <em>every card I've ever had</em> from my own bank (where I hold several, independent accounts) has had the same first 8 digits. I actually shocked someone who called in an order once and read their card number over the phone by asking how they liked banking with their specific credit union.</p>
+<p>"How'd you know I bank there?"</p>
+<p>"Well, I do too, and my card starts with the same 8 numbers."</p>
+<p>With this in mind, it means an attacker who <em>already knows where you bank</em> is looking to crack a debit card number with only $latex 10^{8} $ possible combinations. In probabilistic terms, this means our debit card numbers <em>really</em> have only 27 bits of entropy. For a determined attacker (read: card thief) that's much more approachable.[ref]Guessing (and validation) 1000 card numbers per second would take only a day to guess your card number.[/ref]</p>
+<p>Worse yet, most of those receipts printed out at the cash register contain the last four digits of your card number to help you identify which card you used. Helpful to you, also extremely helpful to anyone trying to steal your money.</p>
+<p>Given knowledge of your banking institution <em>and</em> a discarded receipt from your Black Friday shopping frenzy, an attacker now only has <em>four numbers left to guess</em> to empty your accounts. That's only $latex 10^{4} $ possible combinations. Just 13 bits of entopy.[ref]A 1000 guesses per second system would be able to generate your card number in just 10 seconds.[/ref]</p>
+<p>Given also that the <em>last</em> number on your card is a checksum - used to algorithmically determine whether or not the rest of the number is valid - a determined attacker can whittle these $latex 10^{4} $ possibilities down in no time at all. The checksum reduces the number of valid card numbers with the already-determined digits by a factor of 10 - <strong>given your banking institution and last 4 card digits, there are only 1000 valid card numbers available.</strong></p>
+<p>The likelihood that someone with the above information could correctly guess and exploit your account becomes astronomical.[ref]I built a proof-of-concept cracker and tested it against my own account. Given the information above, it was able to correctly guess my card numbers in an average of just 15 attempts. No, I will not open source or publish that code. Ever. I ran the experiment to prove a point: if your information is public, it's ridiculously easy for someone to abuse it. They don't even need to wait for a Target/Home Depot/whoever database hack to surface.[/ref]</p>
+<h2>Remediation</h2>
+<p>The easiest way to prevent someone from attacking you in such a way is prevention. Keep an eye on your account statements for fraudulent charges. Ask your institution to re-issue you a card (with a new number) if you think someone has gotten a hold of your information without your knowledge. Use credit cards instead of debit and bank cards as they have stronger consumer protections (i.e. laws and legal processes) against fraud.</p>
+<p>Always keep your copy of the store receipt, otherwise it often just ends up in a public trash bin - with your name and last 4 digits proudly emblazoned upon it. Keep track of where the receipts you take end up, too.</p>
+<p>And <em>never</em> ask an ATM for a receipt and just leave it in the trash next to your bank. Knowing your institution <em>and</em> last 4 digits is a major security risk. Don't make it easier for thieves to steal your data.</p>

@@ -1,0 +1,61 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Offline Editor'
+date: 2014-02-12 08:00:28.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- editor
+- offline editing
+- WordPress
+meta:
+  _edit_last: '2'
+  _wpas_mess: 'WordPress Core Proposal: Offline Editor'
+  _yoast_wpseo_title: 'WordPress Core Proposal: Offline Editor'
+  _yoast_wpseo_metadesc: What would you want to see in an offline editor for WordPress?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/s7
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409751164;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6270;}i:1;a:1:{s:2:"id";i:6002;}i:2;a:1:{s:2:"id";i:6080;}}}}
+  keen_postview_count_this_7_days: '11'
+  keen_postview_count_this_30_days: '43'
+  _wpghs_github_path: _posts/2014-02-12-offline-editor.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/offline-editor/"
+excerpt: What would you want to see in an offline editor for WordPress?  How would
+  you approach building it?  Would it be a core feature, plugin material, or something
+  else entirely?
+---
+<p><a title="Just Beneath the Surface" href="http://eamann.com/tech/just-beneath-surface/">Last week</a>, it snowed pretty heavily at my house.  Two days of snow was followed by two days of ice.</p>
+<p>News alerts warned us to stay at home.  My wife worked from the living room rather than brave the freeway.  We walked the mile to the store for groceries.  It was refreshing to not be on the go all the time.</p>
+<p>Then my network died.</p>
+<p>The problem with ice: it takes out power lines.  Even if it leaves my power alone, it can take out the power to the fiber optic relay hub that provides me with connectivity and completely cut me off from the outside world.  Like it did Friday night.</p>
+<p>Doesn't the weather know I have a blog to write?</p>
+<h2>Working Offline</h2>
+<p>My favorite feature in Google Docs is the <a title="About Google Docs, Sheets, Slides, and Drawings offline" href="https://support.google.com/drive/answer/1628467?hl=en">ability to work offline</a>.  I still use Chrome, but I can work on existing documents - or create new ones - while completely disconnected from the network.</p>
+<p>The next time I have connectivity, everything syncs and my work is backed up.  I've only had this workflow not work once; I've been using it otherwise problem-free since the feature first shipped.</p>
+<p>I would love to do the same in WordPress.</p>
+<h2>The Vision</h2>
+<p>No, I don't have a plugin or a Gist to show you working code - mostly because I'm not even sure <em>how</em> to implement this just yet.  I just have a dream and a desire, and I want to share that in the hope someone else can help me draft up an implementation plan.</p>
+<p>My goal would be:</p>
+<ul>
+<li>Navigate to my site in a browser</li>
+<li>Be alerted that I'm offline</li>
+<li>Edit existing content while offline (saving changes to a cache)</li>
+<li>Create <em>new</em> content while offline (saving content to a cache)</li>
+<li>Auto-sync my content with the live server when I'm online again</li>
+</ul>
+<p>I do know there was <a title="LocalStorage drafts backup" href="http://gsoc2011.wordpress.com/localstorage-drafts-backup/">a WordPress GSoC project</a> for a feature to detect when connectivity is lost.[ref]I also seem to remember talk of a similar feature actually <em>in</em> core ... but I can't find references to it, so I'm probably just remembering the discussion around this project instead.[/ref]  This feature will store the post you're currently working on in <a title="Local Storage" href="http://diveintohtml5.info/storage.html">localstorage</a> and re-sync with the server when the network's restored.</p>
+<p>My goal would be to extend this and provide a richer app experience.  It would likely involve a JS-powered (slimmed down) version of the WordPress admin that could run locally.  Probably something built on <a title="Ember.js" href="http://emberjs.com/">Ember</a> or <a title="AngularJS" href="http://angularjs.org/">Angular</a> or <a title="Backbone.js" href="http://backbonejs.org/">Backbone</a>, using pluggable templates for rendering markup.</p>
+<p>Again, localstorage would come into play for storing posts, both drafts and otherwise.</p>
+<p>I can visualize most of it in my head already - just not authentication.  On the one hand, WordPress auth cookies could be used to authenticate the request just fine.  But if the <em>entire</em> editor is in the browser I fear we're opening sites up to further potential for cross-site scripting attacks or man-in-the-machine/browser extension vulnerabilities.</p>
+<p>What would <em>you</em> want to see in an offline editor for WordPress?  How would you approach building it?  Would it be a core feature, plugin material, or something else entirely?</p>

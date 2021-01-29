@@ -1,0 +1,55 @@
+---
+layout: post
+title: WordPress Permalink Performance - Part 2
+date: 2014-12-10 08:00:18.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- performance
+- permalink
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress Permalink Performance - Part 2
+  _yoast_wpseo_metadesc: The overall goal of PerfPress is to build a command-line
+    tool that allows for testing the performance of different features within WordPress.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-h
+  _wpghs_github_path: _posts/2014-12-10-wordpress-permalink-performance-part-2.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-permalink-performance-part-2/"
+excerpt: The overall goal of PerfPress is to build a command-line tool that allows
+  for testing the relative performance of different structures and functionalities
+  within WordPress.
+---
+<p>The last time <a title="WordPress Permalink Performance" href="https://eamann.com/tech/permalink-performance/">I investigated the relative performance of different WordPress permalink structures</a>, I provided a simple Gist that allowed everyone else to play along at home.</p>
+<p>In a nutshell, I hooked in both at the top and the bottom of WordPress' [cci]parse_request()[/cci] method and captured the time it took to actually process a URL request. It was a fairly simple method, and by averaging the results of 10 runs of each permastruct I was able to get a rough picture of what was going on under the hood.</p>
+<p>Unfortunately, the previous method was a bit short-sighted.</p>
+<h2>Limitations</h2>
+<p>Firstly, I was running my tests against a pristine installation of WordPress. There were only a handful of hand-entered posts and perhaps one or two different pages. A few readers pointed this out, so I re-ran my tests against a snapshot I had lying around of a very large WordPress installation. The results were slightly different, but still useful.</p>
+<p>This setup isn't the most scalable thing in the world, though. It required adding a couple of hooks to WordPress, and hoping that everything would be clean enough on the inside to run quickly. Being a drop-in script meant anyone could run it. But the different installations (and the fact that output was relegated to a hidden HTML tag on a given page) make it difficult to compare results between installations.</p>
+<h2>Version 2</h2>
+<p><a href="https://eamann.com/wp-content/uploads/2014/12/Screenshot-2014-12-10-06.57.09.png"><img class="alignright wp-image-6804 " src="{{ site.baseurl }}/assets/2014/12/Screenshot-2014-12-10-06.57.09.png" alt="" width="460" height="445" /></a></p>
+<p>So this week, I've started work on a new project: <a title="PerfPress" href="https://github.com/ericmann/perfpress">PerfPress</a>.</p>
+<p>The overall goal of the project is to build a command-line tool that allows for testing the relative performance of different structures and functionalities within WordPress. The first component is a performance test for [cci]parse_request()[/cci].</p>
+<p>At the moment, PerfPress will allow you to test the running time of [cci]parse_request()[/cci] for all of the standard permalink structures and a variable number of posts and pages. Like the WordPress test framework, it dynamically creates posts and pages in the database, rolling back the transaction when it's finished with the test. It also runs [cci]parse_request()[/cci] 1000 times, giving a more meaningful execution average than a mere 10 runs.</p>
+<p>Armed with this new tool, I've re-tested the various permalink structures with 1, 10, 100, 1,000, 10,000, and 100,000 posts (and pages) in the database. The results have been pretty much what I've expected:</p>
+<ul>
+<li>The default permalink structure is the fastest</li>
+<li>The postname structure is the slowest</li>
+<li>The other three permalink structures are fairly equivalent, with the numeric structure taking an slight edge</li>
+</ul>
+<p>This gives me the information I need to move forward with various site changes. Hopefully new tests coming to PerfPress as time goes on will make it an even more useful tool for everyone.</p>

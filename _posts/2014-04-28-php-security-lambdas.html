@@ -1,0 +1,67 @@
+---
+layout: post
+title: PHP, Security, and Lambdas
+date: 2014-04-28 08:00:44.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- anonymous function
+- create_function
+- lambda function
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: PHP, Security, and Lambdas
+  _yoast_wpseo_metadesc: Why you shouldn't use create_function() in your PHP code.
+  _oembed_31e29d45bb26677e046b0cd384ad4719: '<blockquote class="twitter-tweet" width="500"><p>Is
+    every security plugin out there flagging lambda functions assigned to variables
+    as malicious? Or just WordFence? cc: <a href="https://twitter.com/ChrisWiegman">@ChrisWiegman</a></p>&mdash;
+    Matt Gross (@mattonomics) <a href="https://twitter.com/mattonomics/statuses/459379499088355328">April
+    24, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>'
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ua
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409888995;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5472;}i:1;a:1:{s:2:"id";i:6359;}i:2;a:1:{s:2:"id";i:6129;}}}}
+  keen_postview_count_this_7_days: '2'
+  _wpghs_github_path: _posts/2014-04-28-php-security-lambdas.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/php-security-lambdas/"
+excerpt: If you're writing PHP code and you want to use lambda functions, don't use
+  PHP's create_function() method. It's insecure, and will be flagged as such by security
+  software and analysts.
+---
+<p>I was directed the other day to a discussion of PHP lambda functions and security:</p>
+<p>https://twitter.com/mattonomics/status/459379499088355328</p>
+<p>Let me state first that [cci]create_function()[/cci] is insecure. If you can avoid using it, avoid it. If you can't, take some time to re-evaluate your code to find a way to avoid it.</p>
+<h2>Lambda Functions</h2>
+<p>A <a title="Lambda Function" href="http://en.wikipedia.org/wiki/Anonymous_function">lambda function</a> is merely an anonymous function in your code.  If you're using JavaScript, you've probably written hundreds of them and not even noticed.  The cool thing about lambda functions is that they can be stored in variables in your code, then passed to other functions.</p>
+<p>A great PHP example, straight from Wikipedia, shows:</p>
+<p><code lang="php">$foo = create_function( '$x', 'return $x * $x;' );<br />
+echo $foo( 10 );</code></p>
+<p>The advantage of this approach is that I can now pass this function as I would any other variable. In a WordPress world, I could pass this function into an [cci]add_action()[/cci] or [cci]add_filter()[/cci] call, then reference <i>the same function</i> later with [cci]remove_action()[/cci] or [cci]remove_filter()[/cci]. It's an enormously flexible paradigm and allows for robust code that doesn't litter a namespace with unnecessary clutter since these functions are locally-scoped.</p>
+<h2>Security</h2>
+<p>The security issue here is that, internally, [cci]create_function()[/cci] uses [cci]eval()[/cci].[ref]<a href="http://php.net/create_function" title="PHP create_function()">PHP [cci]create_function()[/cci] documentation.</a>[/ref]</p>
+<p>Just as [cci]eval()[/cci] is evil and should be avoided at nearly all costs in your PHP code, so should [cci]create_function()[/cci].</p>
+<p>The security plugin <a href="https://wordpress.org/plugins/wordfence/" title="WordFence">WordFence</a> will detect uses of [cci]create_function()[/cci] and flag them, appropriately, as security issues.  If you're writing code intended for a WordPress.com VIP environment - arguably the largest WordPress installation in the world - you'll notice that [cci]create_function()[/cci] is <a href="http://vip.wordpress.com/documentation/code-review-what-we-look-for/#eval-and-create_function" title="Code Review: What We Look For">explicitly called out</a> as something looked at during code review.</p>
+<h2>Alternatives</h2>
+<p>The easiest alternative to using [cci]create_function()[/cci] is just to define the function somewhere in your code.  If you're using PHP 5.2 (WordPress' minimum requirement), define your function as a static member of a utility class somewhere in your project. You won't be able to pass it as a variable, but you can pass its <i>name</i> and then use [cci]call_user_func()[/cci] to achieve similar results.</p>
+<p>If you're using PHP 5.3 or higher, you have even more alternatives.</p>
+<p>You can define the function within a <a href="http://www.php.net/manual/en/language.namespaces.php" title="PHP Namespace">namespace</a> (if you need to get around security flags for the [cci]$func( $param );[/cci] pattern).</p>
+<p>Or, and my personal preference, you can use an actual anonymous function in PHP:</p>
+<p><code lang="php">$func = function( $x ) {<br />
+    return $x *= 2;<br />
+};<br />
+echo $func( 10 );</code></p>
+<p>Internally, this creates a [cci]Closure[/cci] object in PHP, and calls its magic [cci]__invoke[/cci] method. It doesn't interpret arbitrary strings and is far more secure than the oldschool [cci]create_function()[/cci] approach.</p>
+<p>An added bonus, it makes your code look more like JavaScript, making swapping between one language and the other far easier on your brain.</p>

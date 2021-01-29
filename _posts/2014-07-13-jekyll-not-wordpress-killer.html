@@ -1,0 +1,78 @@
+---
+layout: post
+title: Jekyll is not a "WordPress Killer"
+date: 2014-07-13 08:00:20.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Jekyll
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1405238463;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Jekyll is not a "WordPress Killer"
+  _yoast_wpseo_metadesc: I've tried Jekyll, and it's definitely not as easy to use
+    as its proponents claim.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wd
+  _oembed_a6200d48f209a109b964f064aa060260: <blockquote class="twitter-tweet" width="500"><p><a
+    href="https://twitter.com/EricMann">@EricMann</a> if all you ever build are HTML
+    files and or use erb and haml then it can be faster for some.</p>&mdash; Michael
+    Bastos (@bastosmichael) <a href="https://twitter.com/bastosmichael/statuses/487780343861088256">July
+    12, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409645220;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:12;}i:1;a:1:{s:2:"id";i:6043;}i:2;a:1:{s:2:"id";i:5518;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '2'
+  keen_postview_count_this_30_days: '103'
+  _wpghs_github_path: _posts/2014-07-13-jekyll-not-wordpress-killer.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/jekyll-not-wordpress-killer/"
+---
+<p>My first experience with a dynamic website was in high school.</p>
+<p>I was in a Venturing Crew,[ref]A co-ed, outdoors-focused organization that's part of the Boy Scouts[/ref] and my friend Taylor had helped us put our group online with a website hosted by another friend. This website was built in classic ASP and used a Microsoft Access database on the back-end to house content.</p>
+<p>I hated it.</p>
+<p>The website looked great to visitors, but was messy to manage. I never once managed to post any new content of my own and would usually give up after a few hours of head scratching and just email my content to the team instead. Eventually my meeting notes would make it online, but I think only once it was by my own doing.</p>
+<p>I swore off websites, databases, and web development entirely before graduation.</p>
+<h2>Round Two</h2>
+<p>Around the same time WordPress was just becoming a thing, I took a second crack at having a website. My college gave me a URL and hosting for free, so I figured it was only prudent to leverage these resources while I was still a student.</p>
+<p>My options at the time were:</p>
+<ol>
+<li>Resurrect the ASP-Access monstrosity we'd used in high school (Nope)</li>
+<li>Learn enough about Linux to install one of the available open source packages available (Considered b2. Decided it was too much work)</li>
+<li>Build a static HTML site and forego any sort of database administration (Winner!)</li>
+</ol>
+<p>I liked the idea of static content because it was straight-forward, freed up my time to do something that <em>didn't</em> include studying Linux man pages, and leveraged the pirated copy of FrontPage I'd gotten from a friend. It felt like a win-win-win for me.</p>
+<p><strong>Managing a site built in static HTML is a major pain.</strong></p>
+<p>I blogged a few times each week for over a year, and eventually abandoned my site because manually manipulating HTML for every post was time consuming and mind-numbing. As much as I missed the WYSIWYG built in to the ASP-Access solution, I wasn't ready to go back to a convoluted database setup.</p>
+<p>My junior year I abandoned my self-hosted site for Blogger.</p>
+<h2>WordPress</h2>
+<p>Grad school introduced me to WordPress. I finally buckled down and learned PHP - not because I wanted to, but because I'd convinced a client I knew it and wanted to actually get paid for some freelance work.</p>
+<p>Eventually I learned enough about the platform, server administration, and database configuration to be considered somewhat of an expert. I speak frequently on the platform and have maintained a WordPress-powered blog for <strong>seven years</strong> this month.</p>
+<p>That said, I'm still fairly critical of the system. I know where it's come from, I know where it is today, and I have a good idea where it's going. I also have <a title="WordPress Core Proposal" href="http://eamann.com/?s=wordpress+core+proposal">several thoughts</a> on where I'd <em>like</em> to see it go.</p>
+<p>One of those thoughts is around <a title="WordPress Core Proposal: Portability" href="http://eamann.com/tech/wordpress-portability/">data portability</a> - I absolutely despise the current MySQL setup. It's just <em>barely</em> scalable and is incredibly difficult to move from one location to another. I would love if I could keep my post content version controlled, perhaps through a system like Git, making it easy to move <i>without</i> sacrificing the ease of presentation.</p>
+<h2>Jekyll</h2>
+<p>Based on this desire for versioned content and simple portability, a few people suggested I look into <a title="Jekyll" href="http://jekyllrb.com/">Jekyll</a>. The promise was, once I used Jekyll I'd leave WordPress and never look back.</p>
+<p>Wishful thinking on their part.</p>
+<p>What I do like about Jekyll is that all content and site material (i.e. theme) are housed in the same repository. Thanks to Git, you could easily maintain multiple versions of your site - to test a theme, to test different structures, etc. Switching between one or another would be as easy as [cci]git checkout other-version[/cci].</p>
+<p>What I <em>don't</em> like about Jekyll is the very developer-focused environment.</p>
+<p>There is no WYSIWYG interface - all content is written in markdown, which isn't too bad from a developer perspective, but which makes visualizing your content incredibly difficult.[ref]This is also the reason I don't consider Ghost to be a WordPress killer. Yes, markdown is simple to use <em>for developers</em>, but if you're trying to write and layout a specific article its an unnecessary pain in the ass.[/ref]</p>
+<p>The setup is also incredibly convoluted. I made my first attempt with a GitHub Pages setup. In order to make things work (i.e. preview the site to make sure it worked before I pushed things <em>live</em>) I had to install Jekyll itself on my local machine.[ref]I already have Ruby and Bundler installed for some other development work. Frankly, though, needing to install <em>developer tools</em> to preview a blog is asinine.[/ref] Once I did have things set up, previewing the site worked well, but it took a while to figure out why, even though I'd added content to the [cci]_posts[/cci] directory, content wouldn't show up.</p>
+<p>In all, it took me <b>almost two hours</b> just to get "Hello World!" printed on my new Jekyll site. This could just be inexperience with the platform; it could also be that there are no user-friendly guides to setting things up.[ref]Yes, there is <em>loads</em> of documentation. But they're all written for developers with experience in Ruby, Liquid, and Jekyll itself. If you've never worked with any of these before, good luck trying to figure it out.[/ref] For context, my parents use WordPress. My dad's still using the same cell phone we got him in 2002 - and even <em>he</em> was able to set up a new WordPress site in less than 10 minutes.</p>
+<p>I complained about Jekyll on Twitter shortly after I lost a good chunk of my day trying to figure it out. The first response I got was fairly telling:</p>
+<p>https://twitter.com/bastosmichael/status/487780343861088256</p>
+<p>The thing is, I was experimenting with Jekyll to build a documentation site. Like a blog, it would involve a considerable amount of writing. Unlike WordPress, it would involve several writers collaborating on the same document, often at the same time (a task for which I felt a Git-based CMS would be well-suited). The act of <em>writing</em> (producing raw, unformatted content) will be fast - it's just another document. The act of <em>setting up the tool</em>, however, was incredibly painful and absolutely <strong>not</strong> easier than WordPress.</p>
+<p>Trying to produce well-structured, visually attractive articles on a tool that's difficult to set up, however, is a non-starter. Even once I get things set up on my machine and hosted, training new writers (and getting things set up on <em>their</em> machine for previewing content) has limited return on what will be a significant investment.</p>
+<p>WordPress has a long way to go to becoming what I would consider a perfect platform. Jekyll has even farther to go to even catch up with WordPress in the first place.</p>

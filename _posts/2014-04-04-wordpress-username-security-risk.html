@@ -1,0 +1,77 @@
+---
+layout: post
+title: Why Showing The WordPress Username Is A Security Risk
+date: 2014-04-04 08:00:11.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- administration
+- security
+- vulnerability
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Why Showing Usernames In WordPress Is A Security Risk
+  _yoast_wpseo_metadesc: Does exposing WordPress usernames constitute a security risk?
+    I say it does.
+  _wpas_mess: Why Showing The WordPress Username Is A Security Risk
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/tm
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409906002;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5995;}i:1;a:1:{s:2:"id";i:6043;}i:2;a:1:{s:2:"id";i:6515;}}}}
+  keen_postview_count_this_24_hours: '3'
+  keen_postview_count_this_7_days: '7'
+  keen_postview_count_this_30_days: '24'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_content_score: '30'
+  _wpcom_is_markdown: '1'
+  _wpghs_github_path: _posts/2014-04-04-wordpress-username-security-risk.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-username-security-risk/"
+excerpt: "There have been a handful of discussions lately surrounding WordPress and
+  usernames - particularly whether or not exposing usernames is a security risk.\r\n\r\nThe
+  consensus appears to be \"no.\"  I beg to differ."
+---
+<p>There have been a handful of discussions lately surrounding WordPress and usernames - particularly whether or not <a title="Why Showing The WordPress Username Is Not A Security Risk" href="http://wptavern.com/why-showing-the-wordpress-username-is-not-a-security-risk">exposing usernames is a security risk</a>.</p>
+<p>The consensus appears to be "no."  I beg to differ.</p>
+<h2>Two Factor Authentication</h2>
+<p>Your username is one of the two pieces of information WordPress uses to identify <em>you</em> versus the hoards of people pretending to be you in order to gain access to your website.  The second piece of information is your password.</p>
+<p><img class="alignright size-medium wp-image-6245" alt="Gravatar Hovercards" src="{{ site.baseurl }}/assets/2014/04/Screenshot-2014-04-03-07.59.51-e1396537254486-300x136.png" width="300" height="136" />In older systems (not WordPress), users were able to log in using just a unique ID - i.e. their username.  Actually, in <i>current</i> systems this is still a widely accepted identification scheme.  Anyone could visit any WordPress site, drop my email address in a comment form, and be recognized as me when they leave a comment.</p>
+<p>No second form of authentication is required.  This is hugely disturbing as I have zero control over the content (or removal) of comments masquarading as me by merely using my email, which is then hashed by Gravatar and used to pull in not just my profile image, but often also a "hovercard" with my information on many sites.</p>
+<p><em>Two</em> factor authentication requires two separate forms of user identification.  Take the everyday example of ATM cards:</p>
+<blockquote><p>To prove that users are who they claim to be, the system requires two items: an ATM smartcard (application of the possession factor) and the personal identification number (PIN) (application of the knowledge factor). In the case of a lost ATM card, the user's accounts are still safe; anyone who finds the card cannot withdraw money as they do not know the PIN. The same is true if the attacker has only knowledge of the PIN and does not have the card.[ref]<a title="Two-step verification" href="http://en.wikipedia.org/wiki/Two-step_verification">Two-step verification</a>[/ref]</p></blockquote>
+<p>If we were talking about bank cards rather than WordPress access, you would be hard-pressed to find someone claiming that "showing your card number is not a security risk" because, well, it's a huge one.  Even if an attacker doesn't have your PIN, having just one piece of information is so dangerous (as a 4-digit pin can easily be guessed) that we immediately cancel/change our cards if lost, stolen, or if, say, <a title="How Secure is the Internet of Things?" href="https://ttmm.io/tech/security-internet-of-things/">records of a vendor like Target are hacked</a>.</p>
+<p>When it comes to usernames, however, we're so used to the username/password tuple being treated as a single piece of information that two-factor authentication means something different - using a tool like Google Authenticator on a mobile phone.</p>
+<p>I use Google Authenticator for my WordPress.com account because it's a built-in service.  However I have yet to find a comparable system for <em>self-hosted</em> WordPress, so I don't use it.[ref]If Automattic were to finally open source their implementation, I'd use it in a heartbeat. I mention this at every opportunity in the hope that <em>someone</em> will finally do so.[/ref]</p>
+<h2>Brute-Force</h2>
+<p>In the lack of a sufficient two-factor authentication scheme (username is publish, Google Authenticator is not enabled), hacking a WordPress site is relatively easy.  Usernames are public information, meaning hackers only need <em>one</em> piece of information.</p>
+<p>If you've seen the movie <a title="Olympus Has Fallen" href="http://www.imdb.com/title/tt2302755/">Olympus Has Fallen</a>, you'll see where I'm going here.  In the film, the attackers needed three separate codes to hack the national defense system. The President ordered the two other code-holders to give theirs up, swearing "they'll never get mine" each time. In the end, they didn't even <em>need</em> his - two codes got them far enough into the system they could use a brute force generator to guess his code and, eventually, launch the missiles.</p>
+<p>Fictional storyline or no, this helps prove my point: if an attacker knows your login, they can brute force your password.</p>
+<p>This is actually the key reason one of the first recommendations for securing a WordPress installation is to <a title="WordPress Security Tip: Remove the Admin User" href="http://www.dailyblogtips.com/wordpress-security-tip-remove-the-admin-user/">remove</a> <a title="Change WordPress admin username for security" href="http://www.inmotionhosting.com/support/website/wordpress/change-wordpress-admin-username-for-security">the</a> <a title="Hardening WordPress" href="http://codex.wordpress.org/Hardening_WordPress#Security_through_obscurity">"admin" user</a>.</p>
+<p>In fact, WordPress even allows administrators to set a custom username for the initial user upon instantiation to <em>avoid</em> having "admin" used by default.  There have been further <a title="Changeset 25115" href="https://core.trac.wordpress.org/changeset/25115">changes</a> in <a title="Changeset 24998" href="https://core.trac.wordpress.org/changeset/24998">core</a> to remove "admin" as a fallback when the username is not otherwise set.</p>
+<p>Why? Because leaving your site's administrative username as "admin" is considered a security flaw.</p>
+<h2>Vulnerability</h2>
+<p>I've spoken before at how vulnerable logins to your site can be when an admin-level account is used too frequently and in poor environments.  That said, the fact that usernames are exposed - and are enumerable - is one of the largest failings in WordPress when it comes to security.</p>
+<p>There are open source tools on GitHub[ref]I will <em>not</em> link to these tools. I thought about it, but I don't want anyone using this article as a "how to hack WordPress" tutorial. If you're interested in these tools, contact me privately and explain why.[/ref] that allow attackers to quickly list usernames for accounts on your site.  These tools are made possible by the fact that user IDs are assigned as auto-incrementing integers rather than true GUIDs.[ref]There have been proposals to change this, making automated enumeration of usernames essentially impossible. Unfortunately, these proposals have been met with resistance from many on the core team - not because it would be difficult, but because they fail to recognize the importance of such a task.[/ref]</p>
+<blockquote><p>All this comes back to something blindingly obvious though. Everyone is going to know part of your access. The reason we tell people not to use ‘admin’ as a login ID is not because it’s more or less secure, but because it makes it easy for script kiddies to target.[ref]<a title="Your Username is Not A Secret" href="http://halfelf.org/2014/username-secret/">Your Username is Not A Secret</a>[/ref]</p></blockquote>
+<p>Once an attacker has an account they want to target, the same tools will allow them to brute-force the account's password. It doesn't require a personal vendetta against a single user, just an extra line of code to grab a list of usernames and pick one.</p>
+<p>For many servers, this will essentially DOS the system - something a daily blogger will notice.  But if scheduled during off hours, it would be easy to fly under the radar.</p>
+<p>Honestly, when was the last time you logged into your server and checked the access logs?</p>
+<h2>Moving Forward</h2>
+<p>Usernames should not be public information - we should have an alternative field (i.e. [cci]user_nicename[/cci]) to serve as a unique identifier for author permalinks.  Usernames should be used for authentication <em>only</em> and for nothing else.</p>
+<p>Obfuscating user logins won't resolve every potential vulnerability in WordPress.  However, as the scale of the project continues to grow, decisions made in WordPress' infancy will continue to rear their heads as security issues.</p>
+<p>Usernames aren't inherently insecure on a small scale - when a platform reaches the level of visibility attained by WordPress, however, the number of potential attack vectors tied to public usernames goes through the roof.  Curtailing these attacks helps strengthen the platform.</p>

@@ -1,0 +1,58 @@
+---
+layout: post
+title: Doing it Wrong the Right Way
+date: 2012-07-17 08:00:04.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- plugin
+- theme
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/hy
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: include
+  _yoast_wpseo_metadesc: There is no "right" way to include a WordPress plugin within
+    a theme. But if you must, here's how to break the rules ...
+  _yoast_wpseo_linkdex: '74'
+  _wpghs_github_path: _posts/2012-07-17-doing-it-wrong-the-right-way.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/doing-it-wrong-the-right-way/"
+---
+<p>Telling someone there's <a title="The Right Way to Include a Plugin in a WordPress Theme" href="http://alexking.org/blog/2012/07/09/include-plugin-in-wordpress-theme">a right way to include a plugin in a theme</a> is like telling someone there's a right way to cheer for the Beavers during the <a title="Civil War (college football)" href="http://en.wikipedia.org/wiki/Civil_War_(college_football_game)">Oregon Civil War</a>.</p>
+<p>There <em>is</em> no right way.</p>
+<p>However, there are still ways to do it if you absolutely need to.</p>
+<p>Let's admit it. As developers, we're lazy.  We don't like installing multiple tools when they could be bundled into one package.  We don't like teaching our clients the difference between functionality and presentation.  We don't like documenting the multiple items we installed on a client site so the next guy can not break things when he works on it.</p>
+<p>We're lazy. As a result, we try to take shortcuts whenever possible - one of those shortcuts is bundling plugins with themes to extend WordPress' functionality.  But if you <em>must</em> take such a shortcut, here are the "right" ways to invoke [cci]_doing_it_wrong()[/cci].<!--more--></p>
+<h2>TGM Plugin Activation</h2>
+<p>A couple of fantastic WordPress developers have taken the time to pull together a utility class for placing plugin dependencies in themes: <a title="TGM Plugin Activation" href="http://tgmpluginactivation.com">TGM Plugin Activation</a>.</p>
+<p>Add this class to your theme and register its plugin dependencies.  Then, when users activate your theme, you can automatically download, install, and activate any missing required plugins. This has a <em>huge </em>benefit - the plugins are regular WordPress plugins and are installed using regular WordPress functionality.  In other words, when updates are released, WordPress handles the updates exactly the same way as any other update.</p>
+<p>The downside, though, is the somewhat large footprint of the class.  The single PHP file is a whopping 2,000 lines of code - so for automatically including smaller plugins it can be a bit overkill.</p>
+<h2>Copy the Implementation of [cci]mu-plugins[/cci]</h2>
+<p>This is the pattern modeled by Alex King in <a title="The Right Way to Include a Plugin in a WordPress Theme" href="http://alexking.org/blog/2012/07/09/include-plugin-in-wordpress-theme">his tutorial</a> - it involves bundling the plugin directly with the theme and loading the core plugin file the same way WordPress does.  The advantage here is that you're not doing anything exotic - you use the same functionality WordPress does to load the plugin.  In addition, using Alex's model, your bundled version of the plugin is automatically overridden by a standalone installation of the plugin.</p>
+<p>The downside, though, is that you're including the plugin in a location WordPress doesn't expect.  It won't detect updates to the plugin, so if things change you need to re-release the theme.</p>
+<h2>Use Filters</h2>
+<p>The <em>right</em> way to include plugin functionality in a theme is to <strong>not</strong> include plugin functionality in a theme.</p>
+<p>Instead, build your theme under the assumption that the plugin is installed and active.  Then, hide any dependent functionality behind hooks - actions and filters.  You want to add specific social sharing widgets below a post? Great! But don't call [cci]custom_sharing_widgets()[/cci] directly.  Instead, add a hook to your theme and wire the hook up in your theme's functions file:</p>
+<p><code lang="php"><br />
+// In functions.php<br />
+if ( function_exists( 'custom_sharing_widgets' ) )<br />
+  add_action( 'my_theme_below_post', 'custom_sharing_widgets' );</p>
+<p>// In single.php<br />
+do_action( 'my_theme_below_post' );<br />
+</code></p>
+<p>If the plugin is installed, the widgets are automatically placed in the right area of the theme.  If not, nothing happens.  Using actions like this, you can support multiple similar plugins - just tie in the same hooks.  Then your users can decide <em>on their own</em> which plugin to use to add this functionality.</p>
+<p>Actions and filters are insanely powerful, and you can define as many as you need.  Just look at premium themes like the Genesis framework and all the awesome hooks they provide.  It's relatively simple to customize the layout and hooking in new functionality.</p>
+<p>Just remember, plugins and themes are meant to server vastly different purposes.  Mix and match at your own risk.</p>

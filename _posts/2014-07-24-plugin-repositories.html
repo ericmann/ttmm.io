@@ -1,0 +1,53 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Plugin Repositories'
+date: 2014-07-24 08:00:23.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+meta:
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _edit_last: '2'
+  _yoast_wpseo_title: 'WordPress Core Proposal: Plugin Repositories'
+  _yoast_wpseo_metadesc: I'd like to see WordPress allow multiple repositories to
+    be registered side-by-side with WordPress.org's official API.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wp
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409741360;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3405;}i:1;a:1:{s:2:"id";i:6231;}i:2;a:1:{s:2:"id";i:3395;}}}}
+  keen_postview_count_this_7_days: '8'
+  keen_postview_count_this_30_days: '266'
+  _wpghs_github_path: _posts/2014-07-24-plugin-repositories.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/plugin-repositories/"
+excerpt: I'd like to see WordPress allow multiple repositories to be registered side-by-side
+  with WordPress.org's official API.
+---
+<p>Anyone who has used VVV for local site development has probably taken some time to peek under the hood to see how it accomplishes its magic. If you haven't, take a look at the bundled [cci]provision.sh[/cci] script.</p>
+<p>I'll wait.</p>
+<p>One of the neatest parts of the script is how it manages custom Ubuntu repositories. First it adds the repositories' certificate signatures, then it adds the repositories. Tools like PHP and Nginx are then downloaded from alternative locations that contain more up-to-date versions that the default.</p>
+<p>Actually, this is a pattern often used within Linux to pull down alternative distributions of popular projects. Sometimes you want a more modern version. Other times you want to roll back to an earlier one for the sake of compatibility with other tools.</p>
+<p>Whatever the reason, allowing alternate repositories to be registered with Ubuntu's various package managers is a powerful feature.<br />
+It's also something I'd like to see in WordPress.</p>
+<h2>Plugin Management</h2>
+<p>Right now, there is one and only one repository from which you can download and install plugins - WordPress.org. It's limited to free plugins only, and that's a hefty limitation for any package management system.</p>
+<p>Some plugins and themes come with scripts that register alternative download locations, but these are often limited to just keeping the theme/plugin in question updated. There is no additional discovery feature built-in to allow discovery of new systems from different hosts.</p>
+<p>I realize this will be a bit controversial, but I'd like to see the WordPress.org plugin API standardized, documented, and opened to the public. I'd also like to see WordPress extend a way to add alternative repository paths to the system - repositories that implement the same API as WordPress.org.</p>
+<p>This would allow communities like <a title="Easy Digital Downloads" href="https://easydigitaldownloads.com/extensions/">Easy Digital Downloads</a> or <a title="StudioPress" href="http://my.studiopress.com/themes/">StudioPress</a> or <a title="WPMU.dev Premium WordPress Plugins" href="http://premium.wpmudev.org/projects/category/plugins/">WPMU.dev</a> to make their libraries discoverable <em>and installable </em>from within the WordPress admin the same way the core repository is.</p>
+<p>Powerful for the community? Absolutely. Dangerous to the community? Potentially.</p>
+<p>By placing discovery and update maintenance in the hands of people other than WordPress.org we do open the system to potential abuse. But I honestly see no more danger in this than open-sourcing WordPress to begin with.</p>
+<p>I can see various potential implementations of a repo whitelisting system - as rough as adding a filter or as streamlined as an oAuth workflow embedded within the admin. However we do it, this would empower developers to easily distribute beta updates outside of the core updater. It would allow marketplaces to establish digital storefronts integrated with the smooth admin experience of WordPress itself.</p>
+<p>It would bring us more inline with the goal of democratizing publishing by directly democratizing the <em>publishing </em>of WordPress extensions.</p>
+<p>WordPress 4.0 is just around the corner, but it's never too late (or early) to start brainstorming ideas for future versions. Do you see any value in open repository registration? Do you see any danger? Is this something we should pursue for a future version of WordPress?</p>

@@ -1,0 +1,48 @@
+---
+layout: post
+title: Write-only Database Scheme
+date: 2014-12-23 08:00:03.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- database
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Write-only Database Scheme
+  _yoast_wpseo_metadesc: Would restricting database options to write-only give us
+    a proper solution for data consistency and networked installations?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-u
+  _wpghs_github_path: _posts/2014-12-23-write-database-scheme.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/write-database-scheme/"
+excerpt: Would restricting database options to write-only give us a proper solution
+  for data consistency and networked installations?
+---
+<p>I've worked in jobs where we've been forced to reinvent the wheel in terms of data storage. One company in particular built their own database engine - indices and all. Others have merely needed to iterate on one structure or another.</p>
+<p>In just about every case, though, we've come across the same issue: tracking history.</p>
+<p>In a previous job, I built a completely custom CMS we used to manage both web content and a database of business partners. Once you start adding an editorial interface, the next feature request is undoubtedly for some sort of undo feature.</p>
+<p>Editors want to be able to track who changed what when. They want to be able to roll back to an earlier version. They want protection and catastrophic errors being introduced in their data.</p>
+<p>For the custom CMS, I built an extra table to track data diffs. In WordPress, we keep track of previous post revisions in the existing post database.[ref]Unfortunately this doesn't track meta changes, option changes, menu changes, widget changes, etc.[/ref] Neither of these systems is comprehensive, and they both fail in a very specific way.</p>
+<p>Editors are still <em>modifying</em> an object and merely tracking changes in some different object.</p>
+<h2>A Solution?</h2>
+<p>I've been fascinated to see the way tools like Twitter work. They write only, and merely flag certain specific changes in meta for the objects being changed. Namely, Tweets can only be created. They can't be edited. Deleting a tweet merely changes a [cci]deleted[/cci] flag on the object itself.</p>
+<p>Some other distributed systems I've worked with do incredibly will with rapid, distributed <em>writes</em> of information. Reading or modifying that information too quickly is a bit trickier - as a result, many of these systems are write-only and merely resent an "eventually consistent"[ref]<a href="http://en.wikipedia.org/wiki/Eventual_consistency">Eventual consistency</a>[/ref] database state.</p>
+<p>With all this information in mind, I have to wonder how efficient a write-only database system would be. Effectively, data objects are only ever added. When an update is required, a <em>new</em> copy of that data object is inserted into the database (with a higher ID or timestamp or vector clock to track it as the new copy). When a deletion is required, a flag on that object's meta information is merely toggled.</p>
+<p>Thus, no data is ever lost. Also, distributing the data across multiple server nodes, which may or may not have reliable connections, means we can live with an "eventually consistent" database and trust our data will always be present in the end.</p>
+<p>The only potential downside I can see in this situation is that the data store will continually grow - no data is ever removed, so the overall file size will never decrease.</p>
+<p>This is also likely a system we could implement <em>on top of </em>existing database engines. No reinventing the wheel, but we'd potentially have a more reliable data implementation than any of the engines give us by default.</p>
+<p>Do you see value in such a structure? Do you see any potential downsides to such an implementation?</p>

@@ -1,0 +1,78 @@
+---
+layout: post
+title: Software Vulnerabilities, Disclosure, and Marketing
+date: 2018-01-09 08:00:58.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags: []
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/software-vulnerabilities-disclosure-and-marketing/"
+excerpt: Consumers have a certain amount of upgrade fatigue. It's not uncommon for
+  end users to ignore an update notification for months to avoid the frustration that
+  comes with trying to fix something that worked before the update.
+---
+<p><!-- wp:core/paragraph --></p>
+<p>When news about <a href="https://en.wikipedia.org/wiki/Heartbleed">Heartbleed</a> broke, many in the security community rolled their eyes. Not at the bug or the potential attack surface it exposed, but the fact that a software bug had a name, a logo, and <a href="http://heartbleed.com/">its own website</a>.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Most documented bugs are cataloged already with a CVE number and detailed technical description. That <em>this</em> bug required its own branding seemed ridiculous and, since then, has heralded the age where just about <em>every</em>﻿ bug disclosure requires a marketing effort.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>But it&#x27;s not actually a bad thing.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Consumer Awareness</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Just before Heartbleed broke, another critical security bug had been discovered in <em>Apple&#x27;s</em>﻿ products. Now known as &quot;goto fail,&quot; this was a coding mistake in Apple&#x27;s TLS implementation that allowed a potential attacker to trick a computer into skipping verification of certificates.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As a developer, I understand how easy this kind of mistake can be. It also yielded several rounds of updates to various best practices documents to help developers avoid exactly this kind of error in the future. As a developer, I also saw easily how a bug like this could be exploited.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>In fact, I <em>learned</em>﻿ about the bug when a friend demonstrated against my machine how it could be used to bypass proper security checks. I immediately encouraged everyone to update their systems to apply the patch.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Not everyone listened.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Consumers have a certain amount of upgrade fatigue. They&#x27;re bombarded with application, OS, and other updates on an almost <em>daily</em>﻿ basis. Many of these updates either add unwanted features, remove heavily used ones, or break expected functionality entirely. It&#x27;s not uncommon for end users to ignore an update notification <em>for months</em>﻿ to avoid the frustration that comes with trying to fix something that worked before the update.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The patch for &quot;goto fail&quot; was one such update. A couple of friends of mine - who happen to be fairly tech savvy on their own - ignored the update. It didn&#x27;t make sense and the <em>last</em>﻿ update for their computers had broken some of the apps they used for work. Why upgrade?</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Over coffee, they explained how they&#x27;d seen my &quot;please update&quot; email and, though they respected my opinion, couldn&#x27;t risk their workday productivity. They did, however, want to know how much of an impact Heartbleed would have. Why hadn&#x27;t I told them to patch <em>that</em>﻿ bug? Could I upgrade their machines in the cafe?</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Heartbleed affects servers. Goto fail affects consumer desktops/laptops and phones. One had branding, one did not. Consumers were more aware of the one that hand branding - the one that <em>didn&#x27;t</em>﻿ affect the machines for which they are directly responsible.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Why Marketing?</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Heartbleed was fixed almost immediately. The more recently disclosed Meltdown and Spectre bugs also had patches available for most systems almost immediately. Apple&#x27;s latest #iamroot bug had a patch deployed the same day as the disclosure - then another patch the next day to fix the new bugs introduced by the previous one.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As laughable as it might be from a security engineering perspective, good marketing around an exploit is <em>vital</em>﻿ to getting it addressed in a timely manner. I&#x27;m personally aware of several <em>critical</em>﻿ bugs that have gone unpatched for <em>years</em>﻿ because the development team thinks no one cares.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Every time I show someone a proof-of-concept exploit against a known issue, they can&#x27;t believe it hasn&#x27;t been fixed. When I point out the age of the first disclosure (usually a blog post heavily criticized for not contacting security@wherever directly), they shake their heads in frustration.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Still, until we as developers can get better at <em>not</em>﻿ breaking things when we release an update, consumers won&#x27;t fully trust us with silent, background upgrades. Software should always be a transparent aid to the end user, not a cumbersome tool non-developers need to maintain.</p>
+<p><!-- /wp:core/paragraph --></p>

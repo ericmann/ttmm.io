@@ -1,0 +1,133 @@
+---
+layout: post
+title: Bayesian Statistics - Conclusion
+date: 2009-12-12 09:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- statistics
+meta:
+  yourls_shorturl: http://eam.me/3t
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409803186;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:1227;}i:1;a:1:{s:2:"id";i:1226;}i:2;a:1:{s:2:"id";i:1223;}}}}
+  keen_postview_count_this_24_hours: '1'
+  keen_postview_count_this_7_days: '2'
+  _wpghs_github_path: _posts/2009-12-12-bayesian-statistics-conclusion.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/bayesian-statistics-conclusion/"
+---
+<p>People groan whenever I bring up statistics in relation to marketing theory.  In reality, though, most marketing decisions are made based on numbers.  Without some level of smart statistical analysis, you can’t make an informed decision based on your data and all of those research dollars are wasted.</p>
+<p>Given, the case study I posted yesterday was a relatively simple case.  Three products across three demographics.  I simplified things further by assuming each person in each segment rated each product.  In reality, you can never truly know this.  Say, for example, you have a segment of 1,000 people.  In this group, you have 1,000 ratings for Product A, 700 ratings for Product B, and 300 ratings for Product C.  <em>This </em>is the instance in which you’d use a Bayesian weighting filter.  For all we know, 200 of the people who rated Product C also rated Product B and the other 100 only rated Product A.</p>
+<p>So the groups we’re looking at share some overlap, but there’s no easy way to know where that overlap ends and how pervasive it is in our model.  Rather than taking a simple average of our numbers, we use Bayesian statistics to normalize our samples.</p>
+<h3>Revising an example</h3>
+<p>Here’s the table of original ratings from yesterday’s case study.  Remember, our segment sizes: Segment 1 = 5,000 people, Segment 2 = 25,000 people, and Segment 3 = 1,000 people:</p>
+<div>
+<table width="399" border="1" cellspacing="0" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td valign="top" width="100"></td>
+<td valign="top" width="99"><strong>Product A</strong></td>
+<td valign="top" width="99"><strong>Product B</strong></td>
+<td valign="top" width="99"><strong>Product C</strong></td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 1</strong></td>
+<td valign="top" width="99">4.2</td>
+<td valign="top" width="99">3.5</td>
+<td valign="top" width="99">1.0</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 2</strong></td>
+<td valign="top" width="99">3.7</td>
+<td valign="top" width="99">4.0</td>
+<td valign="top" width="99">4.8</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 3</strong></td>
+<td valign="top" width="99">2.4</td>
+<td valign="top" width="100">4.2</td>
+<td valign="top" width="100">2.1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Last time, we made the assumption that, in any particular segment, the same number of people rated each product.  Let’s throw that assumption away and use the following information.  This table represents the total number of consumer ratings for each product by segment:</p>
+<div>
+<table width="399" border="1" cellspacing="0" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td valign="top" width="100"></td>
+<td valign="top" width="99"><strong>Product A</strong></td>
+<td valign="top" width="99"><strong>Product B</strong></td>
+<td valign="top" width="99"><strong>Product C</strong></td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 1</strong></td>
+<td valign="top" width="99">4,825</td>
+<td valign="top" width="99">2,100</td>
+<td valign="top" width="99">4,000</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 2</strong></td>
+<td valign="top" width="99">21,200</td>
+<td valign="top" width="99">15,900</td>
+<td valign="top" width="99">7,525</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 3</strong></td>
+<td valign="top" width="99">725</td>
+<td valign="top" width="100">350</td>
+<td valign="top" width="100">980</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Using these numbers, we can calculate the Bayesian average for each product rating by segment.  Remember, we’re normalizing our data across each <em>segment</em> first.  Then we’ll use a weighted average to find each individual product rating:</p>
+<div>
+<table width="399" border="1" cellspacing="0" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td valign="top" width="100"></td>
+<td valign="top" width="99"><strong>Product A</strong></td>
+<td valign="top" width="99"><strong>Product B</strong></td>
+<td valign="top" width="99"><strong>Product C</strong></td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 1</strong></td>
+<td valign="top" width="99">3.30</td>
+<td valign="top" width="99">2.92</td>
+<td valign="top" width="99">2.12</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 2</strong></td>
+<td valign="top" width="99">4.02</td>
+<td valign="top" width="99">4.12</td>
+<td valign="top" width="99">4.26</td>
+</tr>
+<tr>
+<td valign="top" width="100"><strong>Segment 3</strong></td>
+<td valign="top" width="99">2.77</td>
+<td valign="top" width="100">3.09</td>
+<td valign="top" width="100">2.64</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This gives us the following weighted average product ratings: Product A – 3.86, Product B – 3.89, and Product C – 3.86.  You can see how much the numbers have changed by <em>not</em> assuming uniformity among the market segments.  Yesterday, we thought Product B was the lowest rated of our lines.  Considering we didn’t have all the information, this was the best analysis we could perform.  Armed with deeper knowledge of the market’s responses, though, we now know that Product B is our highest rated product, though Products A and C aren’t that far behind.</p>
+<p>If this case study were real, you’d have to make some hard decisions at this point.  Do we cut Product A or Product C?  Considering they’re rated equally amongst the market, we’d be forced to turn to the opinion of our largest market segment.  Based on the opinions of Segment 2’s 25,000 people, we’d most likely elect to cut Product A due to its somewhat lower rating in comparison with our other two products.</p>
+<h3>Conclusion</h3>
+<p>Statistics can be a powerful tool in the hands of a savvy marketer.  They can help you make decisions based on slim data sets or help you model the future behavior of a yet un-tapped market.  On one hand you can think of statistics as your crystal ball for the market.</p>
+<p>But always remember that, in the wrong hands, statistics can be worthless.  Just because you can take an average of a bunch of figures doesn’t mean that the number will tell you anything.  Don’t let yourself be conned by fancy words or shiny graphs – always make sure the numbers you’re looking at are relevant to the problem at hand, the decision you have to make, and the market you’re studying.</p>

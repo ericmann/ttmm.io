@@ -1,0 +1,47 @@
+---
+layout: post
+title: Modular Architecture
+date: 2014-11-18 08:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- API
+- WordPress
+meta:
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _edit_last: '2'
+  _wpas_mess: WordPress, the JSON API, and Modular Architecture
+  _yoast_wpseo_title: Modular Architecture
+  _yoast_wpseo_metadesc: One of the most exciting new developments (at least for API
+    geeks like me) is the coming JSON API.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zw
+  _wpghs_github_path: _posts/2014-11-18-modular-architecture.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/modular-architecture/"
+excerpt: One of the most exciting new developments (at least for API geeks like me)
+  is the coming JSON API.
+---
+<p>One of the most exciting new developments (at least for API geeks like me) is the coming JSON API. If you aren't aware, it's an in-development feature that provides parity with the existing XML-RPC system in WordPress, just using a more approachable syntax.</p>
+<p>Through the JSON API, developers like me will be able to build out new apps that interface with WordPress with relative ease. I'm parriculary excited because the data structure used is native to JavaScript. This paves the way for a JS-based, <a href="https://eamann.com/tech/offline-editor/">offline-first interface</a> for WordPress.</p>
+<h2>Modularity</h2>
+<p>Ideally, every component of your application will stand apart from every other. The interface is well contained and easily replaced. The database access layer is pluggable and can be swapped out for other abstractions. Various components can be snapped in or out as needed.</p>
+<p>Despite its rich plugin-based architecture, WordPress is <em>not </em>modular in any definable way.</p>
+<p>The core framework uses a database access layer, but still makes direct calls to the database. The admin interface is built dynamically in PHP and can't be split out from the rest of core. The plugin system <em>feels </em>modular, but certain components are still so highly dependent on WordPress APIs and developer-specific designs that any meaningful interoperability is nonexistent.</p>
+<p>The advent of the JSON API has the potential to change this.</p>
+<p>Now, WordPress itself can be treated as the database access layer (albeit with a well-structured, built-in administrative layer). Themes used for front-end presentation can be built simply, use zero PHP code, and be entirely static yet pull dynamic content over the API.</p>
+<p>A new editorial interface can be built in HTML and JavaScript - which both run literally <em>anywhere </em>- and used across mobile, desktop, Mac, Windows, etc to manage content.</p>
+<p>Each component can be maintained independently. Each can be released independently. Each will also be incredibly modular - themes and editors can work with <em>any </em>CMS that exposes a similar RESTful API.</p>
+<p>The future of WordPress is finally modular! I'm looking forward to that future.</p>

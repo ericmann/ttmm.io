@@ -1,0 +1,48 @@
+---
+layout: post
+title: Machine Learning
+date: 2014-05-09 08:00:31.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- neural network
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Machine Learning
+  _yoast_wpseo_metadesc: I've been a fan of neural networks since my friend's computer
+    scientist dad first explained them to me when I was in elementary school.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/ul
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408655233;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6459;}i:1;a:1:{s:2:"id";i:6270;}i:2;a:1:{s:2:"id";i:6272;}}}}
+  _wpghs_github_path: _posts/2014-05-09-machine-learning.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/machine-learning/"
+excerpt: I've been a fan of neural networks since my friend's computer scientist dad
+  first explained them to me when I was in elementary school.
+---
+<p>I've been a fan of neural networks since my friend's computer scientist dad first explained them to me when I was in elementary school.</p>
+<p>He was doing research to map the brain of a <a title="Nematode" href="http://en.wikipedia.org/wiki/Nematode">roundworm</a> inside a computer; why build a neural network from scratch when you could just copy one already in existence?</p>
+<h2>How are neural networks different?</h2>
+<p>As I grew up, I continued to be fascinated by this alternative form of computing.</p>
+<p>In a standard computer, everything is built up in terms of logic. A computer chip is a series of logical gates - AND, OR, NOR, etc. Programs merely pass instructions across these gates to produce a certain, expected output.</p>
+<p>Because of this, higher-level programming languages we know and love can be reduced to an incredibly finite number of characters (due to the tiny number of logical gates required to actually represent machine language). A few developers have even demonstrated how just about every command in modern JavaScript <a title="Java/script: no alnum cheat sheets" href="http://sla.ckers.org/forum/read.php?24,33349">can be represented with just 11 characters</a> - [cci][]()+!{}/.,[/cci]</p>
+<p>Neural networks, on the other hand, don't use logical gates. Instead, they use the weighted connections between virtual "neurons" to determine whether a bit is on or off (whereas a logical gate would use a hard-coded <a title="Truth Table" href="http://en.wikipedia.org/wiki/Truth_table">truth table</a>).</p>
+<h2>Machine Learning</h2>
+<p>The power in neural networks lies in the fact that they can be <em>trained</em>. You can build a neural network by creating an array of inputs, building up a number of hidden layers for data translation, and exposing an array of outputs. You then give it a set of known data and, thanks to an algorithm called "backwards propagation," you can <em>teach</em> the neural network to produce the correct output array.</p>
+<p>For example, say our input is a 10x10 grid of pixels. We use this grid to analyze a handwritten English character, assigning the value 1 to each input bit where a pixel contains ink and 0 to each bit with no ink (or a small amount of ink). The network exposes an array of 26 potential output bits - with each bit representing a specific character in the English alphabet (ignoring case for now).</p>
+<p>We train the neural network by giving it a sample character, checking its output against our expectations, and <em>backwards propagating</em> the results to adjust the weights of each neural connection. After a number of training runs, the neural network will be able to view the training set and correctly identify each character.</p>
+<p>What's more, it will be able to analyze <em>unknown test data</em> and, with a high accuracy, classify previously unknown characters with their alphabet equivalent.</p>
+<h2>Potential Applications</h2>
+<p>I've used neural networks to successfully break captchas by building my own <a title="Optical Character Recognition" href="http://en.wikipedia.org/wiki/Optical_character_recognition">OCR</a> software. I've used basic networks to classify emails as spam or not spam based on tokenized keywords. I'd <em>like to</em> use networks to help digest and automatically classify articles based on categories, keywords, and relevancy.</p>
+<p>I find this field incredibly fascinating and am hunting after an excuse to use neural networks with my day job - or just built on top of WordPress/CMS in general. What potential applications can <em>you</em> think of?</p>

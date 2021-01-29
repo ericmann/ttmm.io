@@ -1,0 +1,198 @@
+---
+layout: post
+title: Dependency Injection and Abstract Interfaces in C#
+date: 2012-04-19 09:00:00.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- C#
+- Tutorials
+tags:
+- C#
+- interface
+- Unit Test
+meta:
+  yourls_shorturl: http://eam.me/ha
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: interfaces
+  _yoast_wpseo_title: Dependency Injection and Abstract Interfaces - Jumping Duck
+    Media
+  _yoast_wpseo_metadesc: Abstracting interfaces in your applications makes unit testing
+    remarkably easy. Here's a practical example.
+  _yoast_wpseo_linkdex: '69'
+  _wpghs_github_path: _posts/2012-04-19-dependency-injection-interfaces-c-sharp.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tutorial/dependency-injection-interfaces-c-sharp/"
+---
+<p>If you've ever written code, you've probably written a unit test.  If you haven't written unit tests, you should start.</p>
+<p>Now.</p>
+<p>Really.</p>
+<p>Unit tests let you quickly verify that your code is operating in a predictable fashion.  When you make changes down the road, you re-run the same unit tests to make sure nothing broke.</p>
+<p>In many cases, you write the unit tests <em>first</em>.  Define what your code will do, decide what objects you will use/make to accomplish that, then write a test.  At this stage, the test will fail - but you have a place to start.  Now write your code until it passes the test and you can be certain your code, however inelegant it might be, is doing what you expect.</p>
+<p>Sometimes, though, you don't write the unit tests first.  You go back days, weeks, even <em>years</em> later and try to add unit tests to your code.  In most cases, this will be next to impossible because of the way the code is written.  A function with direct calls to the database needs to be rewritten.  File access needs to be abstracted into an object.</p>
+<p>It's tricky, but makes your code more maintainable in the long run.<br />
+<!--more--></p>
+<h2>Database Update Web Service</h2>
+<p>I was recently tasked with updating the data persistence routines in a legacy web service that lacked unit tests.  My <em>first</em> task was to build out the new test scenarios before changing any code - make sure everything meets expectations before changing those expectations.</p>
+<p>The [cci]Save()[/cci] method was the powerhouse of the system.  It took in:</p>
+<ul>
+<li>The ID of the client sending data</li>
+<li>A checksum password to verify the client</li>
+<li>A local filesystem path for a log file</li>
+<li>The IP address of the client</li>
+</ul>
+<p>The object <em>containing</em> the [cci]Save()[/cci] method also contained a local [cci]data[/cci] object populated from an XML file posted to the server.</p>
+<p>Initially, the method looked something like this:</p>
+<p><code lang="csharp" height="1000px"><br />
+public bool Save(Int32 ClientID, String Password, String sAppData,String IPAddress)<br />
+{<br />
+  try<br />
+  {<br />
+    if (Password.CompareTo(GetPasscode(ClientID, Agency.Date)) != 0)<br />
+    {<br />
+      throw new Exception("Invalid ClientID!");<br />
+    }</p>
+<pre><code>string Filename = sAppData + "\\" + ClientID.ToString() + ".xml";
+
+//-----Check to see if file is from yesterday or today-----
+if (File.Exists(Filename))
+{
+  FileInfo info = new FileInfo(Filename);
+  //----If File date is today, then create ClientID file
+  if (info.LastWriteTime.Date.CompareTo(DateTime.Today.Date) == 0)
+  {
+    int nCount = 1;
+    do
+    {
+      Filename = sAppData + "\\" 
+        + ClientID.ToString() + "-" 
+        + nCount.ToString() + ".xml";
+      nCount++;
+    } while (File.Exists(Filename));
+  }
+  else //----if FileDate is not today, wipe out all data for that client id
+  {
+    File.Delete(Filename);
+
+    //---Delete all iterations---
+    String[] Files = Directory.GetFiles(sAppData + "\\", ClientID.ToString() + "-*.xml");
+    foreach (String file in Files)
+      File.Delete(file);
+  }
+}
+
+if (!Save(Filename))
+  throw new Exception("Unable to Save File!");
+
+File.AppendAllText(sAppData + "\\UploadSysInfo.log", "Pre New Data\r\n");
+UploadInfoDataContext data = new UploadInfoDataContext();
+File.AppendAllText(sAppData + "\\UploadSysInfo.log", "Post New Data\r\n");
+data.SaveToDB(this, IPAddress);
+File.AppendAllText(sAppData + "\\UploadSysInfo.log", "Post SaveToDB\r\n");
+</code></pre>
+<p>}<br />
+  catch(Exception e)<br />
+  {<br />
+    File.AppendAllText(sAppData + "&#92;UploadSysInfo.log", "Error: " + e.Message + "\r\n");<br />
+    throw;<br />
+  }<br />
+  return true;<br />
+}<br />
+</code></p>
+<p>Unfortunately, you can't just invoke this method and test that it works.  The method talks to the file system directly, then calls a data-heave [cci]SaveToDB()[/cci] method that talks directly to several SQL stored procedures.  Invoking this version of the method directly from a test routine will corrupt your data and cause a while host of other unintended effects.</p>
+<p>Instead, we can abstract what dependencies the system does have - primarily the file system and database.  By wrapping that access in secondary objects, we can mock those objects and inject our mocks into the system.</p>
+<p>Mocking is a fancy way of saying we override the default behavior and prevent the code from actually touching the file system or database by short-circuiting it in a specifi way.</p>
+<p>First, we change the signature of the [cci]Save()[/cci] method so that it also takes in an object of type [cci]IStatusLog[/cci].  This is an object implementing a specific interface for writing to a static text log:</p>
+<p><code lang="csharp"><br />
+public interface IStatusLog<br />
+{<br />
+  void Write(string Message);<br />
+}<br />
+</code></p>
+<p>Our test code passes in a <em>fake</em> object that implements [cci]IStatusLog[/cci] but doesn't actually do anything.  Any calls to member methods on the mocked object will go into the abyss.  The program won't crash, and our test will actually test what we want to pass.</p>
+<p>We also add an [cci]IXmlDataWriter[/cci] object to wrap routines that write our posted XML data to disk and an [cci]IUploadInfoDataContext[/cci] interface that wraps our database access methods.  In normal use (i.e. production), the system creates <em>real</em> objects for these interfaces and passed them to our worker method:</p>
+<p><code lang="csharp"><br />
+public bool Save(Int32 ClientID, String Password, String sAppData, String IPAddress, IStatusLog statusLog)<br />
+{<br />
+  this.Log = statusLog;</p>
+<p>this.Log.Write("Pre New Data");<br />
+  IUploadInfoDataContext data = new UploadInfoDataContext();<br />
+  this.Log.Write("Post New Data");</p>
+<p>return this.Save(<br />
+    ClientID,                              // ClientID<br />
+    Password,                              // Password<br />
+    sAppData,                              // sAppData<br />
+    IPAddress,                             // IPAddress<br />
+    statusLog,                             // statusLog<br />
+    new XmlDataWriter(sAppData, ClientID), // writer<br />
+    data                                   // data<br />
+  );<br />
+}<br />
+</code></p>
+<p>But the<em> real </em>work is done in another method, an overload of [cci]Save()[/cci] that takes in our objects that implement [cci]IStatusLog[/cci], [cci]IXmlDataWriter[/cci], and [cci]IUploadInfoDataContext[/cci].  In production, these are real objects that touch the file system and database.  In testing, they're mocks that return whatever values we need them to return.</p>
+<p>But since both cases use the same interfaces, they expose the same methods and properties.  We can write our [cci]Save()[/cci] method tied to these dependencies and rely on it both in production and in testing.</p>
+<p><code lang="csharp"><br />
+public bool Save(Int32 ClientID, String Password, String sAppData,<br />
+  String IPAddress, IStatusLog statusLog, IXmlDataWriter writer,<br />
+  IUploadInfoDataContext data)<br />
+{<br />
+  this.Log = statusLog;</p>
+<p>try<br />
+  {<br />
+    if (Password.CompareTo(GetPasscode(ClientID, Agency.Date)) != 0)<br />
+    {<br />
+      throw new ApplicationException("Invalid ClientID!");<br />
+    }</p>
+<pre><code>// Save object to XML file
+if (!writer.WriteData(this)) throw new ApplicationException("Unable to Save File!");
+
+data.SaveToDB(this, IPAddress, this.Log);
+this.Log.Write("Post SaveToDB");
+</code></pre>
+<p>}<br />
+  catch (ApplicationException e)<br />
+  {<br />
+    this.Log.Write("Error: " + e.Message);<br />
+    throw;<br />
+  }<br />
+  return true;<br />
+}<br />
+</code></p>
+<p>This method is the one we're testing.  It's the one that contains the actual logic to validate client data, save our passed object to disk, and update the database.  Everything else has been merely abstracting the underlying framework in such a way that we can inject phoney dependencies in a test environment.</p>
+<p>This test method, for example, passes in a mocked log writer, a mocked data writer, and a mocked database context.  However it still validates that the client ID makes it through our password check, that the mock database records data, and that the [cci]Send()[/cci] method returns true.</p>
+<p><code lang="csharp"><br />
+[TestMethod]<br />
+public void Save_Returns_True_After_Writing_To_Database()<br />
+{<br />
+  Mock<ixmldatawriter> dataWriter = new Mock<ixmldatawriter>();<br />
+  Mock<istatuslog> statusLog= new Mock<istatuslog>();<br />
+  Mock<iuploadinfodatacontext> dataContext = new Mock<iuploadinfodatacontext>();</p>
+<p>UploadInfo info = new UploadInfo();<br />
+  info.Agency = new AgencyInfo()<br />
+  {<br />
+    Date = "12/1/2012"<br />
+  };</p>
+<p>dataWriter.Setup(x => x.WriteData(info)).Returns(true);<br />
+  dataContext.Setup(x => x.SaveToDB(info, It.IsAny<string>(), It.IsAny<istatuslog>())).Returns(true);</p>
+<p>bool status = info.Save(<br />
+    28,                // ClientID<br />
+    "7DC1cC1",         // Password<br />
+    "AppData",         // sAppData<br />
+    "127.0.0.1",       // IPAddress<br />
+    statusLog.Object,  // statusLog<br />
+    dataWriter.Object, // writer<br />
+    dataContext.Object // data<br />
+  );</p>
+<p>Assert.IsTrue(status);<br />
+}<br />
+</istatuslog></string></iuploadinfodatacontext></iuploadinfodatacontext></istatuslog></istatuslog></ixmldatawriter></ixmldatawriter></code></p>
+<p>Abstracting dependencies into interfaces is a valuable tool in any application developer's toolbox.  It just so happens that the practice is somewhat more elegant in C# than other languages.  But understanding how, when, and <em>why</em> to use interfaces is a lesson every developer should learn.</p>

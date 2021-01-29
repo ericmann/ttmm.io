@@ -1,0 +1,94 @@
+---
+layout: post
+title: 'To Test or Not To Test: Unit Testing and Privacy'
+date: 2013-12-01 22:06:24.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- API
+- development
+- method privacy
+- phpunit
+- software
+- testing
+- Unit Test
+meta:
+  _yoast_wpseo_linkdex: '69'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: test
+  _yoast_wpseo_title: 'To Test or Not To Test: Unit Testing and Privacy'
+  _yoast_wpseo_metadesc: Which part of the API should be the emphasis of unit testing?
+    Public methods only, or private/protected ones as well?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/qx
+  _wp_old_slug: test-test-unit-testing-privacy
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _zem_rp_image: empty
+  _oembed_2fb65e26a0ec7fb653e9f716076c7258: <blockquote class="twitter-tweet" data-width="500"><p
+    lang="en" dir="ltr"><a href="https://twitter.com/awoods">@awoods</a> <a href="https://twitter.com/Jaffe75">@Jaffe75</a>
+    Problem is plugin contained in class w/ protected methods can’t be fully tested.
+    Silly to declare public <a href="https://twitter.com/benlobaugh">@benlobaugh</a></p>&mdash;
+    Ryan Duff (@ryancduff) <a href="https://twitter.com/ryancduff/status/406239275194523648">November
+    29, 2013</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409897999;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6269;}i:1;a:1:{s:2:"id";i:6231;}i:2;a:1:{s:2:"id";i:5472;}}}}
+  keen_postview_count_this_30_days: '19'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_focuskw_text_input: test
+  _yoast_wpseo_content_score: '30'
+  _wpcom_is_markdown: '1'
+  _oembed_time_2fb65e26a0ec7fb653e9f716076c7258: '1496518572'
+  _wpghs_github_path: _posts/2013-12-01-unit-testing-and-privacy.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/unit-testing-and-privacy/"
+excerpt: Determining which methods in your application needed testing used to be easy
+  - test everything exposed by the public API. But once you invite other developers
+  to contribute, you are exposing a whole other set of internal APIs to the team.  The
+  behavioral consistency of these methods is just as important as that of the public
+  API, so shouldn't you be testing them too?  I would argue you should, even if this
+  internal API consists of private and protected methods.  To make life easier, I'll
+  give you a couple of tools for testing these limited-visibility functions without
+  forcing everything to be declared "public."
+---
+<p>Over the Thanksgiving holiday, I had an interesting discussion with some of my Twitter peers about unit testing in WordPress:</p>
+<p>https://twitter.com/ryancduff/status/406239275194523648</p>
+<p>If you know me, you know I like <a title="Start with a Unit Test" href="https://ttmm.io/tutorial/start-with-a-unit-test/">unit testing</a> - even when <a title="Making Singletons Safe in PHP" href="http://eamann.com/tech/making-singletons-safe-in-php/">singletons are involved</a>. &nbsp;Test-driven development makes life a whole lot easier for developers and QA teams alike, and I will&nbsp;<em>always</em> be a strong advocate of the practice as a standard in web development. &nbsp;That said, the question of whether or not to test certain parts of an application remains a good one on which there is no definitive answer.</p>
+<h2>Not To Test</h2>
+<p>The easiest stance to take is one I often advocate in unit testing overviews or quick tutorials: only test public APIs.</p>
+<p>When you're building an extensible system, testing the API exposed to outside developers is a must. &nbsp;This suite of tests will help you, as the original developer, verify that the API behaves as expected and exposes the functionality your documentation[ref]You&nbsp;<em>are</em> documenting your API, aren't you?[/ref] claims it does.</p>
+<p>As you further develop your application, you can re-run the tests as often as needed to verify functionality remains intact. &nbsp;This way you aren't breaking any promises your API design is making to the community.</p>
+<p>If a method is declared as protected - or even private - it establishes the method as an internal behaviour and&nbsp;<em>should not</em> be subject to tests. &nbsp;Internal behavior - the inner workings and implementation of your system - should remain a black-box to anyone coding against your API. &nbsp;You can change it as often as you need, so long as the unit tests for your public API continue to pass.</p>
+<p>In short - if it's public, test it. &nbsp;If it's private, it's magic and can be treated as such.</p>
+<h2>To Test</h2>
+<p>The alternative argument, which is one I'm beginning to embrace, is that&nbsp;<em>everything</em> should be tested. &nbsp;Yes, your code exposes an API to the world against which other developers can write code. &nbsp;The functionality of that API can and should be tested as completely as possible.</p>
+<p>But unless you're a solo developer[ref]Few developers are truly solo acts anymore. &nbsp;Even if you're not a member of a larger corporation or entity, I can all but guarantee you will have someone else either contributing to or hacking on your code in the future.[/ref], there's a&nbsp;<em>second</em> API in your codebase. &nbsp;Every application, whether it exposes a public interface for developers or not, contains an internal API. &nbsp;This is the API you code against every day in your project, and it's just as important as - if not more than - your public API.</p>
+<p>Once you invite another developer to work on your project, you're opening even private and protected methods within your objects to the team. &nbsp;A method for verifying nonces, for example, is something you would not likely ever expose via a public API. &nbsp;However, it contains certain functionality that&nbsp;<em>must</em>&nbsp;exhibit a specific, consistent behavior in order for your application to function properly.</p>
+<p>In short - if it's critical to consistent functionality, even private functionality, test it. &nbsp;There is no such thing as magic.</p>
+<h2>What is the Question?</h2>
+<p>There is no generalization I or anyone else can make regarding what code should be tested. &nbsp;The best we can do is offer guidance to help determine&nbsp;<em>which</em> methods should be tested and which should be considered untestable.</p>
+<p>Generally, all public functionality - the exposed API - should be tested. &nbsp;There might be pieces of functionality that dictate layout or element positioning; these pieces don't need unit tests but should instead be covered by integration tests.[ref]Integration testing can also be automated, but requires a slightly different toolset than unit testing. &nbsp;It's a bit beyond the scope of this article, but definitely something you should look into.[/ref]</p>
+<p>Generally, private functionality&nbsp;<em>is</em> internal implementation and won't need to be tested. &nbsp;But if the private functionality is used in a utility context (i.e. it's used by your code and the code written by the guy in the next cubicle) then it absolutely needs to be tested.</p>
+<p>I use the term "generally" above in both circumstances to try to explain a best practice. &nbsp;These are in no ways catch-all rules, however, and your best judgement is required when making the decision whether to or not to test a piece of code. &nbsp;I would always encourage erring on the side of testing. &nbsp;You can never have too many tests.</p>
+<p>So let's say you decide there's some protected or private functionality in your class that needs testing. &nbsp;How exactly would you go about that?[ref]I work in the world of WordPress, and WordPress lives in the universe of PHP. &nbsp;All of the code to follow is PHP, but you can probably abstract the concepts to your language of choice.[/ref]</p>
+<h3>Testing Protected Methods in PHP</h3>
+<p>If methods are&nbsp;<em>protected</em>, one of the easiest ways to test them is to subclass your object and override them with a public method. &nbsp;This is the approach I use to unit test my PHP singleton pattern, and it works wonders.</p>
+<p><script src="https://gist.github.com/ericmann/7745729.js"></script></p>
+<h3>Testing Private Methods in PHP</h3>
+<p>Private methods are a bit trickier. &nbsp;Subclassing won't provide access since private methods aren't inherited by child classes. &nbsp;Instead, we can use a neat feature of PHP called&nbsp;<em><a title="Reflection" href="http://php.net/manual/en/book.reflection.php">reflection</a></em>. &nbsp;Reflection will allow our objects to look at their own definitions and manipulate the privacy of their member functions, making things accessible to our tests.</p>
+<p><script src="https://gist.github.com/ericmann/7702180.js"></script></p>
+<h2>There are more things in heaven and earth, Horatio</h2>
+<p>Unit testing is a huge deal if you want to maintain clean, bug-free, future-proof code. &nbsp;It's a fantastic way to document your API to ensure functionality behaves as expected farther down the road when client requirements change and new code enters the project. &nbsp;It's&nbsp;<em>also</em> an effective way to ensure internal consistency between privileged APIs used by your development team.</p>
+<p>There is no set of rules that can be universally applied to all code when determining whether or not to test. &nbsp;When you look at a function and ask, "should I test this?" the answer is&nbsp;<em>probably</em> yes, even if it's not part of your public API.</p>

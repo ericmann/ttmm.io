@@ -1,0 +1,309 @@
+---
+layout: post
+title: The Case for Singletons in WordPress
+date: 2012-12-28 07:00:16.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Computer Programming
+- Dependency
+- Dependency Injection
+- design pattern
+- Developer
+- Object
+- singleton
+- Singleton Pattern
+- software
+- WordPress
+- You're
+meta:
+  _yoast_wpseo_linkdex: '70'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: singleton
+  _yoast_wpseo_title: The Case for Singletons in WordPress
+  _yoast_wpseo_metadesc: Several WordPress developers have been discussing the singleton
+    pattern lately. Here's why I think singletons are actually useful in WordPress.
+  _scribe_content_analysis: "O:8:\"stdClass\":7:{s:8:\"docScore\";i:100;s:9:\"docScoreE\";a:0:{}s:11:\"fleschScore\";s:14:\"very
+    difficult\";s:8:\"keywords\";a:9:{i:0;O:8:\"stdClass\":12:{s:3:\"kwc\";i:5;s:3:\"kwd\";d:2.439999999999999946709294817992486059665679931640625;s:3:\"kwe\";a:0:{}s:3:\"kwf\";i:13;s:3:\"kwl\";i:1;s:7:\"kwlText\";s:7:\"Primary\";s:3:\"kwo\";s:1:\"A\";s:4:\"kwod\";s:109:\"Congratulations,
+    this term strikes a good balance between search optimization and copywriting best
+    practices.\";s:3:\"kwp\";s:9:\"Very High\";s:3:\"kwr\";i:1;s:3:\"kws\";i:10;s:4:\"text\";s:9:\"wordpress\";}i:1;O:8:\"stdClass\":12:{s:3:\"kwc\";i:3;s:3:\"kwd\";d:3.37999999999999989341858963598497211933135986328125;s:3:\"kwe\";a:0:{}s:3:\"kwf\";i:18;s:3:\"kwl\";i:3;s:7:\"kwlText\";s:11:\"Significant\";s:3:\"kwo\";s:1:\"C\";s:4:\"kwod\";s:139:\"While
+    your copywriting is strong, consider writing more about this topic on your site
+    and/or use this term more frequently in your content.\";s:3:\"kwp\";s:3:\"Low\";s:3:\"kwr\";i:2;s:3:\"kws\";i:0;s:4:\"text\";s:9:\"singleton\";}i:2;O:8:\"stdClass\":12:{s:3:\"kwc\";d:1.2199999999999999733546474089962430298328399658203125;s:3:\"kwd\";d:0.190000000000000002220446049250313080847263336181640625;s:3:\"kwe\";a:3:{i:0;s:4:\"KwET\";i:1;s:4:\"KwEM\";i:2;s:5:\"KwELF\";}s:3:\"kwf\";i:1;s:3:\"kwl\";i:4;s:7:\"kwlText\";s:14:\"Not
+    Emphasized\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You will need to do some
+    work for this term, including improving your copywriting and writing more about
+    this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:9;s:3:\"kws\";i:0;s:4:\"text\";s:7:\"factory\";}i:3;O:8:\"stdClass\":12:{s:3:\"kwc\";d:1.2199999999999999733546474089962430298328399658203125;s:3:\"kwd\";d:0.190000000000000002220446049250313080847263336181640625;s:3:\"kwe\";a:3:{i:0;s:4:\"KwET\";i:1;s:4:\"KwEM\";i:2;s:5:\"KwELF\";}s:3:\"kwf\";i:1;s:3:\"kwl\";i:4;s:7:\"kwlText\";s:14:\"Not
+    Emphasized\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You will need to do some
+    work for this term, including improving your copywriting and writing more about
+    this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:8;s:3:\"kws\";i:0;s:4:\"text\";s:11:\"constructor\";}i:4;O:8:\"stdClass\":12:{s:3:\"kwc\";d:1.2199999999999999733546474089962430298328399658203125;s:3:\"kwd\";d:0.190000000000000002220446049250313080847263336181640625;s:3:\"kwe\";a:3:{i:0;s:4:\"KwET\";i:1;s:4:\"KwEM\";i:2;s:5:\"KwELF\";}s:3:\"kwf\";i:1;s:3:\"kwl\";i:4;s:7:\"kwlText\";s:14:\"Not
+    Emphasized\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You will need to do some
+    work for this term, including improving your copywriting and writing more about
+    this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:3;s:3:\"kws\";d:2.2599999999999997868371792719699442386627197265625;s:4:\"text\";s:16:\"wordpress
+    plugin\";}i:5;O:8:\"stdClass\":12:{s:3:\"kwc\";d:1.62999999999999989341858963598497211933135986328125;s:3:\"kwd\";d:0.75;s:3:\"kwe\";a:1:{i:0;s:4:\"KwET\";}s:3:\"kwf\";i:4;s:3:\"kwl\";i:4;s:7:\"kwlText\";s:14:\"Not
+    Emphasized\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You will need to do some
+    work for this term, including improving your copywriting and writing more about
+    this topic on your site.\";s:3:\"kwp\";s:3:\"Low\";s:3:\"kwr\";i:7;s:3:\"kws\";i:0;s:4:\"text\";s:17:\"singleton
+    pattern\";}i:6;O:8:\"stdClass\":12:{s:3:\"kwc\";d:2.220000000000000195399252334027551114559173583984375;s:3:\"kwd\";d:1.689999999999999946709294817992486059665679931640625;s:3:\"kwe\";a:2:{i:0;s:4:\"KwET\";i:1;s:4:\"KwEM\";}s:3:\"kwf\";i:9;s:3:\"kwl\";i:3;s:7:\"kwlText\";s:11:\"Significant\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You
+    will need to do some work for this term, including improving your copywriting
+    and writing more about this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:5;s:3:\"kws\";i:0;s:4:\"text\";s:6:\"object\";}i:7;O:8:\"stdClass\":12:{s:3:\"kwc\";d:2.220000000000000195399252334027551114559173583984375;s:3:\"kwd\";d:1.310000000000000053290705182007513940334320068359375;s:3:\"kwe\";a:2:{i:0;s:4:\"KwET\";i:1;s:4:\"KwEM\";}s:3:\"kwf\";i:7;s:3:\"kwl\";i:3;s:7:\"kwlText\";s:11:\"Significant\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You
+    will need to do some work for this term, including improving your copywriting
+    and writing more about this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:4;s:3:\"kws\";i:0;s:4:\"text\";s:20:\"dependency
+    injection\";}i:8;O:8:\"stdClass\":12:{s:3:\"kwc\";d:1.62999999999999989341858963598497211933135986328125;s:3:\"kwd\";d:0.38000000000000000444089209850062616169452667236328125;s:3:\"kwe\";a:2:{i:0;s:4:\"KwET\";i:1;s:5:\"KwELF\";}s:3:\"kwf\";i:2;s:3:\"kwl\";i:4;s:7:\"kwlText\";s:14:\"Not
+    Emphasized\";s:3:\"kwo\";s:1:\"D\";s:4:\"kwod\";s:129:\"You will need to do some
+    work for this term, including improving your copywriting and writing more about
+    this topic on your site.\";s:3:\"kwp\";s:8:\"Very Low\";s:3:\"kwr\";i:6;s:3:\"kws\";i:0;s:4:\"text\";s:9:\"developer\";}}s:11:\"scribeScore\";i:60;s:4:\"tags\";a:15:{i:0;s:9:\"wordpress\";i:1;s:9:\"singleton\";i:2;s:7:\"factory\";i:3;s:11:\"constructor\";i:4;s:16:\"wordpress
+    plugin\";i:5;s:17:\"singleton pattern\";i:6;s:6:\"object\";i:7;s:20:\"dependency
+    injection\";i:8;s:9:\"developer\";i:9;s:14:\"the singletons\";i:10;s:20:\"computer
+    programming\";i:11;s:16:\"multiton pattern\";i:12;s:19:\"wordpress developer\";i:13;s:10:\"dependency\";i:14;s:10:\"injections\";}s:7:\"request\";O:8:\"stdClass\":4:{s:10:\"html_title\";s:36:\"The
+    Case for Singletons in WordPress\";s:11:\"description\";s:143:\"Several WordPress
+    developers have been discussing the singleton pattern lately. Here's why I think
+    singletons are actually useful in WordPress.\";s:7:\"content\";s:10854:\"There
+    has been a lot of discussion this week regarding the Singleton pattern and whether
+    or not it has a place in modern software development. &nbsp;<a title=\"Enabling
+    Action and Filter Hook Removal from Class-based WordPress Plugins\" href=\"http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/\">Mike
+    Schinkel wrote a tutorial about a Singleton factory</a> (really a \"multiton\").
+    &nbsp;<a title=\"Functions and Classes and Singletons, Oh My!\" href=\"http://jumping-duck.com/tutorial/wordpress-plugin-structure/\">I
+    wrote one about using Singletons as a WordPress plugin scaffold</a>. &nbsp;Then
+    the conversation <a title=\"Twitter - Part 1\" href=\"http://twitter.com/EricMann/status/284350904524754945\">bled</a>
+    <a title=\"Twitter - Part 2\" href=\"http://twitter.com/EricMann/status/284492563342323712\">over
+    to Twitter</a> and people questioned whether or not it was a sound development
+    pattern at all.\n\nI would argue that Singletons are not just useful, but are&nbsp;<em>necessary</em>
+    for robust software development.<!--more-->\n<h2>The Singleton Model</h2>\nTo
+    understand&nbsp;<em>why</em> I claim Singletons are necessary, we first have to
+    agree on a definition of \"Singleton.\"\n<blockquote>A Singleton is a class for
+    which there can exist one and only one instance during the life of the application.,</blockquote>\nIn
+    practice[ref]By \"practice\" I mean in WordPress development in particular. &nbsp;WordPress
+    is written in PHP, and PHP is by nature runs as a single thread. &nbsp;If you're
+    dealing with a more dynamic, multi-threaded&nbsp;environment, the practices will
+    differ significantly. &nbsp;I will rarely ever argue that a Singleton is the right
+    use case in a multi-threaded .Net application, for example, but there are still
+    situations where it's a useful pattern.[/ref] Singletons are used all over. &nbsp;Think
+    of every time you've used the [cci]global[/cci] keyword when working in WordPress.
+    &nbsp;Not for Posts, which are atomic objects, but for framework-wide constructs
+    like [cci]$wpdb[/cci] and [cci]$wp_rewrite[/cci].\n\nThe objects don't implement
+    a Singleton design pattern, but for all intents and purposes they fit our definition.
+    &nbsp;These are objects that are (and should be) only instantiated once during
+    the lifetime of a WordPress request-response cycle. &nbsp;You never call [cci]new
+    wpdb()[/cci] in your themes and plugins; instead you make a reference to the [cci]global
+    $wpdb[/cci] object that WordPress set up for you.\n\nThe Singleton model exists
+    to protect you from memory bloat. &nbsp;In most cases, you never want more than
+    one connection to the database open at any given time - so there's only one instance
+    of the database object during the request. &nbsp;It also protects you from instantiating
+    multiple copies of objects that are expensive to construct - it makes no sense
+    to have multiple instances of the [cci]WP_Rewrite[/cci] class lying around.\n<h2>Why
+    All the Hate?</h2>\nStill, Singletons are considered an \"anti-pattern\" by many
+    developers. &nbsp;They claim it's an overused pattern that's misused by too many
+    developers. &nbsp;True, it can be misused, but so can Axe body spray and words
+    like YOLO. &nbsp;Overuse doesn't make them&nbsp;<em>wrong</em> per se, you just
+    need to be very judicious in when, where, why, and how you use them.\n\nIn some
+    applications, Singletons are a horrible idea. &nbsp;The introduce the idea of
+    a global state into the application - and that state can bleed across threads
+    in multi-threaded, persistent applications. &nbsp;This means one request can inadvertently
+    affect another. &nbsp;For stateless (REST) web services, this can lead to many
+    a sleepless night.\n\nAs a result, most developers will see \"Singleton\" and
+    immediately think \"bad.\" &nbsp;They've been trained to avoid the pattern and
+    will summarily reject it if you suggest using a Singleton.\n<h2>When It Makes
+    Sense</h2>\nAs I've already pointed out, WordPress already uses singly-instantiated
+    objects that are placed in the global scope. &nbsp;So apparently it makes sense
+    to at least a handful of people.\n\nI've also used a Singleton as the backbone
+    for my <a title=\"Introducing WP_Session\" href=\"http://eamann.com/tech/introducing-wp_session/\">[cci]WP_Session[/cci]</a>
+    object. &nbsp;It's instantiated lazily (meaning only when you actually access
+    it rather than when the class file is included by WordPress), and lives for the
+    entire request. &nbsp;This is an object I'll used as a great example of <i>why</i>
+    the Singleton pattern makes sense.\n\nI work on WordPress, but I'm not the only
+    developer. &nbsp;My code touches a few aspects of the application, like the XML-RPC
+    system, the [cci]WP_Http[/cci] class, and certain other tiny elements. &nbsp;But
+    WordPress itself is a huge application, with hundreds of contributors and maintainers.
+    &nbsp;We have a few set of coding guidelines, but there's no guarantee everyone
+    will write their code exactly the same time.\n\nSo while&nbsp;<em>I</em> might
+    only instantiate [cci]WP_Session[/cci] once, there's no guarantee other developers
+    will respect that. &nbsp;Not in core, and certainly not in plugins. &nbsp;If the
+    class could be instantiated multiple times, all it would take is one extra call
+    to [cci]new WP_Session[/cci] to muck things up.\n\nAlso, once I've instantiated
+    the class, since it's an object I intend for other developers to use, I have to
+    place a reference to it in the global scope so their code can access the same
+    instance. &nbsp;So, ultimately, there are two patterns I can follow to set up
+    a single instance of [cci]WP_Session[/cci] for the request:\n\n<code lang=\"php\">class
+    WP_Session {\n  // Pray that this is only ever called by me\n  public function
+    __construct() { }\n}\n\n// Heavily document that this var shouldn't be abused\nglobal
+    $wp_session;\n$wp_session = new WP_Session();</code>\n\nOr using a Singleton -
+    a static [cci]get_instance()[/cci] method will return the current instance, and
+    the private constructor&nbsp;<em>cannot be called outside of the class</em>.\n\n<code
+    lang=\"php\">class WP_Session {\n  private static $instance;\n\n  public static
+    function get_instance() {\n    if ( ! self::$instance ) {\n      self::$instance
+    = new self();\n    }\n    return self::$instance;\n  }\n\n  private function __construct()
+    { }\n}\n\n$wp_session = WP_Session::get_instance();</code>\n<h2>What About Dependency
+    Injection?</h2>\nThis is the single greatest argument&nbsp;<em>against</em> Singletons
+    that I've heard. &nbsp;On Twitter, over email, and even on Stack Overflow I've
+    seen people arguing that dependency injection is a suitable replacement for the
+    Singleton pattern.\n\nThey're wrong.\n\nDependency injection is a pattern that
+    encourages you to abstract your dependencies so you can substitute mock objects
+    in your code. &nbsp;Consider the following pseudo-code example:\n\n<code lang=\"php\">class
+    Logger {\n  var $persist;\n\n  function __construct() {\n    $this->persist =
+    new FileSystemWriter( 'log.txt' );\n  }\n\n  function write( $event ) {\n    $this->persist->save(
+    $event );\n  }\n}\n\n$logger = new Logger();</code>\n\nThis kind of code would
+    run just fine. &nbsp;However, you are stuck between a rock and a hard place should
+    you need to change your code. &nbsp;If you want to change your application to
+    log in a database rather than to the filesystem, you need to rewrite both your
+    business logic code&nbsp;<em>and</em> your data persistence layer. &nbsp;Consider
+    instead the following code:\n\n<code lang=\"php\">class Logger {\n  var $persist;\n\n
+    \ function __construct( $engine ) {\n    $this->persist = $engine;\n  }\n\n  function
+    write( $event ) {\n    $this->persist->save( $event );\n  }\n}\n\n$fileEngine
+    = new FileSystemWriter( 'log.txt' );\n$logger = new Logger( $fileEngine );</code>\n\nNow,
+    when you change your application, you just change the data persistence layer since
+    you're passing the persistence object directly to the logic layer. &nbsp;Your
+    code is highly decoupled and you can move forward with blissful flexibility. &nbsp;Dependency
+    injection is truly an amazing paradigm to work within,&nbsp;<em>but it does not
+    solve the problems solved by Singletons</em>.\n<h2>Unit Testing</h2>\nThe biggest
+    argument against Singletons - and where the misguided rants about dependency injection
+    come from - is rooted in unit testing.\n\nWhen you're unit testing an application,
+    each test should be completely isolated from every other test. &nbsp;Singletons
+    make this difficult, since they introduce a global state for the application that
+    must be managed in between each test. &nbsp;When you're working with other stateful
+    objects in a testing environment (i.e. a database), you use dependency injection
+    to introduce a mock object that implements a similar interface, but with stateless
+    behavior.\n\nBasically, the mock object allows you to start every test with a
+    clean slate.\n\nTo unit test with Singletons, you have to do two things:\n<ol>\n\t<li><span
+    style=\"line-height: 13px;\">Have the Singleton implement a standard interface
+    that you can mock in your tests, then use dependency injection to inject the&nbsp;<em>Singleton</em>
+    inside the application</span></li>\n\t<li>Implement a [cci]reset()[/cci] method
+    within your Singleton that flushes the stored class instance</li>\n</ol>\nThe
+    first step allows you to test your code that depends on the Singleton object without
+    actually using the Singleton itself.\n\n<code lang=\"php\">class User {\n  var
+    $session;\n\n  function __construct( $session ) {\n    $this->session = $session;\n
+    \ }\n\n  function save_meta( $key, $value ) {\n    $session[$key] = $value;\n
+    \ }\n}\n\n$user = new User( WP_Session::get_instance() );</code>\n\nThe second
+    step allows you to test the Singleton in isolation - just call [cci]Singleton::reset()[/cci]
+    at the beginning of your test to ensure you're starting with a null state, then
+    call it again at the end of the test to clean up after yourself. &nbsp;It's not
+    the prettiest way to do things, but PHPUnit doesn't currently have per-test setup/teardown
+    functionality.\n<h2>Conclusions</h2>\nSingletons are one of the most misunderstood
+    constructs in software development. &nbsp;In most modern (read: multi-threaded)
+    environments, their overuse has resulted in almost universal disgust for the pattern.
+    &nbsp;However, in single-threaded, multi-developer systems - like WordPress -
+    they serve an important and necessary purpose. &nbsp;Singletons allow you to maintain
+    global, singly-instantiated objects in a particular request, keeping memory clean
+    and optimizing your application through heavy operations (i.e. database or filesystem
+    access).\n\nSingletons can be tricky to use in a unit test environment, but it's
+    not impossible to test code that uses the pattern. &nbsp;Don't jump the gun and
+    assume, just because hoards of developers on Stack Overflow dislike something,
+    that it's a bad thing. &nbsp;Singletons have their place; you just need to learn
+    how to use them properly.\";s:3:\"url\";s:18:\"http://eamann.com/\";}}"
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/q4
+  _wpas_skip_1588757: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409871433;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6130;}i:1;a:1:{s:2:"id";i:5472;}i:2;a:1:{s:2:"id";i:6129;}}}}
+  keen_postview_count_this_24_hours: '5'
+  keen_postview_count_this_7_days: '28'
+  keen_postview_count_this_30_days: '130'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: ''
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _yoast_wpseo_focuskw_text_input: singleton
+  _yoast_wpseo_content_score: '60'
+  _wpcom_is_markdown: '1'
+  _wpghs_github_path: _posts/2012-12-28-the-case-for-singletons.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/the-case-for-singletons/"
+---
+<p style="text-align:center;font-size:0.8em;"><em>Please also review my follow-up post, <a href="https://ttmm.io/tech/making-singletons-safe-in-php/" title="Making Singletons Safe in PHP">Making Singletons Safe in PHP</a>.</em></p>
+<p>There has been a lot of discussion this week regarding the Singleton pattern and whether or not it has a place in modern software development. &nbsp;<a title="Enabling Action and Filter Hook Removal from Class-based WordPress Plugins" href="http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/">Mike Schinkel wrote a tutorial about a Singleton factory</a>. &nbsp;<a title="Functions and Classes and Singletons, Oh My!" href="https://ttmm.io/tutorial/wordpress-plugin-structure/">I wrote one about using Singletons as a WordPress plugin scaffold</a>. &nbsp;Then the conversation <a title="Twitter - Part 1" href="http://twitter.com/EricMann/status/284350904524754945">bled</a> <a title="Twitter - Part 2" href="http://twitter.com/EricMann/status/284492563342323712">over to Twitter</a> and people questioned whether or not it was a sound development pattern at all.</p>
+<p>I would argue that Singletons are not just useful, but are&nbsp;<em>necessary</em> for robust software development.<br />
+<!--more--></p>
+<h2>The Singleton Model</h2>
+<p>To understand&nbsp;<em>why</em> I claim Singletons are necessary, we first have to agree on a definition of "Singleton."</p>
+<blockquote><p>A Singleton is a class for which there can exist one and only one instance during the life of the application.,</p></blockquote>
+<p>In practice[ref]By "practice" I mean in WordPress development in particular. &nbsp;WordPress is written in PHP, and PHP is by nature runs as a single thread. &nbsp;If you're dealing with a more dynamic, multi-threaded&nbsp;environment, the practices will differ significantly. &nbsp;I will rarely ever argue that a Singleton is the right use case in a multi-threaded .Net application, for example, but there are still situations where it's a useful pattern.[/ref] Singletons are used all over. &nbsp;Think of every time you've used the [cci]global[/cci] keyword when working in WordPress. &nbsp;Not for Posts, which are atomic objects, but for framework-wide constructs like [cci]$wpdb[/cci] and [cci]$wp_rewrite[/cci].</p>
+<p>These objects don't actually implement a Singleton design pattern, but <em>for all intents and purposes</em> they fit our definition. &nbsp;These are objects that are (typically) only instantiated once during the lifetime of a WordPress request-response cycle. &nbsp;You never call [cci]new wpdb()[/cci] in your themes and plugins; instead you make a reference to the [cci]global $wpdb[/cci] object that WordPress set up for you.[ref]In reality, you can (and will) call [cci]new wpdb()[/cci] if you are trying to connect to a new database. This is rare, though, and I was trying to find an example of a class most people use that already follows a Singleton pattern.  In the majority of cases, you aren't connecting to a new database, so the [cci]new[/cci] keyword never appears in the context of the WP database object.[/ref]</p>
+<p>The Singleton model exists to protect you from memory bloat. &nbsp;In most cases, you never want more than one connection to the database open at any given time - so there's only one instance of the database object during the request. &nbsp;It also protects you from instantiating multiple copies of objects that are expensive to construct - it makes no sense to have multiple instances of the [cci]WP_Rewrite[/cci] class lying around.</p>
+<h2>Why All the Hate?</h2>
+<p>Still, Singletons are considered an "anti-pattern" by many developers. &nbsp;They claim it's an overused pattern that's misused by too many developers. &nbsp;True, it can be misused, but so can Axe body spray and words like YOLO. &nbsp;Overuse doesn't make them&nbsp;<em>wrong</em> per se, you just need to be very judicious in when, where, why, and how you use them.</p>
+<p>In some applications, Singletons are a horrible idea. &nbsp;They introduce the idea of a global state into the application - and that state can bleed across threads in multi-threaded, persistent applications. &nbsp;This means one request can inadvertently affect another. &nbsp;For stateless (REST) web services, this can lead to many a sleepless night.</p>
+<p>As a result, most developers will see "Singleton" and immediately think "bad." &nbsp;They've been trained to avoid the pattern and will summarily reject it if you suggest using a Singleton.</p>
+<h2>When It Makes Sense</h2>
+<p>As I've already pointed out, WordPress already uses singly-instantiated objects that are placed in the global scope. &nbsp;So apparently it makes sense to at least a handful of people.</p>
+<p>I've also used a Singleton as the backbone for my <a title="Introducing WP_Session" href="http://eamann.com/tech/introducing-wp_session/">[cci]WP_Session[/cci]</a> object. &nbsp;It's instantiated lazily (meaning only when you actually access it rather than when the class file is included by WordPress), and lives for the entire request. &nbsp;This is an object I'll used as a great example of <i>why</i> the Singleton pattern makes sense.</p>
+<p>I work on WordPress, but I'm not the only developer. &nbsp;My code touches a few aspects of the application, like the XML-RPC system, the [cci]WP_Http[/cci] class, and certain other tiny elements. &nbsp;But WordPress itself is a huge application, with hundreds of contributors and maintainers. &nbsp;We have a few set of coding guidelines, but there's no guarantee everyone will write their code exactly the same time.</p>
+<p>So while&nbsp;<em>I</em> might only instantiate [cci]WP_Session[/cci] once, there's no guarantee other developers will respect that. &nbsp;Not in core, and certainly not in plugins. &nbsp;If the class could be instantiated multiple times, all it would take is one extra call to [cci]new WP_Session[/cci] to muck things up.</p>
+<p>Also, once I've instantiated the class, since it's an object I intend for other developers to use, I have to place a reference to it in the global scope so their code can access the same instance. &nbsp;So, ultimately, there are two patterns I can follow to set up a single instance of [cci]WP_Session[/cci] for the request:</p>
+<p><code lang="php">class WP_Session {<br />
+  // Pray that this is only ever called by me<br />
+  public function __construct() { }<br />
+}</p>
+<p>// Heavily document that this var shouldn't be abused<br />
+global $wp_session;<br />
+$wp_session = new WP_Session();</code></p>
+<p>Or using a Singleton - a static [cci]get_instance()[/cci] method will return the current instance, and the private constructor&nbsp;<em>cannot be called outside of the class</em>.</p>
+<p><code lang="php">class WP_Session {<br />
+  private static $instance;</p>
+<p>public static function get_instance() {<br />
+    if ( ! self::$instance ) {<br />
+      self::$instance = new self();<br />
+    }<br />
+    return self::$instance;<br />
+  }</p>
+<p>private function __construct() { }<br />
+}</p>
+<p>$wp_session = WP_Session::get_instance();</code></p>
+<h2>What About Dependency Injection?</h2>
+<p>This is the single greatest argument&nbsp;<em>against</em> Singletons that I've heard. &nbsp;On Twitter, over email, and even on Stack Overflow I've seen people arguing that dependency injection is a suitable replacement for the Singleton pattern.</p>
+<p>They're wrong.</p>
+<p>Dependency injection is a pattern that encourages you to abstract your dependencies so you can substitute mock objects in your code. &nbsp;Consider the following pseudo-code example:</p>
+<p><code lang="php">class Logger {<br />
+  var $persist;</p>
+<p>function __construct() {<br />
+    $this->persist = new FileSystemWriter( 'log.txt' );<br />
+  }</p>
+<p>function write( $event ) {<br />
+    $this->persist->save( $event );<br />
+  }<br />
+}</p>
+<p>$logger = new Logger();</code></p>
+<p>This kind of code would run just fine. &nbsp;However, you are stuck between a rock and a hard place should you need to change your code. &nbsp;If you want to change your application to log in a database rather than to the filesystem, you need to rewrite both your business logic code&nbsp;<em>and</em> your data persistence layer. &nbsp;Consider instead the following code:</p>
+<p><code lang="php">class Logger {<br />
+  var $persist;</p>
+<p>function __construct( $engine ) {<br />
+    $this->persist = $engine;<br />
+  }</p>
+<p>function write( $event ) {<br />
+    $this->persist->save( $event );<br />
+  }<br />
+}</p>
+<p>$fileEngine = new FileSystemWriter( 'log.txt' );<br />
+$logger = new Logger( $fileEngine );</code></p>
+<p>Now, when you change your application, you just change the data persistence layer since you're passing the persistence object directly to the logic layer. &nbsp;Your code is highly decoupled and you can move forward with blissful flexibility. &nbsp;Dependency injection is truly an amazing paradigm to work within,&nbsp;<em>but it does not solve the problems solved by Singletons</em>.</p>
+<h2>Unit Testing</h2>
+<p>The biggest argument against Singletons - and where the misguided rants about dependency injection come from - is rooted in unit testing.</p>
+<p>When you're unit testing an application, each test should be completely isolated from every other test. &nbsp;Singletons make this difficult, since they introduce a global state for the application that must be managed in between each test. &nbsp;When you're working with other stateful objects in a testing environment (i.e. a database), you use dependency injection to introduce a mock object that implements a similar interface, but with stateless behavior.</p>
+<p>Basically, the mock object allows you to start every test with a clean slate.</p>
+<p>To unit test with Singletons, you have to do two things:</p>
+<ol>
+<li><span style="line-height: 13px">Have the Singleton implement a standard interface that you can mock in your tests, then use dependency injection to inject the&nbsp;<em>Singleton</em> inside the application</span></li>
+<li>Implement a [cci]reset()[/cci] method within your Singleton that flushes the stored class instance</li>
+</ol>
+<p>The first step allows you to test your code that depends on the Singleton object without actually using the Singleton itself.</p>
+<p><code lang="php">class User {<br />
+  var $session;</p>
+<p>function __construct( $session ) {<br />
+    $this->session = $session;<br />
+  }</p>
+<p>function save_meta( $key, $value ) {<br />
+    $session[$key] = $value;<br />
+  }<br />
+}</p>
+<p>$user = new User( WP_Session::get_instance() );</code></p>
+<p>The second step allows you to test the Singleton in isolation - just call [cci]Singleton::reset()[/cci] at the beginning of your test to ensure you're starting with a null state, then call it again at the end of the test to clean up after yourself. &nbsp;It's not the prettiest way to do things, but PHPUnit doesn't currently have per-test setup/teardown functionality.</p>
+<h2>Conclusions</h2>
+<p>Singletons are one of the most misunderstood constructs in software development. &nbsp;In most modern (read: multi-threaded) environments, their overuse has resulted in almost universal disgust for the pattern. &nbsp;However, in single-threaded, multi-developer systems - like WordPress - they serve an important and necessary purpose. &nbsp;Singletons allow you to maintain global, singly-instantiated objects in a particular request, keeping memory clean and optimizing your application through heavy operations (i.e. database or filesystem access).</p>
+<p>Singletons can be tricky to use in a unit test environment, but it's not impossible to test code that uses the pattern. &nbsp;Don't jump the gun and assume, just because hoards of developers on Stack Overflow dislike something, that it's a bad thing. &nbsp;Singletons have their place; you just need to learn how to use them properly.</p>

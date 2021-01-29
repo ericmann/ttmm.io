@@ -1,0 +1,36 @@
+---
+layout: post
+title: Leveling up with the RingCentral API
+date: 2019-09-21 16:38:06.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags: []
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_content_score: '30'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/ringcentral-api/"
+---
+<p>Anyone who knows me in the development community knows how much of a fan I am of efficient APIs. I've built payments systems with Stripe. I've built bots with Twitter. I've built <a href="https://ttmm.io/tech/building-a-phone-routing-system/">a phone routing system</a> with Twilio. It's this last experience that's helped shape my own understand of and affinity for APIs, and I've been constantly on the lookout for something just as efficient and fun to use.</p>
+<p>Over the past several months, I've been spending a lot of time with <a href="https://twitter.com/mikegstowe">Mike Stowe</a> and <a href="https://twitter.com/TanjaHoefler">Tanja Hoefler</a> from the RingCentral team at various development events. They've pointed me to RingCentral's new (ish) <a href="http://gamechanging.dev">Game Changing Developers program</a>, an interactive and well gamified way to learn and experiment with the RingCentral API.</p>
+<p>Given I'd already gone all-in with Twilio, I was skeptical about this new program. It was yet another SMS and voice-calling system. It integrated with services like WhatsApp. It provided programmable fax services. It honestly felt like just another flavor of something I'd already built. Until I took Mike and Tanja's advice and dug into the API more deeply.</p>
+<p>My Twilio-based phone routing system is incredibly basic. It allows anyone to call me and routes their calls (during business hours) to my cellphone. But I can't call <em>them</em> from the same phone number. If I return a message, I expose my cell number to an end user, which entirely defeats the purpose of providing privacy. I tried to hack together a conference call system with Twilio but was never really happy with the way it worked.</p>
+<p>Last month, I spent some more time with the RingCentral API through the Game Changers challenges, specifically a challenge to use <a href="https://developers.ringcentral.com/guide/voice/quick-start/python">the "ring out" API</a>. Using this API, I was able to programmatically trigger a phone call that linked my cell to another device (I used my wife's phone to test), but presented the call as having come from my cloud phone number.</p>
+<p>This is exactly what I wanted to do!</p>
+<p>With RingCentral's API, I can <em>modify</em> my existing phone routing system to either route calls for my virtual number to my phone or even <em>make</em> calls from that virtual phone number. It's a huge improvement over my existing setup and only requires I migrate my existing number to my RingCentral account. From here, the sky is the limit with what I can do here. Next, I might even use the voicemail integration services to filter content[ref]I get 5-10 spam calls every day. Dynamic filtering of "this is the office social security" messages and such will be a huge productivity improvement![/ref] and ensure I respond most quickly to the calls I care the most about.</p>
+<p>What newer communication APIs have you discovered?</p>

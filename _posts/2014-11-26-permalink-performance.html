@@ -1,0 +1,77 @@
+---
+layout: post
+title: WordPress Permalink Performance
+date: 2014-11-26 08:00:34.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- performance
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _oembed_fa38d0dee6a2c616ae5d538d235db095: <blockquote class="twitter-tweet" width="500"><p>Anyone
+    have any stats regarding various permastruct performance in WP 4.0?</p>&mdash;
+    Eric Mann (@EricMann) <a href="https://twitter.com/EricMann/status/537329833739825153">November
+    25, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_fa38d0dee6a2c616ae5d538d235db095: '1416962528'
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress Permalink Performance
+  _yoast_wpseo_metadesc: A few quick WordPress experiments show that the "Post Name"
+    permalink setting, once the least performant option, is apparently the fastest.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-3
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-11-26-permalink-performance.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/permalink-performance/"
+excerpt: A few quick WordPress experiments show that the "Post Name" permalink setting,
+  once the least performant option, is apparently the fastest.
+---
+<p>I was stuck on a problem this week that necessitated changing a site's permalink structure. Initially, we were using the "Day and Name" format - [cci]/2014/11/16/some-cool-post[/cci], for example. We wanted to remove some, or at least part, of the date from the permalink. Unfortunately I'm not as up-to-speed with the performance of various permastructs in WordPress right now.</p>
+<p>So I turned to Twitter:</p>
+<p>https://twitter.com/EricMann/status/537329833739825153</p>
+<p>Even more unfortunate, no one seemed able to help me. So I had to run a few tests.</p>
+<h2>Methodology</h2>
+<p>WordPress does all of the conversion from URLs to parameters for [cci]WP_Query[/cci] in the [cci]parse_request()[/cci] method of the global [cci]wp[/cci] object.</p>
+<p>Conveniently, this method uses a hook both at the beginning of its execution (to determine whether or not to parse the request) and at the end (to invoke action handlers when the request is parsed). I simply chose to create a timer at the beginning of the function's execution and check the value of that timer against the current system time when the function is complete.</p>
+<p>For precision, I decided to use PHP's [cci]microtime()[/cci] function so we can drill down to the <em>micro</em>second.</p>
+<p><script src="https://gist.github.com/ericmann/296897ca4195afe4eca5.js"></script></p>
+<p>I ran my code on a single article, using the same article on each iteration to verify that nothing else changed. I ran the test 10 times for each permalink option and averaged the time reported by each run. The results were ... unexpected.[ref]I ran this on a clean install of WordPress running in a virtual machine. There is always a chance, though, that some part of my system configuration is causing faulty readings, so I encourage you to re-run my tests so we can verify things independently.[/ref]</p>
+<h2>Results</h2>
+<p>On the surface, it seems that the "Post Name" option, once the <em>least</em> performant permalink option, is apparently the fastest.</p>
+<p>The average of 10 loads of a single article using the various permalink options are:</p>
+<ul>
+<li>Default: 1.326ms</li>
+<li>Day and Name: 2.016ms</li>
+<li>Month and Name: 1.784ms</li>
+<li>Numeric: 2.194ms</li>
+<li>Post Name: 0.994ms</li>
+</ul>
+<p>My objective with this experiment was merely to prove that switching from a "Day and Name" URL format to a "Post Name" format wouldn't cause <em>lower</em> performance on the site. The numbers above definitely give me the confidence I need to advocate for a "Post Name" format on projects.</p>
+<p>The said, it also raises a few questions: mostly, why are statistics like this not created more frequently?</p>
+<p>We're so concerned about performance that we advocate offloading scripts and styles to CDNs, installing reverse-proxy caching, and migrating PHP applications to HHVM. Why aren't we concerned with monitoring the time involved in executing such basic functionality in the system so we can optimize?</p>
+<h2>[Update 10:30am]</h2>
+<p>A colleague asked me a quick question today regarding whether or not a large database would impact query performance. I can say for sure that a large database <em>will</em> result in slightly slower queries. Luckily the [cci]parse_request()[/cci] method depends primarily on RegEx, so the impact there is somewhat minimal.</p>
+<p>That said, I did re-run my tests from above on a very large network site I have mirrored on my local machine. Keep in mind, the original tests was against a clean WordPress install with no plugins and the default theme. My second round of tests used the exact same methodology, but against an in-use WordPress installation with upwards of 30 plugins and a highly-custom theme built to run on WordPress.com VIP.</p>
+<ul>
+<li>Default: 1.882ms</li>
+<li>Day and Name: 6.002ms</li>
+<li>Month and Name: 4.418ms</li>
+<li>Numeric: 4.263ms</li>
+<li>Post Name: 6.065ms</li>
+</ul>
+<p>Keep in mind, this theme has several custom rewrites defined, which is why everything tends to be slower. But in the context of evaluating the performance of "Day and Name" versus "Post Name" performance, there's really not much of a difference.</p>

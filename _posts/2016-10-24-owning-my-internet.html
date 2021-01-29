@@ -1,0 +1,64 @@
+---
+layout: post
+title: Owning My Internet
+date: 2016-10-24 09:18:58.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- privacy
+- vpn
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _oembed_f56b11672c88e3ad6bf10f09c9ef0317: <blockquote class="twitter-tweet" data-width="500"><p
+    lang="en" dir="ltr">I pay for Hulu.<br>I pay for an anon VPN so I can browse securely.<br>Hulu
+    won&#39;t work over anon VPN.<br>This. This is why we can&#39;t have nice things.</p>&mdash;
+    Eric Mann (@EricMann) <a href="https://twitter.com/EricMann/status/786598966850785280">October
+    13, 2016</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _oembed_time_f56b11672c88e3ad6bf10f09c9ef0317: '1477325144'
+  _thumbnail_id: '6953'
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_content_score: '30'
+  yourls_shorturl: http://eam.me/10r
+  _wpas_done_all: '1'
+  _jetpack_dont_email_post_to_subs: '1'
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2016-10-24-owning-my-internet.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/owning-my-internet/"
+excerpt: For some access, I use an anonymous VPN proxy. When publishers block that
+  kind of a VPN, I instead roll my own network with a Raspberry Pi from home.
+---
+<p>Whenever I'm away from home, I connect to an <a href="https://www.privateinternetaccess.com/">anonymous proxy VPN</a> to protect my Internet traffic. It's not that I'm doing anything illegal or necessarily anything private, I just don't want to advertise my activity to the entire world.</p>
+<p>I pay for this VPN because it's fast and presents me with a wide array of potential data centers through which I can connect. If I'm near home, I connect through a data center in Seattle. If I'm visiting friends on the East Coast, through New York. If traveling abroad, whichever international location yields the highest throughput.</p>
+<p>Wherever I am, it means my traffic is safe from inspection regardless who else might be eavesdropping on the network.</p>
+<h2>Why This Matters</h2>
+<p>In the earlier days of secure Internet browsing, every secure website could be expected to have a unique IP address. This meant you didn't need to specify the hostname when initiating a TLS handshake to create a secure connection.</p>
+<p>As the Internet matured and more sites came online, we quickly exhausted the available address space of the IP protocol.[ref]I'm specifically talking about IPv4 here. The newer IPv6 address space is so large it is unlikely to be exhausted in my lifetime. Unfortunately, support for IPv6 is still ... spotty.[/ref] To get around the limitations, we started hosting multiple sites on the same physical server, reusing the server's IP address. To still route traffic appropriately, we have to leverage <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">Server Name Identification (SNI)</a> and eavesdroppers can intercept  unencrypted hostnames.</p>
+<p>So anyone looking at the logs will know what sites you're viewing, even if they don't know what <em>pages</em> you're viewing on those sites. For most traffic, this isn't too revealing ... but it's still additional information that can be used to fingerprint an individual based on their web habits.</p>
+<h2>Where Things Stand Now</h2>
+<p>https://twitter.com/EricMann/status/786598966850785280</p>
+<p>Even using an anonymous proxy is not enough because various media producers - and remember, the web itself <em>is</em> media - are starting to track the IP addresses used by these proxies and is blocking them entirely. Though I'm a paying Hulu subscriber, I can't watch Hulu over my paid VPN.</p>
+<p><img class="aligncenter wp-image-6953 size-full" src="{{ site.baseurl }}/assets/2016/10/hulu-vpn-block.jpg" alt="hulu-vpn-block" width="884" height="437" /></p>
+<p>This past weekend, a friend noticed something curious about one of the news apps he uses. While connected to my home network, the app began displaying intermittent pop-over ads in an attempt to block access to various stories because the publisher detected, and apparently dislikes, my ISP.</p>
+<p>Frankly, this behavior is beyond ridiculous.</p>
+<h2>Solutions</h2>
+<p>I will still use my paid, anonymous VPN when connecting to various sites as I travel. The bandwidth available is fantastic and, for the small but growing number of sites blocking access, something I can live with for the moment.</p>
+<p>For other sites - like Hulu - I have a basic alternative. Thanks to amazing open source projects like <a href="https://github.com/sovereign/sovereign">Sovereign</a>, I've been able to convert a Raspberry Pi 3 into a private "cloud" server running on my home network.[ref]This is a <em>new</em> build from the one I've <a href="https://ttmm.io/tech/self-hosted-vpn/">documented before</a>. Last time I used a first-generation Pi (which was <em>painfully</em> slow) and was very limited in terms of functionality. The new machine is unparalleled. For example, the Pi 1 took 26 hours to generate a Diffie-Hellman keypair. The Pi 3 took 10 minutes.[/ref] I have a self-hosted ownCloud instance, Git repository server, and most importantly an OpenVPN instance. My machines can now connect securely to my home network and will encrypt any traffic I need remotely, proxying it instead from my home.</p>
+<p>It's not the fastest connection in the world, but to any external viewers I'm using the same resources I would be if I were at home on my PC.</p>
+<p>I'm also working with a few friends to set up a <a href="https://www.softether.org/">SoftEther</a> cluster across various datacenters worldwide so we can host our own private replacement for a distributed commercial VPN. Like the commercial option, we would have the ability to connect to whichever node has the fastest speed. <em>Unlike</em> the commercial option, our IP addresses won't be indexed and blocked by media providers.</p>
+<p>The point is that the publishing world is becoming <a href="http://ttmm.io/tech/email-lock-down/">increasingly hostile</a> to the notion of personal privacy. These are just some of the steps <em>I'm</em> taking to keep my data secure. What steps are <em>you</em> taking?</p>

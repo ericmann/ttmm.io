@@ -1,0 +1,62 @@
+---
+layout: post
+title: Full-Stack Application Development
+date: 2014-02-20 08:00:55.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- application
+- development
+- server configuration
+- stack
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: Full-Stack Application Development
+  _yoast_wpseo_metadesc: My ideal blogging app/content management system/application
+    platform would take the entire stack into account.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sf
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409381217;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3475;}i:1;a:1:{s:2:"id";i:5518;}i:2;a:1:{s:2:"id";i:5905;}}}}
+  keen_postview_count_this_7_days: '2'
+  _wpghs_github_path: _posts/2014-02-20-full-stack-development.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/full-stack-development/"
+excerpt: 'My ideal blogging app/content management system/application platform would
+  take the entire stack into account. '
+---
+<p>Working in technology, I find myself trying to re-design the tools I use.  Frequently.</p>
+<p>Not a day goes by that I don't bemoan some drawback of WordPress and sketch out in my head the perfect replacement.  Actually, most WordPress developers complain about one aspect of the software or another and mentally plan out a future product that fixes the nitpick of the day.</p>
+<p>But, like WordPress, our solutions only solve <em>part</em> of the problem.</p>
+<h2>WordPress Isn't The Whole Picture</h2>
+<p>When I ask new developers how to install WordPress, I usually get one of two answers:</p>
+<ol>
+<li>Use a host's one-click installer</li>
+<li>Set up a standard PHP install, talking to MySQL, and routed by Nginx/Apache</li>
+</ol>
+<p>In practice, though, configuring WordPress is rarely this simple.  In addition to configuring the web server (Nginx, Apache, or some other flavor), you have to configure:</p>
+<ul>
+<li>PHP - As a server extension (Apache), as a CGI process, as an FPM module.  Accessed over a port or a socket</li>
+<li>MySQL - Setting up a new user, locking that user down</li>
+<li>File system - Configuring the proper write-access and user permissions within the server so WordPress can't touch non-WordPress files</li>
+<li>The server itself - Does the web server talk directly to PHP, or proxy through another application? Some servers use Nginx as a proxy to Apache, which bundles PHP as a module ...</li>
+<li>Caching - Memcached?  APC?  Nginx microcache? Varnish?</li>
+<li>Does the site serve content through a CDN?  Is the CDN merely an asset server or a reverse proxy?</li>
+</ul>
+<p>WordPress has a 5-minute installer for the software itself.  But the whole <em>application</em> is so much larger than the tarball pulled down from WordPress.org.</p>
+<h2>Full-Stack Development</h2>
+<p>Lately, when I start fantasizing about the "perfect" built-from-scratch CMS, I've been taking the entire stack into account.  How static pages are served from a cache <em>should</em> be a consideration.  How static assets are managed by the web server (and potentially offloaded to a CDN) <em>should</em> be a consideration.  How the application deals with data connection pools and query caches <em>should</em> be a consideration.</p>
+<p>WordPress is just one part of what can amount to a very complex stack in production.  Unfortunately for newer developers, this stack is often convoluted, configured by a systems team with little to no maintenance documentation, and <em>will be set up differently on every server you encounter</em>.</p>
+<p>I have yet to see an entire WordPress server set up twice in exactly the same way by different people - if the same sysadmin sets things up, she'll usually do it the same way twice.  Sometimes, I even see individual developers set up WordPress <em>differently</em> on two different servers.</p>
+<p>It's a nightmare!</p>
+<p>My ideal blogging app/content management system/application platform would take the <em>entire</em> stack into account.  The entire request lifecycle - from cache hits to database queries to static asset delivery - would be modeled within the application itself rather than left up to the whims of whichever sysadmin is tasked with installation.</p>
+<p>What other considerations would you add to WordPress (or any other application) to support developing a full-stack solution over a piecemeal conglomeration of tools?</p>

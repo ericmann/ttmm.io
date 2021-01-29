@@ -1,0 +1,58 @@
+---
+layout: post
+title: Rethinking Email Subscriptions
+date: 2014-07-09 08:00:48.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- email
+- syndication
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Rethinking Email Subscriptions
+  _yoast_wpseo_metadesc: For the past few months, I've been very happily using Jetpack's
+    email subscription system to power notifications on this site. There has to be
+    a better way.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/w9
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1407550211;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3928;}i:1;a:1:{s:2:"id";i:3395;}i:2;a:1:{s:2:"id";i:3194;}}}}
+  keen_postview_count_this_24_hours: '1'
+  _wpghs_github_path: _posts/2014-07-09-rethinking-email-subscriptions.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/rethinking-email-subscriptions/"
+excerpt: For the past several months, I've been very happily using Jetpack's email
+  subscription system to power notifications on this site. There has to be a better
+  way.
+---
+<p>For the past several months, I've been very happily using Jetpack's email subscription system to power notifications on this site. It's convenient that my messages make it through spam filters and look pretty.</p>
+<p>But it's inconvenient for several other reasons.</p>
+<p>I have absolutely zero control over my post templates. I've seen non-standard plugin shortcodes be rendered as plain text in messages, rendering complex infographics and sometimes even syntax highlighting unintelligible. Email subscriptions are also highly one-way in terms of communication.</p>
+<p>There has to be a better way.</p>
+<h2>Changing Things Up</h2>
+<p>Once upon a time, I built a little plugin for WordPress that used the <a title="Mandrill" href="mandrillapp.com">Mandrill API</a> to send out both individual posts and digests of recently published articles. It was a fun project that gave me several advantages over hosted solutions:</p>
+<ol>
+<li>I owned my subscriber list</li>
+<li>Message templates were contained entirely within WordPress</li>
+</ol>
+<p>Recent conversations about how readers consume my content, however, has me wanting to revisit this plugin.</p>
+<blockquote><p>And a “like” button in email would give you feedback as well. If fact, a plugin that allowed you the author to have 3 or 4 user configurable choices (each going to a specific URL – - no forms) would give even better feedback.</p></blockquote>
+<p>I don't subscribe to my own posts by email (though I do check the status of my RSS feed every day), so I wasn't aware that Jetpack's template was lacking sharing or like buttons to begin with. I definitely think these should be an element to email syndication because, otherwise, there is no way for an author to receive feedback from his or her email subscribers.</p>
+<blockquote><p>I subscribed to your blog several months ago but typically read your daily posts via e-mail. Adding a way to comment via e-mail would substantially increase the odds that I (and apparently Mike) would comment with our passing thoughts as opposed to keeping them to ourselves.</p></blockquote>
+<p>The idea of commenting by email is more exciting to me than any others that have come up lately. The Mandrill API features inbound message processing, so it's conceivable that every post could be replied to, and those replies could automatically be converted into post comments.</p>
+<p>Commenting by email could auto-subscribe commentors to the discussion and similarly email out new comments as they come in. Replying to comment emails could likewise create nested comments.</p>
+<p>WordPress is infinitely extensible through plugins, and as I've already begun on a plugin to allow self-hosted email subscriptions, incorporating the two ideas above should be relatively straight-forward. What else would you add to the list?</p>
+<p>&nbsp;</p>

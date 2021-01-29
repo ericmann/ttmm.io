@@ -10,8 +10,16 @@
     </header><!-- .post-header -->
     <div class="post-content">
         <p>{{ post.excerpt | strip_html | truncatewords:40 }} </p>
+        {% if post.categories.size > 0 %}
+        <p class="post-cats">
+            <span class="post-share-title">Filed under </span>
+            {% for cat in post.categories %}<a href="{{ site.baseurl }}/categories/index.html#{{ cat | cgi_escape }}" rel="category">{{ cat }}</a>
+            {% unless forloop.last %} {% endunless %}{% endfor %}
+        </p>
+        {% endif %}
         {% if post.tags.size > 0 %}
         <p class="post-tags">
+            <span class="post-share-title">Tagged with </span>
             {% for tag in post.tags %}<a href="{{ site.baseurl }}/tags/index.html#{{ tag | cgi_escape }}" rel="tag">{{ tag }}</a>
             {% unless forloop.last %} {% endunless %}{% endfor %}
         </p>

@@ -1,0 +1,149 @@
+---
+layout: post
+title: 'PHP: Read Only Attributes'
+date: 2014-06-13 08:00:36.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- attributes
+- PHP
+- visibility
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'PHP: Read Only Attributes'
+  _yoast_wpseo_metadesc: Like in JavaScript, sometimes you want an object property
+    in PHP to be read-only. This is pretty easy to set up!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/vk
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409567102;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6390;}i:1;a:1:{s:2:"id";i:3124;}i:2;a:1:{s:2:"id";i:6232;}}}}
+  _wpghs_github_path: _posts/2014-06-13-php-read-attributes.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/php-read-attributes/"
+excerpt: Like in JavaScript, sometimes you want an object property in PHP to be read-only.
+  This is pretty easy to set up!
+---
+<p><a href="http://eamann.com/tech/javascript-read-attributes/" title="JavaScript: Read Only Attributes">Just like in JavaScript</a>, many PHP developers find themselves in situations that warrant read-only properties. Unfortunately, the most common practice is to use a pseudo getter (again, like JavaScript) that's more hack than it is design.</p>
+<p>Again, I'm talking about things like [cci]$object->getProperty()[/cci], which works, but is poor design.</p>
+<p>Like its JavaScript cousin, you've probably come across an object that looks something like this:</p>
+<p><code lang="php" height="540"><?php /**<br />
+ * Represent a used car.<br />
+ */<br />
+class Car {<br />
+  protected $odometer = 0;</p>
+<p>  /**<br />
+   * Increment the odometer<br />
+   *<br />
+   * @param float $miles<br />
+   */<br />
+  public function drive( $miles ) {<br />
+    $this?>odometer += abs( $miles );<br />
+  }</p>
+<p>  /**<br />
+   * Get a protected odometer reading<br />
+   *<br />
+   * @return float<br />
+   */<br />
+  public function getOdometer() {<br />
+    return $this->odometer;<br />
+  }<br />
+}</p>
+<p>$subaru = new Car();<br />
+$subaru->drive( 500 );<br />
+echo $subaru->getOdometer(); // 500</code></p>
+<p>Like the JavaScript equivalent, this works, but it's an ugly, unituitive hack. Don't use this.</p>
+<h2>The Alternative</h2>
+<p>If you have build a class in PHP 5, you've used what's called a "magic method" - namely, [cci]__construct()[/cci]. A magic method is one that's not directly exposed on an object instance, but which is invoked in certain specific situations instead. For example, invoking [cci]new Car()[/cci] would invoke [cci]Car::__construct()[/cci] if such a method exists.</p>
+<p>As it so happens, PHP includes magic methods for both getters and setters of properties. Build these into your objects, and you can completely control the behavior of certain properties.</p>
+<p>The code below is the same as before, but refactored to expose a <em>read-only</em> property on our object:</p>
+<p><code lang="php" height="780"><?php /**<br />
+ * Represent a used car.<br />
+ *<br />
+ * @property-read float $odometer<br />
+ */<br />
+class Car {<br />
+  protected $odometer = 0;</p>
+<p>  /**<br />
+   * Increment the odometer<br />
+   *<br />
+   * @param float $miles<br />
+   */<br />
+  public function drive( $miles ) {<br />
+    $this?>odometer += abs( $miles );<br />
+  }</p>
+<p>  /**<br />
+   * Magic getter for our object.<br />
+   *<br />
+   * @param string $field<br />
+   *<br />
+   * @throws Exception Throws an exception if the field is invalid.<br />
+   *<br />
+   * @return mixed<br />
+   */<br />
+  public function __get( $field ) {<br />
+    switch( $field ) {<br />
+      case 'odometer':<br />
+        return $this->odometer;<br />
+      default:<br />
+        throw new Exception( 'Invalid property: ' . $field );<br />
+    }<br />
+  }<br />
+}</p>
+<p>$subaru = new Car();<br />
+$subaru->drive( 500 );<br />
+echo $subaru->odometer; // 500<br />
+$subaru->odometer = 0;  // Fatal error: Cannot access protected property<br />
+echo $subaru->odometer; // 500 </code></p>
+<p>The [cci]@property-read[/cci] annotation in our class' docblock will tell your IDE that the class has a read-only property. If you depend on things like inline autocomplete, this added documentation can be a lifesaver during development!</p>
+<h2>Other Uses</h2>
+<p>Magic getters and setters can also help adjust an object's internal state when properties are read or set. As I noted in the JavaScript walkthrough yesterday, <strong>this is an extremely rare use case</strong> and obscures the functionality of your object and application. Don't use it unless you know exactly what you're doing and understand the potential consequences:</p>
+<p><code lang="php" height="830"><?php /**<br />
+ * Represent an elementary particle.<br />
+ *<br />
+ * @property-read array $position<br />
+ * @property-read int   $speed<br />
+ */<br />
+class Fermion {<br />
+  protected $position = array( 50, 35 );</p>
+<p>  protected $speed = 75;</p>
+<p>  /**<br />
+   * Magic getter for an elementary particle that<br />
+   * obeys the Heisenburg Uncertainty Principle.<br />
+   *<br />
+   * @param string $field<br />
+   *<br />
+   * @throws Exception<br />
+   *<br />
+   * @return mixed<br />
+   */<br />
+  public function __get( $field ) {<br />
+    switch( $field ) {<br />
+      case 'position':<br />
+        unset( $this?>speed );</p>
+<p>        return implode( ',', $this->position );<br />
+      case 'speed':<br />
+        unset( $this->position);</p>
+<p>        return $this->speed;<br />
+      default:<br />
+        throw new Exception( 'Invalid property: ' . $field );<br />
+    }<br />
+  }<br />
+}</p>
+<p>$electron = new Fermion();<br />
+echo $electron->position; // 50,35<br />
+echo $electron->speed;    // Warning: Undefined property</p>
+<p>$electron = new Fermion();<br />
+echo $electron->speed;    // 75<br />
+echo $electron->position; // Warning: Undefined property</code></p>

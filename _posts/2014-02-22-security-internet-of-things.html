@@ -1,0 +1,70 @@
+---
+layout: post
+title: How Secure is the Internet of Things?
+date: 2014-02-22 08:00:50.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- connectivity
+- data security
+- hacking
+- security
+meta:
+  _edit_last: '2'
+  _wpas_mess: My Kindle could be an open door for hackers into my private network.
+    What else could be insecure?
+  _yoast_wpseo_title: How Secure is the Internet of Things?
+  _yoast_wpseo_metadesc: How secure are you? Really?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sh
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409382506;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6086;}i:1;a:1:{s:2:"id";i:3893;}i:2;a:1:{s:2:"id";i:5499;}}}}
+  _wpghs_github_path: _posts/2014-02-22-security-internet-of-things.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/security-internet-of-things/"
+excerpt: How secure are you?  Really?
+---
+<p>After my post about <a title="Is Your TV Watching You?" href="http://eamann.com/tech/is-your-tv-watching-you/">potential security vulnerabilities in smart TVs</a>, I took some time to follow up on the topic.  While I couldn't find a specific vulnerability targeting TVs, what I <em>did</em> find was hugely troubling.</p>
+<p>First, take some time to Google "the Internet of things."  I'll wait.</p>
+<h2>Connectivity</h2>
+<p>Just about all of our newer devices are in some way connected to every other.  As a result, consumers today have unparalleled access to their entire houses - from laptops to smart TVs to home security systems to refrigerators - from remote Internet connections.</p>
+<p>Just this week, my brother was painting a rosy picture of a fully-connected home that would allow him to, among other things:</p>
+<ul>
+<li>stream media from one room of the house to another (allowing for a consolidated video library to live in one room yet be accessible anywhere)</li>
+<li>check if the lights were left on while he's out of town</li>
+<li>remotely let a friend in the front door to feed the dog</li>
+</ul>
+<p>It sounded like a great system.  But it also terrifies me.</p>
+<p>Once you open a device to the Internet, you open yet another potential point of attack for would-be hackers.  Don't believe me?</p>
+<blockquote><p>A refrigerator was discovered among a "botnet" of more than 100,000 Internet-connected devices that sent upward of 750,000 malicious emails between Dec. 23 and Jan. 6. So-called "smart" appliances, like multimedia centers, TVs -- and yes, a fridge -- were behind more than 25 percent of the volume, Internet security firm Proofpoint reports.[ref]<a title="Refrigerator Busted Sending Spam Emails In Massive Cyberattack" href="http://www.huffingtonpost.com/2014/01/23/refrigerator-spam-email-internet-of-things-attack_n_4654566.html">Refrigerator Busted Sending Spam Emails In Massive Cyberattack</a>[/ref]</p></blockquote>
+<p>Is the jury still out?  Then consider this: Target, a major US retailer, was targeted by hackers during this past holiday system.  Hackers installed malware on Target's point-of-sale machines to slurp up credit card numbers from unsuspecting customers.  Their way in to the system? Target's HVAC vendor:</p>
+<blockquote><p>Last week, Target told reporters at <em>The Wall Street Journal</em> and <em>Reuters</em> that the initial intrusion into its systems was traced back to network credentials that were stolen from a third party vendor.[ref]<a title="Target Hackers Broke in Via HVAC Company" href="https://krebsonsecurity.com/2014/02/target-hackers-broke-in-via-hvac-company/">Target Hackers Broke in Via HVAC Company</a>[/ref]</p></blockquote>
+<p>Hackers broke in to Target by first hacking one of their vendors: a vendor with remote access to Target's system.  How many vendors have access to your house?</p>
+<p>Does your printer support ePrint?  Can you monitor your refrigerator temperature remotely?  Can you check your security system's status from a smart phone on-the-go?</p>
+<p>You're more connected than you think.</p>
+<h2>Trust No One...</h2>
+<p>I'm a Verizon customer.  Say what you will about the company, but I've had amazing service during my tenure, and I often use my phones far longer than the 2-year renewal contract requires.  It's a win-win.</p>
+<p>The only downside: I don't root my devices.</p>
+<p>Yes, I know how to root an Android phone (or "jailbreak" an iPhone).  No, I won't do it.  Why not?  Because my contract explicitly states that I'm not allowed to and, since I work in the world of tech, respecting the contract written by another tech entity is a defining aspect of my career.</p>
+<p>This means I have to <em>wait</em> for Verizon to roll out an over-the-air update to my phone when a new version of Android ships.  Usually it's not too long of a wait, but sometimes it can be <em>months</em> after a new release has hit the market.</p>
+<p>Think back to our discussion about other connected devices: Refrigerators and routers and TVs and thermostats are potentially vulnerable because their firmware is rarely (if ever) updated by vendors pushing you to purchase newer devices with newer firmware.  My <em>phone</em> is potentially vulnerable for the same reason - Verizon (or AT&amp;T or Sprint or T-Mobile or ...) would rather I just buy a new device than ship an OTA update.</p>
+<p>Despite our ongoing relationship - and the large sum of cash I shell out each month for service - I can't trust even Verizon to care about or proactively support my security.</p>
+<h2>...Not Even Yourself</h2>
+<p>I usually refer to my home network as a "trusted" network.  I know all of the devices connected to it and, after a neighbor proved too savvy at spoofing my WPA2 key, use MAC address filtering to make sure only devices I "trust" can connect to it.</p>
+<p>But how much can I really trust these devices?</p>
+<p>I've had friends and family accidentally download malware while innocently searching online for rugs for my living room.  I've had guests connect laptops only to discover their local virus scanner had already failed and their machines were active members of a bot net.</p>
+<p>Just yesterday, I discovered a known vulnerability in Android (up to version 4.2) that could allow hackers access inside my private network:</p>
+<blockquote><p>Researcher Joe Vennix found that the vulnerability in Android versions below 4.2, which is early Jelly Bean, could be exploited by clicking on a link in a text message, which would send the recipient to a malicious website. At that point, the attacker could throw up whatever Web page they like, while JavaScript is downloaded in the background to exploit the vulnerability.[ref]<a title="Beware of Employee's Cheap Android Phones" href="http://www.cio.com/article/748566/Beware_of_Employees_Cheap_Android_Phones">Beware of Employees' Cheap Android Phones</a>[/ref]</p></blockquote>
+<p>My cell runs a newer version of Android (which hopefully means it's not vulnerable to this particular exploit), but some of the other Android devices in my house do not.[ref]My Kindle Fire, which no longer has unfettered access to my local network, is running on the same <a title="Kindle Fire - Software" href="http://en.wikipedia.org/wiki/Kindle_Fire#Software">Android 2.3.3 OS it shipped with</a>.[/ref]  If they've been hacked, it means a "trusted" device with full access to my network is open to a nefarious individual whom can do whatever he or she wishes on the inside of my system - with the same level of access the legitimate users of my network have.</p>
+<p>I'm not trying to be too paranoid here - but essentially <em>anyone</em> with an Android 4.2 (or lower) device is now a potential open door for hackers into even your most secure network.</p>
+<p>I usually trust myself to keep things safe and secure.  Perhaps its time to look at myself and my own habits - like being <em>too</em> connected when I feel safe - as potential inroads for security issues.</p>
+<p>How secure are you?  Really?</p>

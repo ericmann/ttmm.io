@@ -1,0 +1,57 @@
+---
+layout: post
+title: Modular Code
+date: 2014-09-27 08:00:53.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Composer
+- dependency management
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1411847136;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Modular Code
+  _yoast_wpseo_metadesc: Composer is a potential solution for theme/plugin dependencies
+    in WordPress. But it will take some time before we flesh out the solution fully.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yh
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-09-27-modular-code.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/modular-code/"
+excerpt: Composer is a potential solution for theme/plugin dependencies in WordPress.
+  But it will take some time before we flesh out the solution fully.
+---
+<p>One of the biggest arguments for object-oriented programming is the potential reusability of code.</p>
+<p>One of the biggest arguments <em>against</em> object-oriented programming is that few developers actually reuse code that's not built into a standalone library.</p>
+<h2>Modularization</h2>
+<p>For years, the WordPress community has been struggling to determine the best way to handle dependencies. Plugins are built on top of one another, themes are built on top of existing plugins, functionality-rich themes are split into functionality plugins and the theme remains just a presentation layer.</p>
+<p>One potential solution, which I've been experimenting with at least, is to use <a title="Composer" href="https://getcomposer.org/">Composer</a> with individual projects to manage their dependencies.</p>
+<p>Advanced themes[ref]Read: Single sites with complex themes that for which I personally manage or configure hosting.[/ref] can bundle their plugin dependencies with Composer automatically. This keeps development environments in-sync, and running Composer automatically on the server (as a post-commit hook) keeps the server in-sync with the development team. Thus far, it's proven a very workable system.</p>
+<p>Sometimes, though, code in a particular project isn't well-suited to be broken into a separate plugin. In these instances, I'll still break the code out into its own repository (for separate version management) and still pull it into the project with Composer. Making the code modular in this way allows for it to easily be re-used across projects, and also allows for simple maintenance updates in the event of bugs or security issues.</p>
+<h2>Versioning</h2>
+<p>The biggest issue we've faced with dependency management, though, is versioning.</p>
+<p>Once upon a time, I wrote a library called Elliot RPC. The goal of the library was to allow a WordPress plugin to "phone home" and report its installation, the server environment on which it was hosted, and any potential issues (exceptions, errors, etc) automatically so I could debug and proactively support customers.[ref]After releasing this library and actively using it on several plugins for about a year, I was reminded that plugins hosted on WordPress.org weren't allowed to silently "phone home" without site owner permission. I removed the library from my plugins and moved on with my life.[/ref] It was, at the time, the most important piece of code I'd written as it allowed me to easily monitor my own market landscape and fix issues my customers were facing - often before they even realized it.</p>
+<p>Like any library, though, the code had a few bugs and I took the time to fix them. Then I'd ship an updated version of the plugins in which the library lived and hope everyone would upgrade. Unfortunately, I hit a snag.</p>
+<p>One customer was using two of my plugins at the same time. For one reason or another, their theme was only compatible with version 1 of one plugin, so it was locked in an un-updated state (and had an older version of the Elliot library than the other plugin on their system). Because of alphabetical loading order, the older plugin loaded first, and its copy of Elliot was booted and instantiated.</p>
+<p>The newer plugin ended up with serious conflicts because it was attempting to use Elliot's v2 API, but Elliot v1 was the only one available. The short of it: their site white-screened and eventually they dumped <em>both </em>of my plugins for less problematic alternatives.</p>
+<p><em>We need a better way to handle multiple versions of libraries that live side-by-side.</em></p>
+<p>Luckily, PHP provides a solution. If you use at least version 5.3 you can use namespaces for your classes and functions. No more collisions.</p>
+<p>One plugin can load classes and APIs from the [cci]Jumping_Duck\Elliot\v1[/cci] namespace. Another can load classes and APIs from the [cci]Jumping_Duck\Elliot\v2[/cci] namespace <em>and the code of each can live side-by-side</em>.</p>
+<h2>In Short</h2>
+<p>Writing modular code for WordPress is possible, thanks to tools like Composer for managing and loading the modules and language constructs like namespaces that allow for discrete code isolation. The question is no longer how do we write better, more modular code for WordPress, but why don't we?</p>
+<p>Are there other requirements for dependency management that the solutions above fail to account for? Are there other approaches that are more efficient and effective?</p>

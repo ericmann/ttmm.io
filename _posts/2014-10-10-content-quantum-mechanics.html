@@ -1,0 +1,54 @@
+---
+layout: post
+title: Content and Quantum Mechanics
+date: 2014-10-10 08:00:56.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- computing
+- quantum mechanics
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Content and Quantum Mechanics
+  _yoast_wpseo_metadesc: If there were a way to use the Heisenberg uncertainty principal
+    in computing, maybe we could have real digital rights management.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/yu
+  _wpghs_github_path: _posts/2014-10-10-content-quantum-mechanics.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/content-quantum-mechanics/"
+excerpt: If there were a way to use the Heisenberg uncertainty principal in computing,
+  maybe we could have real digital rights management.
+---
+<p>Part of my search for a way to <a title="Copyright, DRM, and Diminishing Returns" href="https://eamann.com/tech/copyright-in-the-digital-age/">publish things electronically</a> without lowering the barrier to theft and unauthorized production has included a search for a technological solution.</p>
+<p>I've looked into various digital rights management (DRM) systems. Unfortunately just about every DRM system available sucks. Some are tied to specific devices, others require customers to always be connected to the Internet. Neither is a solution I would put up with <em>as a customer myself</em>, so there's no reason I'm going to force them onto my own customers.</p>
+<p>I finally did devise a non-sucky system. Unfortunately, it's not likely one that will be possible in the immediate future.</p>
+<h2>The Heisenberg Uncertainty Principle</h2>
+<p>Let's step back a few steps and consider a theory that underlies most of the field of quantum mechanics.</p>
+<p>In 1925, Werner Heisenberg was making some remarkable observations about the behavior of electrons in their orbits around atoms. He theorized:</p>
+<blockquote><p>One can never know with perfect accuracy both of those two important factors which determine the movement of one of the smallest particles—its position and its velocity. It is impossible to determine accurately both the position and the direction and speed of a particle <em>at the same instant</em>.[ref]Heisenberg, W., Die Physik der Atomkerne, Taylor &amp; Francis, 1952, p. 30.[/ref]</p></blockquote>
+<p>In a nutshell, this means that you can never know both how fast an electron is moving and where it happens to appear in its orbit - if you attempt to determine one property, you destroy any available information about the other.</p>
+<p>It's a physical law very similar to that of quantum mechanical superposition - the idea that one particle (or object) can be in two or more contradictory physical states <em>at the same time</em> and won't resolve to any one until you try to measure it.</p>
+<p>Imagine if data storage could work the same way.</p>
+<h2>Quantum Mechanics and Data</h2>
+<p>Imagine if a file, or the data contained within that file, were both readable and copyable until you either read or copied that data. In such a system, you could distribute files that, essentially, self-expire after they're read or self-delete after they're copied to other media.[ref]<strong>Note:</strong> With the way computers, file storage, and memory work today this is impossible. Reading a file into memory and copying it to another location are effectively indistinguishable. To copy a file, you merely read it and re-write its bytes to another location.[/ref]</p>
+<p>Or imagine a system where data on a disk is only readable if you overwrite it - the act of reading the data <em>also</em> replaces it with something else. Though you've effectively copied the data into memory, you've destroyed the original. Saving the memory buffers back out to a file doesn't reproduce the file any more than it just re-saves what already existed; there's still only one copy.</p>
+<p>It's this second (imaginary) system that excites me because it has biological equivalents. Our memories work in such a way that referencing old information (your first bike ride, that horrible test you took sophomore year, the taste of your breakfast) means we have to both read <em>and</em> re-write that information. Your brain actually re-lives the experience coded into your memory, and re-writes that memory after its done.</p>
+<p>This is why rote memorization - repeating the same thing over and over and over and over and ... until it "sticks" - can be an effective learning tool.[ref]For some. Rote memorization is boring and monotonous to many, leading them to not form new connections in the brain to help with memorization. But that's beside my point.[/ref] You form a connection in your short-term memory, then replay it over and over and over again, each time reliving the memory and re-writing it - making it stronger.</p>
+<p>If your brain didn't re-write the memory, you'd lose it.[ref]I actually read a horror novel where this was the key point of terror - a computer that injected chemicals into your bloodstream that impaired the creation of new memories, then forced you to relive your memories and, as you did, erase them from your mind. Truly terrifying.[/ref]</p>
+<p>Imagine if we could build a computer storage system that works this way. You can read the data off the disk, removing it from the disk and <em>moving</em> it to memory at the same time, rather than merely creating a copy. Then, when you're done with the file, you read it back from memory to the disk, removing it from memory and <em>moving</em> it to the disk rather than creating a new copy.</p>
+<p>You'd now have a file that could only be read by one device, user, interface, or application at a time. It would be highly volatile, and you wouldn't have to worry about someone making and distributing unauthorized copies.</p>
+<p>Unfortunately, with the way computers work today, this isn't likely to become possible in the short term - maybe not even the long term. It is, however, entertaining to think about and consider the possibilities. I write about it here in the hope that someone smarter than me might be able to figure it out.</p>

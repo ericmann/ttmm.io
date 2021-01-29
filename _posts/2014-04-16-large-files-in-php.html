@@ -1,0 +1,54 @@
+---
+layout: post
+title: Gracefully Handling Too-large Files in PHP
+date: 2014-04-16 08:00:43.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- file upload
+- PHP
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Gracefully Handling Too-large Files in PHP
+  _yoast_wpseo_metadesc: What if a visitor uploads a file that's too large for your
+    system to handle?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/tz
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409597516;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:3438;}i:1;a:1:{s:2:"id";i:6521;}i:2;a:1:{s:2:"id";i:5518;}}}}
+  _wpghs_github_path: _posts/2014-04-16-large-files-in-php.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/large-files-in-php/"
+excerpt: What if a visitor uploads a file that's too large for your system to handle?
+---
+<p>Whenever you allow the public to upload files to your site, you're opening a Pandora's Box of potential issues.</p>
+<p>What if they upload a file format you don't want on your server?</p>
+<p>What if they upload a file with an incorrect extension?</p>
+<p>What if they upload a file that's too large for your system to handle?</p>
+<p>As it turns out, the third issue is relatively straight-forward to fix.</p>
+<h2>Before the fix</h2>
+<p>Let's say your upload form initially consists of three parts:</p>
+<ul>
+<li>The form itself, correctly set up with [cci]enctype="multipart/form-data"[/cci] and pointing its action at your server</li>
+<li>A file input field</li>
+<li>A hidden "action" input field to enable server-side filtering</li>
+</ul>
+<p>When the file gets to the server, your code checks for the presence of the action flag and changes its logic (i.e. begins processing the form), and moves merrily along.</p>
+<p>Unfortunately, if the file uploaded is larger than your server can handle, madness will ensue instead.  The action flag <em>won't</em> be hit and either the page acts as if nothing's been submitted or, worse, your customer is left with a white-page-of-death.</p>
+<p>Not sure which of the two doom-and-gloom eventualities plague your site?  Check your server's [cci]php.ini[/cci] file for the [cci]post_max_size[/cci] definition, then try submitting a file larger than that value.  It will fail in a ball of fiery glory.</p>
+<h2>After the fix</h2>
+<p>When a PHP request exceeds the [cci]post_max_size[/cci] setting, the server will <a title="Description of core php.ini directives" href="http://ca2.php.net/manual/en/ini.core.php#ini.post-max-size">automatically empty</a> the contents of both [cci]$_POST[/cci] and [cci]$_FILE[/cci].  So if you're keying application logic based on flags set in [cci]$_POST[/cci] variables, it will fail miserably.</p>
+<p>The fix is relatively simple.</p>
+<p>Add whatever flags you'll need in the [cci]$_POST[/cci] object as query arguments on your form's action attribute.  This will submit them as <em>both</em> POST (assuming they're still in hidden input fields) <em>and</em> GET parameters.</p>
+<p>Now switch your application logic to check for [cci]$_REQUEST[/cci] flags, and it will appropriately check the GET parameters, see the flags, and continue along.</p>
+<p>Further, you can check if both the action flag is set and the [cci]$_POST[/cci] array is empty to determine if you're experiencing an error condition and alert your site visitors.  It makes for a much more robust user experience, and prevents <em>anyone</em> from claiming your site is broken because they tried to upload something larger than you expected.</p>

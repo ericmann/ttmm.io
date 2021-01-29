@@ -1,0 +1,117 @@
+---
+layout: post
+title: Google Reader API - A Brief Tutorial
+date: 2010-05-21 08:00:01.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- API
+- Google
+meta:
+  yourls_shorturl: http://eam.me/c
+  aktt_notify_twitter: 'yes'
+  _edit_last: '2'
+  aktt_tweeted: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409678966;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:2664;}i:1;a:1:{s:2:"id";i:5508;}i:2;a:1:{s:2:"id";i:5992;}}}}
+  _wpghs_github_path: _posts/2010-05-21-google-reader-api-a-brief-tutorial.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/google-reader-api-a-brief-tutorial/"
+---
+<p>A few days ago, I asked a question on <a href="http://stackoverflow.com/questions/2752076/where-to-start-with-google-reader-as-an-api" target="_blank">Stack Overflow regarding the Google Reader API</a>.  What I wanted to do was build a WordPress plug-in that would import my feeds from Google Reader into my dashboard.  I've already pulled in my site statistics and <a href="http://wordpress.org/extend/plugins/facebook-dashboard/" target="_blank">Facebook</a>, Google Reader is the last holdout keeping me from managing all of my online <em>stuff</em> in one spot.</p>
+<p>Unfortunately, the <a href="http://blog.martindoms.com/2009/08/15/using-the-google-reader-api-part-1/" target="_blank">best tutorial I could find online</a> (and the one recommended by Stack Overflow users) was written for C# ... WordPress runs in PHP.  The two languages might look the same, but it would be like trying to put a chunk of Shakespearean writing in the middle of a modern book - out of context things would just break down.  So I set out to build my own version of a Google Reader reader in PHP.  Here's how to do it:</p>
+<h2>Step 1: Get an SID and Token</h2>
+<p>Google Reader authenticates users based on their username (Gmail address) and password.  After that, the system gives you an SID, which you can in turn use to get a token.  All of these elements work together to make sure you are really you and have permission to read, modify, and delete items from your Google Reader feed.  Here's the code you use to get an SID and token:<br />
+<code lang="php"><br />
+class JDMReader {<br />
+  private $_username;<br />
+  private $_password;<br />
+  private $_sid;</p>
+<p>  private $_token;<br />
+  private $_cookie;</p>
+<p>  public function __construct($username, $password) {<br />
+    $this->_username = $username;<br />
+    $this->_password = $password;</p>
+<p>    $this->_connect();<br />
+  }</p>
+<p>  private function _connect() {<br />
+    $this->_getToken();<br />
+    return $this->_token != null;<br />
+  }</p>
+<p>  private function _getToken() {<br />
+    $this->_getSID();<br />
+    $this->_cookie = "SID=" . $this->_sid . "; domain=.google.com; path=/";</p>
+<p>    $url = "http://www.google.com/reader/api/0/token";</p>
+<p>    $ch = curl_init();<br />
+    curl_setopt($ch, CURLOPT_COOKIE, $this->_cookie);<br />
+    curl_setopt($ch, CURLOPT_URL, $url);</p>
+<p>    ob_start();</p>
+<p>    curl_exec($ch);<br />
+    curl_close($ch);</p>
+<p>    $this->_token = ob_get_contents();<br />
+    ob_end_clean();<br />
+  }</p>
+<p>  private function _getSID() {<br />
+    $requestUrl = "https://www.google.com/accounts/ClientLogin?service=reader&Email=" . urlencode($this->_username) . '&Passwd=' . urlencode($this->_password);</p>
+<p>    $ch = curl_init();<br />
+    curl_setopt($ch, CURLOPT_URL, $requestUrl);<br />
+    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );</p>
+<p>    ob_start();</p>
+<p>    curl_exec($ch);<br />
+    curl_close($ch);<br />
+    $data = ob_get_contents();<br />
+    ob_end_clean();</p>
+<p>    $sidIndex = strpos($data, "SID=")+4;<br />
+    $lsidIndex = strpos($data, "LSID=")-5;</p>
+<p>    $this->_sid = substr($data, $sidIndex, $lsidIndex);<br />
+  }<br />
+}<br />
+</code></p>
+<p>This set of functions forms the core of a new PHP class I've built for my Google Reader plug-in.  When you create a new instance of the class, you pass in your Google username and password.  From that, the class will get an SID, get a token, and create a cookie string that it will pass to the server every time you make a subsequent request.  It's a fairly simple system, and translates Martin Doms' C# approach into PHP as closely as possible.</p>
+<p>I've used this already to get my Google Reader feed.  It works quickly and effectively.  Now I just need to wrap it all in a nice widget and share it with the rest of the world.  All of the power of Google Reader, right in your WordPress dashboard!</p>
+<h2>Step 2: Try it Out!</h2>
+<p>The majority of API calls you can make involve a GET request, so I built a helper function into my class to handle those calls:</p>
+<p><code lang="php"><br />
+private function _httpGet($requestUrl, $getArgs) {<br />
+  $url = sprintf('%1$s?%2$s', $requestUrl, $getArgs);<br />
+  $https = strpos($requestUrl, "https://");</p>
+<p>  $ch = curl_init();<br />
+  curl_setopt($ch, CURLOPT_URL, $url);<br />
+  if($https === true) curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );<br />
+  curl_setopt($ch, CURLOPT_COOKIE, $this-&gt;_cookie);</p>
+<p>  ob_start();</p>
+<p>  try {<br />
+    curl_exec($ch);<br />
+    curl_close($ch);<br />
+    $data = ob_get_contents();<br />
+    ob_end_clean();<br />
+  } catch(Exception $err) {<br />
+    $data = null;<br />
+  }<br />
+  return $data;<br />
+}<br />
+</code></p>
+<p>This function works well enough, but unless you have something to <em>get</em> with your GET, it's pretty useless. So I added a public method to my class that returns a list of all my subscriptions in a JSON array:</p>
+<p><code lang="php"><br />
+public function listAll() {<br />
+  $gUrl = "http://www.google.com/reader/api/0/stream/contents/user/-/state/com.google/reading-list";<br />
+  $args = sprintf('ck=%1$s', time());</p>
+<p>  return $this->_httpGet($gUrl, $args);<br />
+}<br />
+</code></p>
+<p>Now you're off and running. Two lines of code will print out your reading list:</p>
+<p><code lang="php"><br />
+$reader = new Reader('myname@gmail.com', 'mypassword');<br />
+echo $reader->listAll();<br />
+</code></p>
+<p>Easy, isn't it? Now it's your turn to try things out ...</p>

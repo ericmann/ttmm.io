@@ -1,0 +1,112 @@
+---
+layout: post
+title: How to Publish a WordPress Plugin - Git
+date: 2011-05-19 08:00:10.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Git
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/f7
+  _yoast_wpseo_newssitemap-genre: blog
+  _yoast_wpseo_newssitemap-include: 'on'
+  _yoast_wpseo_metakeywords: wordpress, git, plugin, plug-in
+  _yoast_wpseo_metadesc: Here's a step-by-step tutorial on using Git to publish your
+    plugin to the WordPress Plugin Repository.
+  _yoast_wpseo_title: How to Publish a WordPress plugin using Git
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: git
+  _yoast_wpseo_newssitemap-original: ''
+  _yoast_wpseo_newssitemap-stocktickers: ''
+  yourls_tweeted: '1'
+  _yoast_wpseo_linkdex: '88'
+  _wpas_skip_1588757: '1'
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409774650;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6103;}i:1;a:1:{s:2:"id";i:3395;}i:2;a:1:{s:2:"id";i:3248;}}}}
+  keen_postview_count_this_7_days: '4'
+  keen_postview_count_this_30_days: '16'
+  _wpghs_github_path: _posts/2011-05-19-how-to-publish-a-wordpress-plugin-git.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/how-to-publish-a-wordpress-plugin-git/"
+---
+<p>Last week we covered <a title="How to Publish a WordPress Plugin – Subversion" href="http://eamann.com/tech/how-to-publish-a-wordpress-plugin-subversion/">how to publish a WordPress plugin using Subversion</a>.  But many of us aren't using Subversion.  I know that after I started using version control, I quickly graduated to Git and Mercurial for managing <em>distributed</em> development.  It makes it easier for me to collaborate with others, and makes it easier for other people to take my ideas and run in new directions.</p>
+<p>Actually, those two reasons most of us like Git and Mercurial are probably the two reasons keeping WordPress in Subversion.  But I digress ...</p>
+<p>Here is a step-by-step tutorial for publishing a WordPress plugin using Git.  To follow along, you'll need:</p>
+<ul>
+<li>A WordPress plugin to write</li>
+<li><a title="Download Git" href="http://git-scm.com/" target="_blank">Git</a></li>
+<li>A WordPress.org account</li>
+</ul>
+<p><!--more--></p>
+<h2>First and Foremost</h2>
+<p>The very first step is to create an account on WordPress.org.  You’ll use this account to control your plugin, post to the support forum, and edit the Codex.  Chances are that you already have an account.  But if you don’t, it would be a good idea to <a href="http://wordpress.org/support/register.php" target="_blank">create one</a>.</p>
+<h2>Get Hosted</h2>
+<p>Next, you’ll need to <a href="http://wordpress.org/extend/plugins/add/" target="_blank">ask the WordPress.org team to host</a> your snazzy new plugin.  All you need at this point is a name and an idea.  It can take anywhere from an hour to a few days to get your application approved, so don’t worry if you don’t have any code written yet.</p>
+<h2>Using Git</h2>
+<p>If you haven't already, you should read my tutorial on working with Subversion.  It holds some great reasons for why you should use version control in the first place, and introduces a great GUI for working with Subversion.</p>
+<p>There's a similar GUI for Git called <a href="http://code.google.com/p/tortoisegit/" target="_blank">TortoiseGit</a>.  I use it for a lot of my <a href="https://github.com/" target="_blank">GitHub </a>and <a href="http://gitorious.org/" target="_blank">Gitorious </a>work, but I'm not going to use it for this tutorial for reasons to be explained above.</p>
+<p>So if you haven't already, download <a href="http://git-scm.com/" target="_blank">Git</a>.  It includes both a command line application (Git Bash) and a user interface, at least for Windows users (Git GUI).  Trust me, they'll come in handy.</p>
+<h2>Clone the Repository</h2>
+<p>With Git, you make a local <em>clone</em> of a <em>remote</em> repository, make all of your commits locally, then <em>push</em> your changes back to the remote.  The convenience of this is that you can do most of your development offline but keep track of your changes just like you did with Subversion.</p>
+<p>Luckily, Git even has a tool that allows you to clone a Subversion repository as a Git repository.  It's called "git-svn."</p>
+<p>First, find a place on your computer where you want to keep your plugin, and create a new folder for it – I keep most of my stuff inside a <strong>/WP-Plugins</strong> folder.</p>
+<p>Right click on <strong>/WP-Plugins</strong> and select "Git Bash Here" to open the command line client.  Basically, this opens a shell window and automatically drops you right in the folder.</p>
+<p>Be very careful when you clone your local repository.  It might take a while ...</p>
+<blockquote><p>WordPress keeps <strong><em>all</em></strong> of its plugins in the same Subversion repository.  There are over 24,000 plugins in the repository, covering a total of almost 780,000 revisions.  I accidentally cloned the entire repository once and it took several hours.</p></blockquote>
+<p>To clone your repository, run the following command in Bash:</p>
+<p>[cc lang="bash" width="580"]git svn clone -r697143:HEAD -s --no-minimize-url http://plugins.svn.wordpress.org/my-cool-plugin[/cc]</p>
+<p>Let's break this command down just a bit:</p>
+<ul>
+<li>[cci]git svn clone[/cci] This is the basic command required to clone an SVN repository using Git</li>
+<li>[cci]-r697143:HEAD[/cci] This flag will clone starting from revision 697,143. Use whatever revision you want - the later the better. When you first gain access to your repository you can check the revision number it's currently at. <strong>Use that</strong> to skip the first ~700k lines of unnecessary history.</li>
+<li>[cci]-s[/cci] Clone the repository assuming the standard trunk/tags/branches directory structure so many of us use with SVN.</li>
+<li>[cci]--no-minimize-url[/cci] Don't shorten the repository URL, instead clone from the subdirectory you've specified - your plugin.</li>
+<li>[cci]http://plugins.svn.wordpress.org/my-cool-plugin[/cci] The URL for your new plugin.</li>
+</ul>
+<p>This clones your plugin repository into a <strong>/my-cool-plugin</strong> directory.  The "-s" flag tells Git to expect the standard trunk/tags/branches folder layout and the "--no-minimize-url" flag tells Git to pull down <em>only</em> your plugin rather than the entire repository.</p>
+<p>Git will take a while to think Git has to look at the whole repository to pull in all of your changes ... so it could take a while.  Go grab some coffee while you wait.</p>
+<h2>Create a First Version</h2>
+<p>If your plugin's all ready to go, feel free to skip ahead to the <a href="#sync">section on pushing your changes</a>.  Otherwise, start writing something in your empty folder.</p>
+<p>As you make changes to your plugin, you can commit whenever you want within Git.  Just run the following in Bash:</p>
+<p>[cc lang="bash" width="580"]git add .<br />
+git commit -m "Your commit message"[/cc]</p>
+<p>This will add your modifications and commit to your local copy of repository.</p>
+<p><strong>Remember:</strong> You're working entirely on your machine, so these changes won't be seen by the rest of the community until you're ready.  Commit as often as you want and as often as you need to.  If you ever need to go back and undo something, you won't regret it.<a name="sync"></a></p>
+<h2>Synchronize</h2>
+<p>When you're ready to publish, you have to do three things:</p>
+<ul>
+<li><a href="#update">Update</a></li>
+<li><a href="#push">Push</a></li>
+<li><a href="#tag">Tag</a></li>
+</ul>
+<p><a name="update"></a></p>
+<h3>Update</h3>
+<p>You always want to make sure you're working with the latest section of code.  If you're like me, you might end up working on multiple machines ... to make sure you don't accidentally roll back a release when you push, you'll first need to update your local repository.</p>
+<p>If we were working with a typical Git repository, we'd run [cci lang="bash"]git pull[/cci] to get the changes.  But since we're working with Subversion, things are slightly different:</p>
+<p>[cc lang="bash" width="580"]git svn rebase[/cc]</p>
+<p>This command tells Git to re-fetch your repository from Subversion and <em>rebase</em> your changes on top of anything that's changed in Subversion.  In a sense, you can think of this as taking your entire block of changes, exporting a patch, running [cci]svn up[/cci], then re-applying your patch.</p>
+<p>That's not <em>really</em> what happens, but it's close enough.<a name="push"></a></p>
+<h3>Push</h3>
+<p>Now we know our repository is up-to-date and we're ready to commit our changes to the Subversion repository.  In the world of distributed version control, this is called a <em>push</em>.  Basically, you're <em>pushing</em> your changes from the local clone back to the original repository.</p>
+<p>If you're working with something on GitHub, you can just run [cci]git push[/cci].  Once again, though, remember that with Subversion things are slightly different:</p>
+<p>[cc lang="bash" width="580"]git svn dcommit[/cc]</p>
+<p>The [cci]dcommit[/cci] command tells Git to push all of your local changes into the remote Subversion repository.  It'll think for a minute, package things appropriately, then start talking to WordPress' server.</p>
+<p>At this point, Git will ask you for your WordPress.org credentials.  Make sure you enter your username and password or this won't work.<a name="tag"></a></p>
+<h3>Tag</h3>
+<p>The "/trunk" folder of your plugin is now up-to-date.  But remember from our discussion on Subversion that the downloader looks in your "/tags" folder for releases.  Conveniently, Git will copy your "/trunk" folder into the right tag for you.  Just run:</p>
+<p>[cc lang="bash" width="580"]git svn tag "1.0"[/cc]</p>
+<p>This will copy everything in <strong>/trunk</strong> into <strong>/tags/1.0</strong> on the server.  If you were to do a standard Subversion checkout, you'd see the folder sitting there with all of your changes.</p>
+<h3>Why Didn't We Tag First?</h3>
+<p><a title="How to Publish a WordPress Plugin – Subversion" href="http://eamann.com/tech/how-to-publish-a-wordpress-plugin-subversion/">When we were working with Subversion</a>, I encouraged you to tag your release before changing the readme file in trunk.  That's because every time you commit to trunk it's immediate.  If you edit your readme file today, but don't plan to release until next Tuesday, things can go horribly wrong.</p>
+<p>With Git, though, that doesn't happen.  You can change your readme file or update anything you want and commit <em>locally</em> as much as you want.  Nothing happens on the server until you use [cci]dcommit[/cci] to synchronize your changes.  So long as you always remember to tag your releases, you should be just fine.</p>

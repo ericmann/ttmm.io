@@ -1,0 +1,58 @@
+---
+layout: post
+title: Code Smell
+date: 2014-05-29 08:00:24.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- code pattern
+- code smell
+- opinion
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1401372273;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Code Smell
+  _yoast_wpseo_metadesc: With a few notable exceptions, developers often invoke "code
+    smell" because they don't like an approach or pattern, but can't articulate why.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/v5
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-05-29-code-smell.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/code-smell/"
+excerpt: With a few notable exceptions, developers often invoke "code smell" because
+  they don't like an approach or pattern, but can't articulate why.
+---
+<p>The more I write about various code, the more I notice a particular trend: Everyone has an opinion.</p>
+<p>No matter what code or pattern I discuss, there are always some who like it and some who don't. Be it <a title="Making Singletons Safe in PHP" href="http://eamann.com/tech/making-singletons-safe-in-php/">singletons</a>, <a title="Singleton: Alternative to the Anti-Pattern" href="http://eamann.com/tech/singleton-alternative/">multitons</a>, dependency injection, <a title="PHP Output Parameters" href="http://eamann.com/tech/php-output-parameters/">output parameters</a>, <a title="Object-Oriented JavaScript" href="http://eamann.com/tech/object-oriented-javascript/">prototypical inheritance</a> - it doesn't matter.</p>
+<p>It's been a universal phenomenon that when code snippets are included, someone somewhere will bring up the term "code smell."</p>
+<h2>What is "code smell?"</h2>
+<p>Code smell is a euphemism for an indication that something is wrong in the design of an application on a deeper level. A physical analog would be an odor coming from your fridge, indicating that perhaps something has rotted somewhere inside.</p>
+<blockquote><p>Code smells are usually not bugs—they are not technically incorrect and do not currently prevent the program from functioning.[ref]<a title="Code smell" href="http://en.wikipedia.org/wiki/Code_smell">Code smell</a>[/ref]</p></blockquote>
+<p>On a high level, this could mean you're using an anti-pattern somewhere in your code that, while it won't hurt you today, will likely cause architectural issues in the future. For example, using a singleton to wrap functionality in a quick proof-of-concept prototype will work, but will cause issues when your try to add unit testing later to flesh out the project.</p>
+<p>Code smell is, functionally, a yellow flag in your application that should be <a title="Don’t Delay Dirty Dishes" href="http://eamann.com/journal/dont-delay-dirty-dishes/">addressed quickly</a>, but it's probably not top priority.</p>
+<h2>What do developers mean when they mention code smell?</h2>
+<p>With a few notable exceptions, developers often invoke "code smell" because they don't like an approach or pattern, but can't articulate why.</p>
+<blockquote><p>Highly experienced and knowledgeable developers have a "feel" for good design. Having reached a state of "Unconscious Competence," where they routinely practice good design without thinking about it too much, they find that they can look at a design or the code and immediately get a "feel" for its quality, without getting bogged down in extensive "logically detailed arguments".[ref]<a title="Code Smell" href="http://c2.com/cgi/wiki?CodeSmell">Code Smell</a>[/ref]</p></blockquote>
+<p>There is rarely, if ever, justification to structure a program based on a developer's "gut feeling." Yes, an experienced developer can often look at a design or code and understand its quality - but if he can't articulate why it's good or bad, I would argue they are not as knowledgable as they pretend.</p>
+<p>A good developer can explain why she used one design pattern over another. When asked, "why did you index this database column" or "why <em>didn't</em> you index this database column," she should be able to explain the reasoning behind the decision - or be willing/able to adjust her approach given this inquisitive feedback.</p>
+<p>An "experienced" developer citing "code smell" when looking at your code (who can't articulate <em>why</em> your code smells) is a developer who merely doesn't understand your approach and is putting on airs while reviewing it.[ref]If "your code smells" is followed by "because ..." I retract this statement. There are very talented developers in the industry who will cite code smell during a review and who will <em>also</em> provide an explanation. These are not the developers to whom I am referring.[/ref]</p>
+<p>For many developers, "your code smells" is not a euphemism for poor approach or design. It's a cover for "I don't understand what you're doing here or why and I don't want to be seen as less experienced than you."</p>
+<h2>My code smells</h2>
+<p>My code often smells. Sometimes it's because I was lazy in my initial approach and used the wrong design pattern that comes back to bit me later. Sometimes it's because I'm learning a new set of design structures and implement them poorly.</p>
+<p>Sometimes it's because I make a conscious decision to use an overused design pattern in a certain way. Still other times it's because I'm using an approach with which other developers are unfamiliar, so they write the approach off as "smell" and move on.</p>
+<p>I'm OK with all of the above because I'm more than willing to explain why I've done what I've done, even if my explanation is "I was lazy, that was wrong, I'll fix it."</p>
+<p>The question isn't whether or not I'm capable of explaining smell in my code - it's are you capable of explaining why you think it smells in the first place?</p>

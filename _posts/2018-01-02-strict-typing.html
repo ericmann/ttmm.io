@@ -1,0 +1,110 @@
+---
+layout: post
+title: Strict Typing
+date: 2018-01-02 08:00:32.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+tags: []
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/strict-typing/"
+excerpt: Do you use type information in your PHP code? What drove you to make the
+  change (or what is preventing you from taking the jump)?
+---
+<p><!-- wp:core/paragraph --></p>
+<p>The first programming language I ever worked with was QuickBasic. I copied programs out of the back of a book to create everything from digital artwork to a password-protected Rolodex application. It was great!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>But my coding skills sucked.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I never did master subroutines in QuickBasic, so anything beyond a <em>simple</em>﻿ program quickly grew out of control. I abandoned the world of programming for a few years until I fell back into it with PHP and had to learn everything over again.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Luckily, PHP was relatively easy to learn! I could write clear code in an easy-to-follow outline and I never had to worry about type information or compiling or memory management. These were all topics that had kept me <em>away</em>﻿ from other, &quot;professional&quot; programming languages in the past.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As my coding skills improved, however, so did my understanding of the <em>value</em>﻿ of these requirements.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>PHP 7</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>PHP 7 introduced the concept of <em>strict</em> typing by way of type annotations. In the past, developers could identify the types of data passed into and out of a function using documentation alone:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/code --></p>
+<pre class="wp-block-code"><code>/**
+ * This function takes in a number and a string
+ * and produces a log message.
+ *
+ * @param int    $code Error code
+ * @param string $msg  Error message
+ *
+ * @return string
+ */
+function produce_message($code, $msg)
+{
+}</code></pre>
+<p><!-- /wp:core/code --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>With the newer version of PHP, developers can now annotate their code <em>directly</em>﻿ and specify both the types required for function input and returned after function execution:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/code --></p>
+<pre class="wp-block-code"><code>/**
+ * This function takes in a number and a string
+ * and produces a log message.
+ *
+ * @param int    $code Error code
+ * @param string $msg  Error message
+ *
+ * @return string
+ */
+function produce_message(int $code, string $msg): string
+{
+}</code></pre>
+<p><!-- /wp:core/code --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Even better, developers can identify their code as requiring &quot;strict&quot; mode, meaning PHP will <em>not</em>﻿ attempt to silently coerce one type to another. In its default mode, the following code is perfectly valid:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/code --></p>
+<pre class="wp-block-code"><code>function sum(int $first, int $second)
+{
+  return $first + $second;
+}
+
+$third = sum(1, &#x27;2&#x27;); // Now contains 3</code></pre>
+<p><!-- /wp:core/code --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Adding a <a href="http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration.strict">strict type declaration</a> ...</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/code --></p>
+<pre class="wp-block-code"><code>declare(strict_types=1);</code></pre>
+<p><!-- /wp:core/code --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>... will cause the same code to instead produce a runtime exception!</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Other Types</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Even newer versions of PHP support newer type information. <a href="http://php.net/manual/en/migration71.new-features.php">PHP 7.1 introduced</a> the idea of <em>nullable</em>﻿ types - data that can either be of one type, or an explicit NULL.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p><a href="http://php.net/manual/en/migration72.new-features.php">PHP 7.2 introduces</a> a more abstract &quot;object&quot; type, allowing for something that more closely resembles dynamic typing even in a strictly-typed world.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Do you use type information in your PHP code? What drove you to make the change (or what is <em>preventing</em> you from taking the jump)?</p>
+<p><!-- /wp:core/paragraph --></p>

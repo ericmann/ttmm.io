@@ -1,0 +1,70 @@
+---
+layout: post
+title: Democratizing SSL Certificates
+date: 2014-02-28 08:00:58.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- certificate
+- democratization
+- security
+- ssl
+- verification
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: Democratizing SSL Certificates
+  _yoast_wpseo_metadesc: I want to democratize security, and I need your help to do
+    it.
+  _wpas_mess: I want to democratize SSL certificates =>
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/so
+  _oembed_6766a40756247ff995750a16c8cd634f: <blockquote class="twitter-tweet" width="500"><p>Verisign,
+    Comodo, Digicert and Thawte are running their websites with self-signed certificates.
+    <a href="http://t.co/1rtklJZlWX">pic.twitter.com/1rtklJZlWX</a></p>&mdash; Mikko
+    Hypponen (@mikko) <a href="https://twitter.com/mikko/statuses/434055799820660736">February
+    13, 2014</a></blockquote><script async src="//platform.twitter.com/widgets.js"
+    charset="utf-8"></script>
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408020487;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6043;}i:1;a:1:{s:2:"id";i:5995;}i:2;a:1:{s:2:"id";i:3498;}}}}
+  _wpghs_github_path: _posts/2014-02-28-democratizing-ssl-certificates.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/democratizing-ssl-certificates/"
+excerpt: I have an easier time trusting individuals and corporations I personally
+  know than large companies with whom my only relationship is as a certificate vendor.  I'm
+  also a huge proponent of democratizing both publishing on the Internet and the Internet
+  itself.
+---
+<p>You're not reading this site over SSL.  That means anyone else on the network can see not only the domain you're browsing but the page you're reading.  If you submit a search or a contact form here, your request will be sent to my server in plain text for all the world to see.</p>
+<p>Hopefully, you're OK with that.</p>
+<p>On some sites, however, this can be a major security issue.  Sensitive files might be hosted on the domain - files with names you don't want exposed.  You might be posting private information - like credit card data - to the server for processing.  The server might be transferring data to you and you want to be sure you're the only one who can read it.</p>
+<p>This is why important websites use SSL - secure socket layers - to encrypt traffic between the client (your browser) and the server.</p>
+<p>Again, you're not reading this site over SSL, not because I don't value SSL, but because I don't want to pay a 3rd party to sign my certificate.</p>
+<h2>The System is Broken</h2>
+<p>Currently, you have to shell out cash to one of a <em>handful</em> of large corporations to get them to sign your SSL certificate, otherwise browsers display an "I don't know who this is" message to your visitors.  Typically, this isn't a bad thing, except most of your visitors won't understand the message and will think you've been hacked.</p>
+<p>Ironically, most of the big players sign their own certificates.  If you or I were to do that, browsers would flag things and alert the user that something's amiss.</p>
+<p>https://twitter.com/mikko/status/434055799820660736</p>
+<p>These trusted authorities are hard-coded into your browser software - Chrome, Firefox, Internet Explorer, Safari, etc all trust them by default, even when things go wrong and rogue certificates are issued.  There's no way to prevent a hack in such a situation without a browser update - again, not many visitors will understand this or update their browsers to prevent a fix.</p>
+<p>We live in a world where software - particularly open source software - is democratizing more and more of the web.  Publishing is open.  Even <em>hosting</em> these tools is inexpensive.[ref]I host one of my sites on a $5/month VPS. That's less than I paid for crappy shared hosting when I first started online![/ref]</p>
+<p>So long as certificate security remains in the hands of large corporate conglomerates, it will never be as open as the tools it purports to protect.</p>
+<h2>Patches Welcome</h2>
+<p>I propose a simple change to the above paradigm: peer-to-peer trust.</p>
+<p>I don't know you.  You don't know me.  However we both know Sam.  I trust Sam; Sam trusts me.  You trust Sam; Sam trusts me.  By extension (because Sam will vouch for me), <em>you</em><em> can trust me.</em></p>
+<p>It's a simple extension of the above system - you elevate individuals (or companies) whom you trust to the same level as the larger certificate authorities I already discussed.  Smaller entities become capable of signing peers' certificates (likely in exchange for those same peers signing their certificates in turn) and visitors who trust these entities know they can trust those entities' peers as well.</p>
+<p>Much of the infrastructure we currently use for SSL certificate verification today could be reused for these purposes - it would just need to be extended a bit.  For example, to allow more than one "hop" to reach verification: I know Sam - Sam knows Tom - you know Tom - you can trust me through your trust of Tom, Tom's trust of Sam, and Sam's trust of me.</p>
+<h2>Benefits and Drawbacks</h2>
+<p>The biggest benefit is a decentralization of certificate security.  By running certificates through multiple verification <em>nodes</em> instead of a handful of monolithic entities, the system becomes inherently more sturdy in the face of attack: failure of one node or another has far less of an impact on the network as a whole than, say, failure of <a title="Comodo SSL Affiliate The Recent RA Compromise" href="http://blogs.comodo.com/it-security/data-security/the-recent-ra-compromise/">Comodo</a>.</p>
+<p>The drawback is that this system remains to be built and, until an adequate prototype exists, it's hard to know for sure the impact of the failure of any given node.  Rogue nodes are sure to arise - but once detected the network could, in a sense, self-heal and notify other nodes of the failure and dynamically revoke trust.</p>
+<p>This would <em>necessarily</em> be a very dynamic system and, once launched, will be very difficult to reel back in.  I'd like to fully understand the potential downsides of such a change before prototyping anything - that said, this feels like the right solution.</p>
+<p>I have an easier time trusting individuals and corporations I personally know than large companies with whom my only relationship is as a certificate vendor.  I'm also a huge proponent of democratizing both publishing on the Internet and the Internet itself.</p>
+<p>If you agree, I'd like to hear it - and other potential benefits you see with such a system.  If you <em>disagree</em>, I'd like to hear it - and any potential drawbacks you see with such a system.<em><br />
+</em></p>
+<p>I want to democratize security, and I need your help to do it.</p>

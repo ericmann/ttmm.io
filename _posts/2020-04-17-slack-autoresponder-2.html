@@ -1,0 +1,164 @@
+---
+layout: post
+title: Slack Autoresponder - Part II
+date: 2020-04-17 07:00:00.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- JavaScript
+- Technology
+- Tutorials
+tags:
+- AWS
+- RingCentral
+- Slack
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/slack-autoresponder-2/"
+---
+<p><!-- wp:paragraph --></p>
+<p><a href="https://ttmm.io/tech/slack-autoresponder-part-1/">Last time</a>, we talked about my motivations for building a Slack autoresponder so I can better communicate with my colleagues. Today we'll walk through the components required and all the steps for wiring together the full application.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Serverless Framework</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>First things first, we need to build <a rel="noreferrer noopener" href="https://github.com/ericmann/slack-autoresponder" target="_blank">the application</a> itself. We'll be leveraging the Serverless framework, so if you don't already have that installed go ahead and install it:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>npm i -g serverless</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We install this tool <em>globally</em> to make the <tt>sls</tt> command available everywhere. When we're ready to deploy our application, a simple <tt>sls deploy</tt> will push everything up to AWS. That said, the next thing we need to do is configure our AWS credentials for Serverless to use - rather than walk you though those steps here, I'll refer you to <a href="https://serverless.com/framework/docs/providers/aws/guide/credentials/">Serverless' excellent configuration walkthrough</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once your system is configured, you can <a href="https://github.com/ericmann/slack-autoresponder">clone my existing project</a> and take a look through the code. I'll step through some significant functionality below once we've configured the rest of our credentials.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>RingCentral</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image {"align":"right","id":8201,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/ringcentralsetup.png" target="_blank" rel="noopener noreferrer"><img src="{{ site.baseurl }}/assets/2020/04/ringcentralsetup-300x253.png" alt="RingCentral App Creation Interface" class="wp-image-8201" /></a><br />
+<figcaption>RingCentral's App Creation Interface</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>For this illustration, we're going to use the Node SDK for RingCentral. The code is straight-forward and can be taken directly from <a href="https://developers.ringcentral.com/guide/messaging/quick-start/node">the documentation's Quick Start Guide</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Clicking the "Create SMS App" button on the Guide page will launch you into the developer console, where you can configure an <strong>Other Non-UI</strong> application for use with this tool. Accept all of the details and click through the Create buttons to get started with the app - the defaults are acceptable enough for this solution, though as you become more accustomed with RingCentral you might want to make changes.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8203,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/ringcentral-app.png" target="_blank" rel="noopener noreferrer"><img src="{{ site.baseurl }}/assets/2020/04/ringcentral-app-300x204.png" alt="RingCentral App Credentials" class="wp-image-8203" /></a><br />
+<figcaption>RingCentral App Credentials</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once you've created an app, you can grab all of the credentials you'll need to configure our integration. You'll need:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>The API server URL (this should be for their dev/test platform)</li>
+<li>Your client ID</li>
+<li>Your client secret</li>
+<li>Your account phone number (this is also be your username)</li>
+<li>Your account password</li>
+<li>Your phone extension (by default this is 101, so we'll just use that)</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>That's all we need from RingCentral for now!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Slack Application</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Configuring the Slack application itself is equally straight-forward. Go to <a rel="noreferrer noopener" href="https://api.slack.com/apps" target="_blank">the Slack App console</a> and create a new app. Once it's created, you'll need to grab the app's <strong>Signing Secret</strong> for use with our integration.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next, go to the <strong>OAuth &amp; Permissions</strong> screen (link on the left-hand side under Features). First, </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next, go to the <strong>OAuth &amp; Permissions</strong> screen (link on the left-hand side under Features). First, scroll down the the <strong>User Token Scopes</strong> section and add the scopes we need for the integration to work:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>chat:write</li>
+<li>im:history</li>
+<li>users.profile:read</li>
+<li>users:read</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now scroll back up and install the app in your Slack workspace. This will set up OAuth permission for the app to work and give you the application's <strong>OAuth Access Token</strong> (which you'll need for our integration to work).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Finally, you'll need to get your user ID. I found mine by viewing my profile in the <em>web</em> version of Slack (not the desktop app). Create a DM with yourself and say hi. Then click on your name to view a small version of your profile with a "View full profile" link - click that link.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>On your profile screen, click the kebob menu on the right and you'll see your <strong>Member ID</strong> in the resulting dropdown. This is the value you need.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Likewise, if there's anyone in your org you <em>don't</em> want to automatically respond to while you're away, grab their member IDs as well.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>The Slack Autoresponder</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The autoresponder itself is <a href="https://github.com/ericmann/slack-autoresponder">fully coded for you</a>. It's open source, so you can use it, modify it, and do whatever you want.[ref]Note that I offer no guarantees or warranties of any kind. The system works for me and I use it daily, but it's not a fully fleshed-out system with integration tests so there might be edge cases where things break.[/ref] First, <a href="https://github.com/ericmann/slack-autoresponder">clone the repository</a> to your local system and run <tt>npm install</tt> from the newly-created directory to set up all of the package dependencies.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now, copy <tt>_secrets.yml</tt> to <tt>secrets.yml</tt> in the project and fill in all of the credentials we've copied down from the systems above. Ensure you set the <tt>sms_tool</tt> value to <tt>ringcentral</tt> and enter your own phone number in <tt>destination_phone</tt>. The rest of the credentials will be obvious based on the steps above.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The <tt>ignore_users</tt> field is a quoted, comma-delimited list of the user IDs you want to skip the autoresponder. At the very minimum, your ID should be in there so you don't accidentally respond to yourself. I'd also highly recommend you also include your boss' ID.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8212,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/sls-deploy.png" target="_blank" rel="noopener noreferrer"><img src="{{ site.baseurl }}/assets/2020/04/sls-deploy-300x193.png" alt="Deploying the app with Serverless." class="wp-image-8212" /></a><br />
+<figcaption>Deploying the app with Serverless</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once everything is set up, you're ready to deploy! Use Serverless from the same directory, and it will configure your Lambda function, APIGateway endpoints, and CloudFormation monitoring all for you. Just <tt>sls deploy</tt> and wait.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Before you can use the autoresponder</strong>, though, you'll need to tell Slack about it. Go back to the app's configuration page in the Slack console and select the <strong>Event Subscriptions</strong> option under Features. You need to enable events, then add your new Lambda function's URL (Serverless will give it to you after the deployment completes). Slack will verify things, then you're good!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>You also need to subscribe to message events by expanding the <strong>Subscribe to events on behalf of users</strong> section and adding the <tt>message.im</tt> event. <em>Now</em> the application is fully configured and ready to go!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>In Summary</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The application is configured to respond to anyone who sends you a DM when your Slack presence is set to "away." If you're "active," then the system remains quiet and no one gets a notice, but once you toggle yourself to being "away" they'll get a subtle reminder that you won't respond immediately to any pings.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8209,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/textscreenshot.png" target="_blank" rel="noopener noreferrer"><img src="{{ site.baseurl }}/assets/2020/04/textscreenshot-150x300.png" alt="Screenshot of RingCentral text message" class="wp-image-8209" /></a><br />
+<figcaption>RingCentral SMS</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Additionally, if someone sends you a message starting with the word "urgent," you'll immediately get a text message via RingCentral alerting you that they need your attention. It's a great way to both suppress unwanted interruptions while also ensuring you're notified of <em>actual</em> urgent issues.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The system is also smart enough to not respond to the same person twice in a 10 minute period. It uses a DynamoDB table to keep track of who it's responded to and suppresses itself in a short window. This will (hopefully) avoid annoying your team while still reminding them you're unavailable.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that you have a Lambda-powered Slack integration, what are some other integrations you think would be useful?</p>
+<p><!-- /wp:paragraph --></p>

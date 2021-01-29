@@ -1,0 +1,62 @@
+---
+layout: post
+title: Are You Nuts?
+date: 2014-04-05 08:00:22.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Business
+- Technology
+tags:
+- impossible projects
+- innovation
+- standards
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: Are You Nuts?
+  _yoast_wpseo_metadesc: Sometimes, innovation requires setting an impossible goal
+    and working hard to reach it despite being told about its impossibility.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/tn
+  _wpghs_github_path: _posts/2014-04-05-nuts.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/biz/nuts/"
+excerpt: Sometimes, innovation requires setting an impossible goal and working hard
+  to reach it despite being told about its impossibility.
+---
+<blockquote>One of my favorite stories about [Steve Jobs] is about the moment when the Apple design team presented him with the first version of the iPod. He looked at it for a while, turned it over and over, weighed it in his hand and then said: "It's too big." The engineers protested that it was a miracle of state-of-the-art miniaturization – 1,000 songs packed into that tiny space.</p>
+<p>Jobs walked over to the fish tank in the corner of his office and dropped the prototype into the water. He then pointed to the bubbles that floated from it to the surface and said: "That means there's still some space in it. It's too big."[ref]<a title="Steve Jobs: Stanford commencement address, June 2005" href="http://www.theguardian.com/technology/2011/oct/09/steve-jobs-stanford-commencement-address">Steve Jobs: Stanford commencement address, June 2005</a>[/ref]</p></blockquote>
+<p>If this story were about anyone other than Steve Jobs, we'd all shake our heads and decry the executive's insanity.  Jobs, however, is another story entirely.  His reputation is such that we'd expect <em>exactly</em> this kind of behavior and instead term it genius.</p>
+<p>Exacting standards and outside-the-box thinking are a bit cliche when it comes to startups. Understanding technical limitations and knowing where to draw the line is the status quo when it comes to technology.</p>
+<p>So how can technology startups continue to innovate?</p>
+<h2>Set Goals</h2>
+<p>Sometimes, innovation requires setting an impossible goal and working hard to reach it despite being told about its impossibility.</p>
+<p>One of my past jobs was at a medical software company.  Our flagship product was a Windows-based clinical management system.  To stay relevant, we were focusing on patient care as well and wanted a web-based, cross-browser, cross-platform application <em>patients</em> could use to interface with their physicians.</p>
+<p>The first run was, admittedly, limited.</p>
+<p>We had a .Net website that worked great for viewing patient information.  Unfortunately client charts were static JPEGs (rendered remotely by the desktop software) and the in-browser applet to download patient information from blood glucose meters was built in ActiveX.  Things worked great, assuming you used specific versions of Internet Explorer and understood enough about charts to not care about dynamic filtering.</p>
+<p>Our boss set two seemingly impossible goals: make the charts interactive, and make the meter download applet work on Mac.</p>
+<p>A co-worker took the charts initiative and, over the period of a year, rebuilt the system from scratch using Java.  Data was still pulled remotely from the desktop application but was rendered in real-time using Java, thus allowing both patients and physicians to filter data dynamically and re-render charts on demand.</p>
+<p>The device download was a bit trickier.</p>
+<h2>Building the Impossible</h2>
+<p>My task was to build an in-browser application that allowed patients to download data from devices connected to their machine's USB or serial ports.  It had to work on Windows <em>and </em>Mac.  It had to work on Internet Explorer, Google Chrome, Safari, <em>and</em> Firefox. It had to be built in such a way that we could deploy updates for new devices without requiring customers to update software on their machine (most of our customers were not tech savvy).</p>
+<p>I argued <em>a lot</em> that the goal was an impossible one.</p>
+<p>My boss didn't care.</p>
+<p>I beat my head against the wall for <em>months</em> before I found a solution.  <a title="FireBreath" href="http://www.firebreath.org/display/documentation/FireBreath+Home">An open source library exists</a> that allows for the easy cross-compilation of a browser plugin into both an ActiveX (Internet Explorer) and an NPAPI (everyone else) extension.</p>
+<p>I used the FireBreath library to write a simple C++ app that exposed the API of a machine's peripheral ports (namely USB and serial) to a custom API layer built in JavaScript.  Visitors hitting the site would be prompted to install a simple plugin - once - that allowed us to interface with their blood glucose meter from within the browser.</p>
+<p>As new meters came online, we simply scripted "drivers" for them in JavaScript and made them available on the site.  The FireBreath plugin itself never needed to be updated since it merely passed data from point A to B.</p>
+<p>Our boss's exacting standards and insane product requests paid off.</p>
+<h2>Are You Nuts?</h2>
+<p>If you're not trying to build the impossible, you're not trying hard enough.</p>
+<p>Innovation is born when you try to accomplish something everyone tells you cannot be done.  If you, instead, acquiesce to the status quo you give up any power you once had to <em>change</em> the status quo.</p>
+<p>Asking for the impossible gives us products and software we've never imagined. Had Jobs given up on the impossible, we wouldn't have the iPhone, the iPad, the Macbook Air. Had my boss given up on the impossible, his customers would still be tied to IE only for website access.</p>
+<p>Asking for the impossible will first brand you as insane.  Refuse to give up on the impossible, and your title will transition from "insane" to "visionary."</p>
+<p>Look at how you approach projects today: are you shooting for the moon, or comfortable with the status quo?</p>

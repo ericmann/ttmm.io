@@ -1,0 +1,55 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Dependency Management'
+date: 2014-09-05 08:00:25.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409932813;s:7:"payload";a:0:{}}}
+  _yoast_wpseo_title: 'WordPress Core Proposal: Dependency Management'
+  _yoast_wpseo_metadesc: I don't have an answer for dependency management, but I do
+    recognize most of our existing solutions are worse than the problem itself.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/xw
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpghs_github_path: _posts/2014-09-05-wordpress-dependency-management.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-dependency-management/"
+excerpt: This is a problem for which I don't have a solution. It is also one where
+  I think most of the proposed solutions are problems to begin with.
+---
+<p>This is a problem for which I don't have a solution. It is also one where I think most of the proposed solutions are problems to begin with.</p>
+<h2>The Need</h2>
+<p>The need for code dependencies isn't one on the user end, but the developer side of things.</p>
+<p>We like clean, well-organized code. We like solid but flexible user experiences. As such, we advocate separating design (themes) from functionality (plugins) so that customers can swap themes as often as they want without sacrificing functionality on their site.</p>
+<p>As a friend once put it, separating functionality (like post types) into plugins allows "changing the wallpaper in the bathroom without the toilet disappearing on you." You can change the <em>design</em> while retaining all of the custom <em>behavior</em> of WordPress. For a developer, this makes sense.</p>
+<p>Some developers have taken to automatically disabling plugins and themes if other required plugins aren't available. Some have tried to automatically installing required plugins if they don't exist - a mechanism that often fails when using FTP-only filesystem access or when the required plugins don't live on WordPress.org.</p>
+<p>Other developers have automated their sites' dependencies with tools like Composer. This is great - if you have access to Composer, understand how to configure it, and are comfortable setting things up on your server.</p>
+<h2>Current Solutions Suck</h2>
+<p>For an editor, though, dependency management is the thing of nightmares.</p>
+<p>Separate functionality plugins means you have two (or more) modules to install. Two (or more) modules that need to be updated and maintained. Worse yet, if they're by different authors/marketplaces/shops there are now two (or more) ecosystems to understand or maintain.</p>
+<p>A programmatic solution like Composer means you need to a) understand how to manage your server, b) understand how to manage versioned dependencies, and c) keep up with changes on your own. Yes, Composer (and Git and Subversion and ...) can be automated to an extent. But this automation breaks when you have developers failing to follow <a title="SemVer" href="http://semver.org/">SemVer</a>, failing to test their changes with the particular mix of plugins you use, or releasing multiple versions all at once to fix bug after bug after bug.[ref]I love WordPress Analytics by Yoast, but when the plugin releases an update there are often several point-release patches that follow within 24 hours. Version 5.0 was released yesterday. Followed rapidly by 5.0.1, 5.0.2, 5.0.3, and 5.0.5 <em>all on the same day</em> to patch bugs in the initial release - at least one of which (5.0.2) that broke the display of even <em>my</em> site. For a non-dev working on a fully-automated setup, this spells tragedy for a site.[/ref]</p>
+<p>If all you want to do is <em>write</em>, the above solutions are hell.</p>
+<h2>What Would Really Work</h2>
+<p>While I don't think Composer (or tools similar to it) are the solution, as a developer I like and appreciate the model. The application defines a list of dependencies and the minimum (and maximum) versions allowed for each. The tool then automatically installs each dependency (and their dependencies, and their dependencies, etc) and keeps track of version updates for the developer.</p>
+<p>There's no reason we can't build something similar into the WordPress.org repository.</p>
+<p>A plugin (or theme) defines a list of its dependencies and minimum/maximum required versions. When an administrator tries to install said plugin, WordPress automatically downloads, installs, and activates any required libraries along with the one the administrator selected - but completely transparently. I'm not even sure these in-the-background dependencies should be exposed in the admin unless explicitly selected by an administrator.[ref]If, for example, someone already downloaded a dependency it would display in the admin. If they tried to download an already-installed dependency, the admin would merely reveal its presence.[/ref]</p>
+<p>This would streamline the experience related to extending WordPress, and would definitely make things easier to navigate for end-users wading through complex systems. Think of it as "WordPress Bundles" within the ecosystem.</p>
+<p>The only thing left to figure out is what to do if out-of-date dependencies are installed (managed ones could be updated transparently, but what would be do about explicitly installed versions?) Also, what do we do with multiple versions of the <em>same</em> dependency that might need to coexist? Some form of PHP meets Docker meets WordPress?</p>

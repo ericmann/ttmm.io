@@ -1,0 +1,74 @@
+---
+layout: post
+title: 'RingCentral Game Changers: Transcription with Rev.ai'
+date: 2019-10-03 06:00:14.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Python
+- Technology
+- Tutorials
+tags:
+- RingCentral
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_content_score: '90'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_focuskw: rev.ai
+  _yoast_wpseo_linkdex: '73'
+  _yoast_wpseo_title: "%%title%% %%page%%"
+  _yoast_wpseo_metadesc: Today we learn how to automatically transcribe incoming audio
+    messages into text using Rev.ai. This lets us leverage text-based analysis tools!
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/ringcentral-rev-ai/"
+excerpt: Today we learn how to automatically transcribe incoming audio messages into
+  text using Rev.ai. This will allow us to leverage text-based categorization and
+  sentiment analysis tools!
+---
+<p style="text-align: center;"><em>This article is part one in a <a href="https://ttmm.io/tech/changing-the-game/">month-long series</a> aimed at learning and exercising the RingCentral APIs in Python as part of their new <a href="https://gamechanging.dev">Game Changers challenge</a>. Feel free to follow along, leave a comment, or even participate in the challenge yourself!</em></p>
+<p><a href="https://ttmm.io/tech/ringcentral-monkeylearn/">Yesterday</a>, we talked a great deal about the MonkeyLearn API and how it can be used for topic extraction or sentiment analysis of text-based messages. Unfortunately, this text limitation means we can't <em>directly</em> leverage MonkeyLearn to categorize and filter incoming voice messages. We have to convert the audio into text first!</p>
+<p>Once upon a time, I leveraged the services of <a href="http://Rev.com">Rev.com</a> to translate some personal documents from English into another language so I could file them with the government of another country. It was fast, easy, and relatively inexpensive to use their platform to schedule the translation job. Recently, the team has expanded their services and now provides audio to text "translation" through the <a href="http://Rev.ai">Rev.ai</a> platform.</p>
+<h2>Setup</h2>
+<p>Once again, the very first step is to create a free account on Rev.ai. According to the platform's pricing, the first 5 hours of transcription are free and no credit card is required to sign up, so let's get started. Once you sign up, the very first thing you can do is upload a file to try a direct transcription.</p>
+<p>[caption id="attachment_8128" align="aligncenter" width="906"]<img class="size-full wp-image-8128" src="{{ site.baseurl }}/assets/2019/10/Rev-Dashboard.png" alt="Rev.ai Dashboard" width="906" height="901" /> Rev.ai Dashboard[/caption]</p>
+<p>As I want a better idea of how the system works, let's give it a try using the audio from a <a href="https://www.youtube.com/watch?v=wTb1hh_-QSQ">recent YouTube video</a> I posted about <a href="https://www.codercruise.com/">CoderCruise</a>. It's only a 3 minute video, and the extracted audio file is just about 3MB in size. It's a great quick test, though I truly hope my customers never leave voice messages this long. Uploading the file takes you immediately to the Recent Jobs screen where you can see the job is processing. After a few minutes, it will complete and the transcript is available, either in text or JSON format.</p>
+<p>[caption id="attachment_8129" align="aligncenter" width="749"]<img class="size-full wp-image-8129" src="{{ site.baseurl }}/assets/2019/10/Transcript.png" alt="Video Transcript" width="749" height="198" /> Transcript of my CoderCruise testimonial video.[/caption]</p>
+<p>It's not <em>perfect</em>, but it's a close enough speech-to-text solution that we can then pipe it through our AI classifier and gain some insight on the contents without needing to listen to the audio itself.</p>
+<h2>Wiring the API</h2>
+<p>Just like before, we'll be leveraging <em>Python</em> for our API interactions. The first step to leveraging the Rev.ai API is to install it:</p>
+<pre>pip install rev_ai</pre>
+<p>Once the API is installed, we can submit a job programmatically, just like we did through the web console:[ref]There is a capability to submit hosted files directly. I'm not standing up a web server to host this audio for now, but moving forward we can have Rev.ai download our voice messages <em>directly</em> from RingCentral and avoid storing the raw audio anywhere else.[/ref]</p>
+<pre>from rev_ai import apiclient
+access_token = 'your_access_token'
+
+# Create client with your access token
+client = apiclient.RevAiAPIClient(access_token)
+
+file_job = client.submit_job_local_file(filename="/home/ericmann/codercruise.m4a", metadata="CoderCruise 2019 testimonial", skip_diarization=False)</pre>
+<p>The output of this operation is, again, a job handle with an in-process status. We can further <a href="https://www.rev.ai/docs">leverage the API to query</a> for the job status, polling until it completes, or leverage a callback URL so the API will tell us when it's done.[ref]Our full voicemail assistant will leverage a callback URL so we can directly link the transcript output from Rev.ai to our classifier with MonkeyLearn.[/ref]</p>
+<p>For the moment, it's enough to refresh the Recent Jobs web console and see the new job queued up for processing. Once it's done, we can retrieve either the text or JSON transcript of the audio with <a href="https://www.rev.ai/docs#operation/GetTranscriptById">another API call</a>:</p>
+<pre>import json
+from rev_ai import apiclient
+access_token = 'your_access_token'
+job_id = 'your_job_id'
+
+# Create client with your access token
+client = apiclient.RevAiAPIClient(access_token)
+
+# Get transcript as text
+transcript_text = client.get_transcript_text(job_id)
+print(transcript_text)</pre>
+<h2>Next Steps</h2>
+<p>Now the various building blocks of our virtual voicemail assistant are starting to take shape. The assistant can receive voice messages from customers. We can convert those messages to text. An AI platform can automatically categorize those messages for us. The next step in the process will be to <em>act</em> on those categorizations as they come in!</p>

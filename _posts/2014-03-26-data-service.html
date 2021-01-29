@@ -1,0 +1,64 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Data Service'
+date: 2014-03-26 08:00:51.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- data
+- database
+- repository pattern
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_title: 'WordPress Core Proposal: Data Service'
+  _yoast_wpseo_metadesc: Rather than pitch a feature that is a must-have within the
+    ecosystem, I want to explain something that would be nice-to-have from a developer
+    perspective.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/td
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409799307;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6140;}i:1;a:1:{s:2:"id";i:6472;}i:2;a:1:{s:2:"id";i:5914;}}}}
+  keen_postview_count_this_30_days: '9'
+  _wpghs_github_path: _posts/2014-03-26-data-service.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/data-service/"
+excerpt: Rather than pitch a feature that is a must-have within the ecosystem, I want
+  to explain something that would be nice-to-have from a developer perspective.
+---
+<p>WordPress is, first and foremost, a platform that empowers <a title="What Constitutes a Publisher?" href="http://eamann.com/biz/what-is-a-publisher/">publishers</a> to get their content out into the world.</p>
+<p>Secondarily, WordPress is a platform upon which developers like me build new applications.  As such, there are hundreds of things that developers want to add to the list of WordPress' features that no publisher will ever know or care about.</p>
+<p>It leads to considerable debates in the community - what to or <em>not</em> to add to the system - and the ever-present reminder that, if you spend your days knee-deep in PHP debugging WordPress hooks, you're probably not the target customer of the product in the first place.</p>
+<p>I accept that, and rather than pitch a feature that is a must-have within the ecosystem, I want to explain something that would be nice-to-have from a developer perspective.</p>
+<h2>Services and Repositories</h2>
+<p>WordPress' data abstraction layer lies in a ubiquitous [cci]$wpdb[/cci] object that wraps all of the major MySQL functions we use. WordPress further abstracts MySQL away from developers with handy tools like [cci]get_posts[/cci] and [cci]WP_Query[/cci].</p>
+<p>Unfortunately, these abstractions are missing something major - easy accessibility.</p>
+<p>I'm a big fan of the <a title="The Repository Design Pattern" href="http://code.tutsplus.com/tutorials/the-repository-design-pattern--net-35804">repository pattern</a> in code.  In my implementations, I've built the pattern out of two primary objects:</p>
+<ul>
+<li>A data service</li>
+<li>A data repository</li>
+</ul>
+<p>The data service is the code I use within my application.  Fetching content from the database is <em>really</em> fetching it from the service.</p>
+<p>Collections, individual objects, advanced (filtered) queries - all of this happens on the service level, which can in-turn cache its returns in the interest of speed.  Since developers work against items returned from a service, they never have to interact with the data storage layer itself, leading to huge gains in potential abstraction.</p>
+<p>The data repository is the component that does all of the heavy lifting with the data itself - translating functional calls from the service layer into actual queries against the real data store.  By separating the raw query logic into the repository, you can easily <a title="WordPress Core Proposal: Portability" href="http://eamann.com/tech/wordpress-portability/">swap out your repository object</a> when you change your data store.</p>
+<p>I've actually built systems before where you could swap MS SQL for SQLite for MySQL for flat TXT files just by replacing the repository object in the application - no other code needed to change.</p>
+<h2>Why WordPress?</h2>
+<p>Firstly, I want to rid WordPress of its tight dependency on MySQL.  Coming from a .Net world, I've seen a lot of people try (and mostly fail) to run WordPress with other dialects of SQL.  Since so much of WordPress contains direct SQL calls, it will be a mess to properly translate everything.</p>
+<p>Abstracting the SQL calls to a repository, however, would make swapping data layers easier.</p>
+<p>Using a repository pattern <em>also</em> makes unit testing (without a database) far simpler.  Rather than installing a database and running actual SQL calls during WordPress' unit test run, you would provide a "mock" repository that just implements the same code interface - exposes the same method signatures as the real repository.  The mock layer allows you to run your code <i>independent</i> of a potentially problematic MySQL system.[ref]Anyone who's ever unit tested against a real database has seen problems arise where tests will inexplicably pass one moment and fail the next, despite making zero changes to the code.  This is most evident in systems attempting to run tests in parallel when the tests work with the same (dynamic) data layer.[/ref]</p>
+<h2>Patches Welcome</h2>
+<p>I've taken a few runs at building this kind of abstraction into WordPress already.  Unfortunately it's a <em>huge</em> endeavor and will likely take several releases to make it a reality.  That said, creating a plan to slowly convert core data access from [cci]$wpdb[/cci] to a new data service is a <em>must</em> before anyone tries to shoulder this effort on their own.</p>
+<p>I don't just want to implement the "new shiny" in WordPress - so I'm not going to pitch this as a wholesale, we-need-a-patch-for-all-the-things-today proposal.  Instead, I'd like to see plugin developers start taking this approach in their code.</p>
+<p>Repositories could <em>still</em> use [cci]$wpdb[/cci] internally for data access, but we should stop using [cci]global $wpdb[/cci] in the business logic of our code.  Any direct queries made against the database should similarly be abstracted away to use an <em>actual API</em> for data access that is independent of the actual storage implementation of the platform.<em><br />
+</em></p>
+<p>I suggest services and repositories (ideally queued up by proper factories) as one way around the hard MySQL dependency of WordPress.  What other suggestions would you make?</p>

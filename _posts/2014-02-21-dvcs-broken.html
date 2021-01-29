@@ -1,0 +1,56 @@
+---
+layout: post
+title: DVCS is Broken
+date: 2014-02-21 08:00:42.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Git
+- GitHub
+- Mercurial
+- subversion
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: DVCS is Broken
+  _yoast_wpseo_metadesc: Git is a lifesaver for easily branching, tagging, and resolving
+    merge conflicts, but Subversion is superior when it comes to sub-project management.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/sg
+  _wpghs_github_path: _posts/2014-02-21-dvcs-broken.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/dvcs-broken/"
+excerpt: While Git (and Mercurial) is a lifesaver when it comes to easily branching,
+  tagging, and resolving merge conflicts, Subversion (and TFS and the like) is superior
+  when it comes to sub-project management.
+---
+<p>In one of my earliest projects, the file tree of my application was littered with files ending in [cci].1[/cci], [cci].2[/cci], [cci].old[/cci], etc.  Up til then I had been a solo developer learning how to program out of books, and none of those books said word 1 about version control.</p>
+<p>Then I decided to publish a WordPress plugin, and had to buy a book on Subversion to make sense of the "how to publish a plugin" page in the Codex.[ref]The fact that I had to buy a book to understand allegedly "common sense" documentation shows either just how lacking our documentation is or just how green of a developer I was.  I'm still not sure which ...[/ref]  This magical new version control system was amazing.</p>
+<p>I quickly set up my desktop to act as a Subversion server and put <i>all</i> of my projects under version control.</p>
+<h2>DVCS</h2>
+<p>My next job finally took me to a company with multiple developers.  Among other things, this meant I finally had the benefit of peer code review, had colleagues off whom I could bounce ideas, <em>finally</em> had a reason to learn unit testing, and I ran head-first into the limitations of Subversion.</p>
+<p>Namely, two of us, working on the same codebase, <em>at the same time</em>.</p>
+<p>Subversion was a nightmare!  I spent more hours each day reconciling code conflicts than I did actually writing code.  Had we been working on <em>separate</em> projects in the same repository, things would have been fine.  Unfortunately we were working in a world where I was committing unit tests in parallel with him updating the base API of the project.  Changing a single variable name (i.e. to fix a typo) at the top of a file often resulted in Subversion flagging <em>every other line in the file</em> as a conflict.</p>
+<p>We took a few weeks to find a better way, and eventually converted all of our projects to <a title="Mercurial SCM" href="http://mercurial.selenic.com/">Mercurial</a>.[ref]We wrote off Git since too many developers at the time - and still - thought Git was synonymous with GitHub and our boss was adamantly against anything resembling open source.  Using Mercurial made the "hey boss, we need 2 days to do nothing but migrate our repository and update the server" conversation easier.[/ref]</p>
+<p>Using Mercurial was also the first time I experienced subrepos.  Our multiple projects shared a handful of libraries; rather than schism our work, we placed the libraries into their own repositories and just referenced them as submodules in our main project repositories.  Everything was fine - until another developers' API changes resulted in a necessary update to a submodule.</p>
+<p>Keeping track of releases using tags was the only way we could make sense of the differences in our submodules, but it was <em>still</em> a nightmare since our bundled libraries were so closely related and <em>all</em> under active development.</p>
+<h2>Multi-Project</h2>
+<p>Fast forward a bit and I returned to the world of open source.  In the WordPress world, many of us use Subversion for deployment and Git for active development.  This is fine in theory, but breaks down in a handful of cases:</p>
+<ol>
+<li>When deployment is needed, via Subversion, to multiple endpoints (i.e. staging <em>and</em> production)</li>
+<li>When a Git repo becomes so large it needs to be segmented out into multiple subrepos that may or may not remain in-sync with their Subversion deployment</li>
+</ol>
+<p>The other day, I needed to add a library I maintain to someone else's project repository.  Typically, I'd just add a Git remote to my own repo, then push to their remote.  Except ... their entire server infrastructure (configuration, server applications, library extensions, etc) was all contained within a single repository.</p>
+<p>To add my code, I needed to clone <em>their entire repository</em>, check my project out in the appropriate subfolder, and push my changes back to the parent.</p>
+<p>In a Subversion world, I could have just checked out the appropriate <em>directory</em>, inserted my code, and checked that directory back in.  Much smoother, and much less clutter on my local machine with a 200MB project just so I can add a 300KB library.</p>
+<p>While Git (and Mercurial) is a lifesaver when it comes to easily branching, tagging, and resolving merge conflicts, Subversion (and TFS and the like) is superior when it comes to sub-project management.</p>
+<p>Is having the best of both worlds too much to ask?  In my opinion, distributed version control systems (like Git) are just as broken as centralized repositories (like Subversion), even though the ways in which they are broken are very different.</p>

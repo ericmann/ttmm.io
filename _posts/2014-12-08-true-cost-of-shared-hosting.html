@@ -1,0 +1,48 @@
+---
+layout: post
+title: The True Cost of Shared Hosting
+date: 2014-12-08 08:00:35.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- hosting
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: The True Cost of Shared Hosting
+  _yoast_wpseo_metadesc: Shared hosting might appear inexpensive, but the hidden cost
+    of cut-rate service is higher than you might think.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/-f
+  _wpghs_github_path: _posts/2014-12-08-true-cost-of-shared-hosting.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/true-cost-of-shared-hosting/"
+excerpt: Shared hosting might appear inexpensive, but the hidden cost of cut-rate
+  service is higher than you might think.
+---
+<p>My first website ever was hosted on a university's in-house servers. It was fairly simple, and I managed all of the dynamic components from within Microsoft Frontpage.[ref]I pulled an archive of this site off an old USB I had sitting around this weekend. The markup was awful, but it was enlightening to see how far things have come since 2004 when I first built the site.[/ref]</p>
+<p>Unfortunately, a static site was <em>all</em> I could ever use on that server. It was essentially a file server, configured explicitly so researchers and staff could share static documents quickly and without needing to set up a separate system. I merely abused the server's presence (and that anyone with a university email had an active subdomain) to host my static blog.</p>
+<p>Fast forward to graduate school and I upgraded from this limited shared hosting account to a <em>paid</em> shared hosting account with Network Solutions. Gone were the days of static HTML sites, replaced instead with dynamic PHP and database-powered sites. Unfortunately, I still had little real access to the server. I used a web-based admin tool to configure databases, and even uploaded file content through a web admin.[ref]I later replaced this with a client-side FTP client, but it didn't really do anything differently.[/ref]</p>
+<p>I've been playing the web hosting game for a few more years now, and I've grown accustomed to working with servers that provide much fuller access to the infrastructure. I typically spin up a new virtual machine, install the software I need, harden the access points so I can sleep at night knowing it's secure, and wire in the appropriate 3rd party support systems where I can. Being able to log in to the machine remotely has become invaluable to debugging issues that come up.</p>
+<p>This past week, though, I helped a friend make some changes on their server. It was an inexpensive shared host, so I anticipated a few hiccups in what we had to do. Sadly, the "few" hiccups quickly became legion.</p>
+<p>The system was configured in such a way that I couldn't install WordPress merely by uploading files and running the install.[ref]Actually, I <em>could</em>, but system security policies locked everyone out of remote access to the WordPress login screen. Once the system was installed, I couldn't actually use it.[/ref] Instead, I had to move an existing site to a backup location and run the host's automated installer to drop WordPress in a fresh [cci]public_html/[/cci] directory.</p>
+<p>Then I had to use the same console within the host's control panel to log in to the site. As a result, though WordPress is aware of three discrete users for the site, we can only log in with the 1 set of credentials the control panel recognizes.</p>
+<p>When you cut costs and go with a cheap host, you lose out on the capabilities extended by quality hosting environments. What you save in a lower annual hosting feel you quickly lose in the <em>hours</em> it takes someone to fix a poorly-engineered system.</p>
+<p>For example, say it takes a competent WordPress engineer 1 hour to fully configure a VPS, harden its access points, install WordPress, and configure your collection of plugins and theme.[ref]This is a fictitious number I'm using for comparison purposes only. Rarely do sites launch this quickly, and those that do involve many hours of lead-in time beyond just click-and-deploy.[/ref] Such a VPS costs as little as $5 per month. The engineer's time will run for (I hope) $150/hr.</p>
+<p>In all you're looking at a fixed cost of $150 for setup and $60 recurring annually for hosting. Add in a few hours here and there for server maintenance and ongoing updates, and you might spend $500 a year on the system.</p>
+<p>On the other hand, look at the cut-rate shared hosting. Many plans start at the same price as the cheap VPS above ($5/month). However, they're shared infrastructure, so any security hardening you'd do on a VPS is <em>impossible</em> on the shared host. In addition, many of the configuration and monitoring tools engineers will use to get things running are either unavailable or only accessible through sluggish web-based consoles. The 1-hour setup referenced above might take 3 or more hours, <em>at the same rate</em>.</p>
+<p>You're looking now at a fixed cost of $450 <em>just to set things up</em>. Recurring hosting is still just $60 each year, but there's no guarantee if or when the shared host updates infrastructure. Unpatched software leads to security holes or hacks that are expensive (and time-consuming) to repair. Untested patches deployed blindly across a black-box architecture are just as costly.</p>
+<p>Launching with a cheap shared host <em>doesn't actually save you money</em> when a complete VPS is available for the same price. Instead, the additional overhead applied by the host to create a shared environment will almost assuredly <em>cost</em> you money.</p>
+<p>So ... where is <em>your</em> site hosted?</p>

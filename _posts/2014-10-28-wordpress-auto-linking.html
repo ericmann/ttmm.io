@@ -1,0 +1,46 @@
+---
+layout: post
+title: WordPress and Auto-Linking
+date: 2014-10-28 08:00:38.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: WordPress and Auto-Linking
+  _yoast_wpseo_metadesc: I want to change the way the link screen in WordPress works.
+    Do you think it's a good idea?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zb
+  _wpghs_github_path: _posts/2014-10-28-wordpress-auto-linking.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-auto-linking/"
+excerpt: I want to change the way the link screen in WordPress works. Do you think
+  it's a good idea?
+---
+<p>One of the most frustrating elements of WordPress is the little link button in the editor toolbar. It's frustrating not because of how it works, but because of how it interrupts my workflow.</p>
+<h2>Current Workflow</h2>
+<p>I often work on a piece where I'm referencing a book or blog post or news article or Wikipedia reference where I want to link readers for further information. It would be like linking to <a title="The WordPress Homepage" href="http://wordpress.org">WordPress' homepage</a> so readers can look for more documentation.</p>
+<p>In many situations, the title of the link and the text being linked match. This is most often when I link directly to a book by title, include a footnote annotation for a quote from another source, or try to reference a piece of information from Wikipedia. Unfortunately, I'll often have to copy multiple pieces of information <em>twice</em> to get things to work right.</p>
+<p>I'll write up a blockquote, add a reference shortcode containing an article title, and try to link that title back to the article itself. My link will necessarily have the title both as the anchor text <em>and</em> the anchor title, but I have to copy that information into two different locations.</p>
+<p>It's a stumbling block for me and slows me down. I want to fix this.</p>
+<h2>The Ideal Workflow</h2>
+<p>When you link URLs in tools like Microsoft Word or Google Docs, the linking tool is smart enough to pull the link text (the URL) in as the HREF automatically. You can still manually edit the link, but you don't have to if things are already correct.</p>
+<p>Both tools save you a step.</p>
+<p>I'd like WordPress, when a piece of text is highlighted, to automatically populate the title field in the linking tool with said text. No selection, no pre-population.</p>
+<p>The advantage here streamlines workflows like mine - where the anchor text and title are the same and have to be copied in both locations. If you're <em>not</em> using my workflow, we can leave the title field selected so all you need to do is hit "delete" to clear things out and move on with your life.</p>
+<p>I know this would help my workflow move a lot more smoothly. Would it help yours? Is this worth patching?</p>

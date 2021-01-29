@@ -1,0 +1,58 @@
+---
+layout: post
+title: Open Source Matters
+date: 2014-01-13 08:00:13.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Business
+tags:
+- GPL
+- mit
+- open source
+- openness
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: Open Source Matters
+  _yoast_wpseo_metadesc: Trust and transparency go hand-in-hand. If you're not transparent,
+    how could I possibly trust you?
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/re
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409346271;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6378;}i:1;a:1:{s:2:"id";i:1445;}i:2;a:1:{s:2:"id";i:5894;}}}}
+  _wpghs_github_path: _posts/2014-01-13-open-source-matters.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/biz/open-source-matters/"
+excerpt: Trust and transparency go hand-in-hand.  If you're not transparent, how could
+  I possibly trust you?
+---
+<p><a title="Can I Count on You?" href="http://eamann.com/journal/can-count/">Trust</a> and transparency go hand-in-hand.  If you're not transparent, how could I possibly trust you?</p>
+<h2>Why I Love Open Source</h2>
+<p>WordPress is an amazing platform, but not because of the features it offers.  WordPress is amazing because of <a title="Why WordPress?" href="http://ttmm.io/why-wordpress/">the community</a> that builds it.  The individual men and women who give their best work, give it away for free, and earn their daily bread elsewhere.</p>
+<p>WordPress being open source means anyone can see the code that runs their site, make changes to the code, and distribute those changes to someone else if they want to.  It's an amazing principle that has irrevocably changed the software development landscape.</p>
+<h2>Why I Hate Open Source</h2>
+<p>At the same time, there's a dark side to open source.  Well, not to the <em>idea</em> of open source, but the actual practice.  It's a matter of noise versus signal.</p>
+<p>Anyone who's sat in a community development meeting can vouch for the difficulty of sussing out real contributions from noise and chatter and "me to!" throughout the meeting.  As a result, it's hard to know for sure what's going on - so many project leaders will instead take the conversation off open tools like IRC or blogs or forums and move them to <em>closed</em> tools HipChat or Skype or Email.</p>
+<p>I don't care what you say, leading an open source project from behind closed doors is <em>not</em> transparent.</p>
+<p>I understand why conversations are taken offline, but I don't have to agree with that decision.</p>
+<h3>Critical Failure</h3>
+<p>Once upon a time I worked with a .Net-based forum application.  It was powerful, used by thousands of sites, and fit my need perfectly.  Added to that, it was open source, so I could make changes as necessary.</p>
+<p>When I started at the company, I didn't have a login for the forum.  Actually, <em>no one</em> in the company had the super-admin login.  The software had been installed by a previous developer who had long since left for a different job.  In order to gain access to the site, I had to hack it.</p>
+<p>Poring over the source code, I found a vulnerability in how feeds were generated - query arguments on the feed page were passed directly to the database without any sanitization.  I built the query I needed to add myself as a super-admin, accessed the feed page, and voila!</p>
+<p>My next step was to refactor the feed code to plug the vulnerability so no one else would compromise the site in such a way.  I also took the liberty of preparing a patch and submitting it upstream to the security contact of the software vendor.</p>
+<blockquote><p>Thanks, but unless someone else complains or pays us for an audit, we don't really care.  Also, we consider this a huge ethical breach if we see you disclosing this vulnerability anywhere in public.</p></blockquote>
+<p>Behind closed doors, the vendor knew about the exploit.  Further, they <em>had a patch</em> to fix the exploit.  But they were so busy elsewhere - and I was the only report - that it was deemed trivial and ignored.</p>
+<p>A Google search turned up 12,000 other sites running this vulnerable version of the software.[ref]The vendor has since released a new version that entirely replaced the DB layer with parameterized SQL queries.  Everything is sanitized with the newer version, and the number of sites running the older, vulnerable one has dropped to below 1,000.[/ref]<em><br />
+</em></p>
+<h2>Moving Forward</h2>
+<p>I love working with open source software because of the freedom it grants me.  I hate working with open source software when the development and discussion of said software happens behind closed doors.</p>
+<p>Openness is an ideal many open source projects are flat-out failing to achieve.</p>
+<p>We <em>can</em> have thorough, open conversations about features and roadmaps.  We <em>can</em> have clear lines for contributing new code, ideas, UX mocks, and usability critiques.  We <em>can</em> have clear responses to - and documentation of changes from - security issues in software.</p>
+<p>We <em>can</em> do better.</p>

@@ -1,0 +1,50 @@
+---
+layout: post
+title: Why Open Source? - Part 2
+date: 2011-01-05 08:00:34.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/d6
+  _edit_last: '2'
+  _yoast_wpseo_metadesc: Last month, I joined with several other developers explaining
+    why I work with open source. Today I follow up with a sequel.
+  _yoast_wpseo_focuskw: open source
+  yourls_tweeted: '1'
+  _zem_rp_image: '3196'
+  _wpghs_github_path: _posts/2011-01-05-why-open-source-part-2.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/why-open-source-part-2/"
+---
+<p>Last month, I joined with several developers in explaining my reasoning behind working with open source software.  Like many others, I am involved in open source projects because I enjoy working with the community.  Last night, I only reinforced that.</p>
+<p>For some time, I've been hosting all of my various WordPress websites on a multisite network - meaning I install WordPress once and everything ties together.  This makes it easier to process code updates when they come out (install once rather than several times) and I can jump from the admin panel of one to the other without having to log in each time.</p>
+<p>But each of my websites also has its own domain, so I have to "map" my disparate domain names to the appropriate sites in my WordPress network.</p>
+<p>The good news: there's <a title="WordPress MU Domain Mapping" href="http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/" target="_blank">a plug-in that does exactly that</a>.</p>
+<p>It's free, easy to install, and incredibly well-supported.  When I started using the beta releases of WordPress on my live sites (against the instructions of the core team, of course) I was able to get a beta version of the domain mapping plug-in that worked with the new release of WordPress.  How often have you been able to get pre-release plug-ins to work with a pre-release platform outside of the open source community?</p>
+<p>I also started using <a title="SEO Plugin - Yoast" href="http://yoast.com/wordpress/seo/" target="_blank">an incredible SEO plug-in</a> to make sure my content is always reaching the maximum number of people online.  It helps me clean up my keywords, maximize the impact of my posts, and track how effective each article is online.  Unfortunately, it also broke my site.</p>
+<p>As soon as I installed the SEO plug-in, my domain mapping system started acting up.  I could still log in.  I could still write posts.  I could still manage plug-ins.  But if I was logged in, I couldn't navigate to the front-end of my website!  I had to either log out or use a different browser to view post previews.  Definitely a less-than-efficient workflow.</p>
+<p>Most people would have given up there.  I didn't.  I dropped an email to the developer of the SEO plug-in, <a href="http://yoast.com/" target="_blank">Joost de Valk</a>, and asked for advice.  In a matter of minutes via email and Twitter, we figured out exactly what was going on and fixed the problem.</p>
+<p>The domain mapping plugin appends several authentication keys and tokens to the blog's URL to keep you logged in to each site in the network ... but there was a setting in the SEO system that was stripping these appended query variables from the URL.  In short, I ended up in an infinite loop, bouncing back and forth between a login script and the main site.</p>
+<p>There were two ways to fix this:</p>
+<ol>
+<li>Tell the SEO plug-in not to redirect "ugly" links with query variables</li>
+<li>Tell the SEO plug-in which query variables to ignore</li>
+</ol>
+<p style="text-align: center;"><a href="http://ttmm.wpengine.com/wp-content/uploads/2011/01/options.jpg"><img class="aligncenter size-full wp-image-3196" src="{{ site.baseurl }}/assets/2011/01/options.jpg" alt="" width="475" height="341" /></a></p>
+<p>I elected option #2 and, a total of 5 minutes after reporting my problem, had a clear and easy-to-implement fix to the problem.  I can tell you from personal experience that has <em>never</em> happened with any commercial situation.</p>
+<p>Remember, open source developers contribute code because they <em>want</em> to.  They care about the systems they create, and will often go to extreme ends while supporting them.  Yoast (Joost de Valk) is no exception to this rule.  He is an outstanding developer who has earned the respect of nearly everyone involved with WordPress.  And yesterday, he earned even more respect from me.</p>
+<p>I know that working in open source won't make me rich.  I do it because I enjoy the challenge of writing innovative code.  I do it because I enjoy working with certain members of the community.  I do it because it's fun to give back to the people and projects that have trained me and taught me everything I know.</p>
+<p>So when I can, I also work to support other members of the community - contributing patches back to other's projects, reviewing source when I can, and even donating funds when certain developers demonstrate a superhuman effort in customer service.</p>
+<p>Have you benefited from an open source system?  How did you say "thank you" to the developer who lent you a hand?</p>

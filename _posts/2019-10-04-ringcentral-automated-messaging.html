@@ -1,0 +1,68 @@
+---
+layout: post
+title: 'RingCentral Game Changers: Automated Messaging'
+date: 2019-10-04 06:00:27.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Python
+- Technology
+- Tutorials
+tags:
+- RingCentral
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _yoast_wpseo_content_score: '60'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/ringcentral-automated-messaging/"
+excerpt: We want to send a text message to a manager whenever a voice message is received
+  by our system. In this walkthrough, we do exactly that!
+---
+<p style="text-align: center;"><em>This article is part one in a <a href="https://ttmm.io/tech/changing-the-game/">month-long series</a> aimed at learning and exercising the RingCentral APIs in Python as part of their new <a href="https://gamechanging.dev">Game Changers challenge</a>. Feel free to follow along, leave a comment, or even participate in the challenge yourself!</em></p>
+<p>Thus far, we've learned how to <a href="https://ttmm.io/tech/ringcentral-getting-started/">configure an automated voice message system</a>, <a href="https://ttmm.io/tech/ringcentral-rev-ai/">transcribe voice messages</a>, and leverage AI to <a href="https://ttmm.io/tech/ringcentral-monkeylearn/">categorize those messages</a>. The next step in our journey is to actually <em>act</em> on the categorization of those messages. What should happen when a voicemail comes in? Should we immediately page a first responder by text? Should we send an email to a support team? Should we create a work ticket? The actual actions we can take are as diverse as the messages that could come in.</p>
+<p>For the purposes of this walkthrough, we merely want to send a text notification that there's a pending voice message.[ref]When we pull everything together later, we'll want to also categorize the <em>urgency</em> of the message and only send a text if the message itself is urgent.[/ref]</p>
+<h2>API Integration</h2>
+<p>As we've already set up our RingCentral account, today we just want to exercise it to send a message. Like our examples before, the first thing we need to do is install the Python SDK:</p>
+<pre>pip install ringcentral</pre>
+<p>Before we can send a message, though, we need to create an application through the RingCentral console. Logging in and clicking "Create App" will let us set things up and wire in the appropriate credentials. If/when we're ready to graduate our app to production for use with real phone numbers, we can do so from the same screen.</p>
+<p>[caption id="attachment_8134" align="aligncenter" width="1060"]<img class="size-full wp-image-8134" src="{{ site.baseurl }}/assets/2019/10/Sample-App.png" alt="Sample App" width="1060" height="847" /> Sample app in the RingCentral console.[/caption]</p>
+<p>Now we want to actually send our text message. The recipient below is going to be my cell number. The other credentials all come from my RingCentral account directly:</p>
+<pre>from ringcentral import SDK
+
+RECIPIENT = '&lt;ENTER PHONE NUMBER&gt;'
+
+RINGCENTRAL_CLIENTID = '&lt;ENTER CLIENT ID&gt;'
+RINGCENTRAL_CLIENTSECRET = '&lt;ENTER CLIENT SECRET&gt;'
+RINGCENTRAL_SERVER = 'https://platform.devtest.ringcentral.com'
+
+RINGCENTRAL_USERNAME = '&lt;YOUR ACCOUNT PHONE NUMBER&gt;'
+RINGCENTRAL_PASSWORD = '&lt;YOUR ACCOUNT PASSWORD&gt;'
+RINGCENTRAL_EXTENSION = '&lt;YOUR EXTENSION, PROBABLY "101"&gt;'
+
+rcsdk = SDK( RINGCENTRAL_CLIENTID, RINGCENTRAL_CLIENTSECRET, RINGCENTRAL_SERVER)
+platform = rcsdk.platform()
+platform.login(RINGCENTRAL_USERNAME, RINGCENTRAL_EXTENSION, RINGCENTRAL_PASSWORD)
+
+platform.post('/restapi/v1.0/account/~/extension/~/sms',
+{
+  'from' : { 'phoneNumber': RINGCENTRAL_USERNAME },
+  'to' : [ {'phoneNumber': RECIPIENT} ],
+  'text' : 'You have an urgent voicemail pending...'
+})</pre>
+<p>Entering the appropriate credentials and running the code above successfully dispatches a message to my cell:</p>
+<p>[caption id="attachment_8136" align="aligncenter" width="1080"]<img class="size-full wp-image-8136" src="{{ site.baseurl }}/assets/2019/10/Screenshot_20191003-202633_2.png" alt="Test SMS" width="1080" height="495" /> Test SMS message from our virtual assistant.[/caption]</p>
+<h2>Next Steps</h2>
+<p>The <em>final</em> step for our next post will be to wire everything together - from receiving the voice message to broadcasting a text alerting us of its urgency. Stay tuned!</p>

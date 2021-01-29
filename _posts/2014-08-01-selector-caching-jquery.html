@@ -1,0 +1,67 @@
+---
+layout: post
+title: Selector Caching in jQuery
+date: 2014-08-01 08:00:58.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- cache
+- javascript
+- jQuery
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Selector Caching in jQuery
+  _yoast_wpseo_metadesc: One of the first critiques I find myself writing while I
+    review JavaScript code is "cache your selectors."
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409800502;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6458;}i:1;a:1:{s:2:"id";i:5489;}i:2;a:1:{s:2:"id";i:6323;}}}}
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/wx
+  keen_postview_count_this_24_hours: '4'
+  keen_postview_count_this_7_days: '80'
+  keen_postview_count_this_30_days: '80'
+  _wpghs_github_path: _posts/2014-08-01-selector-caching-jquery.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/selector-caching-jquery/"
+excerpt: One of the first critiques I find myself writing while I review JavaScript
+  code is "cache your selectors."
+---
+<p>One of the first critiques I find myself writing while I review JavaScript code is "cache your selectors."</p>
+<p>Like me, many JavaScript developers are self taught and worked their way through a basic understanding of scripting through tutorials. Unfortunately, many tutorials sacrifice cleanliness for brevity, leading to functional snippets of code that look absolutely horrible in larger collections of code.</p>
+<p>The worst offender is the way developers handle jQuery selectors.  Most commonly, I see things like [cci]$( this )[/cci] repeated several times within a callback function. Or [cci]$( '#selector' )[/cci] used throughout a script to both bind and unbind multiple events.</p>
+<p>What new developers don't realize is that every call to [cci]$( something }[/cci] asks jQuery to rescan for the matching element, wrap it in a jQuery object, and <strong>create a new instance of something you already have</strong> in memory. If your code crashes due to memory cascades, overuse of redundant selectors might be related.</p>
+<p>Actually, if you use a more advanced IDE like <a title="PhpStorm" href="http://www.jetbrains.com/phpstorm/">PhpStorm</a> or <a title="WebStorm" href="http://www.jetbrains.com/webstorm/">WebStorm</a>, the IDE itself will alert you to this issue so you can correct it.</p>
+<h2>Caching Selectors</h2>
+<p>In a small application, caching selectors isn't that difficult. Just declare all of your objects at the top of your closure and use the new variables throughout your script.</p>
+<p><code lang="js">var $window = $( window ),<br />
+    $document = $( document ),<br />
+    $footer = $( '#footer' ),<br />
+    $sidebar = $( '#sidebar' ),<br />
+    $images = $( 'img' );</code></p>
+<p>Unfortunately, as the length of your application grows, the size of this selector cache grows and becomes difficult to manage. I've been experimenting with different forms of in-memory caching for JavaScript applications, and came up with a simple selector cache <em>object</em> that makes it easier to wrangle your references.</p>
+<p><code lang="js">function Selector_Cache() {<br />
+    var collection = {};</p>
+<p>    function get_from_cache( selector ) {<br />
+        if ( undefined === collection[ selector ] ) {<br />
+            collection[ selector ] = $( selector );<br />
+        }</p>
+<p>        return collection[ selector ];<br />
+    }</p>
+<p>    return { get: get_from_cache };<br />
+}</p>
+<p>var selectors = new Selector_Cache();</p>
+<p>// Usage $( '#element' ) becomes<br />
+selectors.get( '#element' );</code></p>
+<p>Using [cci]selectors.get( something )[/cci] in your code from that point forward might be slightly more <em>characters</em> than the redundant selectors we've used previously, but it's far more performant. Once you run code through a minifier, the character count difference will be negligible anyway.</p>

@@ -1,0 +1,64 @@
+---
+layout: post
+title: Keep Your Environment Clean
+date: 2014-11-08 08:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- unit test WP_Mock
+- Vagrant
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Keep Your Environment Clean
+  _yoast_wpseo_metadesc: I run a streamlined, sandboxed development environment to
+    keep my system clean. It changes the way I structure projects - for the better!
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zm
+  _wpghs_github_path: _posts/2014-11-08-keep-environment-clean.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/keep-environment-clean/"
+excerpt: I run a streamlined, sandboxed development environment to keep my system
+  clean. It changes the way I structure projects - for the better!
+---
+<p>When I started PHP development, it was with WAMP Sever installed locally. This gave me local installations of Apache, MySQL, and PHP that let me run WordPress while still offline. It was great.</p>
+<p>Well, actually it sucked, but I was new enough to the game I didn't know any better.</p>
+<p>My <em>first</em> attempt was actually to install all three applications locally on Windows <em>manually</em>. I was able to get MySQL and PHP running, but Apache gave me headaches. I was working between a laptop and a desktop at the time, so I installed everything on the desktop and just accessed them over the local network.</p>
+<p>This worked, but it wasn't very portable. For the life of me, though, I couldn't get the software to run on my laptop ... so i switched instead to WAMP.</p>
+<p>The only issue I had (at first) with WAMP was that it interfered with Skype (both would attempt to bind to port 80, so I'd have to start WAMP <em>first</em> otherwise they'd collide). Then I needed to upgrade PHP because WordPress bumped their requirement to 5.2.</p>
+<p>Three days of frustration later, I dropped WAMP for XAMPP. It did pretty much the same thing, but had a smaller footprint, was easier to install, and had a nifty toolbar option that allowed me to start/stop the entire suite of apps at a moments' notice.</p>
+<p>Unfortunately, XAMPP <em>still</em> sucked.</p>
+<p>Fast forward a few years and I was given the opportunity to help build VVV with a smart team of developers both within and nearby to 10up. VVV uses virtual machines to entirely <em>sandbox</em> a local development environment - PHP, Apache, Nginx, whatever are all installed on the virtual machine and <em>not</em> your local environment.</p>
+<p>When I got a Mac, I started with VVV. The only tools I have installed <em>locally</em> are Node (for project management), PHP (for Composer at the command line), and Composer (for project management).</p>
+<p>When I got a new PC, I started again with VVV (albeit this time on top of Hyper-V instead of VirtualBox).</p>
+<p>The improvement in my workflow has been enormous! Well, except for needing to boot the virtual server to do just about everything.</p>
+<h2>Unit Testing</h2>
+<p>Except for unit testing projects built with <a title="WP_Mock" href="https://github.com/10up/wp_mock">WP_Mock</a>.</p>
+<p>I'm a huge proponent of decoupling development projects <em>as much as possible</em>, which is why I'm also a huge opponent of direct SQL queries within WordPress. The direct database calls mean that, to test WordPress core programatically, you <em>must</em> have a database configured and available - otherwise function calls will fail fatally.</p>
+<p>This is why the WordPress Unit Test Framework requires you set up a local database against which to run your tests. I hate that.</p>
+<p>Next week I'll be giving two separate talks about unit testing at php[world] in Washington, DC. One of my talks will cover the benefits of the WP Test Framework, but the gem of each is the WP_Mock tool I've developed with <a title="John P Bloch" href="https://twitter.com/johnpbloch">John Bloch</a> of 10up and the dev team at <a title="TechCrunch" href="http://techcrunch.com">TechCrunch</a>.</p>
+<p>This tool allows me to <em>mock</em> WordPress' core API when I'm testing my theme and plugin code. That means I don't even need WordPress installed in order to test my code. Nor do I need a local database.</p>
+<p>Just my code itself, and PHP (so I can install Composer and manage the project's dependencies).</p>
+<p>Want to see such a system in action?</p>
+<ol>
+<li>Clone my <a title="HTTP" href="https://github.com/10up/http">HTTP utility project</a> to your machine</li>
+<li>Navigate into the project directory from the command line</li>
+<li>Run [cci]composer install[/cci] to pull down project dependencies</li>
+<li>Now run [cci]vendor\bin\paratest[/cci] to run the test suite[ref]Unfortunately, this command requires a *NIX style command line. Windows users will <em>still</em> have to run this from within a VM or some sort of Bash-style command environment.[/ref]</li>
+</ol>
+<p>You've now cloned a project, used PHP/Composer to pull down its dependencies (including WP_Mock, PHPUnit, and Paratest), then used PHP/Paratest/PHPUnit to run a test suite with 100% coverage. On a WordPress project. Without installing WordPress, a web server, a database, or anything else you'd normally have to install.</p>
+<p>You've tested code locally, and kept your environment clean at the same time.</p>
+<p>When I started writing code for WordPress, I thought something like this would be impossible. Look how far we've come ...</p>

@@ -1,0 +1,59 @@
+---
+layout: post
+title: WordPress is One Of the Best Decisions You Can Make
+date: 2013-10-25 11:15:27.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- hack
+- security
+- WordPress
+meta:
+  _yoast_wpseo_linkdex: '80'
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: WordPress
+  _yoast_wpseo_title: WordPress is One of the Best Decisions You Can Make
+  _yoast_wpseo_metadesc: Some say using WordPress in an enterprise or mission-critical
+    environment is a mistake. I disagree. Using WordPress is the best decision I've
+    ever made.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/qs
+  _zem_rp_image: empty
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409823467;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6001;}i:1;a:1:{s:2:"id";i:5995;}i:2;a:1:{s:2:"id";i:5611;}}}}
+  _wpghs_github_path: _posts/2013-10-25-wordpress-one-best-decisions-can-make.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-one-best-decisions-can-make/"
+excerpt: Some would say the decision to use WordPress in an enterprise or mission-critical
+  environment is a mistake.  I disagree. Strongly. Using WordPress is the best decision
+  I've ever made.
+---
+<p>A coworker pointed me today at an interesting article on <a title="Is WordPress One Of The Biggest Mistakes You Can Make?" href="http://lbpost.com/business/2000002990-is-wordpress-one-of-the-biggest-mistakes-you-can-make">Long Beach Post</a> suggesting WordPress would be a bad business decision.</p>
+<blockquote><p>The real problem, according to Stan Stahl, Ph.D., the President of Citadel Information Group, a Los Angeles cyber security firm, is simple. "WordPress," he warns, "was designed to make for easy blogging with lots of plugin capability, not for security. It should NEVER be used for eCommerce or when connected to sensitive information or back-end corporate databases."</p></blockquote>
+<p>This quote is highly misleading. Yes, WordPress was <em>originally</em> designed for blogging.  It's a highly-extensible infrastructure that empowers developers to add and manipulate features through plugins and custom code in their themes.  But WordPress has <em>always</em> been designed with security in mind.</p>
+<p>The core WordPress application is <a title="WordPress 3.7 “Basie”" href="http://wordpress.org/news/2013/10/basie/">maintained by hundreds of developers</a> with a wide variety of experience.  Every line of code is peer-reviewed.  <a title="Security FAQ" href="http://codex.wordpress.org/Security_FAQ">When security vulnerabilities <em>are</em> found</a> they are fixed quickly and patches are pushed out immediately.  The entire process is completely transparent, which is both a plus and a minus.</p>
+<h2>Pros of Transparency</h2>
+<p>The first benefit is that everyone knows when WordPress fixes a security vulnerability.  With closed-source projects this isn't the case.  You may or may not receive a prompt to upgrade but often know nothing about the nature of the vulnerability that was patched - or how long the vulnerability was known in the wild.</p>
+<p>Since WordPress is open source, <em>anyone</em> can track down and patch a security hole.  By installing WordPress you are becoming part of a larger community of developers, and someone across the country - or world - might be patching a hole on your site that your internal security team missed.  You reap the benefits of millions of users working with and depending on the same software.</p>
+<h2>Cons of Transparency</h2>
+<p>Transparency is a double-edged sword.  If you <em>fail</em> to keep your site up-to-date when WordPress pushes a security update, the entire world will know your site is vulnerable.  Hackers have a slew of automated tools to scan sites at random and detect known issues so they can exploit your server.</p>
+<p>With the code base being open to the world, everyone can see exactly what you're doing and how.  They can determine how your forms are posted to the server and have a leg up at detecting potential SQL injection holes or cross-site scripting opportunities.  Opening your code to the world is inviting nefarious individuals to look at the internals of your site and probe for vulnerabilities.</p>
+<h2>Why the Pros Outweigh the Cons</h2>
+<p>The cons listed above are not unique to WordPress.  Any open source system in the world will be vulnerable in exactly the same way - but few projects are as open and responsive as WordPress.[ref]I once detected a SQL injection vulnerability in a .Net-based forum project. After patching my own server, I pushed the change back to the original dev team ... who sat on the fix for over a year. This left 1.2 million sites running the forum software open to a major security vulnerability![/ref] Opening your code to the world is a great way to reap the benefits of a global developer community - complete strangers helping to fix and optimize your project - but it's also an invitation to the world's hackers.</p>
+<p>Automated scans for security vulnerabilities are also not unique to WordPress - or even to open source.  Any product released to the wild is now available to both white hat and black hat developers.  If a vulnerability is discovered, the black hats will write an automated tool to scan and detect it.  Using an in-house or closed-source system is merely a way to protect yourself through security-by-obscurity - the less widely used the platform, the fewer hackers will target it.</p>
+<p><em><strong>This is not</strong></em><strong><em> security</em>.</strong></p>
+<p>Finally, the allegation that WordPress' extensibility is a vulnerability is false.  WordPress at its core is well-tested and secure. Adding any code to WordPress - as with adding any code to a proprietary or closed-source system - is potentially opening your site to more risk <em>if you fail to properly vet the code beforehand.</em>  WordPress is easy to extend, but <em>you</em> are responsible for making an informed, educated decision of how it is extended.</p>
+<h2>Summary</h2>
+<p>A decision to use WordPress is a decision to partner with a world-wide network of developers all passionately iterating on an already secure platform.  You can use WordPress to power your personal blog, your corporate website, <em>your e-commerce gateway</em>, or any other web property where it's the best fit.  WordPress won't always be the best fit for your project, but it's a great fit for many.</p>
+<p>Where I <em>do</em> agree with Stahl:</p>
+<blockquote><p>Security is management’s responsibility. Management must set the standards and validate IT’s compliance with them.</p></blockquote>
+<p>Using WordPress is the first of many decisions you must make when building your website. Properly securing your server, selecting appropriate additional enhancements, and enforcing certain security measures are some of the next steps - steps that apply to <em>all</em> websites despite your choice in software platform.</p>

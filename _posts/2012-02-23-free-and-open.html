@@ -1,0 +1,66 @@
+---
+layout: post
+title: Free and Open
+date: 2012-02-23 07:04:39.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- GPL
+- license
+- open source
+meta:
+  yourls_shorturl: http://eam.me/1-
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: GPL
+  _yoast_wpseo_metadesc: The GNU General Public License is the enemy of real software
+    freedom.
+  yourls_tweeted: '1'
+  _zem_rp_image: empty
+  _wpghs_github_path: _posts/2012-02-23-free-and-open.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/free-and-open/"
+---
+<p>I write software for a living.  Not something I ever expected to do for a career, but it happened and I'm fairly good at it.</p>
+<p>I also write software as a hobby.  Different languages and platforms - working with a diverse set of tools makes me a better developer.  I also <em>give away</em> most of the software I write in my free time.</p>
+<p>Why?</p>
+<p>Releasing software helps me find bugs, contribute to a growing community of developers, and raise my own name recognition in the market.  Increased name recognition means more consulting contracts.  It's a win-win.</p>
+<p>When I do give my software away, I try to pick the most permissive terms possible under which it's distributed.  So long as my name and copyright stays on the code, I don't care what you do with it.</p>
+<p>A great deal of the code I write in my free time is for WordPress.  WordPress is distributed under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GPL </a>(version 2, specifically), so my code has to licensed under GPL-compatible terms.</p>
+<p>And <em>that</em> is a can of worms that irritates me.</p>
+<p>In my opinion, the GPL is the enemy of software freedom.</p>
+<p>Let me say that again - the most commonly used license for "free" software is the enemy of free software.</p>
+<p>Here are a number of reasons why:</p>
+<ul>
+<li><strong>Various versions of the GPL are incompatible.</strong> WordPress uses GPLv2. The current "standard" is GPLv3.  GPLv2 code can be included in GPLv3 projects, but not the other way around. So for WordPress plugins to be GPLv2 compatible (a requirement for distribution via WordPress.org), they must <em>also</em> use the older version of the license.</li>
+<li><strong>The license is viral.</strong> I build websites. A client wishes exclusive rights and a restrictive license on the code they've bought from me (which is fine because they bought that right). But they also want to add a feature to the site to make it easier for their end users to interact with. That one feature on one page of the site <em>could</em> use a library licensed under the AGPL ... but incorporating that library (for one button on one page in a rich web application) would require <em>the entire project</em> to be GPL-compatible.</li>
+<li><strong>The terms of the license are ambiguous. </strong>Developers go blue in the face debating what is and is not compliant with their beloved license. If we spent half the time we spent debating actually writing new code, we might already have flying cars.</li>
+<li><strong>It's unproven in court. </strong>Everyone is tying their code to a license that has yet to be defended and upheld by any legal body.  The terms of the license are ambiguous at best, so we debate the <em>spirit</em> of the GPL and just pray that a judge will back us up should anyone ever contest it.</li>
+</ul>
+<p>The purpose of a free software license is to protect users.  If Microsoft were to go belly up tomorrow, we'd lose Word, Windows, Internet Explorer, and every other program they sell.  We don't have the code, we don't have a right to the code, and no one can step in and make changes to the code without the defunct company's permission.</p>
+<p>Open source software, however, gives the end user the right to have a copy of the code, a right to <em>change</em> the code, and a right to redistribute their changes to someone else.  If Automattic were to go belly up tomorrow, we'd still have the source code for WordPress, After the Deadline, and every other open source project they've distributed.  We have the code, we have a right to the code, and <em>anyone</em> can step in to take over development.</p>
+<p>WordPress itself began as a fork of another software project that stalled its development.</p>
+<p>But, once again, WordPress is bound to the GPL.</p>
+<p>The GPL was designed (allegedly) to protect the little guy.  The aim was to keep software behemoths like Microsoft and Apple from snatching libraries out of the open source community and locking them behind restrictive, proprietary licenses.</p>
+<p>Unfortunately, it also hurts the little guy.</p>
+<p>Let's say I write an application.  I distribute it under the terms of the GPL and post it on my website for free.  Now, anyone can download it, anyone can use it, and anyone can redistribute the code.  Great!  Then, a larger company comes along, grabs my code, refactors it to slap their own branding all over the place, and puts it on their website for $50/copy.</p>
+<p>So long as my original copyright is in place (inline in the code where no one but a developer would ever see it), they are 100% in the clear.  Legally.  Their site with more traffic than mind starts to pull in revenue from work I gave away for free.</p>
+<p>Yes, this has happened before.  Not just to me, either.</p>
+<p>Does it bother me?  Not really.  I was giving my stuff away for free in the first place.</p>
+<p>But look at this same situation a different way.</p>
+<p>I write a library.  I want as many people to use it as possible so I can build up my resume with a list of projects implementing my code.  I naively distribute it under the terms of the GPL and post it on my site for free.  Great!  Then a larger company comes along, but refuses to touch my code because they distribute software in an industry that, for regulatory reasons, is not permitted to be GPL.</p>
+<p>A developer's choice of license matters.</p>
+<p>It can be the difference between distributing software for free and making a political statement that all software should be free.  Depending on who you are, that will mean very different things.</p>
+<p>I'm a capitalist, and I aim to benefit from every line of code I write.  Sometimes I do that by selling closed-source software.  Sometimes I do that by selling open-sourced software.  Sometimes I do that by giving my software way for free.</p>
+<p>But many new developers are so worried about getting out a 1.0 release that they gloss over licensing terms.  Who could blame them?  Licensing is a messy, opinionated topic.  Choosing the <em>wrong</em> license, though, can set you up for a lot of problems.</p>
+<p>When I first started writing code for WordPress, I copy-pasted my license block from an "official" tutorial on how to license your plugins.  That tutorial has since been removed, and I was informed yesterday that <em><a href="http://core.trac.wordpress.org/ticket/16898">all of my plugins are violating the requirements of the WordPress.org plugin repository</a></em>.  My plugins are all licensed as GPLv3 or greater ... the repository <a href="http://wordpress.org/extend/plugins/about/">requires GPLv2-compatible</a>.</p>
+<p>I'll be carving time out of my weekend to walk through all of my open source projects and relicense them under the terms of the <a href="http://en.wikipedia.org/wiki/MIT_License">X11 open source license</a>.  It's more permissive than the GPL, but still meets the repository's requirements.</p>

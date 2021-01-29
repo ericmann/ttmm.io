@@ -1,0 +1,54 @@
+---
+layout: post
+title: 'TDD: Proof of Life'
+date: 2014-10-23 08:00:10.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Unit Test
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";d:1414051240;s:6:"status";s:6:"pushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: 'TDD: Proof of Life'
+  _yoast_wpseo_metadesc: Unit testing and test-driven development are both very much
+    alive.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/z6
+  _wpghs_github_path: _posts/2014-10-23-proof-life.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/proof-life/"
+excerpt: Unit testing and test-driven development are both very much alive.
+---
+<p>One of my favorite current shows is <em>The Newsroom</em>.[ref]Yes, I realize it's about to begin it's third and final season. I'm not upset it's being cancelled, I'm excited a third season is happening at all.[/ref] If you haven't watched it, it's an Aaron Sorkin drama that takes a heavily fictionalized view of what happens behind the scenes of a nightly news show.</p>
+<p>What's more, the episodes frequently parallel current events, making Sorkin's not-at-all-veiled social commentary even more striking. One episode even takes a look at the attempted assassination of Rep. Gabby Giffords and the utterly botched news coverage of the event.</p>
+<p>Essentially the fact that, for ratings, every network was quick to jump on the bandwagon of reporting her death, even though their evidence was spotty and, in fact, <em>she survived</em>. The best line from the episode:</p>
+<blockquote><p>It’s a person. A doctor pronounces her dead, not the news.[ref]<a title="‘The Newsroom’ Season 1, Episode 4, ‘I’ll Try to Fix You’: TV Recap" href="http://blogs.wsj.com/speakeasy/2012/07/15/the-newsroom-season-1-episode-4-ill-try-to-fix-you-tv-recap/">‘The Newsroom’ Season 1, Episode 4, ‘I’ll Try to Fix You’: TV Recap</a>[/ref]</p></blockquote>
+<p>So often we're in such a hurry to be the one breaking a news story that we forget to fact check or look outside our protected little bubbles for validation before making a statement. I've done it, you've done it, we've all done it. We've all made a grandiose, authoritative statement that ultimately proved to be false.</p>
+<h2>Unit Testing</h2>
+<p>I've been working professionally as a developer for 7 years.[ref]I'm not counting the time I spent learning to freelance before I started taking full-time gigs. Yes, I was a professional, but my focus was elsewhere.[/ref] I've been writing OOP-style code for just about 6 years. I've only been using version control systems for 5 years.</p>
+<p>And I've been writing unit tests for my code for 4 years.</p>
+<p>While the <em>concept</em> of unit testing is very well-established in the history of development, the <em>practice</em> is relatively young in many communities. Only 20% of the .Net developers I worked with knew how to write a unit test. Even fewer of the PHP developers I work with test their code.</p>
+<p>I can count on one had the number of JavaScript developers who write tests.</p>
+<p>Still, there is a very <em>live</em> interest in testing among all of these communities. Every single conference session I've proposed about unit testing has been accepted - and the rooms have been <em>packed</em>.</p>
+<h2>Test-Driven Development</h2>
+<p>One of the most discussed topics around unit testing is that of TDD - the idea that you write your tests <em>first</em> and then write code that passes those tests. It's one of the more popular ways to work on unit tests, not because it's easy, but because it ensures your code is actually tested before you ship.[ref]If you don't mandate tests first, I <em>guarantee</em> you will ship untested code. Once you skip the test suite, it's very hard to justify time/salary/budget/resources to come back and write tests later.[/ref]</p>
+<p>It's also incredibly hard to do. So hard in fact, that developers who don't understand unit testing are quick to write TDD off as either antiquated or irrelevant.</p>
+<p>Some even go so far as to <a title="TDD is dead. Long live testing." href="http://david.heinemeierhansson.com/2014/tdd-is-dead-long-live-testing.html">declare it "dead."</a></p>
+<p>To borrow from <em>The Newsroom</em>, a development community declares a practice dead, not a self-centered blogger.</p>
+<p>I will readily admit that I don't always test my code. Sometimes, I even write the code first and come back to write a test afterwards once I've decided on the architecture. I'm not going to go on a rampage saying all testing must be done first.</p>
+<p>But I will point out the immense value in such a pattern.</p>
+<p>Firstly, it forces you to build objects and functions in an extensible, documented manner. Functions that do <em>something</em> but return <em>nothing</em> are inherently difficult to test. Objects that talk directly to the database (or an API) without  routing through a mockable service object are inherently unscalable - you can't replace the database/API with a different implementation.</p>
+<p>Blindly declaring TDD - a practice only just beginning to take off in many communities - dead signals a deep failure to understand the point of writing code tests-first in the first place. It reeks of naïveté at best, and points out deep-seated hubris at worst.</p>
+<p>Testing, and test-driven development, is alive and well. Ignore it at your own peril and the risk of becoming obsolete as the world moves on.</p>

@@ -1,0 +1,74 @@
+---
+layout: post
+title: WordPress, Options, and Auto-loading
+date: 2014-04-06 08:00:43.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- add_option
+- option
+- update_option
+- WordPress
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _yoast_wpseo_metadesc: 'There are many different ways WordPress performance can
+    be slowed: not understanding options is one of them.'
+  _yoast_wpseo_title: WordPress, Options, and Auto-loading
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/to
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409747043;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5518;}i:1;a:1:{s:2:"id";i:5460;}i:2;a:1:{s:2:"id";i:5980;}}}}
+  keen_postview_count_this_7_days: '3'
+  keen_postview_count_this_30_days: '13'
+  _wpghs_github_path: _posts/2014-04-06-wordpress-options-auto-loading.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/wordpress-options-auto-loading/"
+excerpt: 'There are many different ways WordPress performance can be slowed: not understanding
+  options is one of them.'
+---
+<p>There are many different ways WordPress performance can be slowed: not understanding options is one of them.</p>
+<h2>Creating Options</h2>
+<p>When you're dealing with data, the options table can be a convenient place to cache information you might need later.  API keys, fragments of HTML, remote server responses.  Storing this data in WordPress' options table is quick, easy, and useful.</p>
+<p>It's also fraught with problems.</p>
+<p>Namely, most of us are using [cci]update_option()[/cci] to <em>create</em> options rather than just update existing data.  This will work, but if the option doesn't yet exist it's created with the auto-load parameter set to "yes."</p>
+<p>This is probably not the behavior you'd expect.</p>
+<h2>Auto-loading</h2>
+<p>When a request comes in to WordPress, the system will load into memory all options registered with the auto-load parameter set to "yes."  If you added your option with a call to [cci]update_option()[/cci], then your data is being loaded into memory on every request <em>whether WordPress needs the data or not.</em></p>
+<p>If you use an option to cache a snipped of markup, and it auto-loads on pages not needing that markup, you're filling up the system memory with unnecessary data.</p>
+<p>If you use an option to store your remote API keys, and they auto-load for WordPress requests that aren't fetching or interacting with the remote API, you're filling up system memory with unnecessary data.</p>
+<p>If you haven't caught on yet, loading unnecessary data into memory is a bad thing.[ref]If you're using a caching system like Memcached, auto-loading data unnecessarily can fill up your Memcache buckets quickly and force the system to flush everything more frequently than expected. In some cases, this can essentially negate the benefit of using an external object cache in the first place, so keeping track of where and when your option data loads is hugely important.[/ref]</p>
+<h2>Not Auto-loading</h2>
+<p>WordPress' aptly-named [cci]add_option()[/cci] function allows you to create options <em>without</em> forcing them to autoload.  Unlike [cci]update_option()[/cci], [cci]add_option()[/cci] wll fail if the option already exists - this is one of the main reasons developers <em>update</em> rather than <em>add</em> when they're working with code.</p>
+<p>But there's a better way.</p>
+<p><code lang="php">if ( ! add_option( 'option_name', 'some_value', '', 'no' ) ) {<br />
+    update_option( 'option_name', 'some_value' );<br />
+}</code></p>
+<p>The code above will attempt to <em>add</em> an option first. If WordPress adds it as expected, then everything is stored, nothing is auto-loaded, and we can move merrily along.</p>
+<p>If [cci]add_option()[/cci] fails, then we know the option already exists in the database, so we fall back on [cci]update_option[/cci] to update things in the system.  We can wrap this functionality up in our own[ref]I have not prefixed the function name - I fully expect you to add your own prefix should you use this function in your own code.[/ref] utility function:</p>
+<p><code lang="php">/**<br />
+ * Add or update a WordPress option.<br />
+ * The option will _not_ auto-load.<br />
+ *<br />
+ * @param string $name<br />
+ * @param mixed  $value<br />
+ */<br />
+function add_or_update( $name, $value ) {<br />
+    $success = add_option( $name, $value, '', 'no' );</p>
+<p>    if ( ! $success ) {<br />
+        $success = update_option( $name, $value );<br />
+    }</p>
+<p>    return $success;<br />
+}</code></p>
+<p>Now you can cache data in options without suffering the performance failings of having everything auto-load!</p>

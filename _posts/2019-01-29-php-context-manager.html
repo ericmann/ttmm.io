@@ -1,0 +1,101 @@
+---
+layout: post
+title: Context Managers in PHP
+date: 2019-01-29 08:45:02.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Technology
+tags:
+- Software Design Patterns
+meta:
+  _wpcom_is_markdown: '1'
+  _publicize_twitter_user: "@EricMann"
+  _edit_last: '2'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _yoast_wpseo_content_score: '60'
+  _yoast_wpseo_focuskw: context manager
+  _yoast_wpseo_metadesc: It's refreshing to work with and learn from various programming
+    languages. Python implements a context manager, which is something PHP can learn
+    from.
+  _yoast_wpseo_linkdex: '75'
+  _wpas_mess: Python has context managers. Should/Could PHP have them, too?
+  _wpas_done_all: '1'
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/php-context-manager/"
+excerpt: These days, I spend far more time writing and reviewing code in Python than
+  I do PHP. It's been a refreshing change of pace, and it's fun to learn the different
+  patterns present in various programming languages. One of the nicer patterns in
+  Python is the Context Manager. It's a pattern that PHP can learn from and leverage.
+---
+<p><!-- wp:paragraph --></p>
+<p>These days, I spend far more time writing and reviewing code in Python than I do PHP. It's been a refreshing change of pace, and it's fun to learn the different patterns present in various programming languages.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If you haven't taken the time to look around to see what other languages or frameworks are doing, I'd highly recommend it.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>One of the nicer patterns in Python is the <a href="https://docs.python.org/2.5/ref/context-managers.html">Context Manager</a>. In Python, certain objects and functions can be wrapped in a <tt>with</tt> block used to provide specific <em>context</em> to the code running within it. Opening files, for example, becomes remarkably easy:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">with open('output.txt', 'w') as f:<br />     f.write('Hello world!')<br /></pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>The beauty of this pattern is the automated resource cleanup. You don't have to manage (and free) file pointers manually. You don't have to initialize and disconnect a database session. The context manager handles things for you automatically.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:quote --></p>
+<blockquote class="wp-block-quote"><p>A database context manager could manage creating and closing a connection to the database itself (or the connection pool it uses). Or it could be used to wrap a transaction and automatically commit the results at the end of the block. Either way, you don't have to manage things on your own.</p>
+</blockquote>
+<p><!-- /wp:quote --></p>
+<p><!-- wp:paragraph --></p>
+<p>PHP doesn't have a pattern like this natively. I think adding a <tt>with</tt> construct would be a huge value add for the language, but my lower-level coding skills are a bit too rusty to code up a quick proof of concept. <em>Instead</em>, I can abuse generators and loops to simulate similar functionality with an existing system.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The Python example above used the <tt>open()</tt> function to demonstrate context management as applied to files. We can do something similar in PHP with the following helper function:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">function open($file, $mode = 'r')<br />{<br />    $f = fopen($file, $mode);<br />    yield $f;<br /><br />    fclose($f);<br />}</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>Since this function is a <em>generator</em>, we can use it natively inside a <tt>foreach</tt> loop. The thing is, we only ever loop once, so <tt>foreach</tt> in this example is really a parallel to Python's <tt>with</tt>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">foreach(open('output.txt', 'w') as $file) {<br />    fwrite($file, 'Hello, world!');<br />}</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>Since the generator only yields <em>once</em>, we only get a single item to iterate across in our <tt>foreach</tt> loop. The loop will also automatically return back to the generator after it iterates, which gives us the opportunity to clean up our context and scope.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>It's a bit more verbose than the Python, and we have to build our own context managers, but it's a much cleaner way to ensure we're cleaning up after ourselves.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Taking things a step further, assume we need to work with a PDO connection. We want to connect to the database, do some work <em>within a transaction</em>, and automatically commit the result. Doing so imperatively would look something like:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">try {<br />    $dbh = new PDO($dsn, $user, $pass, $options);<br />} catch (Exception $e) {<br />    die("Unable to connect: " . $e->getMessage());<br />}<br /><br />try {  <br />    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);<br />    $dbh->beginTransaction();<br />    $dbh->exec("insert into users (id, first, last) values (5, 'Eric', 'Mann')");<br />    $dbh->exec('insert into authors (id) values (5)');<br />    $dbh->commit();<br />} catch (Exception $e) {<br />    $dbh->rollBack();<br />    echo "Failed: " . $e->getMessage();<br />}</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>The same operation, leveraging a context manager pattern, would be far simpler:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">function transaction()<br />{<br />    $dbh = new PDO($dsn, $user, $pass, $options);<br />    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);<br />    $dbh->beginTransaction();<br /><br />    yield $dbh;<br /><br />    try {<br />        $dbh->commit();<br />    } catch (Exception $e) {<br />        $dbh->rollBack();<br />    }<br />}<br /><br />// Now use the transaction<br />foreach(transaction() as $dbh) {<br />    $dbh->exec("insert into users (id, first, last) values (5, 'Eric', 'Mann')");<br />    $dbh->exec('insert into authors (id) values (5)');<br />}<br /></pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>This is more complex than the first example. The gist is that the setup and teardown code for the database connection and the transaction happens <em>outside</em> of your business logic. The <tt>transaction()</tt> function here could be in a separate file or namespace from the rest of your code, which keeps the execution logic clean and removes the need to worry about setup/teardown at all.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Files, databases, remote connections to resources, locks, threads. These are all intensive operations that could benefit from the use of this pattern - and which <em>do</em> leverage this pattern in Python and other languages.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Is this a pattern that would make a difference in your code? It's certainly different than the way many of us write PHP today. How else might you leverage this pattern? Would it make more sense if we extended the language with our own implementation of <tt>with</tt>?</p>
+<p><!-- /wp:paragraph --></p>

@@ -1,0 +1,53 @@
+---
+layout: post
+title: Cryptography, JavaScript, and Performance
+date: 2014-11-19 08:00:23.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- cryptography
+- javascript
+- performance
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _wpas_mess: JavaScript really is powerful, if you know how to use it ...
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Cryptography, JavaScript, and Performance
+  _yoast_wpseo_metadesc: JavaScript really is powerful, if you know how to use it
+    ...
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/zx
+  _wpghs_github_path: _posts/2014-11-19-cryptography-javascript-performance.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cryptography-javascript-performance/"
+excerpt: JavaScript really is powerful, if you know how to use it ...
+---
+<p>As a kid, I failed miserably at learning either C or C++. I did learn a bit of Basic, but my skills were relegated to whatever I could pull out of old manuals or glean from random developers in AOL chat rooms.</p>
+<p>My issue was that all of the above languages were <em>compiled</em> and I didn't have a compiler. Actually, I didn't do any hard-core compiled programming until college when I built an <a title="JavaScript Astrophysics" href="https://eamann.com/tech/javascript-astrophysics/">astrophysics simulation in Fortran</a>. Even then, I struggled to understand what was going on.</p>
+<p>Grad school brought along encouragement to pay attention to web development. I built a website and learned a few lines of JavaScript - mostly just invoking jQuery plugins or toggling animation states. Still, the power of <em>interpreted</em> scripts impressed me; when I pivoted from marketing and business development into programming, I kept my eye on them.</p>
+<p>After a few positions in .Net-based enterprises (again, building software that required compilation), I finally landed where I had the opportunity to write WordPress code full-time. WordPress, that's written in PHP and JavaScript - both <em>interpreted</em> languages. It's been amazing to see just how much faster engineers can prototype solutions when they work with dynamic scripts than when they have to wrangle a compiler.</p>
+<p>Still, hard-core engineers look with disdain on interpreted languages and the developers who use them.</p>
+<h2>Performance</h2>
+<p>Whenever I get an engineer to stop mocking me long enough to ask, I push for an explanation of why exactly they think my languages of choice are inferior. More often than not, it comes down to performance.</p>
+<p>The foundations of C and C++ are so much closer to the processor that writing highly performant code is relatively straight-forward. PHP has to be interpreted by the runtime, turned into opcode, then further processed until it actually runs on the machine and executes a task. Likewise, JavaScript has to be parsed and interpreted, then is run inside a virtual machine that does all the work - yet another level of abstraction away from the CPU.</p>
+<p>I've tried to point out many times before, and especially with my <a title="JavaScript Astrophysics" href="https://eamann.com/tech/javascript-astrophysics/">aforementioned article</a> illustrating JavaScript as a speedy replacement for Fortran, that interpreted languages can be nearly as fast as the old school tools. Unfortunately, no one takes me seriously because of their long-standing assumptions about JavaScript and similar tools.</p>
+<h2>Cryptography</h2>
+<p>In the beginning of a Coursera course on cryptography, I was told by an instructor that I'd need to learn C to keep up.[ref]To be clear, I know C already, but since I don't write C on a daily basis I struggle to keep pace with some more polished low-level developers. Not being an expert in C <a title="Diversity of Experience" href="https://eamann.com/biz/diversity-experience/">doesn't mean</a> I'm a novice when it comes to computing, though.[/ref] I disagreed, but kept my feelings to myself and just carried on with the course.</p>
+<p>For the first programming assignment, our instructor gave us a C program that encrypts a string of text using a modified Vigenere cipher - where each byte of the plain text message is XORed with a byte from a randomly-selected encryption key. Again, he recommended with use C to build a program to crack the cipher, and most of the class got right to doing that.</p>
+<p>I decided to stick out from the group. I wrote my cracking program in JavaScript instead.</p>
+<p>At one point, our frequency analysis of potential decryption keys gave us about 70 different key combinations. The rest of the students moaned and complained and started testing different combinations by hand. One student tried to automate things and, even with 70 different combinations, complained about how long the tests took to run. Many students began picking keys at random, hoping to find a lucky guess (some, miraculously, did just that).</p>
+<p>After successfully cracking the cipher using frequency analysis, I stepped back to see how efficient a try-every-possible-key solution would be in JavaScript. I wrote my loop, leaned back, and fully expecting explosions, ran my function.</p>
+<p>It returned immediately, having processed 256 possible values for each character in the key. No waiting, and I had the solution sitting right in front of me.</p>
+<p>So, not only is JavaScript (when coded correctly) just as fast as C when it comes to implementing a solution, I could have skipped all of the optimizations my C-writing-colleagues were using and just ran an exhaustive brute-force attack. I learned a bit more by walking through the exercise; I think my coursemates learned a bit about judging interpreted languages unfairly, too.</p>

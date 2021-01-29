@@ -1,0 +1,83 @@
+---
+layout: post
+title: Merging WordPress Multisite
+date: 2012-06-07 09:00:44.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- PHP
+- Tutorials
+tags:
+- nginx
+- redirect
+- WordPress
+meta:
+  yourls_shorturl: http://eam.me/hp
+  _wpcom_is_markdown: '1'
+  _yoast_wpseo_metadesc: I migrated several sites from WordPress Multisite to a single
+    WordPress site. Here's how I made sure no traffic was lost in the process.
+  _edit_last: '2'
+  _yoast_wpseo_focuskw: multisite
+  _yoast_wpseo_linkdex: '81'
+  _wpghs_github_path: _posts/2012-06-07-merging-wordpress-multisite.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/php/merging-wordpress-multisite/"
+---
+<p>When I first set up my personal website network, I got a bit carried away.  Once I had the first two sites in a multisite network, I started splitting out every category of my blog into its own site - each with its own domain.</p>
+<p>At the peak, I had:</p>
+<ul>
+<li>One site for my personal profile - linking to all the other sites</li>
+<li>One site for a professional portfolio</li>
+<li>One site for my business blog</li>
+<li>One site for my Christianity blog</li>
+<li>One site for my creative writing portfolio</li>
+<li>One site for political discussions</li>
+<li>One site for a personal journal</li>
+</ul>
+<p>Then I read a <a title="Don't Use WordPress Multisite" href="http://halfelf.org/2011/dont-use-wordpress-multisite/">great article by Ipstenu</a> about why you <em>shouldn't </em>use WordPress Multisite and decided I should rein things in a bit.  Categories of content should be <em>categories</em> instead of full sites.</p>
+<p>This started a huge migration of content.  I set up a clean WordPress installation and started moving all of my posts, pages, categories, tags, etc from the schismed sites into the new one.  Everything was clean and ready to go ... except for one thing. External links.<!--more--></p>
+<p>I've never understood why, but sometimes people actually like what I write.  They link to it.  People follow those links and comment.  So when <a title="How to Publish a WordPress Plugin with Subversion" href="http://mindsharestrategy.com/2011/how-to-publish-a-wordpress-plugin-subversion/">http://mindsharestrategy.com/2011/how-to-publish-a-wordpress-plugin-subversion/</a> becomes <a title="How to Publish a WordPress Plugin with Subversion" href="http://eamann.com/tech/how-to-publish-a-wordpress-plugin-subversion/">http://eamann.com/tech/how-to-publish-a-wordpress-plugin-subversion/</a>, what happens to my traffic?</p>
+<h2>Redirection</h2>
+<p>The first thing I did was install a plugin called <a title="Redirection Plugin" href="http://wordpress.org/extend/plugins/redirection/">Redirection</a> on my new site.  I knew that my URL structure was going to be different before and after the merge, so I was able to set up redirects between the old structure and the new structure.</p>
+<p>Using the URL structure above as an example, I mapped /2011/how-to-publish-a-wordpress-plugin-subversion/ to <a title="How to Publish a WordPress Plugin with Subversion" href="http://eamann.com/text/how-to-publish-a-wordpress-plugin-subversion/?ref=mindshare">http://eamann.com/text/how-to-publish-a-wordpress-plugin-subversion/?ref=mindshare</a>.</p>
+<p>The query argument at the end does two things:</p>
+<ol>
+<li>It lets me track how many people are being directed to my site from old URLs</li>
+<li>It lets me display a message on my site explaining why the design and URL has changed if I want to</li>
+</ol>
+<h2>Server Configuration</h2>
+<p>Now that the redirects were in place, all I had to do was point the domains at the new location.</p>
+<p>I use Nginx to power my WordPress sites, so pointing my Mindshare domain at my EAMann site was a matter of the domain as a [cci]server_name[/cci] in my configuration:</p>
+<p><code lang="bash"><br />
+server {<br />
+  listen      80;<br />
+  server_name eamann.com mindsharestrategy.com;<br />
+  root        /home/s1/html/website;</p>
+<p># Rest of Nginx configuration below ...<br />
+}<br />
+</code></p>
+<p>Anyone trying to visit an old post or page from Mindshare Strategy is now redirected automatically to the same content on the new site.</p>
+<h2>Root Domains</h2>
+<p>Unfortunately, this failed to handle the root domain - all of my old domains stayed the same but presented content from the new site.  I could have mapped a redirect from / to <a title="EAMann" href="http://eamann.com">http://eamann.com</a>, but there'd be no way to see if the traffic was coming from Mindshare Strategy, Prose Painting, Grounded Christianity, or one of my other sites.</p>
+<p>So instead of placing the domain directly in my main site's configuration, I broke each domain into a separate server profile and used Nginx' internal rewriting to redirect traffic:</p>
+<p><code lang="bash"><br />
+server {<br />
+  listen      80;<br />
+  server_name mindsharestrategy.com;</p>
+<p>location = / {<br />
+    rewrite ^ http://eamann.com/category/biz/?ref=mindshare permanent;<br />
+  }</p>
+<p>location / {<br />
+    rewrite ^ http://eamann.com$request_uri permanent;<br />
+  }<br />
+</code></p>
+<p>This configuration still maps all post and page requests through WordPress so that the Redirection plugin can do its work.</p>
+<p>It <em>also</em> forces a redirect of the root domain to a specific page I design - in the case of Mindshare Strategy, all visitors are mapped to the category archive for Business posts.</p>

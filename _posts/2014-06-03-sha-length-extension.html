@@ -1,0 +1,54 @@
+---
+layout: post
+title: SHA and Length Extension Attacks
+date: 2014-06-03 08:00:50.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- length extension
+- secure XMLRPC
+- SHA
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: SHA and Length Extension Attacks
+  _yoast_wpseo_metadesc: Developers keep raising a concern about an attack that might
+    be related to my Secure XML-RPC proposal. Let me explain why it's not a concern.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/va
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409926788;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5995;}i:1;a:1:{s:2:"id";i:2770;}i:2;a:1:{s:2:"id";i:6267;}}}}
+  keen_postview_count_this_24_hours: '2'
+  keen_postview_count_this_7_days: '7'
+  keen_postview_count_this_30_days: '15'
+  _wpghs_github_path: _posts/2014-06-03-sha-length-extension.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/sha-length-extension/"
+excerpt: Developers keep raising a concern about a particular type of attack that
+  might be related to my Secure XML-RPC proposal. Let me explain why it's not a concern.
+---
+<p>I received an email yesterday that brought up a frequent concern about my <a title="Securing XML-RPC for WordPress" href="http://eamann.com/tech/securing-xml-rpc-wordpress/">Secure XML-RPC proposal</a> - that it might be vulnerable to a length extension attack:</p>
+<blockquote><p>In [<a title="XMLRPCS_Profile.php" href="https://github.com/ericmann/secure-xmlrpc/blob/master/includes/XMLRPCS_Profile.php#L216">XMLRPCS_Profile.php</a>], the hash is calculated with SHA-256, which has so called length-extension "feature", which means an adversary can append his own data at the end of the payload (without knowing the key).</p></blockquote>
+<p>This isn't the first time someone has raised this concern. I want to take some time to briefly explain what's going on here and why the code <em>isn't actually vulnerable</em> to such an attack.</p>
+<h2>Length Extension Attack</h2>
+<p>A length extension attack is one that primarily targets message signature with algorithms that take the form [cci]Hash( salt + message )[/cci]. The attacker is able to append data to a known message and generate a valid signature without necessarily knowing the secret salt used to generate the original signature.</p>
+<p>I won't get too much into the details of how this attack is implemented - if you're curious, read <a title="Length extension attack" href="http://en.wikipedia.org/wiki/Length_extension_attack">the example on Wikipedia</a>. The Cliff Notes version is that you take the original message, append some calculable amount of padding, then append your intended attack string.</p>
+<p>The purpose of the attack, is simple - to append some desired content to the end of a known (validated) message and trick the server into accepting your corrupted payload. With messages in GET and POST requests (i.e. query strings), this is a significant vulnerability since hackers can essentially override valid values with whatever they want and convince your server it's seeing a completely valid message.</p>
+<p>If you're using method signing to validate this form of data, be sure to use something like <a title="HMAC" href="http://en.wikipedia.org/wiki/HMAC">HMAC</a> to generate your signatures instead.</p>
+<h2>Secure XML-RPC</h2>
+<p>My proposed WordPress security extension - currently coded as a plugin - uses a simple SHA-256 hash to generate message signatures. It builds the signature with the following PHP code:</p>
+<p>[cc lang="php]$calculated = hash( 'sha256', $secret . $body );[/cc]</p>
+<p>This code takes the exact format I explain above that is vulnerable to length extension - but the implementation here <em>isn't</em> broken. The thing you need to keep in mind here is what the content of the message body looks like.</p>
+<p>We're dealing with XML-RPC, so the body of the message must be a well-formed XML document. Since a length extension attack only allows you to <em>append</em> content to an existing (signed) message, this means you can only append your attack string <em>after</em> the close of the otherwise valid XML document (producing in turn an <em>invalid</em> XML-RPC request).</p>
+<p>If we were signing, say, an [cci]application/x-www-form-urlencoded[/cci] POST message I would be concerned about length extension. Since we're signing a complete XML document, I'm not worried about someone trying to append data to the end. All the appended data will do is kick out an error in the parsing of the message and cause the system to fail - it's secure enough as-is that we don't need to use a more sophisticated (slower) hashing algorithm.</p>

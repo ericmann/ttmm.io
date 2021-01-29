@@ -1,0 +1,52 @@
+---
+layout: post
+title: 'WordPress Core Proposal: Aribitrary File Upload'
+date: 2014-01-15 08:00:41.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- feature
+- plugin
+- Plupload
+- WordPress
+meta:
+  _edit_last: '2'
+  _yoast_wpseo_title: 'WordPress Core Proposal: Arbitrary File Upload'
+  _yoast_wpseo_metadesc: I propose enabling editors to drag-and-drop potential uploads
+    to the Media Gallery from anywhere within WordPress.
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/rg
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409701076;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:5914;}i:1;a:1:{s:2:"id";i:6085;}i:2;a:1:{s:2:"id";i:3405;}}}}
+  _wpghs_github_path: _posts/2014-01-15-aribitrary-file-upload.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/aribitrary-file-upload/"
+excerpt: I'm proposing a new feature for WordPress that would enable editors to drag-and-drop
+  new media anywhere within the admin interface and have those uploads added to the
+  media gallery. It would streamline several of my workflows.  Would it help yours?
+---
+<p>Continuing with my previous goal, I want to pitch another feature-as-plugin idea before writing any code. This time, the ability to upload media from <em>anywhere</em>.</p>
+<h2>Current Workflows</h2>
+<p>There are quite a few ways you can upload to WordPress.  You can add media when editing content.  You can visit the Media Gallery directly and upload from there.  You can upload from the Plugins section.  You can upload from the Themes section.  You can upload from the WordPress Importer. A few plugins allow you to upload from their settings pages.</p>
+<p>But they all work a bit differently.</p>
+<p>Sometimes that "differently" is a huge annoyance.</p>
+<h2>Proposed Alternative</h2>
+<p>My proposal is to enable editors to drag-and-drop potential uploads <em>anywhere</em> within WordPress.  These uploads would then go to the Media Gallery automatically.  An indicator would then appear in the toolbar (or on the Media menu item) alerting the editor they have new uploads to work with.</p>
+<p>It's a small change, but has some big ramifications.</p>
+<p>First, editors would be able to upload in bulk from any administrative page within WordPress.  The post editor.  The dashboard.  A plugin settings page.  The theme settings page.  Anywhere.</p>
+<p>Second, exposing hooks would allow plugin authors (or core contributors) to react to new media being available.  Rather than needing to build an uploader or enqueue an existing upload script, plugin devs could just listen for an [cci]uploaded[/cci] event and modify the UI in response. Think: <em>no more inconsistency in upload experience within WordPress plugins!</em></p>
+<p>Finally, core could enable installing plugins from the media gallery.  No more navigating from Dashboard to Plugins to Install New to Upload to get a new plugin into WordPress.  Merely drag-and-drop the plugin on the Plugins page, wait for WordPress to do its magic and alert you a new plugin is available[ref]The Plugins page could listen for an [cci]uploaded[/cci] event, check the MIME type of the upload to see if it's a ZIP, and attempt to install the plugin silently in the background.  If the upload was a plugin, then WordPress could alert the user that the new plugin is installed and ready for activation, <em>all from the same page!</em>[/ref], then click a link to activate the plugin.</p>
+<p>All of the above would streamline the workflow of getting uploaded content - images, documents, plugins, etc - from your hard disk and into WordPress.</p>
+<h2>Would You Use It?</h2>
+<p>I admit, this feature would be more power-user functionality in WordPress than anything else.  If you're only using WordPress to write, then the existing "Insert Media" button is likely all you'll ever need.</p>
+<p>If, however, you're <a title="WP Publication Archive" href="http://wordpress.org/plugins/wp-publication-archive/">using a plugin</a> to <a title="WP Document Revisions" href="http://wordpress.org/plugins/wp-document-revisions/">add non-post content</a> to WordPress.  If you're trying to add <em>multiple</em> plugins to WordPress using ZIP archives.  If you're trying to import multiple, separated WXR files to a new WordPress install.</p>
+<p>If you're trying to use a WordPress that smooths out the process of adding media to your site, then this workflow would help.  I know it would help me.  Would it help you?</p>

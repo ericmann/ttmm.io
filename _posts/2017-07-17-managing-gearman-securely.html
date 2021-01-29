@@ -1,0 +1,96 @@
+---
+layout: post
+title: Managing Gearman Securely
+date: 2017-07-17 08:00:48.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Gearman
+- PHP
+- security
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_focuskw_text_input: Gearman
+  _yoast_wpseo_focuskw: Gearman
+  _yoast_wpseo_linkdex: '71'
+  _wpas_done_all: '1'
+  _wpas_skip_1588757: '1'
+  _wpas_skip_1588752: '1'
+  _wpas_skip_1650274: '1'
+  _wpghs_github_path: _posts/2017-07-17-managing-gearman-securely.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/managing-gearman-securely/"
+excerpt: The impact of an improperly-secured Gearman server grows with the importance
+  of the application using it.
+---
+<p>A few years back, I was introduced to the world of task and job queues. A friend was writing a tutorial on <a href="https://www.rabbitmq.com/">RabbitMQ</a>, and I'd discovered <a href="http://gearman.org/">Gearman</a> as a potential solution for a large task I was working to complete. The idea of leveraging <em>multiple</em> servers to complete a single task in parallel was a foreign concept to me.</p>
+<p>Once I'd mastered the idea of concurrent processing, I never looked back.</p>
+<h2>Learning Curve</h2>
+<p>The biggest downside of working with new server technologies is often that you need to learn the technology <em>on a server</em>. Keep in mind that I was learning Gearman while still using WAMP for local development; the idea of running a <em>local</em> VM hadn't occurred to me, so I learned the API by cowboy-coding against a Digital Ocean droplet.</p>
+<p>Version control made my lessons (and mistakes) very public, so I worked to learn quickly.</p>
+<p>Learning quickly meant I missed a step or two along the way in my education. I haven't worked with Gearman directly in a few years, so I took some time to brush up on the PHP interface to see what I could remember.</p>
+<h2>The Job Server</h2>
+<p>Gearman is split into two components - the server and workers. The server acts as a central "hub" that can accept job information from various clients and make it available to workers when they come online. There isn't much to the application itself; it's a daemon that runs persistently on the server and holds job data (both incoming and outgoing) in memory until it's needed.</p>
+<p>Gearman <em>can</em> work with a persistent database backend to keep information around in the event of a reboot. If your application is mission-critical (i.e. billing) or takes a long time to complete (i.e. sending email newsletter subscriptions), maintaining a persistent backend is a good idea.</p>
+<p>Installation <a href="http://gearman.org/getting-started/#installing">is straight-forward</a>, thanks to package managers for all of the major Linux server distributions. Some developers have even built <a href="https://hub.docker.com/r/kendu/gearman/">Dockerized distributions</a>, if that's your thing. The point is: you need a server somewhere, listening on port 4730, that both workers and clients can connect to.</p>
+<h2>Workers</h2>
+<p>Workers are, usually, simple PHP scripts that can be daemonized on the server. Your approach to daemonization is up to you - in the past, I've used Supervisord to keep a few copies of the script running or have Dockerized the process with a restart declaration.</p>
+<p>The script itself merely registers a "function" with the Gearman server. Like any other piece of PHP code, this function takes arguments and returns data, it just takes its arguments from a dynamic process (Gearman) and returns data to the same.</p>
+<p>Assume for now you have the desire to process PDF documents in bulk on the server, for optical character recognition, machine learning, or some other purpose. There are a lot of documents to import, so you want to parallelize the operation over multiple worker processes (and potentially multiple servers as well). Your code might take the form of a <tt>PHPImporter</tt> object with a single <tt>import()</tt> method:</p>
+<p><code lang="php"><br />
+// worker.php<br />
+$importer = new PDFImporter();<br />
+$worker = new GearmanWorker();<br />
+$worker->addServer( 'localhost', 4730 );<br />
+$worker->addFunction( 'import', array( $importer, 'import' );<br />
+while( $worker->work() );<br />
+</code></p>
+<p>For the sake of this example, the worker script will run on the same server that's running Gearman itself, hence the binding to <tt>localhost</tt> above. In a real-world example, the local reference would be replaced with the IP address of the central server (or <em>multiple</em> servers in a distributed case).</p>
+<p>This worker will run forever and will wait until a task is available on the local Gearman hub to process. It exposes a single function to the Gearman server, though it could expose <em>many</em>. Likewise, there could be multiple workers exposing <em>different</em> functions all to the same hub.</p>
+<p>The beauty of Gearman is that you can use different languages to build the workers. This example uses PHP alone, but there are libraries for Java, Python, Ruby, Go, and many other languages as well. In theory, you could write have two workers written in different languages expose the <em>same function</em> to Gearman.</p>
+<h2>The Client</h2>
+<p>The client is just as simple. It's an operation within PHP (or your language of choice) that connects to Gearman and publishes a job to be processed. Often, you'll want to run a job in the <em>background</em>, meaning the main application doesn't wait for the take to complete before completing itself. This would allow a single application to create multiple jobs at once, then exit back to a browser or command line for further instruction.</p>
+<p><code lang="php"><br />
+// app.php<br />
+$client = new GearmanClient();<br />
+$client->addServer( 'localhost', 4730 );<br />
+$job = $client->doBackground( 'import', $file . '||:||' . $email );<br />
+$db->record( $job );<br />
+</code></p>
+<p>Gearman automatically returns a job ID that can be used to query for the job's status later on, if required. The example above fits with our PDF import illustration from earlier and instructs a Gearman server to execute a function named "import," passing it a concatenated string with a filename and an email address for later notification.</p>
+<p><em>Keep in mind</em> that Gearman workloads (the second argument in the invocation) are only strings. In this example we're passing a filename, but the workload could just as easily be the base64-encoded binary body of the file itself. Gearman supports messages up to 4GB in size - the only limit here is the bandwidth the client has available.</p>
+<h2>Security</h2>
+<p>When I first set up a Gearman server, I didn't fully understand the ramifications of leaving the server in the public space. I was somewhat new to server maintenance, so while I could follow a tutorial to install a new application, I didn't <em>really</em> understand what was going on. This meant the server I'd built was completely exposed to the Internet - <em>anyone could connect to my Gearman server</em> whether they were running my code or not.</p>
+<p>Think about that for a moment.</p>
+<p>Anyone who knew I was running Gearman and the IP address I was using could leverage my server for their own purposes. Among other things, they could:</p>
+<ul>
+<li>Enumerate the functions I had registered on the server</li>
+<li><em>Invoke</em> a function I had registered (even with a malicious or inaccurate payload)</li>
+<li><em>Register their own functions</em> on the server</li>
+</ul>
+<p>Given Gearman's flexibility, a third party could even register a new worker to manage an already-registered function. Gearman would happily forward along any invocations, failing to distinguish between <em>legitimate</em> workers coded by me and malicious workers coded by a third party.</p>
+<p>With the PDF processing server illustrated in the examples above, this might not be too much of an issue. Our machine learning database would be missing a few documents or might have some junk data inserted by a third party. If Gearman were instead being used to parallelize stock trades or process credit transactions or notify medical study participants of information ...</p>
+<p>The impact of an improperly-secured Gearman server grows with the importance of the application using it.</p>
+<h3>In the Wild</h3>
+<p>I use a tool called <a href="https://www.shodan.io/">Shodan</a> on occasion to check that my servers (and Raspberry Pi clusters) are properly locked down while still visible on the public Internet. Shodan is an amazing tool, but it's also a treasure trove of information for potentially malicious parties as well. In addition to scanning specific IP addresses, it also maintains a directory of machines listening on specific ports.</p>
+<p>My last check through Shodan showed over 8,000 individual servers listening on port 4730, the default port for Gearman. I didn't drill down much further than that,[ref]I did <em>not</em> connect to any of these machines. I merely enumerated the cached listings stored in Shodan's public database. Accessing someone else's computer system without authorization is illegal.[/ref] but Shodan ran a simple status query when it indexed these machines; the public database lists both the machines <em>and</em> their registered functions.</p>
+<p>Remember, if your machine is visible to tools like Shodan, it's visible to malicious third parties who can manipulate or steal your data.</p>
+<h3>Locking things Down</h3>
+<p>Thankfully, the situation doesn't have to be dire. Gearman itself doesn't have any authentication, but the server <em>running</em> it can protect the daemon from abuse. Simply configure your server's firewall to block connections on port 4730 from everything <em>except</em> <tt>localhost</tt> and any specific, whitelisted servers. Shodan won't be able to index you and third parties won't be able to abuse your installation.</p>
+<p>Gearman is a powerful application that you can and should be using to parallelize the processing done by your PHP server. It's <em>also</em> something that can easily expose you and your team to undue stress if not properly configured and secured. Take some time today to lock your Gearman servers down.</p>
+<p>Then take some <em>more</em> time to ensure your other hosted applications are properly protected as well.</p>

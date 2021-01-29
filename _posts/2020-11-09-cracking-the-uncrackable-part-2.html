@@ -1,0 +1,82 @@
+---
+layout: post
+title: Cracking the Uncrackable - Background
+date: 2020-11-09 07:00:00.000000000 -08:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- Bitcoin
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/cracking-the-uncrackable-part-2/"
+---
+<p><!-- wp:paragraph --></p>
+<p><a href="https://ttmm.io/tech/cracking-the-uncrackable/">Last time</a>, I explained the backstory for why I'm treading down this bizarro path in the first place. If I can't <em>find</em> my Bitcoin and it's nearly impossible to turn a profit from <em>mining</em> as a hobby, I'll try to buy my way into wealth instead.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The very first step forward is to acquire a wallet with sufficient funds to make the journey worth it and sufficient information about the password to give me a head start. But before we dive into <em>that</em>, let's discuss <em>why</em> it's possible to "recover" a Bitcoin wallet in the first place.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Bitcoin Keys</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>To understand Bitcoin wallets you have to first understand Bitcoin keys. Bitcoin, like most modern cryptographic systems, is built atop a protocol that uses public key cryptography. You hold one key known only to you and publicize another key folks can use to communicate with you.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In the world of Bitcoin, your private key is a 256-bit number. More specifically, this key is a number valid in the <a href="https://en.bitcoin.it/wiki/Secp256k1">Secp256k1 curve</a> used for elliptic curve cryptography.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Your wallet's public key is another number derived from that fixed private key. With a public key anyone can verify the balance you hold, while only the holder of the <em>private</em> key can cryptographically sign transactions on behalf of your account.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>When you transfer money from your account to another, you use your private key to sign the transaction and publish this transaction and signature to the public ledger - the blockchain. Miners will then verify the block containing your transaction, making it part of the public blockchain and immutable.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If you lose your private key, you lose the ability to transfer, spend, or otherwise to <em>anything</em> with your Bitcoins.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>What About Random Guessing?</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Humans aren't very good at imagining big things. When I tell you a Bitcoin private key is a 256-bit number you see the "256" and think it's relatively small. In reality, 256 bits means 2<sup>256</sup>. There are that many possible private keys.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Expanded out, 2<sup>256</sup> is:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:preformatted --></p>
+<pre class="wp-block-preformatted">115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,
+665,640,564,039,457,584,007,913,129,639,936</pre>
+<p><!-- /wp:preformatted --></p>
+<p><!-- wp:paragraph --></p>
+<p>That is an unfathomably large number. To put it in context, this number is actually larger than the total number of atoms in the known universe.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Said another way - even picking a million random numbers per second, the chances that someone could guess at random the same number you use as a private key is infinitesimally small. There is no real chance anyone could guess the private key of an already existing Bitcoin wallet containing value.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Bitcoin Wallet Encryption</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Keeping track of a private number is relatively easy. Some people even write it out on a piece of paper to keep things entirely offline. <em>Using</em> that private number to sign transactions, though, is hard unless you use a tool to do the signing.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://bitcoin.org/en/bitcoin-core/">Bitcoin Core</a> is a free, cross-platform application that will keep track of your private key, track your balance and transactions over time, and facilitate sending/receiving Bitcoin on the blockchain. By default it doesn't encrypt anything, which means anyone with access to your computer has access to your wallet.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>But Bitcoin Core has a feature to set a password on your wallet. Your password is used to create an encryption key, which is then used to encrypt a completely random <em>master</em> key, which is then used to encrypt your Bitcoin private key. Without your password, Bitcoin Core can still display your balance and transaction history (and facilitate <em>receiving</em> funds) but cannot <em>send</em> funds anywhere.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bitcoin Core uses <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">AES-256</a> for encryption, meaning it's also using 256-bit cryptographic keys. It would be just as likely for someone to randomly guess your Bitcoin private key as it would be for them to randomly guess the master key used by the software to encrypt it.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Guessing the <em>password</em> you used to encrypt the master key, however, is far more reasonable. And that's where we'll pick up in the next piece of this series.</p>
+<p><!-- /wp:paragraph --></p>

@@ -1,0 +1,50 @@
+---
+layout: post
+title: Content Categorization
+date: 2014-08-16 08:00:58.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- categorization
+- machine learning
+- topics
+meta:
+  _edit_last: '2'
+  _pushup-notifications-push-setting: a:2:{s:4:"time";i:0;s:6:"status";s:8:"unpushed";}
+  _publicize_facebook_user: https://www.facebook.com/eric.a.mann
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_title: Content Categorization
+  _yoast_wpseo_metadesc: I've been playing once again with a Coursera class on machine
+    learning.
+  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1409822880;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6269;}i:1;a:1:{s:2:"id";i:6459;}i:2;a:1:{s:2:"id";i:6242;}}}}
+  _wpas_done_all: '1'
+  yourls_shorturl: http://eam.me/xb
+  _wpghs_github_path: _posts/2014-08-16-content-categorization.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/content-categorization/"
+excerpt: I've been playing once again with a Coursera class on machine learning.
+---
+<p>I've been playing once again with a Coursera <a title="Machine Learning" href="https://www.coursera.org/course/ml">class on machine learning</a>.</p>
+<p>The most recent lesson was about clustering and dimension reduction in data sets.</p>
+<h2>Dimensionality</h2>
+<p>When we look at the world, we categorize items (people, books, music, etc) based on their individual characteristics. When certain items are extremely complex, we automatically reduce the number of characteristics to a more manageable one to aid in our categorization.</p>
+<p>When if comes to categorizing <em>people</em>, this can be a dangerous step to take - no one wants to have their person reduced to a set of more <em>general</em> characteristics than their real, complex character. For items like books, TV shows, computer hardware, and blog posts, though, it's hugely helpful.</p>
+<p>Take a look at just about any blog/news site on the web and you'll see a finite set of taxonomical terms used to describe each entry. It's a simple way to reduce a body of content that could span <em>thousands</em> of individual entries into discrete, (hopefully) related buckets.</p>
+<h2>Clustering</h2>
+<p>The problem with explicit categorization is that it could be misleading. You're interested in one or two articles I write on PHP unit testing, but that doesn't mean you care at all about dynamic data encryption - on this site, articles about each would fall into the "Technology" category. It's my attempt to help you isolate content you actually <em>want</em> to read from all the work I want to write, but it's a clumsy method.</p>
+<p>We use tools like Zemanta and Jetpack to attempt to scan and identify related content (for suggesting other articles that might interest you), but the magic of their algorithms remains hidden in the black box of their third-party systems. I'd love the opportunity to use c clustering algorithm of my own to categorize and identify (potentially) related content.</p>
+<p>Clustering is the practice of identifying "groups" of elements based on a defined set of features. Every word and sentence in an article could be a "feature" in this situation, and dimension reduction can help us optimize the learning algorithm to run <em>quickly</em> on what could be a very large set of data.</p>
+<p>[caption id="attachment_6531" align="alignright" width="300"]<a href="http://eamann.com/wp-content/uploads/2014/08/Screenshot-2014-08-16-07.10.20.png"><img class="wp-image-6531 size-medium" src="{{ site.baseurl }}/assets/2014/08/Screenshot-2014-08-16-07.10.20-300x225.png" alt="This chart represents the iterative process of K-means run through 10 iterations on a sample data set." width="300" height="225" /></a> This chart represents the iterative process of K-means run through 10 iterations on a sample data set.[/caption]</p>
+<p><a title="K-means classification" href="http://en.wikipedia.org/wiki/K-means_clustering">K-means classification</a>, for example, starts with a randomly initialized set of "groups." The algorithm then classifies all of the given data set based on the group that each point is closest to. Then it redefines the center of the group as the mean of that group's members. The classification routine runs these steps iteratively to narrow down on a stable, optimized set of data groups.</p>
+<p>Ignoring a visual plot of data (I strongly hope my writing has more than two definable dimensions against which to categorize), it would be fairly straight-forward to use a tool like K-means classification to identify trends and "groups" on a site. The only downside is that these groups wouldn't necessarily line up with human-identifiable classifiers - that's to say the final groupings wouldn't be discrete, label-worthy categories.</p>
+<p>The process <em>would</em> allow us to reliably identify groups of related content, though, potentially improving upon (or even outright replacing) third-party hosted "related post" plugins and tools.</p>

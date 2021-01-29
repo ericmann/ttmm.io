@@ -1,0 +1,88 @@
+---
+layout: post
+title: World Domination through WordPress Security
+date: 2017-07-31 10:30:41.000000000 -07:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Technology
+tags:
+- PHP
+- security
+- WordPress
+meta:
+  _wpcom_is_markdown: '1'
+  _edit_last: '2'
+  _genesis_scripts_body_position: bottom
+  _yoast_wpseo_primary_category: '7'
+  _publicize_twitter_user: "@EricMann"
+  _yoast_wpseo_content_score: '30'
+  _yoast_wpseo_metadesc: I'm tired of lamenting the state of WordPress security and
+    doing nothing to address it. I'm building solutions to turn the conversation around.
+  _yoast_wpseo_focuskw_text_input: security
+  _yoast_wpseo_focuskw: security
+  _yoast_wpseo_linkdex: '72'
+  _wpas_done_all: '1'
+  _wpghs_github_path: _posts/2017-07-31-world-domination-wordpress-security.md
+author:
+  login: eamann
+  email: eric@eamann.com
+  display_name: Eric
+  first_name: Eric
+  last_name: Mann
+permalink: "/tech/world-domination-wordpress-security/"
+excerpt: I'm tired of lamenting the state of WordPress security and doing nothing
+  to address it. I'm building solutions to turn the conversation around.
+---
+<p>WordPress powers over a quarter of the Internet. That's quite a statement for a platform that began its life as a fork of a blogging engine. It's also quite refreshing since WordPress is the reason I <a href="https://ttmm.io/journal/started-web-development/">learned to write code</a> in the first place.</p>
+<p>One of the reasons WordPress is so popular is because it's so <em>easy</em>. It's easy to use as a writer. It's easy to manage as a site administrator. It's easy to code as a developer. This learning curve associated with WordPress is relatively flat - many devs and users can dive right in and get something functional from day 1 with little to no outside help.</p>
+<p>Another reason for WordPress' popularity is its long memory. WordPress has been around for over a decade, and the core development team has <em>always</em> prioritized backwards compatibility with the platform. Users of older versions of the software can upgrade to the latest version with, often, no loss in functionality.[ref]I personally upgraded a WordPress 2.3 site to 4.0 once. For context, version 2.3 came out <em>7 years</em> before version 4.0. Still, the upgrade went flawlessly with zero lost content. The old theme even <em>still worked</em> on the newer platform![/ref]</p>
+<p>Unfortunately, this long tenure also means that many in the community have a long memory of WordPress as well. They remember the days before plugins. The days before <a href="https://codex.wordpress.org/WordPress_Nonces">CSRF tokens</a> were in common use throughout the codebase. The days when everyone just assumed WordPress was insecure by default.</p>
+<h2>Is WordPress Insecure?</h2>
+<p>Along a similar vein, WordPress is <em>still</em> very insecure.</p>
+<p>At conferences I often remind people that the <em>core</em> code that powers WordPress is, in itself, vetted, secure, and reliable. The insecurities in <em>code</em> arise when administrators add a custom theme or start installing unverified third-party plugins. Any time you add someone else's code to the system, you add a potential inroad for code-level vulnerabilities.</p>
+<p>That being said, there are also <a href="https://paragonie.com/blog/2016/08/on-insecurity-popular-open-source-php-cms-platforms">specific</a> platform-level risks[ref]I use the term "risk" instead of vulnerability here because each of these <em>potential</em> issues requires specific expertise to exploit. They're also easy to defend against in a rigorous system. They are still risks, though, because it's even <em>easier</em> to fall prey to a hack merely by being lazy or misreading a configuration tutorial.[/ref] that affect the system.</p>
+<p>Among the various risks presented by WordPress, there are four in particular that I see most often in conversation:</p>
+<h3>Insecure Logins</h3>
+<p>A few versions back, WordPress removed the default "admin" username and started enforcing stronger passwords for authentication. These are both good changes to make, but don't necessarily take things far enough. WordPress does not ship with a multi-factor authentication system. The core team has been working to build one; unfortunately the <a href="https://wordpress.org/plugins/two-factor/">current solution</a> bundles so many potential options as to paralyze site administrators. They can choose anything from <a href="https://www.yubico.com/solutions/fido-u2f/">FIDO U2F</a> to Google Authenticator to an email-based system.</p>
+<p>It's a good start, and will definitely help secure WordPress logins, but it's bringing too many options to the table.</p>
+<h3>Insecure Emails</h3>
+<p>If you forget your WordPress password, you can easily request a reset link from your site by providing either your username or your email address. The downside with this functionality is that <em>anyone</em> with access to your inbox can then use this link to reset your account.</p>
+<p>You use a different password for Gmail and for your blog? Great! Unless someone steals your Gmail password ... then they can <em>also</em> steal access to your WordPress account.</p>
+<h3>Insecure Front-ends</h3>
+<p>Many WordPress sites are rocking HTTPS thanks to <a href="https://letsencrypt.org/">Let's Encrypt</a> and the awesome integrations managed WordPress hosts are forming with the project. Sadly, just as many sites are failing to prevent mixed content or are trusting the scripts on their site to CDNs or other remote providers who may or may not be injecting malicious code. The sheer number of people who recommend using a CDN-hosted jQuery versus the version that ships with WordPress[ref]These two are <em>not</em> equivalent. WordPress enables "no conflict mode" by default by adding a line to their own script![/ref] shows how often developers are lead to trust an outside party to load executable code onto their site.</p>
+<h3>Insecure Upgrades</h3>
+<p>WordPress ships all updates (core, themes, and plugins) from a central server, but <a href="http://web.archive.org/web/20170214062414/https://medium.com/@CiPHPerCoder/stopmullware-on-the-security-of-27-of-the-websites-on-the-internet-298a7e5b6871">does nothing</a> to ensure the integrity of the code downloaded. On the one hand, if the central WordPress.org server distributing updates were ever breached, more than a quarter of the Internet would be vulnerable to malicious software.</p>
+<p>On the other hand, if your server is behind any sort of proxy and that <em>proxy</em> is attacked, whether or not WordPress.org is shipping rock-solid code becomes a moot point. There's still no way for you to verify the proxy didn't modify the payload before you received it.[ref]For all the talk about <a href="https://medium.com/@photomatt/wordpress-and-update-signing-51501213e1">why update signing isn't a priority</a>, the risk of a hacked proxy is significant to anyone running on a managed host, in an enterprise environment, or retrieving data through any sort of cached proxy (or <a href="https://packagist.org/packages/johnpbloch/wordpress">external update system like Packagist</a>).[/ref]</p>
+<h2>Changing the Conversation</h2>
+<p>I'm tired of people lamenting the state of security with WordPress and doing nothing to address it. To be certain, there have been some <a href="https://core.trac.wordpress.org/ticket/39309">significant efforts to address these security risks</a>, but they either haven't landed or have been de-prioritized to the point of obscurity. That's a major disappointment, but I'm not going to just sit back and do nothing.</p>
+<p>Instead, I'm going to open source the solutions I'm personally building to help fix the holes and turn the conversation around.</p>
+<h3>Insecure Logins</h3>
+<p>I continuously beta test various login security plugins to see how they can help average users stay more secure. The <a href="https://github.com/georgestephanis/two-factor">Two Factor plugin</a> the core team is kicking around is great for people who know what they're doing and want multiple options for authentication. I like it because I can use it with a Yubikey. I <em>don't</em> like it because most users don't even know what a Yubikey is.</p>
+<p>I started with that plugin as a core, but reworked it to focus <em>just</em> on using a time-based OTP app and released a simplified fork named <a href="https://wordpress.org/plugins/dovedi/">Dovedi</a>. This plugin uses a lot of the same techniques, but is tested to work with everything from Google Authenticator on Android to Windows Authenticator on Windows Phone.[ref]The hash spec is implemented roughly the same for both, but Windows requires a longer key than Google does. I needed to increase the byte length of device secrets to gain universal compatibility.[/ref] I wanted to target technology many users already have - even if they're <em>not</em> already using an Authenticator app, it's something portable enough they can use it with other systems as well.</p>
+<p>Dovedi was my first step in helping to make WordPress secure.</p>
+<h3>Insecure Emails</h3>
+<p>I've <a href="https://tozny.com/blog/e2e-crypto-secure-email/">written extensively elsewhere</a> on the need for and ease of configuring encrypted email systems. I use both GPG and S/MIME myself to ensure messages are signed whenever I send them and encrypted when they need to be. Once you have an email client capable of receiving and decrypting messages, the next trick is getting WordPress to <em>send</em> encrypted messages.</p>
+<p>This past weekend, I released a new plugin called <a href="https://wordpress.org/plugins/secure-messaging/">Secure Messaging</a> that uses GPG to automatically encrypt password reset emails before they're sent to a user for reclaiming their account. Once you've given WordPress your GPG public key, no one but you (with your <em>private</em> key) can ever steal your account, even if they somehow manage to hack your inbox.</p>
+<h3>Insecure Front-Ends</h3>
+<p>One of the coolest tools I've seen lately is Mozilla's <a href="https://observatory.mozilla.org/">Observatory</a>. This tool scans your site for compliance with many different security features:</p>
+<ul>
+<li>A content security policy that whitelists the domains allowed to serve scripts, images, fonts, and iFrames</li>
+<li>Whether or not your site properly implements HTTPS and if it <em>strictly</em> prevents TLS downgrade</li>
+<li>Whether or not your site implements sub-resource integrity for remote scripts</li>
+<li>If your site is protecting against cross-site scripting or frame-injection attacks</li>
+<li>And so on</li>
+</ul>
+<p>By default, it's difficult to get WordPress to score well under these tests.[ref]<a href="https://ericmann.wordpress.com/">My "dev journal"</a> on WordPress.com, for example, <a href="https://observatory.mozilla.org/analyze.html?host=ericmann.wordpress.com">only scores a D</a> where an A+ is possible. If WordPress.com is the "gold standard" for WordPress hosting, we've obviously got a lot of work left to do. This site, hosted on WP Engine at the time of this writing, <a href="https://observatory.mozilla.org/analyze.html?host=ttmm.io">does even worse with an F.</a>[/ref] I'm collaborating with a couple of other developers to flesh out a plugin that helps configure a WordPress site to score much better according to these scans.</p>
+<p>Remember, a higher score means a more secure front-end and a safer experience for <em>your</em> customers.</p>
+<h3>Insecure Upgrades</h3>
+<p>It doesn't look like the core team will be cryptographically signing updates or payloads any time soon. That being said, I <em>still</em> want to ensure sites I interact with are receiving vetted, secure code. To that end, I will be publishing a list of signed hashes for core files (and a handful of plugins and themes) myself.</p>
+<p>I will also be writing a plugin to force the WordPress updater to <em>verify</em> these hashes before completing the upload.</p>
+<p>This obviously won't fix a hacked site, and it won't protect against all possible avenues of attack. However, it will help ensure that critical code being download through an automated update (via a proxy, for example) is guaranteed by me to be free from outside manipulation.</p>
+<h2>Next Step: Profit?</h2>
+<p>All of this is a labor of love. The tools above are, like almost everything else I do, freely available as open source. Where possible, I license under the terms of the MIT license (but use the GPL on tools like Dovedi, which are forked from others). All of the above constitute a fair amount of work on my part, but my goal is to provide these tools to the community and help change the conversation about WordPress and core security.</p>
+<p>If you want to help, feel free to <a href="https://twitter.com/ericmann">reach out to me on Twitter</a>. If you want to contribute financially, <a href="https://www.paypal.me/eam">donations are always gladly accepted</a>.</p>
+<p>The best way to help, though, is to raise awareness and offer feedback. Where are the rough edges in WordPress or in the systems that secure it? What could be done to make the "secure" way to do something the "easiest" way?</p>
