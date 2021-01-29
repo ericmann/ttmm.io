@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Web Requests and Data Leakage | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Web Requests and Data Leakage" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Even if your site is browsed over HTTPS, it can be insecure if any assets (images, scripts, styles) are transferred over an HTTP connection. This will trigger a “mixed content” warning in the browser that many will brush off as unimportant. The warning can be a major issue for some sites, though, and I want to explain why." />
+<meta property="og:description" content="Even if your site is browsed over HTTPS, it can be insecure if any assets (images, scripts, styles) are transferred over an HTTP connection. This will trigger a “mixed content” warning in the browser that many will brush off as unimportant. The warning can be a major issue for some sites, though, and I want to explain why." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-01-18T08:00:01-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Web Requests and Data Leakage" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Web Requests and Data Leakage","dateModified":"2014-01-18T08:00:01-08:00","datePublished":"2014-01-18T08:00:01-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/data-leakage/"},"url":"/tech/data-leakage/","description":"Even if your site is browsed over HTTPS, it can be insecure if any assets (images, scripts, styles) are transferred over an HTTP connection. This will trigger a “mixed content” warning in the browser that many will brush off as unimportant. The warning can be a major issue for some sites, though, and I want to explain why.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2014-01-18">
+                    January 18, 2014
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Web Requests and Data Leakage</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>When I wrote earlier on securing images and solving <a title="Mixed Content" href="https://developer.mozilla.org/en-US/docs/Security/MixedContent">mixed content issues</a> on websites, my friend Mike Schinkel asked if I could <a title="Comment on Photon and HTTPS" href="http://eamann.com/tech/photon-https-making-work/#comment-1956">explain why it mattered</a>.  I briefly covered information leakage in the comments, but wanted to go over things a bit more in detail for anyone interested.</p>
+<h2>The Tools</h2>
+<p>I use a variety of network tools to monitor requests going back and forth from the browser to the server.  Seeing exactly what the browser sends and exactly what the server returns helps debug interactions, detect potential optimization routes, and gain a better sense of what's going on under the hood.</p>
+<p>On my Windows machine, I use <a title="Fiddler" href="http://fiddler2.com/">Fiddler</a> as a proxy so I can see every piece of data passing over the wire.  On both my Windows and Mac I use <a title="Wireshark" href="http://www.wireshark.org/">Wireshark</a> to monitor both web requests and, well, <em>everything </em>exchanged over the network.</p>
+<p>Wireshark, in particular, is a fun tool to run when connected to any network as it lets me see not just the traffic from my machine but any machine on the network.  If you want proof that people are still using insecure network connections to send sensitive data, spend 5 minutes reading a Wireshark feed.  It's a sobering experience.</p>
+<h2>The Experiment</h2>
+<p>To demonstrate how information could leak with images, I did a quick experiment on my own site.  I made a web request to [cci]http://eamann.com/biz/does-the-fold-still-matter/?username=testing&amp;password=1234[/cci].  This is to demonstrate two things:</p>
+<ol>
+<li>The relative insecurity of GET parameters (variables passed in a URL)</li>
+<li>How data passed in a referrer header can be intercepted by an eavesdropper</li>
+</ol>
+<p>Once upon a time I worked on a stateless REST-based web application that still authenticated users on each request.  The user authentication required the username and password of the current user to be passed as GET parameters in every request.  Every. Request.  This experiment recreates that environment as an illustration.</p>
+<p>Assume, though, that we're requesting an https url.[ref]I don't have an SSL certificate set up for my site because I'm cheap. Also, none of the data on this site is of a sensitive nature, so encryption isn't a big deal.  If, however, I decide to ever host sensitive data the first thing I'll do is lock everything down over SSL.[/ref]  The document will be passed over an encrypted connection and eavesdroppers won't grab anything.  The images, however, <em>could</em> be passed over HTTP and can be viewed by anyone intercepting network traffic.  If the browser is passing a Referrer header, eavesdroppers will now know exactly what page you're viewing, can see any cookies on the site, and can see your GET parameters - your username and password.[ref]Good browsers are now locking down on this and beginning to omit the Referrer header when making an http asset request on an https page. But there's no guarantee here, and you'll never know what browser your visitors are using.  If the page needs to be secure, make sure your assets are secure as well or you'll be leaking information to would-be attackers![/ref]</p>
+<h2>The Results</h2>
+<p>After making the request and taking a look in Wireshark, it was fairly easy to find an image request on the page.[ref]Remember, we're taking the example of an SSL site that contains a vanilla HTTP image in its body.[/ref]</p>
+<p><a href="http://eamann.com/wp-content/uploads/2014/01/Screenshot-Request.jpg"><img class="aligncenter size-large wp-image-6045" alt="Screenshot-Request" src="/assets/2014/01/Screenshot-Request-1024x212.jpg" width="1024" height="212" /></a></p>
+<p>If this were truly an SSL site, the other requests in this image wouldn't appear (I'm filtering on HTTP requests only), but the GET for the image would still be present and (in most browsers) would still contain the same headers.  The image itself is an innocuous request.  It doesn't expose anything vital.</p>
+<p>The <em>headers</em> are a different story:</p>
+<p style="text-align: center;"><a href="http://eamann.com/wp-content/uploads/2014/01/Screenshot-Referrer.jpg"><img class="aligncenter  wp-image-6046" alt="Screenshot-Referrer" src="/assets/2014/01/Screenshot-Referrer-1024x319.jpg" width="717" height="223" /></a></p>
+<p style="text-align: left;">I've highlighted the referral header in the example above.  In plain text, it would be [cci]Referer: http://eamann.com/biz/does-the-fold-still-matter/?username=testing&password=1234[/cci].  Here we have, exposed for all the world to see, the original web url and it's plaintext GET parameters.[ref]I want to point out once more this will still be exposed on most SSL-secured websites if the image is requested over HTTP.  I requested the page over HTTP because my site doesn't currently have an SSL certificate.  However, I wanted to present a <em>real</em> demonstration from a <em>real </em>website with data captured <em>live</em> over an open WiFi network.  This is a real request, captured remotely, using readily-available tools and eavesdropping over a real network.  I used my own site as an example so no one can accuse me of hacking their data.[/ref]</p>
+<h2>The Implications</h2>
+<p>Honestly, few of us are ever going to send a username and password pair via GET parameters.  But there are situations where this could still cause an issue.</p>
+<p>I use a plugin on my WordPress site called "<a title="Share a Draft plugin" href="http://wordpress.org/plugins/shareadraft/">Share a Draft</a>."  This plugin allows me to very easily draft a post, and share a private link for that post with peers to review content before publishing anything.  This private link contains a hash, affixed to the URL via a GET parameter, that tells WordPress to give a visitor access to a not-yet-published post.</p>
+<p>Again, my site doesn't contain any sensitive information - but what if it did.  What if, instead of blogging about personal topics, I was writing news articles about major international affairs for a news media organization?  What if I sent a Share a Draft link to a colleague to proofread a post on not-yet-public international policy decisions?  What if my colleague read the post in a Starbucks over open WiFi?</p>
+<p>Even if the site itself is encrypted and transferred over SSL, any non-SSL images in the post body can be intercepted by anyone else on that network, potentially revealing the referrer URL, exposing the GET parameter, and allowing an eavesdropper access to sensitive news data before it's available to the public.</p>
+<p>Is this a major security flaw?  No.  But it's a flaw nonetheless and something security-minded developers and publishers should keep in mind.  I'll be among the first to admit that thinking about security in this way is extremely paranoid.  I'd also like to point out, though, that <a title="Professional Paranoia" href="http://www.onlamp.com/pub/a/onlamp/2001/07/12/prof_paranoia.html">professional paranoia</a> is the mark of a good security engineer.</p>
+<p>Have I convinced you that "mixed content" warnings are a valid security concern yet?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Web+Requests+and+Data+Leakage&amp;url=https://ttmm.iotech/data-leakage/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/data-leakage/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#data+leakage"
+                    rel="tag">data leakage</a>
+                <a href="/tags/index.html#data+security"
+                    rel="tag">data security</a>
+                <a href="/tags/index.html#encryption"
+                    rel="tag">encryption</a>
+                <a href="/tags/index.html#https"
+                    rel="tag">https</a>
+                <a href="/tags/index.html#mixed+content"
+                    rel="tag">mixed content</a>
+                <a href="/tags/index.html#privacy"
+                    rel="tag">privacy</a>
+                <a href="/tags/index.html#ssl"
+                    rel="tag">ssl</a>
+                <a href="/tags/index.html#vulnerability"
+                    rel="tag">vulnerability</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="January 17, 2014">January 17, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/journal/speak-wordcamp/">Why Speak at WordCamp?</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="January 19, 2014">January 19, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/journal/post-conference-high/">Post-Conference High</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

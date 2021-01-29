@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Installing a New Engine - Nginx | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Installing a New Engine - Nginx" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I originally started blogging with WordPress via the one-click installer that came standard with a basic Network Solutions website.  It&#39;s been several years since then, and I definitely advise against getting started that way.  There are better hosts out there, and better server systems.  Take your pick. For the past year, I&#39;ve been running my blogs on a VPS that I manage myself.  I got started with the basic LAMP (Linux-Apache-MySql-PHP) stack that just about everyone else has.  And it worked ... for the most part. Unfortunately, Apache is a bit slow on the VPS I have.  And to handle some more experimental projects I&#39;m working on, I felt the need to upgrade from the standard to something a bit beefier. Some developers recommended Nginx.  It&#39;s an event-driven web server that can handle several concurrent connections, has a might lighter footprint than Apache, and can handle the new HTML5 websockets that I plan to play with. I was sold! Except for one tiny detail.  All of the &quot;how to install WordPress&quot; tutorials out there detail installation with Apache ... not with Nginx.  So I was mostly on my own, but if you&#39;re reading this, it means I managed to pull it off! Installing Nginx The first thing to remember is that I run my server on CentOS 5.6.  If you&#39;re using a different version of Linux, these steps might not work for you.  In addition, I might have forgotten 1 or 3 steps along the way ... but this is essentially what I did to get things running. First, I wanted to install Nginx.  It turned out to be a lot easier than you might think: [cc:lang=sh]~# yum install nginx[/cc] This seemed to install the server just fine, but I couldn&#39;t be completely sure.  Since Apache was still running to serve up my sites (and my clients&#39; sites), I couldn&#39;t bind Nginx to port 80.  Instead, I opened port 8080 temporarily and changed Nginix&#39;s default site to listen on that port instead. [cc lang=sh tab_size=&quot;2&quot; width=&quot;580&quot; height=&quot;500&quot;] server { limit_conn myzone 10; listen 8080; server_name _; #charset koi8-r; #access_log logs/host.access.log main; location / { root /usr/share/nginx/html; index index.php index.html index.htm; } error_page 404 /404.html; location = /404.html { root /usr/share/nginx/html; } # redirect server error pages to the static page /50x.html # error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } # proxy the PHP scripts to Apache listening on 127.0.0.1:80 # #location ~ .php$ { # proxy_pass http://127.0.0.1; #} # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000 # # location ~ .php$ { # root html; # fastcgi_pass 127.0.0.1:9000; # fastcgi_index index.php; # fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name; # fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html$fastcgi_script_name; # include fastcgi_params; # } # deny access to .htaccess files, if Apache&#39;s document root # concurs with nginx&#39;s one # #location ~ /.ht { # deny all; #} } [/cc] Loading my default site via port 8080 then returned exactly what I expected - the default Nginx &quot;it works&quot; page: Installing PHP Next, I needed to install PHP.  The Apache setup I was migrating from had PHP bundled together inside Apache.  Nginx decouples everything and runs PHP as a FastCGI process.  So I needed to install quite a bit of other tools to get things running.  Luckily, it just took one convoluted installation command: [cc lang=sh width=&quot;580&quot;] ~# yum install php-pear-Net-Socket php-pear php-common php-gd php-devel php php-mbstring php-pear-Mail php-cli php-imap php-snmp php-pdo php-xml php-pear-Auth-SASL php-ldap php-pear-Net-SMTP php-mysql [/cc] This installs PHP and all of the various modules that it needs.  The one other element we need for Nginx to work with PHP is a process to spawn FastCGI processes: [cc lang=sh width=&quot;580&quot;]~# yum install spawn-fcgi[/cc] One more installation lets us configure an initialization script to spawn our FastCGI PHP handlers.  As much as I don&#39;t like downloading scripts from strange sources, it looks clean enough and runs perfectly on my box: [cc lang=sh width=&quot;580&quot;] ~# wget http://bash.cyberciti.biz/dl/419.sh.zip ~# unzip 419.sh.zip ~# mv 419.sh /etc/init.d/php_cgi ~# chmod +x /etc/init.d/php_cgi [/cc] You can test that PHP is installed by placing a standard [cci]phpinfo.php[/cci] file in the http root for Nginx.  This will serve two purposes: it will demonstrate that PHP is parsing properly and will help you verify that you installed the version of PHP you thought you were installing. Just make sure you uncomment the &quot;location&quot; definition labelled &quot;pass the PHP scripts to FastCGI server&quot; so that the system knows what to do with the PHP. Configuring WordPress This was the tricky part. I&#39;ve been running multiple websites with distinct top-level-domains on the same WordPress Multisite setup.  On Apache, it was somewhat difficult to get my vhosts just right so that they&#39;d work with the MU Domain Mapping plugin.  Really, it took me a few weeks to get that right. So this morning, I kept toggling back and forth between Apache and Nginx.  When I thought I had a solution, I&#39;d dump it in my Nginx conf file, test things, curse silently at the terminal, and restart Apache so no one would see my sites down. Then, finally, I figured it out! Below is an example configuration file for this particular domain: [cc lang=sh width=&quot;580&quot; height=&quot;500&quot; tab_size=&quot;2&quot;] server { listen 80; server_name mindsharestrategy.com *.mindsharestrategy.com; root /home/s1/html/eamann; location / { root /home/s1/html/eamann; try_files $uri $uri/ /index.php?$args; index index.php; rewrite ^.*/files/(.*)$ /wp-includes/ms-files.php?file=$1 last; } location ~* ^.+.(js|css|png|jpg|jpeg|gif|ico)$ { rewrite ^.*/files/(.*(js|css|png|jpg|jpeg|gif|ico))$ /wp-includes/ms-files.php?file=$1 last; expires 24h; log_not_found off; } location ~ .php$ { root html; fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME /home/s1/html/eamann$fastcgi_script_name; include fastcgi_params; } location @wp { rewrite ^/files(.*) /wp-includes/ms-files.php?file=$1 last; rewrite ^(/[^/]+)?(/wp-.*) $2 last; rewrite ^(/[^/]+)?(/.*.php) $2 last; rewrite ^/(.*)$ /index.php?q=$1 last; } } [/cc] All of my virtual hosts (discrete domains) are configured the same way. It might not be the prettiest configuration, but just about everything seems to work. Image uploads are still having issues, but my domains work, authentication works, content works, and WordPress works like a dream. Performance Differences Over Apache I&#39;m running the server I have now because my old VPS kept crashing. Apache spawned too many processes and would run the entire system out of memory almost immediately. The best setup I could manage under Apache was to allow no more than 5 instances at a time. Even then, I frequently ran out of memory and all of my sites were somewhat slow. Nginix, on the other hand, is running a minimum of 10 instances at any given time (I allow it up to 20), uses half the memory that Apache used, and serves up my WordPress sites in a fraction of the time. Anecdotal, I know. But I&#39;ll take a 2-second Nginx site over a 12-second Apache site any day of the week. My next challenge is to get Node.JS running through a proxy so I can start playing with websockets ..." />
+<meta property="og:description" content="I originally started blogging with WordPress via the one-click installer that came standard with a basic Network Solutions website.  It&#39;s been several years since then, and I definitely advise against getting started that way.  There are better hosts out there, and better server systems.  Take your pick. For the past year, I&#39;ve been running my blogs on a VPS that I manage myself.  I got started with the basic LAMP (Linux-Apache-MySql-PHP) stack that just about everyone else has.  And it worked ... for the most part. Unfortunately, Apache is a bit slow on the VPS I have.  And to handle some more experimental projects I&#39;m working on, I felt the need to upgrade from the standard to something a bit beefier. Some developers recommended Nginx.  It&#39;s an event-driven web server that can handle several concurrent connections, has a might lighter footprint than Apache, and can handle the new HTML5 websockets that I plan to play with. I was sold! Except for one tiny detail.  All of the &quot;how to install WordPress&quot; tutorials out there detail installation with Apache ... not with Nginx.  So I was mostly on my own, but if you&#39;re reading this, it means I managed to pull it off! Installing Nginx The first thing to remember is that I run my server on CentOS 5.6.  If you&#39;re using a different version of Linux, these steps might not work for you.  In addition, I might have forgotten 1 or 3 steps along the way ... but this is essentially what I did to get things running. First, I wanted to install Nginx.  It turned out to be a lot easier than you might think: [cc:lang=sh]~# yum install nginx[/cc] This seemed to install the server just fine, but I couldn&#39;t be completely sure.  Since Apache was still running to serve up my sites (and my clients&#39; sites), I couldn&#39;t bind Nginx to port 80.  Instead, I opened port 8080 temporarily and changed Nginix&#39;s default site to listen on that port instead. [cc lang=sh tab_size=&quot;2&quot; width=&quot;580&quot; height=&quot;500&quot;] server { limit_conn myzone 10; listen 8080; server_name _; #charset koi8-r; #access_log logs/host.access.log main; location / { root /usr/share/nginx/html; index index.php index.html index.htm; } error_page 404 /404.html; location = /404.html { root /usr/share/nginx/html; } # redirect server error pages to the static page /50x.html # error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } # proxy the PHP scripts to Apache listening on 127.0.0.1:80 # #location ~ .php$ { # proxy_pass http://127.0.0.1; #} # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000 # # location ~ .php$ { # root html; # fastcgi_pass 127.0.0.1:9000; # fastcgi_index index.php; # fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name; # fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html$fastcgi_script_name; # include fastcgi_params; # } # deny access to .htaccess files, if Apache&#39;s document root # concurs with nginx&#39;s one # #location ~ /.ht { # deny all; #} } [/cc] Loading my default site via port 8080 then returned exactly what I expected - the default Nginx &quot;it works&quot; page: Installing PHP Next, I needed to install PHP.  The Apache setup I was migrating from had PHP bundled together inside Apache.  Nginx decouples everything and runs PHP as a FastCGI process.  So I needed to install quite a bit of other tools to get things running.  Luckily, it just took one convoluted installation command: [cc lang=sh width=&quot;580&quot;] ~# yum install php-pear-Net-Socket php-pear php-common php-gd php-devel php php-mbstring php-pear-Mail php-cli php-imap php-snmp php-pdo php-xml php-pear-Auth-SASL php-ldap php-pear-Net-SMTP php-mysql [/cc] This installs PHP and all of the various modules that it needs.  The one other element we need for Nginx to work with PHP is a process to spawn FastCGI processes: [cc lang=sh width=&quot;580&quot;]~# yum install spawn-fcgi[/cc] One more installation lets us configure an initialization script to spawn our FastCGI PHP handlers.  As much as I don&#39;t like downloading scripts from strange sources, it looks clean enough and runs perfectly on my box: [cc lang=sh width=&quot;580&quot;] ~# wget http://bash.cyberciti.biz/dl/419.sh.zip ~# unzip 419.sh.zip ~# mv 419.sh /etc/init.d/php_cgi ~# chmod +x /etc/init.d/php_cgi [/cc] You can test that PHP is installed by placing a standard [cci]phpinfo.php[/cci] file in the http root for Nginx.  This will serve two purposes: it will demonstrate that PHP is parsing properly and will help you verify that you installed the version of PHP you thought you were installing. Just make sure you uncomment the &quot;location&quot; definition labelled &quot;pass the PHP scripts to FastCGI server&quot; so that the system knows what to do with the PHP. Configuring WordPress This was the tricky part. I&#39;ve been running multiple websites with distinct top-level-domains on the same WordPress Multisite setup.  On Apache, it was somewhat difficult to get my vhosts just right so that they&#39;d work with the MU Domain Mapping plugin.  Really, it took me a few weeks to get that right. So this morning, I kept toggling back and forth between Apache and Nginx.  When I thought I had a solution, I&#39;d dump it in my Nginx conf file, test things, curse silently at the terminal, and restart Apache so no one would see my sites down. Then, finally, I figured it out! Below is an example configuration file for this particular domain: [cc lang=sh width=&quot;580&quot; height=&quot;500&quot; tab_size=&quot;2&quot;] server { listen 80; server_name mindsharestrategy.com *.mindsharestrategy.com; root /home/s1/html/eamann; location / { root /home/s1/html/eamann; try_files $uri $uri/ /index.php?$args; index index.php; rewrite ^.*/files/(.*)$ /wp-includes/ms-files.php?file=$1 last; } location ~* ^.+.(js|css|png|jpg|jpeg|gif|ico)$ { rewrite ^.*/files/(.*(js|css|png|jpg|jpeg|gif|ico))$ /wp-includes/ms-files.php?file=$1 last; expires 24h; log_not_found off; } location ~ .php$ { root html; fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME /home/s1/html/eamann$fastcgi_script_name; include fastcgi_params; } location @wp { rewrite ^/files(.*) /wp-includes/ms-files.php?file=$1 last; rewrite ^(/[^/]+)?(/wp-.*) $2 last; rewrite ^(/[^/]+)?(/.*.php) $2 last; rewrite ^/(.*)$ /index.php?q=$1 last; } } [/cc] All of my virtual hosts (discrete domains) are configured the same way. It might not be the prettiest configuration, but just about everything seems to work. Image uploads are still having issues, but my domains work, authentication works, content works, and WordPress works like a dream. Performance Differences Over Apache I&#39;m running the server I have now because my old VPS kept crashing. Apache spawned too many processes and would run the entire system out of memory almost immediately. The best setup I could manage under Apache was to allow no more than 5 instances at a time. Even then, I frequently ran out of memory and all of my sites were somewhat slow. Nginix, on the other hand, is running a minimum of 10 instances at any given time (I allow it up to 20), uses half the memory that Apache used, and serves up my WordPress sites in a fraction of the time. Anecdotal, I know. But I&#39;ll take a 2-second Nginx site over a 12-second Apache site any day of the week. My next challenge is to get Node.JS running through a proxy so I can start playing with websockets ..." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2011-09-30T08:00:59-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Installing a New Engine - Nginx" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Installing a New Engine - Nginx","dateModified":"2011-09-30T08:00:59-07:00","datePublished":"2011-09-30T08:00:59-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/installing-a-new-engine-nginx/"},"url":"/tech/installing-a-new-engine-nginx/","description":"I originally started blogging with WordPress via the one-click installer that came standard with a basic Network Solutions website.  It&#39;s been several years since then, and I definitely advise against getting started that way.  There are better hosts out there, and better server systems.  Take your pick. For the past year, I&#39;ve been running my blogs on a VPS that I manage myself.  I got started with the basic LAMP (Linux-Apache-MySql-PHP) stack that just about everyone else has.  And it worked ... for the most part. Unfortunately, Apache is a bit slow on the VPS I have.  And to handle some more experimental projects I&#39;m working on, I felt the need to upgrade from the standard to something a bit beefier. Some developers recommended Nginx.  It&#39;s an event-driven web server that can handle several concurrent connections, has a might lighter footprint than Apache, and can handle the new HTML5 websockets that I plan to play with. I was sold! Except for one tiny detail.  All of the &quot;how to install WordPress&quot; tutorials out there detail installation with Apache ... not with Nginx.  So I was mostly on my own, but if you&#39;re reading this, it means I managed to pull it off! Installing Nginx The first thing to remember is that I run my server on CentOS 5.6.  If you&#39;re using a different version of Linux, these steps might not work for you.  In addition, I might have forgotten 1 or 3 steps along the way ... but this is essentially what I did to get things running. First, I wanted to install Nginx.  It turned out to be a lot easier than you might think: [cc:lang=sh]~# yum install nginx[/cc] This seemed to install the server just fine, but I couldn&#39;t be completely sure.  Since Apache was still running to serve up my sites (and my clients&#39; sites), I couldn&#39;t bind Nginx to port 80.  Instead, I opened port 8080 temporarily and changed Nginix&#39;s default site to listen on that port instead. [cc lang=sh tab_size=&quot;2&quot; width=&quot;580&quot; height=&quot;500&quot;] server { limit_conn myzone 10; listen 8080; server_name _; #charset koi8-r; #access_log logs/host.access.log main; location / { root /usr/share/nginx/html; index index.php index.html index.htm; } error_page 404 /404.html; location = /404.html { root /usr/share/nginx/html; } # redirect server error pages to the static page /50x.html # error_page 500 502 503 504 /50x.html; location = /50x.html { root /usr/share/nginx/html; } # proxy the PHP scripts to Apache listening on 127.0.0.1:80 # #location ~ .php$ { # proxy_pass http://127.0.0.1; #} # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000 # # location ~ .php$ { # root html; # fastcgi_pass 127.0.0.1:9000; # fastcgi_index index.php; # fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name; # fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html$fastcgi_script_name; # include fastcgi_params; # } # deny access to .htaccess files, if Apache&#39;s document root # concurs with nginx&#39;s one # #location ~ /.ht { # deny all; #} } [/cc] Loading my default site via port 8080 then returned exactly what I expected - the default Nginx &quot;it works&quot; page: Installing PHP Next, I needed to install PHP.  The Apache setup I was migrating from had PHP bundled together inside Apache.  Nginx decouples everything and runs PHP as a FastCGI process.  So I needed to install quite a bit of other tools to get things running.  Luckily, it just took one convoluted installation command: [cc lang=sh width=&quot;580&quot;] ~# yum install php-pear-Net-Socket php-pear php-common php-gd php-devel php php-mbstring php-pear-Mail php-cli php-imap php-snmp php-pdo php-xml php-pear-Auth-SASL php-ldap php-pear-Net-SMTP php-mysql [/cc] This installs PHP and all of the various modules that it needs.  The one other element we need for Nginx to work with PHP is a process to spawn FastCGI processes: [cc lang=sh width=&quot;580&quot;]~# yum install spawn-fcgi[/cc] One more installation lets us configure an initialization script to spawn our FastCGI PHP handlers.  As much as I don&#39;t like downloading scripts from strange sources, it looks clean enough and runs perfectly on my box: [cc lang=sh width=&quot;580&quot;] ~# wget http://bash.cyberciti.biz/dl/419.sh.zip ~# unzip 419.sh.zip ~# mv 419.sh /etc/init.d/php_cgi ~# chmod +x /etc/init.d/php_cgi [/cc] You can test that PHP is installed by placing a standard [cci]phpinfo.php[/cci] file in the http root for Nginx.  This will serve two purposes: it will demonstrate that PHP is parsing properly and will help you verify that you installed the version of PHP you thought you were installing. Just make sure you uncomment the &quot;location&quot; definition labelled &quot;pass the PHP scripts to FastCGI server&quot; so that the system knows what to do with the PHP. Configuring WordPress This was the tricky part. I&#39;ve been running multiple websites with distinct top-level-domains on the same WordPress Multisite setup.  On Apache, it was somewhat difficult to get my vhosts just right so that they&#39;d work with the MU Domain Mapping plugin.  Really, it took me a few weeks to get that right. So this morning, I kept toggling back and forth between Apache and Nginx.  When I thought I had a solution, I&#39;d dump it in my Nginx conf file, test things, curse silently at the terminal, and restart Apache so no one would see my sites down. Then, finally, I figured it out! Below is an example configuration file for this particular domain: [cc lang=sh width=&quot;580&quot; height=&quot;500&quot; tab_size=&quot;2&quot;] server { listen 80; server_name mindsharestrategy.com *.mindsharestrategy.com; root /home/s1/html/eamann; location / { root /home/s1/html/eamann; try_files $uri $uri/ /index.php?$args; index index.php; rewrite ^.*/files/(.*)$ /wp-includes/ms-files.php?file=$1 last; } location ~* ^.+.(js|css|png|jpg|jpeg|gif|ico)$ { rewrite ^.*/files/(.*(js|css|png|jpg|jpeg|gif|ico))$ /wp-includes/ms-files.php?file=$1 last; expires 24h; log_not_found off; } location ~ .php$ { root html; fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME /home/s1/html/eamann$fastcgi_script_name; include fastcgi_params; } location @wp { rewrite ^/files(.*) /wp-includes/ms-files.php?file=$1 last; rewrite ^(/[^/]+)?(/wp-.*) $2 last; rewrite ^(/[^/]+)?(/.*.php) $2 last; rewrite ^/(.*)$ /index.php?q=$1 last; } } [/cc] All of my virtual hosts (discrete domains) are configured the same way. It might not be the prettiest configuration, but just about everything seems to work. Image uploads are still having issues, but my domains work, authentication works, content works, and WordPress works like a dream. Performance Differences Over Apache I&#39;m running the server I have now because my old VPS kept crashing. Apache spawned too many processes and would run the entire system out of memory almost immediately. The best setup I could manage under Apache was to allow no more than 5 instances at a time. Even then, I frequently ran out of memory and all of my sites were somewhat slow. Nginix, on the other hand, is running a minimum of 10 instances at any given time (I allow it up to 20), uses half the memory that Apache used, and serves up my WordPress sites in a fraction of the time. Anecdotal, I know. But I&#39;ll take a 2-second Nginx site over a 12-second Apache site any day of the week. My next challenge is to get Node.JS running through a proxy so I can start playing with websockets ...","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2011-09-30">
+                    September 30, 2011
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Installing a New Engine - Nginx</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>I originally started blogging with WordPress via the one-click installer that came standard with a basic Network Solutions website.  It's been several years since then, and I <em>definitely</em> advise against getting started that way.  There are <a href="http://wordpress.com">better hosts out there</a>, and better server systems.  Take your pick.</p>
+<p>For the past year, I've been running my blogs on a VPS that I manage myself.  I got started with the basic LAMP (Linux-Apache-MySql-PHP) stack that just about everyone else has.  And it worked ... for the most part.</p>
+<p>Unfortunately, Apache is a bit slow on the VPS I have.  And to handle <a href="http://wordpress.stackexchange.com/q/28917/46">some more experimental projects</a> I'm working on, I felt the need to upgrade from the standard to something a bit beefier.</p>
+<p><img class="alignright" title="Nginx Logo" src="/assets/2011/09/Nginx.gif" alt="" width="121" height="32" />Some developers recommended <a href="http://en.wikipedia.org/wiki/Nginx" target="_blank">Nginx</a>.  It's an event-driven web server that can handle several concurrent connections, has a might lighter footprint than Apache, and can handle the new HTML5 websockets that I plan to play with.</p>
+<p>I was sold!</p>
+<p>Except for one tiny detail.  All of the "how to install WordPress" tutorials out there detail installation with Apache ... not with Nginx.  So I was mostly on my own, but if you're reading this, it means I managed to pull it off!</p>
+<h2>Installing Nginx</h2>
+<p>The first thing to remember is that I run my server on CentOS 5.6.  If you're using a different version of Linux, these steps might not work for you.  In addition, I might have forgotten 1 or 3 steps along the way ... but this is <em>essentially</em> what I did to get things running.</p>
+<p>First, I wanted to install Nginx.  It turned out to be a lot easier than you might think:</p>
+<p>[cc:lang=sh]~# yum install nginx[/cc]</p>
+<p>This seemed to install the server just fine, but I couldn't be completely sure.  Since Apache was still running to serve up my sites (and my clients' sites), I couldn't bind Nginx to port 80.  Instead, I opened port 8080 temporarily and changed Nginix's default site to listen on that port instead.</p>
+<p>[cc lang=sh tab_size="2" width="580" height="500"]<br />
+server {<br />
+limit_conn myzone 10;<br />
+listen 8080;<br />
+server_name _;</p>
+<p>#charset koi8-r;</p>
+<p>#access_log logs/host.access.log main;</p>
+<p>location / {<br />
+root /usr/share/nginx/html;<br />
+index index.php index.html index.htm;<br />
+}</p>
+<p>error_page 404 /404.html;</p>
+<p>location = /404.html {<br />
+root /usr/share/nginx/html;<br />
+}</p>
+<p># redirect server error pages to the static page /50x.html<br />
+#<br />
+error_page 500 502 503 504 /50x.html;<br />
+location = /50x.html {<br />
+root /usr/share/nginx/html;<br />
+}</p>
+<p># proxy the PHP scripts to Apache listening on 127.0.0.1:80<br />
+#<br />
+#location ~ .php$ {<br />
+# proxy_pass http://127.0.0.1;<br />
+#}</p>
+<p># pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000<br />
+#<br />
+# location ~ .php$ {<br />
+# root html;<br />
+# fastcgi_pass 127.0.0.1:9000;<br />
+# fastcgi_index index.php;<br />
+# fastcgi_param SCRIPT_FILENAME /scripts$fastcgi_script_name;<br />
+# fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html$fastcgi_script_name;<br />
+# include fastcgi_params;<br />
+# }</p>
+<p># deny access to .htaccess files, if Apache's document root<br />
+# concurs with nginx's one<br />
+#<br />
+#location ~ /.ht {<br />
+# deny all;<br />
+#}<br />
+}<br />
+[/cc]</p>
+<p>Loading my default site via port 8080 then returned exactly what I expected - the default Nginx "it works" page:<br />
+<a href="http://ttmm.wpengine.com/wp-content/uploads/2011/09/Nginix-Home.png"><img class="aligncenter size-full wp-image-3494" title="Nginix Home" src="/assets/2011/09/Nginix-Home.png" alt="" width="394" height="81" /></a></p>
+<h2>Installing PHP</h2>
+<p><em>Next</em>, I needed to install PHP.  The Apache setup I was migrating from had PHP bundled together inside Apache.  Nginx decouples everything and runs PHP as a FastCGI process.  So I needed to install quite a bit of other tools to get things running.  Luckily, it just took one convoluted installation command:</p>
+<p>[cc lang=sh width="580"]<br />
+~# yum install php-pear-Net-Socket php-pear php-common php-gd php-devel php php-mbstring php-pear-Mail php-cli php-imap php-snmp php-pdo php-xml php-pear-Auth-SASL php-ldap php-pear-Net-SMTP php-mysql<br />
+[/cc]</p>
+<p>This installs PHP and all of the various modules that it needs.  The one other element we need for Nginx to work with PHP is a process to spawn FastCGI processes:</p>
+<p>[cc lang=sh width="580"]~# yum install spawn-fcgi[/cc]</p>
+<p>One more installation lets us configure an initialization script to spawn our FastCGI PHP handlers.  As much as I don't like downloading scripts from strange sources, it looks clean enough and runs perfectly on my box:</p>
+<p>[cc lang=sh width="580"]<br />
+~# wget http://bash.cyberciti.biz/dl/419.sh.zip<br />
+~# unzip 419.sh.zip<br />
+~# mv 419.sh /etc/init.d/php_cgi<br />
+~# chmod +x /etc/init.d/php_cgi<br />
+[/cc]</p>
+<p>You can test that PHP is installed by placing a standard [cci]phpinfo.php[/cci] file in the http root for Nginx.  This will serve two purposes: it will demonstrate that PHP is parsing properly and will help you verify that you installed the version of PHP you <em>thought</em> you were installing.</p>
+<p>Just make sure you uncomment the "location" definition labelled "pass the PHP scripts to FastCGI server" so that the system knows what to do with the PHP.</p>
+<h2>Configuring WordPress</h2>
+<p>This was the tricky part.</p>
+<p>I've been running multiple websites with distinct top-level-domains on the same WordPress Multisite setup.  On Apache, it was somewhat difficult to get my vhosts <em>just right</em> so that they'd work with the MU Domain Mapping plugin.  Really, it took me a few weeks to get that right.</p>
+<p>So this morning, I kept toggling back and forth between Apache and Nginx.  When I thought I had a solution, I'd dump it in my Nginx conf file, test things, curse silently at the terminal, and restart Apache so no one would see my sites down.</p>
+<p>Then, finally, I figured it out!</p>
+<p>Below is an example configuration file for this particular domain:</p>
+<p>[cc lang=sh width="580" height="500" tab_size="2"]<br />
+server {<br />
+listen 80;<br />
+server_name mindsharestrategy.com *.mindsharestrategy.com;<br />
+root /home/s1/html/eamann;</p>
+<p>location / {<br />
+root /home/s1/html/eamann;<br />
+try_files $uri $uri/ /index.php?$args;<br />
+index index.php;</p>
+<p>rewrite ^.*/files/(.*)$ /wp-includes/ms-files.php?file=$1 last;<br />
+}</p>
+<p>location ~* ^.+.(js|css|png|jpg|jpeg|gif|ico)$ {<br />
+rewrite ^.*/files/(.*(js|css|png|jpg|jpeg|gif|ico))$ /wp-includes/ms-files.php?file=$1 last;<br />
+expires 24h;<br />
+log_not_found off;<br />
+}</p>
+<p>location ~ .php$ {<br />
+root html;<br />
+fastcgi_pass 127.0.0.1:9000;<br />
+fastcgi_index index.php;<br />
+fastcgi_param SCRIPT_FILENAME /home/s1/html/eamann$fastcgi_script_name;<br />
+include fastcgi_params;<br />
+}</p>
+<p>location @wp {<br />
+rewrite ^/files(.*) /wp-includes/ms-files.php?file=$1 last;</p>
+<p>rewrite ^(/[^/]+)?(/wp-.*) $2 last;<br />
+rewrite ^(/[^/]+)?(/.*.php) $2 last;</p>
+<p>rewrite ^/(.*)$ /index.php?q=$1 last;<br />
+}<br />
+}<br />
+[/cc]</p>
+<p>All of my virtual hosts (discrete domains) are configured the same way. It might not be the prettiest configuration, but just about everything seems to work. Image uploads are still having issues, but my domains work, authentication works, content works, and WordPress works like a dream.</p>
+<h2>Performance Differences Over Apache</h2>
+<p>I'm running the server I have now because my old VPS kept crashing. Apache spawned too many processes and would run the entire system out of memory almost immediately. The best setup I could manage under Apache was to allow no more than 5 instances at a time. Even then, I frequently ran out of memory and all of my sites were somewhat slow.</p>
+<p>Nginix, on the other hand, is running a minimum of 10 instances at any given time (I allow it up to 20), uses <em>half</em> the memory that Apache used, and serves up my WordPress sites in a fraction of the time.</p>
+<p>Anecdotal, I know. But I'll take a 2-second Nginx site over a 12-second Apache site any day of the week.</p>
+<p>My next challenge is to get Node.JS running through a proxy so I can start playing with websockets ...</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Installing+a+New+Engine+-+Nginx&amp;url=https://ttmm.iotech/installing-a-new-engine-nginx/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/installing-a-new-engine-nginx/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#nginx"
+                    rel="tag">nginx</a>
+                <a href="/tags/index.html#sysadmin"
+                    rel="tag">sysadmin</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="September 29, 2011">September 29, 2011</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/one-time-password-security/">One Time Password Security</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="October 4, 2011">October 4, 2011</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/live-blogging-ajax-polling/">Live Blogging - AJAX Polling</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

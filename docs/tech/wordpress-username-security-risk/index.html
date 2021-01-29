@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Why Showing The WordPress Username Is A Security Risk | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Why Showing The WordPress Username Is A Security Risk" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="There have been a handful of discussions lately surrounding WordPress and usernames - particularly whether or not exposing usernames is a security risk. The consensus appears to be “no.” I beg to differ." />
+<meta property="og:description" content="There have been a handful of discussions lately surrounding WordPress and usernames - particularly whether or not exposing usernames is a security risk. The consensus appears to be “no.” I beg to differ." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-04-04T08:00:11-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Why Showing The WordPress Username Is A Security Risk" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Why Showing The WordPress Username Is A Security Risk","dateModified":"2014-04-04T08:00:11-07:00","datePublished":"2014-04-04T08:00:11-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/wordpress-username-security-risk/"},"url":"/tech/wordpress-username-security-risk/","description":"There have been a handful of discussions lately surrounding WordPress and usernames - particularly whether or not exposing usernames is a security risk. The consensus appears to be “no.” I beg to differ.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2014-04-04">
+                    April 4, 2014
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Why Showing The WordPress Username Is A Security Risk</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>There have been a handful of discussions lately surrounding WordPress and usernames - particularly whether or not <a title="Why Showing The WordPress Username Is Not A Security Risk" href="http://wptavern.com/why-showing-the-wordpress-username-is-not-a-security-risk">exposing usernames is a security risk</a>.</p>
+<p>The consensus appears to be "no."  I beg to differ.</p>
+<h2>Two Factor Authentication</h2>
+<p>Your username is one of the two pieces of information WordPress uses to identify <em>you</em> versus the hoards of people pretending to be you in order to gain access to your website.  The second piece of information is your password.</p>
+<p><img class="alignright size-medium wp-image-6245" alt="Gravatar Hovercards" src="/assets/2014/04/Screenshot-2014-04-03-07.59.51-e1396537254486-300x136.png" width="300" height="136" />In older systems (not WordPress), users were able to log in using just a unique ID - i.e. their username.  Actually, in <i>current</i> systems this is still a widely accepted identification scheme.  Anyone could visit any WordPress site, drop my email address in a comment form, and be recognized as me when they leave a comment.</p>
+<p>No second form of authentication is required.  This is hugely disturbing as I have zero control over the content (or removal) of comments masquarading as me by merely using my email, which is then hashed by Gravatar and used to pull in not just my profile image, but often also a "hovercard" with my information on many sites.</p>
+<p><em>Two</em> factor authentication requires two separate forms of user identification.  Take the everyday example of ATM cards:</p>
+<blockquote><p>To prove that users are who they claim to be, the system requires two items: an ATM smartcard (application of the possession factor) and the personal identification number (PIN) (application of the knowledge factor). In the case of a lost ATM card, the user's accounts are still safe; anyone who finds the card cannot withdraw money as they do not know the PIN. The same is true if the attacker has only knowledge of the PIN and does not have the card.[ref]<a title="Two-step verification" href="http://en.wikipedia.org/wiki/Two-step_verification">Two-step verification</a>[/ref]</p></blockquote>
+<p>If we were talking about bank cards rather than WordPress access, you would be hard-pressed to find someone claiming that "showing your card number is not a security risk" because, well, it's a huge one.  Even if an attacker doesn't have your PIN, having just one piece of information is so dangerous (as a 4-digit pin can easily be guessed) that we immediately cancel/change our cards if lost, stolen, or if, say, <a title="How Secure is the Internet of Things?" href="https://ttmm.io/tech/security-internet-of-things/">records of a vendor like Target are hacked</a>.</p>
+<p>When it comes to usernames, however, we're so used to the username/password tuple being treated as a single piece of information that two-factor authentication means something different - using a tool like Google Authenticator on a mobile phone.</p>
+<p>I use Google Authenticator for my WordPress.com account because it's a built-in service.  However I have yet to find a comparable system for <em>self-hosted</em> WordPress, so I don't use it.[ref]If Automattic were to finally open source their implementation, I'd use it in a heartbeat. I mention this at every opportunity in the hope that <em>someone</em> will finally do so.[/ref]</p>
+<h2>Brute-Force</h2>
+<p>In the lack of a sufficient two-factor authentication scheme (username is publish, Google Authenticator is not enabled), hacking a WordPress site is relatively easy.  Usernames are public information, meaning hackers only need <em>one</em> piece of information.</p>
+<p>If you've seen the movie <a title="Olympus Has Fallen" href="http://www.imdb.com/title/tt2302755/">Olympus Has Fallen</a>, you'll see where I'm going here.  In the film, the attackers needed three separate codes to hack the national defense system. The President ordered the two other code-holders to give theirs up, swearing "they'll never get mine" each time. In the end, they didn't even <em>need</em> his - two codes got them far enough into the system they could use a brute force generator to guess his code and, eventually, launch the missiles.</p>
+<p>Fictional storyline or no, this helps prove my point: if an attacker knows your login, they can brute force your password.</p>
+<p>This is actually the key reason one of the first recommendations for securing a WordPress installation is to <a title="WordPress Security Tip: Remove the Admin User" href="http://www.dailyblogtips.com/wordpress-security-tip-remove-the-admin-user/">remove</a> <a title="Change WordPress admin username for security" href="http://www.inmotionhosting.com/support/website/wordpress/change-wordpress-admin-username-for-security">the</a> <a title="Hardening WordPress" href="http://codex.wordpress.org/Hardening_WordPress#Security_through_obscurity">"admin" user</a>.</p>
+<p>In fact, WordPress even allows administrators to set a custom username for the initial user upon instantiation to <em>avoid</em> having "admin" used by default.  There have been further <a title="Changeset 25115" href="https://core.trac.wordpress.org/changeset/25115">changes</a> in <a title="Changeset 24998" href="https://core.trac.wordpress.org/changeset/24998">core</a> to remove "admin" as a fallback when the username is not otherwise set.</p>
+<p>Why? Because leaving your site's administrative username as "admin" is considered a security flaw.</p>
+<h2>Vulnerability</h2>
+<p>I've spoken before at how vulnerable logins to your site can be when an admin-level account is used too frequently and in poor environments.  That said, the fact that usernames are exposed - and are enumerable - is one of the largest failings in WordPress when it comes to security.</p>
+<p>There are open source tools on GitHub[ref]I will <em>not</em> link to these tools. I thought about it, but I don't want anyone using this article as a "how to hack WordPress" tutorial. If you're interested in these tools, contact me privately and explain why.[/ref] that allow attackers to quickly list usernames for accounts on your site.  These tools are made possible by the fact that user IDs are assigned as auto-incrementing integers rather than true GUIDs.[ref]There have been proposals to change this, making automated enumeration of usernames essentially impossible. Unfortunately, these proposals have been met with resistance from many on the core team - not because it would be difficult, but because they fail to recognize the importance of such a task.[/ref]</p>
+<blockquote><p>All this comes back to something blindingly obvious though. Everyone is going to know part of your access. The reason we tell people not to use ‘admin’ as a login ID is not because it’s more or less secure, but because it makes it easy for script kiddies to target.[ref]<a title="Your Username is Not A Secret" href="http://halfelf.org/2014/username-secret/">Your Username is Not A Secret</a>[/ref]</p></blockquote>
+<p>Once an attacker has an account they want to target, the same tools will allow them to brute-force the account's password. It doesn't require a personal vendetta against a single user, just an extra line of code to grab a list of usernames and pick one.</p>
+<p>For many servers, this will essentially DOS the system - something a daily blogger will notice.  But if scheduled during off hours, it would be easy to fly under the radar.</p>
+<p>Honestly, when was the last time you logged into your server and checked the access logs?</p>
+<h2>Moving Forward</h2>
+<p>Usernames should not be public information - we should have an alternative field (i.e. [cci]user_nicename[/cci]) to serve as a unique identifier for author permalinks.  Usernames should be used for authentication <em>only</em> and for nothing else.</p>
+<p>Obfuscating user logins won't resolve every potential vulnerability in WordPress.  However, as the scale of the project continues to grow, decisions made in WordPress' infancy will continue to rear their heads as security issues.</p>
+<p>Usernames aren't inherently insecure on a small scale - when a platform reaches the level of visibility attained by WordPress, however, the number of potential attack vectors tied to public usernames goes through the roof.  Curtailing these attacks helps strengthen the platform.</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Why+Showing+The+WordPress+Username+Is+A+Security+Risk&amp;url=https://ttmm.iotech/wordpress-username-security-risk/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/wordpress-username-security-risk/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#administration"
+                    rel="tag">administration</a>
+                <a href="/tags/index.html#security"
+                    rel="tag">security</a>
+                <a href="/tags/index.html#vulnerability"
+                    rel="tag">vulnerability</a>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 3, 2014">April 3, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/biz/death-sponsored-content/">The Death of Sponsored Content</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 5, 2014">April 5, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/biz/nuts/">Are You Nuts?</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

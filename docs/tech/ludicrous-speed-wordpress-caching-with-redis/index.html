@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Ludicrous Speed: WordPress Caching with Redis | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Ludicrous Speed: WordPress Caching with Redis" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="When I first started hosting my own sites, I had no idea what caching was or why it was important.  Then I wrote a couple of popular blog posts, and my server crashed. Fast forward a few years, and I&#39;m running a few different websites on a few different servers.  Some get a steady stream of traffic; others get a huge spike now and again when a post is picked up by Hacker News.  In both cases, configuring your cache is a great way to keep things from failing. I&#39;m very happy to say that I&#39;ve finally set up a hugely efficient front-end page cache for WordPress.  It doesn&#39;t use a plugin. It doesn&#39;t require hacking core. And it serves my website in 3 ms.[ref]Yes, you read that right. Three milliseconds. This is exclusive of the time it takes to perform a DNS lookup or actually deliver the page. But it is proof that the bottleneck is no longer the server itself.[/ref] Thanks to a clever configuration of Nginx and Redis, WordPress has achieved ... ludicrous speed! https://www.youtube.com/watch?v=mk7VWcuVOf0 WordPress WordPress is my application of choice for just about everything.  It&#39;s easy to set up, easy to extend, and best of all, it&#39;s open source. You&#39;ll notice one thing I really care about is the fact that open source exists and helps train a new generation of software monkeys on how to build the Internet.  Fact is, if WordPress were closed source, I would not have the job I do today. WordPress is built on top of a whole slew of technologies.  The data is stored in MySQL, and PHP is used to script both the retrieval of that data and its shoehorning into an HTML template.  Unfortunately, this many moving parts means requests can be somewhat slow. For comparison to the 3 ms reference above, my site takes about 4 (four) seconds to render when it&#39;s not cached. That is a huge difference between the cached and non-cached performance - 3 ms versus 4000 ms. WordPress is fast, but dynamic page generation is only as fast as the server powering it.  Even on the most streamlined machine, rendering a page dynamically will take time. Nginx Nginx is an open-source, event-driven web server.  I use it on all of my servers because it&#39;s incredibly more efficient than Apache for handling multiple connections.  It&#39;s fast, doesn&#39;t use too much memory, and can be used to proxy requests to PHP or even other handlers like Node and Ruby. Since we&#39;re working with WordPress, we&#39;re also working with PHP.  For reference, a pretty stock Nginx configuration file looks something like this: Redis Redis is an open source, in-memory, key-value database server - meaning it&#39;s an optimized hashtable for your system.  If you&#39;ve ever heard of Memcached, Redis is similar.  You can store anything you want - in memory - and retrieve it crazy fast. Unlike Memcached, though, Redis is fairly easy to install and configure.[ref]I have been working with professionally on the web for over 7 years and have not once been able to configure Memcached properly.  Redis, on the other hand, I have had 0 issues with. If Redis confuses you, feel free to swap out my advice with Memcached and keep on trucking.[/ref] First things first, you&#39;ll need to install Redis.  There are some stock instructions available on the Redis website.  There are also some handy, albeit slightly outdated, tutorials lying around the Internet. I used the Centos 6 tutorial as a base for my configuration, even though I run Ubuntu on my server. Feel free to use whatever installation instructions, tools, or configuration you want (Debian users can just run apt-get install redis-server), just get Redis installed. To let PHP (and thus, WordPress) interact with Redis, we use a library called Predis. You can grab the entire library if you want, or you can use a really clean all-in-one-file version. This version is the predis.php that will be referenced in the cache file in the next section: Magic In a nutshell, I put a single PHP script in front of WordPress on my server.  This script interfaces with Redis directly to handle the page cache:  If this isn&#39;t a postback (form submission), the visitor isn&#39;t logged in (based on the presence of a WordPress cookie), and Redis has an existing cached copy of this URL request, return the cache If this is a postback (form submission) or the request url is postfixed with ?r=y, flush the cache of the page and load WordPress If the visitor is logged in (based on the presence of a WordPress cookie) and the url is postfixed with ?c=y, flush the cache for the entire site and load WordPress If the visitor is logged in, load WordPress The script we load in front of WordPress is fairly simple.  It checks the above criteria and either pulls data from Redis or loads WordPress: Since we&#39;re running this script before loading WordPress we skip all of the overhead associated with firing up MySQL and loading up the entire WordPress environment.  Instead, we return whatever HTML we rendered beforehand and respond to new visitor requests faster than without a cache. But, if certain requirements are met, we still load WordPress like normal. The biggest trick here is to get our script loaded before WordPress without hacking any core WordPress files.  Thanks to Nginx, we can set up an alias for the regular index.php file.  This modified Nginx configuration file will load wp-index-redis.php instead of index.php whenever a visitor requests it.  Also, this configuration will rewrite WordPress requests through wp-index-redis.php so rewritten page/post/queries will pass through the cache as well: The one thing that needs to skip the cache, however, is the entire /wp-admin directory. If you pay close attention to the configuration file above, you&#39;ll see that we&#39;re allowing admin requests to pass back to the regular index.php file. Summary When a request hits my site, Nginx passes it directly to a single PHP script. This script checks an in-memory cache to see if we can load a saved version and, if so, loads it. If we need to refresh things, the script passed the request to WordPress and caches the result for future reference. This is all accomplished through some clever rewriting of Nginx&#39;s configuration such that we don&#39;t need to hack WordPress directly. Now, visitors get lightning-fast responses to requests, and WordPress core can continue to update without any fear of overwriting cache-specific changes. Check out the source of my Jumping Duck Media website to see just how quickly the cache returns a response. [caption id=&quot;attachment_5519&quot; align=&quot;aligncenter&quot; width=&quot;284&quot;] On any given request, the cache returns in 3-10ms.[/caption]" />
+<meta property="og:description" content="When I first started hosting my own sites, I had no idea what caching was or why it was important.  Then I wrote a couple of popular blog posts, and my server crashed. Fast forward a few years, and I&#39;m running a few different websites on a few different servers.  Some get a steady stream of traffic; others get a huge spike now and again when a post is picked up by Hacker News.  In both cases, configuring your cache is a great way to keep things from failing. I&#39;m very happy to say that I&#39;ve finally set up a hugely efficient front-end page cache for WordPress.  It doesn&#39;t use a plugin. It doesn&#39;t require hacking core. And it serves my website in 3 ms.[ref]Yes, you read that right. Three milliseconds. This is exclusive of the time it takes to perform a DNS lookup or actually deliver the page. But it is proof that the bottleneck is no longer the server itself.[/ref] Thanks to a clever configuration of Nginx and Redis, WordPress has achieved ... ludicrous speed! https://www.youtube.com/watch?v=mk7VWcuVOf0 WordPress WordPress is my application of choice for just about everything.  It&#39;s easy to set up, easy to extend, and best of all, it&#39;s open source. You&#39;ll notice one thing I really care about is the fact that open source exists and helps train a new generation of software monkeys on how to build the Internet.  Fact is, if WordPress were closed source, I would not have the job I do today. WordPress is built on top of a whole slew of technologies.  The data is stored in MySQL, and PHP is used to script both the retrieval of that data and its shoehorning into an HTML template.  Unfortunately, this many moving parts means requests can be somewhat slow. For comparison to the 3 ms reference above, my site takes about 4 (four) seconds to render when it&#39;s not cached. That is a huge difference between the cached and non-cached performance - 3 ms versus 4000 ms. WordPress is fast, but dynamic page generation is only as fast as the server powering it.  Even on the most streamlined machine, rendering a page dynamically will take time. Nginx Nginx is an open-source, event-driven web server.  I use it on all of my servers because it&#39;s incredibly more efficient than Apache for handling multiple connections.  It&#39;s fast, doesn&#39;t use too much memory, and can be used to proxy requests to PHP or even other handlers like Node and Ruby. Since we&#39;re working with WordPress, we&#39;re also working with PHP.  For reference, a pretty stock Nginx configuration file looks something like this: Redis Redis is an open source, in-memory, key-value database server - meaning it&#39;s an optimized hashtable for your system.  If you&#39;ve ever heard of Memcached, Redis is similar.  You can store anything you want - in memory - and retrieve it crazy fast. Unlike Memcached, though, Redis is fairly easy to install and configure.[ref]I have been working with professionally on the web for over 7 years and have not once been able to configure Memcached properly.  Redis, on the other hand, I have had 0 issues with. If Redis confuses you, feel free to swap out my advice with Memcached and keep on trucking.[/ref] First things first, you&#39;ll need to install Redis.  There are some stock instructions available on the Redis website.  There are also some handy, albeit slightly outdated, tutorials lying around the Internet. I used the Centos 6 tutorial as a base for my configuration, even though I run Ubuntu on my server. Feel free to use whatever installation instructions, tools, or configuration you want (Debian users can just run apt-get install redis-server), just get Redis installed. To let PHP (and thus, WordPress) interact with Redis, we use a library called Predis. You can grab the entire library if you want, or you can use a really clean all-in-one-file version. This version is the predis.php that will be referenced in the cache file in the next section: Magic In a nutshell, I put a single PHP script in front of WordPress on my server.  This script interfaces with Redis directly to handle the page cache:  If this isn&#39;t a postback (form submission), the visitor isn&#39;t logged in (based on the presence of a WordPress cookie), and Redis has an existing cached copy of this URL request, return the cache If this is a postback (form submission) or the request url is postfixed with ?r=y, flush the cache of the page and load WordPress If the visitor is logged in (based on the presence of a WordPress cookie) and the url is postfixed with ?c=y, flush the cache for the entire site and load WordPress If the visitor is logged in, load WordPress The script we load in front of WordPress is fairly simple.  It checks the above criteria and either pulls data from Redis or loads WordPress: Since we&#39;re running this script before loading WordPress we skip all of the overhead associated with firing up MySQL and loading up the entire WordPress environment.  Instead, we return whatever HTML we rendered beforehand and respond to new visitor requests faster than without a cache. But, if certain requirements are met, we still load WordPress like normal. The biggest trick here is to get our script loaded before WordPress without hacking any core WordPress files.  Thanks to Nginx, we can set up an alias for the regular index.php file.  This modified Nginx configuration file will load wp-index-redis.php instead of index.php whenever a visitor requests it.  Also, this configuration will rewrite WordPress requests through wp-index-redis.php so rewritten page/post/queries will pass through the cache as well: The one thing that needs to skip the cache, however, is the entire /wp-admin directory. If you pay close attention to the configuration file above, you&#39;ll see that we&#39;re allowing admin requests to pass back to the regular index.php file. Summary When a request hits my site, Nginx passes it directly to a single PHP script. This script checks an in-memory cache to see if we can load a saved version and, if so, loads it. If we need to refresh things, the script passed the request to WordPress and caches the result for future reference. This is all accomplished through some clever rewriting of Nginx&#39;s configuration such that we don&#39;t need to hack WordPress directly. Now, visitors get lightning-fast responses to requests, and WordPress core can continue to update without any fear of overwriting cache-specific changes. Check out the source of my Jumping Duck Media website to see just how quickly the cache returns a response. [caption id=&quot;attachment_5519&quot; align=&quot;aligncenter&quot; width=&quot;284&quot;] On any given request, the cache returns in 3-10ms.[/caption]" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-05-11T17:11:53-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Ludicrous Speed: WordPress Caching with Redis" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Ludicrous Speed: WordPress Caching with Redis","dateModified":"2013-05-11T17:11:53-07:00","datePublished":"2013-05-11T17:11:53-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/ludicrous-speed-wordpress-caching-with-redis/"},"url":"/tech/ludicrous-speed-wordpress-caching-with-redis/","description":"When I first started hosting my own sites, I had no idea what caching was or why it was important.  Then I wrote a couple of popular blog posts, and my server crashed. Fast forward a few years, and I&#39;m running a few different websites on a few different servers.  Some get a steady stream of traffic; others get a huge spike now and again when a post is picked up by Hacker News.  In both cases, configuring your cache is a great way to keep things from failing. I&#39;m very happy to say that I&#39;ve finally set up a hugely efficient front-end page cache for WordPress.  It doesn&#39;t use a plugin. It doesn&#39;t require hacking core. And it serves my website in 3 ms.[ref]Yes, you read that right. Three milliseconds. This is exclusive of the time it takes to perform a DNS lookup or actually deliver the page. But it is proof that the bottleneck is no longer the server itself.[/ref] Thanks to a clever configuration of Nginx and Redis, WordPress has achieved ... ludicrous speed! https://www.youtube.com/watch?v=mk7VWcuVOf0 WordPress WordPress is my application of choice for just about everything.  It&#39;s easy to set up, easy to extend, and best of all, it&#39;s open source. You&#39;ll notice one thing I really care about is the fact that open source exists and helps train a new generation of software monkeys on how to build the Internet.  Fact is, if WordPress were closed source, I would not have the job I do today. WordPress is built on top of a whole slew of technologies.  The data is stored in MySQL, and PHP is used to script both the retrieval of that data and its shoehorning into an HTML template.  Unfortunately, this many moving parts means requests can be somewhat slow. For comparison to the 3 ms reference above, my site takes about 4 (four) seconds to render when it&#39;s not cached. That is a huge difference between the cached and non-cached performance - 3 ms versus 4000 ms. WordPress is fast, but dynamic page generation is only as fast as the server powering it.  Even on the most streamlined machine, rendering a page dynamically will take time. Nginx Nginx is an open-source, event-driven web server.  I use it on all of my servers because it&#39;s incredibly more efficient than Apache for handling multiple connections.  It&#39;s fast, doesn&#39;t use too much memory, and can be used to proxy requests to PHP or even other handlers like Node and Ruby. Since we&#39;re working with WordPress, we&#39;re also working with PHP.  For reference, a pretty stock Nginx configuration file looks something like this: Redis Redis is an open source, in-memory, key-value database server - meaning it&#39;s an optimized hashtable for your system.  If you&#39;ve ever heard of Memcached, Redis is similar.  You can store anything you want - in memory - and retrieve it crazy fast. Unlike Memcached, though, Redis is fairly easy to install and configure.[ref]I have been working with professionally on the web for over 7 years and have not once been able to configure Memcached properly.  Redis, on the other hand, I have had 0 issues with. If Redis confuses you, feel free to swap out my advice with Memcached and keep on trucking.[/ref] First things first, you&#39;ll need to install Redis.  There are some stock instructions available on the Redis website.  There are also some handy, albeit slightly outdated, tutorials lying around the Internet. I used the Centos 6 tutorial as a base for my configuration, even though I run Ubuntu on my server. Feel free to use whatever installation instructions, tools, or configuration you want (Debian users can just run apt-get install redis-server), just get Redis installed. To let PHP (and thus, WordPress) interact with Redis, we use a library called Predis. You can grab the entire library if you want, or you can use a really clean all-in-one-file version. This version is the predis.php that will be referenced in the cache file in the next section: Magic In a nutshell, I put a single PHP script in front of WordPress on my server.  This script interfaces with Redis directly to handle the page cache:  If this isn&#39;t a postback (form submission), the visitor isn&#39;t logged in (based on the presence of a WordPress cookie), and Redis has an existing cached copy of this URL request, return the cache If this is a postback (form submission) or the request url is postfixed with ?r=y, flush the cache of the page and load WordPress If the visitor is logged in (based on the presence of a WordPress cookie) and the url is postfixed with ?c=y, flush the cache for the entire site and load WordPress If the visitor is logged in, load WordPress The script we load in front of WordPress is fairly simple.  It checks the above criteria and either pulls data from Redis or loads WordPress: Since we&#39;re running this script before loading WordPress we skip all of the overhead associated with firing up MySQL and loading up the entire WordPress environment.  Instead, we return whatever HTML we rendered beforehand and respond to new visitor requests faster than without a cache. But, if certain requirements are met, we still load WordPress like normal. The biggest trick here is to get our script loaded before WordPress without hacking any core WordPress files.  Thanks to Nginx, we can set up an alias for the regular index.php file.  This modified Nginx configuration file will load wp-index-redis.php instead of index.php whenever a visitor requests it.  Also, this configuration will rewrite WordPress requests through wp-index-redis.php so rewritten page/post/queries will pass through the cache as well: The one thing that needs to skip the cache, however, is the entire /wp-admin directory. If you pay close attention to the configuration file above, you&#39;ll see that we&#39;re allowing admin requests to pass back to the regular index.php file. Summary When a request hits my site, Nginx passes it directly to a single PHP script. This script checks an in-memory cache to see if we can load a saved version and, if so, loads it. If we need to refresh things, the script passed the request to WordPress and caches the result for future reference. This is all accomplished through some clever rewriting of Nginx&#39;s configuration such that we don&#39;t need to hack WordPress directly. Now, visitors get lightning-fast responses to requests, and WordPress core can continue to update without any fear of overwriting cache-specific changes. Check out the source of my Jumping Duck Media website to see just how quickly the cache returns a response. [caption id=&quot;attachment_5519&quot; align=&quot;aligncenter&quot; width=&quot;284&quot;] On any given request, the cache returns in 3-10ms.[/caption]","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2013-05-11">
+                    May 11, 2013
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Ludicrous Speed: WordPress Caching with Redis</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>When I first started hosting my own sites, I had no idea what caching was or why it was important.  Then I wrote a couple of popular blog posts, and my server crashed.</p>
+<p>Fast forward a few years, and I'm running a few different websites on a few different servers.  Some get a steady stream of traffic; others get a huge spike now and again when a post is picked up by Hacker News.  In both cases, configuring your cache is a great way to keep things from failing.</p>
+<p>I'm very happy to say that I've finally set up a hugely efficient front-end page cache for WordPress.  It doesn't use a plugin. It doesn't require hacking core. And it serves my website in 3 ms.[ref]Yes, you read that right. <strong>Three </strong><strong>milliseconds.</strong> This is exclusive of the time it takes to perform a DNS lookup or actually <em>deliver</em> the page. But it <em>is</em> proof that the bottleneck is no longer the server itself.[/ref]</p>
+<p>Thanks to a clever configuration of Nginx and Redis, WordPress has achieved ... ludicrous speed!</p>
+<p>https://www.youtube.com/watch?v=mk7VWcuVOf0<br />
+<!--more--></p>
+<h2>WordPress</h2>
+<p>WordPress is my application of choice for just about everything.  It's easy to set up, easy to extend, and best of all, it's <i>open source</i>.</p>
+<p>You'll notice one thing I really care about is the fact that open source exists and helps train a new generation of software monkeys on how to build the Internet.  Fact is, if WordPress were closed source, I would not have <a title="Eric Mann Joins 10up" href="http://10up.com/blog/2012/09/eric-mann-joins-10up/">the job I do today</a>.</p>
+<p>WordPress is built on top of a whole slew of technologies.  The data is stored in MySQL, and PHP is used to script both the retrieval of that data and its shoehorning into an HTML template.  Unfortunately, this many moving parts means requests can be somewhat slow.</p>
+<p>For comparison to the 3 ms reference above, my site takes about 4 (four) seconds to render when it's not cached.</p>
+<p>That is a <strong><em>huge</em></strong> difference between the cached and non-cached performance - 3 ms versus 4000 ms. WordPress is fast, but dynamic page generation is only as fast as the server powering it.  Even on the most streamlined machine, rendering a page dynamically will take time.</p>
+<h2>Nginx</h2>
+<p><a title="Ngnix" href="http://nginx.org/">Nginx</a> is an open-source, event-driven web server.  <a title="Installing a New Engine – Nginx" href="http://eamann.com/tech/installing-a-new-engine-nginx/">I use it</a> on all of my servers because it's incredibly more efficient than Apache for handling multiple connections.  It's fast, doesn't use too much memory, and can be used to proxy requests to PHP or even other handlers like Node and Ruby.</p>
+<p>Since we're working with WordPress, we're also working with PHP.  For reference, a pretty stock Nginx configuration file looks something like this:</p>
+<p><script src="https://gist.github.com/ericmann/5561825.js"></script></p>
+<h2>Redis</h2>
+<p><a title="Redis" href="http://redis.io/">Redis</a> is an open source, in-memory, key-value database server - meaning it's an optimized hashtable for your system.  If you've ever heard of <a title="Memcached" href="http://memcached.org/">Memcached</a>, Redis is similar.  You can store anything you want - in memory - and retrieve it crazy fast.</p>
+<p><em>Unlike</em> Memcached, though, Redis is fairly easy to install and configure.[ref]I have been working with professionally on the web for over 7 years and have <em>not once</em> been able to configure Memcached properly.  Redis, on the other hand, I have had 0 issues with. If Redis confuses you, feel free to swap out my advice with Memcached and keep on trucking.[/ref]</p>
+<p>First things first, you'll need to install Redis.  There are some stock instructions available <a title="Download - Redis" href="http://redis.io/download">on the Redis website</a>.  There are also some handy, albeit slightly outdated, <a title="Install Redis 2.4.5 as Service on Centos 6" href="http://www.saltwebsites.com/2012/install-redis-245-service-centos-6">tutorials</a> lying around the Internet. I used the Centos 6 tutorial as a base for my configuration, even though I run Ubuntu on my server.</p>
+<p>Feel free to use whatever installation instructions, tools, or configuration you want (Debian users can just run <tt>apt-get install redis-server</tt>), just get Redis installed.</p>
+<p>To let PHP (and thus, WordPress) interact with Redis, we use a library called Predis.  You can grab the entire library if you want, or you can use a really clean all-in-one-file version.  This version is the <tt>predis.php</tt> that will be referenced in the cache file in the next section:</p>
+<p><script src="https://gist.github.com/ericmann/5561856.js"></script></p>
+<h2>Magic</h2>
+<p>In a nutshell, I put a single PHP script <em>in front</em> of WordPress on my server.  This script interfaces with Redis directly to handle the page cache:</p>
+<ol>
+<li><span style="line-height: 13px;"> If this isn't a postback (form submission), the visitor isn't logged in (based on the presence of a WordPress cookie), and Redis has an existing cached copy of this URL request, return the cache</span></li>
+<li>If this is a postback (form submission) or the request url is postfixed with <tt>?r=y</tt>, flush the cache of the page and load WordPress</li>
+<li>If the visitor is logged in (based on the presence of a WordPress cookie) and the url is postfixed with <tt>?c=y</tt>, flush the cache for the entire site and load WordPress</li>
+<li>If the visitor is logged in, load WordPress</li>
+</ol>
+<p>The script we load in front of WordPress is fairly simple.  It checks the above criteria and either pulls data from Redis or loads WordPress:</p>
+<p><script src="https://gist.github.com/ericmann/5561802.js"></script></p>
+<p>Since we're running this script <em>before</em> loading WordPress we skip all of the overhead associated with firing up MySQL and loading up the entire WordPress environment.  Instead, we return whatever HTML we rendered beforehand and respond to new visitor requests <em>faster</em> than without a cache.</p>
+<p>But, if certain requirements are met, we still load WordPress like normal.</p>
+<p>The biggest trick here is to get our script loaded <em>before</em> WordPress without hacking any core WordPress files.  Thanks to Nginx, we can set up an <em>alias</em> for the regular <tt>index.php</tt> file.  This modified Nginx configuration file will load <tt>wp-index-redis.php</tt> instead of index.php whenever a visitor requests it.  Also, this configuration will rewrite WordPress requests <em>through</em> <tt>wp-index-redis.php</tt> so rewritten page/post/queries will pass through the cache as well:</p>
+<p><script src="https://gist.github.com/ericmann/5561847.js"></script></p>
+<p>The one thing that needs to <em>skip</em> the cache, however, is the entire <tt>/wp-admin</tt> directory.  If you pay close attention to the configuration file above, you'll see that we're allowing admin requests to pass back to the regular <tt>index.php</tt> file.</p>
+<h2>Summary</h2>
+<p>When a request hits my site, Nginx passes it directly to a single PHP script.  This script checks an in-memory cache to see if we can load a saved version and, if so, loads it.  If we need to refresh things, the script passed the request to WordPress and caches the result for future reference.</p>
+<p>This is all accomplished through some clever rewriting of Nginx's configuration such that we don't need to hack WordPress directly.  Now, visitors get lightning-fast responses to requests, and WordPress core can continue to update without any fear of overwriting cache-specific changes.</p>
+<p><del datetime="2017-06-03T19:34:20+00:00">Check out the source of my Jumping Duck Media website to see just how quickly the cache returns a response.</del></p>
+<p>[caption id="attachment_5519" align="aligncenter" width="284"]<a href="http://eamann.com/wp-content/uploads/2013/05/cache.png"><img src="/assets/2013/05/cache.png" alt="On any given request, the cache returns in 3-10ms." width="284" height="71" class="size-full wp-image-5519" /></a> On any given request, the cache returns in 3-10ms.[/caption]</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Ludicrous+Speed%3A+WordPress+Caching+with+Redis&amp;url=https://ttmm.iotech/ludicrous-speed-wordpress-caching-with-redis/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/ludicrous-speed-wordpress-caching-with-redis/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#caching"
+                    rel="tag">caching</a>
+                <a href="/tags/index.html#nginx"
+                    rel="tag">nginx</a>
+                <a href="/tags/index.html#Redis"
+                    rel="tag">Redis</a>
+                <a href="/tags/index.html#server+configuration"
+                    rel="tag">server configuration</a>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="May 1, 2013">May 1, 2013</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/the-hackiest-hack-that-ever-was-hacked/">The Hackiest Hack that Ever Was Hacked</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="May 23, 2013">May 23, 2013</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/plugin-review-spam-free-wordpress/">Plugin Review - Spam Free WordPress</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

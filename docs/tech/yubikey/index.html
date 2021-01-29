@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Configuring Yubikeys, GPG, and Keybase | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Configuring Yubikeys, GPG, and Keybase" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Rather than use GPG and SSH keys housed on individual machines, I embed my GPG private keys on Yubikeys by default. This allows me to keep my keys somewhat portable (i.e. I can use them on multiple devices) while preventing my keys from leaking if anyone accesses my machine without my permission. This is the same workflow I use with my team to enforce various cryptographic controls with our projects. A specific encryption key manages email encryption and access to git-crypt-protected credentials. A signing key manages email and Git commit signing. A separate authentication key manages SSH access. It&#39;s a strong way to protect our identities within the various tools we use, and one I recommend for just about any development team. To that end, a version of this article appeared in the March 2018 issue of php[architect], and I have an even longer version I distribute in person to developers. Setting up your Yubikey The goal of this walkthrough is to help you configure your GPG identity and port your keys to a secure hardware token - I recommend a Yubkey 4 (as it supports 4096-bit RSA keys). You can also use a Yubikey Neo, but this will only work with 2048-bit keys. The basics we&#39;re going to set up: A 4096-bit master key that will be kept offline A revocation certificate that will also be kept offline 4096-bit sub-keys for encryption, signing, and authentication Publication of keys to Keybase and other directories Automatic signing of Git commits with the GPG key Configuring gpg-agent to act as ssh-agent for remote access I&#39;d love to recommend everyone use the newer elliptic curves available in GPG as they&#39;re powered by Libsodium and rapidly becoming a new industry standard. Unfortunately, the Yubikey hardware doesn&#39;t yet support this family of cryptography, so we&#39;ve got to stick with battle-tested RSA for now. Using a 4096-bit key size with RSA gives us equivalent protection to a 256-bit elliptic curve key, so it&#39;s &quot;good enough&quot; for the moment. Installing GPG The following instructions require some format of GnuPG installed locally to behave. On Mac, this is as simple as running: $ brew install gnupg2 On Windows, this requires installing GPG4Win. If you&#39;re running things on Windows, I&#39;d highly recommend you reference Scott Hanselman&#39;s amazing walkthrough as well. The instructions that follow are more targeted towards *NIX environments, but Scott&#39;s article deals with some of the various edge cases that might pop up during Windows use. Once installed, you can use either gpg2 or gpg from the command line to interact with the system (I&#39;ll use gpg2 below as it refers explicitly to the version of GPG we just installed). Creating the Keys Master Key To begin generating keys, start with: $ gpg2 --full-generate-key On the menus that follow: Select (4) RSA (sign only) Set keysize to 4096 bits I typically set expiration to infinity (0) - use a reasonable value for your use case Set your real name Use your email address Leave the comment blank Use a strong passphrase - but make sure it&#39;s easy enough to remember/type (you&#39;ll need it later) Make a note of the generated key fingerprint and key ID. The key ID will be used in subsequent steps. Sub-keys Start adding sub-keys by editing the key we just created. Make sure to substitute your real key ID when you see KEYID in the steps that follow: $ gpg2 --expert --edit-key KEYID" />
+<meta property="og:description" content="Rather than use GPG and SSH keys housed on individual machines, I embed my GPG private keys on Yubikeys by default. This allows me to keep my keys somewhat portable (i.e. I can use them on multiple devices) while preventing my keys from leaking if anyone accesses my machine without my permission. This is the same workflow I use with my team to enforce various cryptographic controls with our projects. A specific encryption key manages email encryption and access to git-crypt-protected credentials. A signing key manages email and Git commit signing. A separate authentication key manages SSH access. It&#39;s a strong way to protect our identities within the various tools we use, and one I recommend for just about any development team. To that end, a version of this article appeared in the March 2018 issue of php[architect], and I have an even longer version I distribute in person to developers. Setting up your Yubikey The goal of this walkthrough is to help you configure your GPG identity and port your keys to a secure hardware token - I recommend a Yubkey 4 (as it supports 4096-bit RSA keys). You can also use a Yubikey Neo, but this will only work with 2048-bit keys. The basics we&#39;re going to set up: A 4096-bit master key that will be kept offline A revocation certificate that will also be kept offline 4096-bit sub-keys for encryption, signing, and authentication Publication of keys to Keybase and other directories Automatic signing of Git commits with the GPG key Configuring gpg-agent to act as ssh-agent for remote access I&#39;d love to recommend everyone use the newer elliptic curves available in GPG as they&#39;re powered by Libsodium and rapidly becoming a new industry standard. Unfortunately, the Yubikey hardware doesn&#39;t yet support this family of cryptography, so we&#39;ve got to stick with battle-tested RSA for now. Using a 4096-bit key size with RSA gives us equivalent protection to a 256-bit elliptic curve key, so it&#39;s &quot;good enough&quot; for the moment. Installing GPG The following instructions require some format of GnuPG installed locally to behave. On Mac, this is as simple as running: $ brew install gnupg2 On Windows, this requires installing GPG4Win. If you&#39;re running things on Windows, I&#39;d highly recommend you reference Scott Hanselman&#39;s amazing walkthrough as well. The instructions that follow are more targeted towards *NIX environments, but Scott&#39;s article deals with some of the various edge cases that might pop up during Windows use. Once installed, you can use either gpg2 or gpg from the command line to interact with the system (I&#39;ll use gpg2 below as it refers explicitly to the version of GPG we just installed). Creating the Keys Master Key To begin generating keys, start with: $ gpg2 --full-generate-key On the menus that follow: Select (4) RSA (sign only) Set keysize to 4096 bits I typically set expiration to infinity (0) - use a reasonable value for your use case Set your real name Use your email address Leave the comment blank Use a strong passphrase - but make sure it&#39;s easy enough to remember/type (you&#39;ll need it later) Make a note of the generated key fingerprint and key ID. The key ID will be used in subsequent steps. Sub-keys Start adding sub-keys by editing the key we just created. Make sure to substitute your real key ID when you see KEYID in the steps that follow: $ gpg2 --expert --edit-key KEYID" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-04-18T20:33:12-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Configuring Yubikeys, GPG, and Keybase" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Configuring Yubikeys, GPG, and Keybase","dateModified":"2018-04-18T20:33:12-07:00","datePublished":"2018-04-18T20:33:12-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/yubikey/"},"url":"/tech/yubikey/","description":"Rather than use GPG and SSH keys housed on individual machines, I embed my GPG private keys on Yubikeys by default. This allows me to keep my keys somewhat portable (i.e. I can use them on multiple devices) while preventing my keys from leaking if anyone accesses my machine without my permission. This is the same workflow I use with my team to enforce various cryptographic controls with our projects. A specific encryption key manages email encryption and access to git-crypt-protected credentials. A signing key manages email and Git commit signing. A separate authentication key manages SSH access. It&#39;s a strong way to protect our identities within the various tools we use, and one I recommend for just about any development team. To that end, a version of this article appeared in the March 2018 issue of php[architect], and I have an even longer version I distribute in person to developers. Setting up your Yubikey The goal of this walkthrough is to help you configure your GPG identity and port your keys to a secure hardware token - I recommend a Yubkey 4 (as it supports 4096-bit RSA keys). You can also use a Yubikey Neo, but this will only work with 2048-bit keys. The basics we&#39;re going to set up: A 4096-bit master key that will be kept offline A revocation certificate that will also be kept offline 4096-bit sub-keys for encryption, signing, and authentication Publication of keys to Keybase and other directories Automatic signing of Git commits with the GPG key Configuring gpg-agent to act as ssh-agent for remote access I&#39;d love to recommend everyone use the newer elliptic curves available in GPG as they&#39;re powered by Libsodium and rapidly becoming a new industry standard. Unfortunately, the Yubikey hardware doesn&#39;t yet support this family of cryptography, so we&#39;ve got to stick with battle-tested RSA for now. Using a 4096-bit key size with RSA gives us equivalent protection to a 256-bit elliptic curve key, so it&#39;s &quot;good enough&quot; for the moment. Installing GPG The following instructions require some format of GnuPG installed locally to behave. On Mac, this is as simple as running: $ brew install gnupg2 On Windows, this requires installing GPG4Win. If you&#39;re running things on Windows, I&#39;d highly recommend you reference Scott Hanselman&#39;s amazing walkthrough as well. The instructions that follow are more targeted towards *NIX environments, but Scott&#39;s article deals with some of the various edge cases that might pop up during Windows use. Once installed, you can use either gpg2 or gpg from the command line to interact with the system (I&#39;ll use gpg2 below as it refers explicitly to the version of GPG we just installed). Creating the Keys Master Key To begin generating keys, start with: $ gpg2 --full-generate-key On the menus that follow: Select (4) RSA (sign only) Set keysize to 4096 bits I typically set expiration to infinity (0) - use a reasonable value for your use case Set your real name Use your email address Leave the comment blank Use a strong passphrase - but make sure it&#39;s easy enough to remember/type (you&#39;ll need it later) Make a note of the generated key fingerprint and key ID. The key ID will be used in subsequent steps. Sub-keys Start adding sub-keys by editing the key we just created. Make sure to substitute your real key ID when you see KEYID in the steps that follow: $ gpg2 --expert --edit-key KEYID","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2018-04-18">
+                    April 18, 2018
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Configuring Yubikeys, GPG, and Keybase</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>Rather than use GPG and SSH keys housed on individual machines, I embed my GPG private keys on <a href="https://amzn.to/2HefHC7">Yubikeys</a> by default. This allows me to keep my keys somewhat portable (i.e. I can use them on <em>multiple</em> devices) while preventing my keys from leaking if anyone accesses my machine without my permission.</p>
+<p>This is the same workflow I use with my team to enforce various cryptographic controls with our projects. A specific encryption key manages email encryption and access to <a href="https://www.agwa.name/projects/git-crypt/">git-crypt</a>-protected credentials. A signing key manages email and Git commit signing. A separate authentication key manages SSH access.</p>
+<p>It's a strong way to protect our identities within the various tools we use, and one I recommend for just about <em>any</em> development team. To that end, a version of this article appeared in the <a href="https://www.phparch.com/magazine/2018-2/march/">March 2018 issue of php[architect]</a>, and I have an even longer version I distribute in person to developers.</p>
+<h2>Setting up your Yubikey</h2>
+<p>The goal of this walkthrough is to help you configure your GPG identity and port your keys to a secure hardware token - I recommend a Yubkey 4 (as it supports 4096-bit RSA keys). You can also use a Yubikey Neo, but this will only work with <em>2048-bit</em> keys.</p>
+<p>The basics we're going to set up:</p>
+<ul>
+<li>A 4096-bit master key that will be kept offline</li>
+<li>A revocation certificate that will <em>also</em> be kept offline</li>
+<li>4096-bit sub-keys for encryption, signing, and authentication</li>
+<li>Publication of keys to <a href="https://keybase.io/">Keybase</a> and other directories</li>
+<li>Automatic signing of Git commits with the GPG key</li>
+<li>Configuring gpg-agent to act as ssh-agent for remote access</li>
+</ul>
+<blockquote><p>I'd love to recommend everyone use the newer elliptic curves available in GPG as they're powered by Libsodium and rapidly becoming a new industry standard. Unfortunately, the Yubikey hardware doesn't yet support this family of cryptography, so we've got to stick with battle-tested RSA for now. Using a 4096-bit key size with RSA gives us equivalent protection to a 256-bit elliptic curve key, so it's "good enough" for the moment.</p></blockquote>
+<h2>Installing GPG</h2>
+<p>The following instructions require some format of GnuPG installed locally to behave. On Mac, this is as simple as running:</p>
+<pre><code>$ brew install gnupg2</code></pre>
+<p>On Windows, this requires installing <a href="https://www.gpg4win.org/download.html">GPG4Win</a>.</p>
+<blockquote><p>If you're running things on Windows, I'd highly recommend you reference <a href="https://www.hanselman.com/blog/HowToSetupSignedGitCommitsWithAYubiKeyNEOAndGPGAndKeybaseOnWindows.aspx">Scott Hanselman's amazing walkthrough</a> as well. The instructions that follow are more targeted towards *NIX environments, but Scott's article deals with some of the various edge cases that might pop up during Windows use.</p></blockquote>
+<p>Once installed, you can use either <tt>gpg2</tt> or <tt>gpg</tt> from the command line to interact with the system (I'll use <tt>gpg2</tt> below as it refers explicitly to the version of GPG we just installed).</p>
+<h2>Creating the Keys</h2>
+<h3>Master Key</h3>
+<p>To begin generating keys, start with:</p>
+<pre><code>$ gpg2 --full-generate-key</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select (4) RSA (sign only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+<li>Set your real name</li>
+<li>Use your email address</li>
+<li>Leave the comment blank</li>
+<li>Use a strong passphrase - but make sure it's easy enough to remember/type (you'll need it later)</li>
+</ul>
+<p>Make a note of the generated key fingerprint and key ID. The key ID will be used in subsequent steps.</p>
+<h3>Sub-keys</h3>
+<p>Start adding sub-keys by editing the key we just created. Make sure to substitute your real key ID when you see KEYID in the steps that follow:</p>
+<pre><code lang="bash">$ gpg2 --expert --edit-key KEYID
+
+$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 4 - RSA (sign only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 6 - RSA (encrypt only)</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ addkey</code></pre>
+<p>On the menus that follow:</p>
+<ul>
+<li>Select 8 - RSA (own capabilities)</li>
+<li>Press s to toggle signing</li>
+<li>Press e to toggle encryption</li>
+<li>Press a to toggle authentication</li>
+<li>Press q to save settings and create an auth-only key</li>
+<li>Set keysize to 4096 bits</li>
+<li>I typically set expiration to infinity (0) - use a reasonable value for your use case</li>
+</ul>
+<p>Make a note of the generated fingerprint and key ID.</p>
+<pre><code>$ save</code></pre>
+<h3>Publishing the Keys</h3>
+<p>If no one has your public key, they can't verify your identity. Upload your public key to a keyserver with:</p>
+<pre><code>$ gpg2 --keyserver hkps://hkps.pool.sks-keyservers.net --send-key KEYID</code></pre>
+<p>If you're using Keybase, you can also add your key quickly with:</p>
+<pre><code>$ keybase pgp select --multi</code></pre>
+<p>Then select the appropriate key.</p>
+<h2>Add Additional Identities</h2>
+<p>It's often more trouble than you care to deal with to manage multiple identities and keys. Instead, it's easier to add secondary identities to the key we created above (i.e. your personal <em>and</em> professional email addresses). For example, <a href="https://keybase.io/eamann">my keys</a> are bound to <em>all</em> of my online identities to make it easier for people to find me.</p>
+<p>If you need to use GPG keys for personal emails/identities as well, you can add them with the following steps:</p>
+<pre><code lang="bash">$ gpg2 --expert --edit-key KEYID
+
+$ adduid</code></pre>
+<p>On the menus that follow, provide your real name, your email address, and an optional comment. You can add as many secondary IDs as you need. Once you're done, commit the changes with:</p>
+<pre><code>$ save</code></pre>
+<h2>Generate a Revocation Certificate for the Master Key</h2>
+<p>If your keys are ever compromised, you will need to revoke them with the public keyserver. Remember, if you lose your private key there is no way to revoke a key from the server so keeping a revocation certificate is a necessary step to proactively protect your security.</p>
+<p>Generate the key easily with:</p>
+<pre><code>$ gpg2 --output KEYID.asc --gen-revoke KEYID</code></pre>
+<p>Specify the revocation reason that "key has been compromised" and store the generated certificate in a safe, secure, and preferably offline location. You might not ever need this certificate, but if you do having it in a trustworthy place is critical.</p>
+<h2>Transfer Keys to the Yubikey</h2>
+<h3>Configuring the Yubikey</h3>
+<p>The Yubikey ships with two default PINs, one for administrative use and one for daily use (i.e. unlocking your key for signing/decryption).</p>
+<ul>
+<li>Default PIN = 123456</li>
+<li>Default Admin PIN = 12345678</li>
+</ul>
+<p>We need to change both of these to non-default values:</p>
+<pre><code lang="bash">$ gpg2 --card-edit
+
+gpg/card> admin
+
+gpg/card> passwd</code></pre>
+<p>First change the PIN (remember it needs to be 6-digits long).</p>
+<p>Now change the Admin PIN (needs to be 8-digits lon)</p>
+<p>Press Q to save and quit the password menu. Type quit and press enter to exit the card editing screen.</p>
+<h2>Export Backups</h2>
+<p>Exporting your secret key to a backup is vital if you ever need to recreate your Yubikey for any reason. Preferably, this storage location is encrypted and offline (i.e. an encrypted USB stick) and in a safe, secure location.</p>
+<pre><code lang="bash">$ gpg2 -a --export-secret-key KEYID >> /some/secure/location/KEYID.master.key
+
+$ gpg2 -a --export-secret-subkeys KEYID >> /some/secure/location/KEYID.sub.key</code></pre>
+<blockquote><p>I have <em>two</em> Yubikeys configured with the same keys. One is the primary I use day-to-day, the other is a backup in case of emergency. By exporting your keys, you can re-import a key to another Yubikey if necessary.</p></blockquote>
+<p>You won't likely need the backed-up subkeys any time soon, but if you ever want to sign someone else's keys you'll need the master key to do so. It's a good idea to <em>not</em> keep your master key available - think of it like root access to your identity. Instead, using your master key should require intentionality - like getting something out of a vault across town.</p>
+<p>It's <em>incredibly</em> powerful; you should take care to protect it.</p>
+<h2>Actually Transfer the Keys</h2>
+<p>If you have other keys stored on your Yubikey, the following steps will overwrite them. It is impossible to extract a key from a Yubikey once it is there, so the previous step of exporting backups is <em>vital</em> if you ever need to recover a lost key or recreate your Key.</p>
+<p>The following steps assume you created subkeys in the order specified above (signing first, then encryption, then authentication). If you followed a different order, your selections below might vary.</p>
+<pre><code lang="bash">$ gpg2 --edit-key KEYID
+
+gpg> toggle
+
+gpg> key 1
+
+gpg> keytocard
+
+Please select where to store the key: 1 (Signing)
+
+gpg> key 1
+
+gpg> key 2
+
+gpg> keytocard
+
+Please select where to store the key: 2 (Encryption)
+
+gpg> key 2
+
+gpg> key 3
+
+gpg> keytocard
+
+Please select where to store the key: 3 (Authentication)
+
+gpg> save</code></pre>
+<p>Once your keys are exported to the Yubikey they <em>will no longer be present on your machine</em>. Be sure to remove your master key (assuming it's properly backed-up) as well to make sure your machine is safe.</p>
+<h2>Configure GitHub Commit Signing</h2>
+<h3>Export a Public Key</h3>
+<p>To export the public signing key for use with GitHub, merely ask GPG to export it to a file (the key will have ASCII armor so it will remain human-readable):</p>
+<pre><code>$ gpg2 -a --export KEYID > KEYID.asc</code></pre>
+<h3>Configure GitHub</h3>
+<ul>
+<li>Log in to <a href="https://github.com/">GitHub</a></li>
+<li>Go to <a href="https://github.com/settings/profile">your settings</a> by selecting Settings from the dropdown by your avatar</li>
+<li>Select <a href="https://github.com/settings/keys">SSH and GPG keys</a></li>
+<li>Add a new GPG key, coping in the ASCII armored text exported in the step above</li>
+</ul>
+<h3>Configure Git</h3>
+<p>Adding a default signing key is straight-forward. Merely run:</p>
+<pre><code>$ git config --global user signingkey KEYID</code></pre>
+<p>This sets your key, but commits will not be signed by default (you must manually specify -S when committing to sign). To sign by default, run the following:</p>
+<pre><code>$ git config --global commit.gpgsign true</code></pre>
+<p>From this point forward, every commit you make will be signed with your GPG key (and will appear as "Verified" on GitHub). This has the advantage of proving that you and only you authored the commit (i.e. no one spoofed your identity in the commit logs).</p>
+<p>[caption id="attachment_7997" align="aligncenter" width="744"]<img class="size-full wp-image-7997" src="/assets/2018/04/Screen-Shot-2018-04-18-at-8.21.05-PM.png" alt="Verified commit" width="744" height="458" /> GPG commit signature on GitHub[/caption]</p>
+<p>If for any reason you want to create an unsigned commit, add --no-gpg-sign in the command line when authoring your commit. This is useful if you're working remotely and temporarily lack access to your Yubikey.</p>
+<h2>Configure SSH Authentication</h2>
+<p>SSH will still use your default <tt>id_rsa.pub</tt> key for authentication at this point. We have to tell the machine how to use GPG instead and, conveniently, GPG agent has a flag to do just that:</p>
+<pre><code>$ gpg-agent --daemon --enable-ssh-support --write-env-file ~/.gpg-agent-info</code></pre>
+<p>This command generates the environment variables necessary for SSH to use GPG for authentication and writes them to <tt>~/.gpg-agent-info</tt> for future use. It's easier, though, to add them directly to <tt>~/.bash_profile</tt> for consumption with the following block:</p>
+<pre><code># GPG Agent
+
+if test -f ~/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
+  source ~/.gpg-agent-info
+  export GPG_AGENT_INFO
+  export SSH_AUTH_SOCK
+  export SSH_AGENT_PID
+else
+  eval $(gpg-agent --daemon --write-env-file ~/.gpg-agent-info)
+fi</code></pre>
+<p>This code will test for the file first and regenerate it if it doesn't exist - if it does exist, it loads everything for you. From here on out, if you execute <tt>ssh-add -L</tt> to list out your loaded SSH keys, you will see one reported as an identity with your Yubikey's card number instead of an email address or path name. If you want to grab your public key directly, run:</p>
+<pre><code>$ gpg2 --export-ssh-key SUBKEYID</code></pre>
+<p>Where SUBKEYID is the ID of the third sub-key you generated earlier. (This will often be the last key in the list if you run <tt>gpg2 --list-secret-keys</tt> as well.)</p>
+<h2>Next Steps</h2>
+<p>This walkthrough just covers the GPG features of your Yubikey. The hardware can <em>also</em> be used as a <a href="https://developers.yubico.com/yubico-piv-tool/YubiKey_PIV_introduction.html">PIV card</a> to house X509 certificates. It's also a great 2FA device, supporting both <a href="https://www.yubico.com/products/services-software/personalization-tools/yubikey-otp/">OTP generation</a> <em>and</em> <a href="https://www.yubico.com/solutions/fido-u2f/">FIDO's universal second factor</a> (U2F) spec.</p>
+<p>I use my Yubikey <em>daily</em> to:</p>
+<ul>
+<li>GPG-sign every email I send from my workstation</li>
+<li>GPG-sign every Git commit</li>
+<li>Authenticate to remote SSH servers</li>
+<li>Encrypt/decrypt sensitive credentials on my machine</li>
+<li>Respond to U2F challenges from services like GitHub and Gmail</li>
+</ul>
+<p>How will you use <em>your</em> Yubikey?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Configuring+Yubikeys%2C+GPG%2C+and+Keybase&amp;url=https://ttmm.iotech/yubikey/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/yubikey/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#Yubikey"
+                    rel="tag">Yubikey</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 6, 2018">April 6, 2018</time>
+                </div>
+                <h3 class="post-title"><a href="/php/sql-injection-in-cart66-pro/">Disclosure: SQL Injection in Cart66 Pro</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="July 12, 2018">July 12, 2018</time>
+                </div>
+                <h3 class="post-title"><a href="/uncategorized/system76-oryx-pro-first-impressions/">System76 Oryx Pro - First Impressions</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Security | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Security" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Nothing can ever be truly secure. The best we can muster is the illusion of security - create a veil through which our world looks private and closed off from the idle hands of those who would disrupt it. I&#39;ve been working quite a bit on website development lately, and I&#39;ve been thinking a lot about web security.  The fact of the matter is, if one person can get into a website (through authentication, of course) then there&#39;s someone out there with the skills to circumvent any security measures you have and also get in.  It&#39;s like the old bank vault argument - if there&#39;s a door, then someone will be able to sneak through eventually. With this in mind, I see two potential forms of website security: window security and brickwall security. For simplicity&#39;s sake, I will not try to explain the coding behind how either method works.  That would bore you, frustrate me, and ultimately destroy the conversation I&#39;d like to have on the topic.  Instead, assume your website is a building.  You have an open lobby to receive customers and display information about the services you offer.  There&#39;s also a door in the back through which your existing customers or employees can go for deeper access to your resources. It&#39;s this door that we&#39;re talking about.  What kind of a door would you use to protect your deepest, darkest secrets? Imagine, for the sake of this argument, that both kinds of doors are indestructible.  You can&#39;t beat through them or rip them off the hinges.  But, you probably could pick the lock if you knew what you were doing.  So really, what are the benefits and drawbacks of each door? Window Security You can lock people out, but you can&#39;t keep them entirely away from your things.  While they can&#39;t reach in and play with the stapler on your desk, they can stand at the door and ogle your new laptop for hours.  On a web system, window security is remarkably easy to set up.  Check whether or not the person is supposed to be there - if they are, they have access.  If they aren&#39;t, then the special features of the site are &quot;hidden.&quot; In reality, this means the web controls are still present, but they can&#39;t be used.  Someone with an incredibly high level of tech savvy can right click your website and select &quot;view source&quot; to see all of your private goodies.  Once again, while they can see them, they can&#39;t actually interact with anything. Benefits Very easy to code Lightweight on the server Easy to find &#39;broken&#39; elements should something go wrong on the administrative side Drawbacks As my brother would say, you can&#39;t walk around naked if you have a glass door - if the hidden parts of your website are unsightly, remember they are still visible to the righ people Priviledged information seems less protected to some stakeholders Brickwall Security Sometimes, you want to restrict people completely from your things.  It&#39;s not enough that they can&#39;t touch your stapler, you don&#39;t want them to even know you have one!  The majority of login-based web systems are built on the concept of brickwall security today.  You can&#39;t access any page, file, or folder in the file system without authenticating.  You can&#39;t even view the file tree without logging in!  Obviously, brickwall security requires a more refined system of authenticating users. Unlike window security, where protected information is merely &#39;hidden&#39; from prying eyes, brickwall security doesn&#39;t give it out at all.  Private data stays on the server and is only returned to the web browser when a user is authenticated.  An otherwise uneducated user wouldn&#39;t even know they&#39;re missing some of the information on your page. Benefits More secure Priviledged data is protected in its entirety from un-priviledged users The unsightly &#39;hidden&#39; elements of your website are truly hidden, only a select few will even know they exist Drawbacks A completely authenticated system is a much larger, more intricate piece of code that takes up more room on the server and in your files If something breaks on the administrative end, you might not be able to log in to find it In the end, the kind of security you choose for your website is heavily dependent on your personal style and needs.  Just like you wouldn&#39;t use a twenty pound sledgehammer to drive a nail into a birdhouse, you wouldn&#39;t want to build a brickwall security system to protect an online vanity photo album.  Overkill is overkill, no matter the variety.  (On that same note, you wouldn&#39;t use a piece of chewing gum to repair Hoover Dam, either.) So which kind of security do you use on your company&#39;s website (or social network)?  Why did you choose that particular variety?  Did you overspend on something more robust than you needed?  Did you build an ineffective system instead?  How can your resources be better allocated in the future?" />
+<meta property="og:description" content="Nothing can ever be truly secure. The best we can muster is the illusion of security - create a veil through which our world looks private and closed off from the idle hands of those who would disrupt it. I&#39;ve been working quite a bit on website development lately, and I&#39;ve been thinking a lot about web security.  The fact of the matter is, if one person can get into a website (through authentication, of course) then there&#39;s someone out there with the skills to circumvent any security measures you have and also get in.  It&#39;s like the old bank vault argument - if there&#39;s a door, then someone will be able to sneak through eventually. With this in mind, I see two potential forms of website security: window security and brickwall security. For simplicity&#39;s sake, I will not try to explain the coding behind how either method works.  That would bore you, frustrate me, and ultimately destroy the conversation I&#39;d like to have on the topic.  Instead, assume your website is a building.  You have an open lobby to receive customers and display information about the services you offer.  There&#39;s also a door in the back through which your existing customers or employees can go for deeper access to your resources. It&#39;s this door that we&#39;re talking about.  What kind of a door would you use to protect your deepest, darkest secrets? Imagine, for the sake of this argument, that both kinds of doors are indestructible.  You can&#39;t beat through them or rip them off the hinges.  But, you probably could pick the lock if you knew what you were doing.  So really, what are the benefits and drawbacks of each door? Window Security You can lock people out, but you can&#39;t keep them entirely away from your things.  While they can&#39;t reach in and play with the stapler on your desk, they can stand at the door and ogle your new laptop for hours.  On a web system, window security is remarkably easy to set up.  Check whether or not the person is supposed to be there - if they are, they have access.  If they aren&#39;t, then the special features of the site are &quot;hidden.&quot; In reality, this means the web controls are still present, but they can&#39;t be used.  Someone with an incredibly high level of tech savvy can right click your website and select &quot;view source&quot; to see all of your private goodies.  Once again, while they can see them, they can&#39;t actually interact with anything. Benefits Very easy to code Lightweight on the server Easy to find &#39;broken&#39; elements should something go wrong on the administrative side Drawbacks As my brother would say, you can&#39;t walk around naked if you have a glass door - if the hidden parts of your website are unsightly, remember they are still visible to the righ people Priviledged information seems less protected to some stakeholders Brickwall Security Sometimes, you want to restrict people completely from your things.  It&#39;s not enough that they can&#39;t touch your stapler, you don&#39;t want them to even know you have one!  The majority of login-based web systems are built on the concept of brickwall security today.  You can&#39;t access any page, file, or folder in the file system without authenticating.  You can&#39;t even view the file tree without logging in!  Obviously, brickwall security requires a more refined system of authenticating users. Unlike window security, where protected information is merely &#39;hidden&#39; from prying eyes, brickwall security doesn&#39;t give it out at all.  Private data stays on the server and is only returned to the web browser when a user is authenticated.  An otherwise uneducated user wouldn&#39;t even know they&#39;re missing some of the information on your page. Benefits More secure Priviledged data is protected in its entirety from un-priviledged users The unsightly &#39;hidden&#39; elements of your website are truly hidden, only a select few will even know they exist Drawbacks A completely authenticated system is a much larger, more intricate piece of code that takes up more room on the server and in your files If something breaks on the administrative end, you might not be able to log in to find it In the end, the kind of security you choose for your website is heavily dependent on your personal style and needs.  Just like you wouldn&#39;t use a twenty pound sledgehammer to drive a nail into a birdhouse, you wouldn&#39;t want to build a brickwall security system to protect an online vanity photo album.  Overkill is overkill, no matter the variety.  (On that same note, you wouldn&#39;t use a piece of chewing gum to repair Hoover Dam, either.) So which kind of security do you use on your company&#39;s website (or social network)?  Why did you choose that particular variety?  Did you overspend on something more robust than you needed?  Did you build an ineffective system instead?  How can your resources be better allocated in the future?" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2009-04-03T09:00:59-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Security" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Security","dateModified":"2009-04-03T09:00:59-07:00","datePublished":"2009-04-03T09:00:59-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/security/"},"url":"/tech/security/","description":"Nothing can ever be truly secure. The best we can muster is the illusion of security - create a veil through which our world looks private and closed off from the idle hands of those who would disrupt it. I&#39;ve been working quite a bit on website development lately, and I&#39;ve been thinking a lot about web security.  The fact of the matter is, if one person can get into a website (through authentication, of course) then there&#39;s someone out there with the skills to circumvent any security measures you have and also get in.  It&#39;s like the old bank vault argument - if there&#39;s a door, then someone will be able to sneak through eventually. With this in mind, I see two potential forms of website security: window security and brickwall security. For simplicity&#39;s sake, I will not try to explain the coding behind how either method works.  That would bore you, frustrate me, and ultimately destroy the conversation I&#39;d like to have on the topic.  Instead, assume your website is a building.  You have an open lobby to receive customers and display information about the services you offer.  There&#39;s also a door in the back through which your existing customers or employees can go for deeper access to your resources. It&#39;s this door that we&#39;re talking about.  What kind of a door would you use to protect your deepest, darkest secrets? Imagine, for the sake of this argument, that both kinds of doors are indestructible.  You can&#39;t beat through them or rip them off the hinges.  But, you probably could pick the lock if you knew what you were doing.  So really, what are the benefits and drawbacks of each door? Window Security You can lock people out, but you can&#39;t keep them entirely away from your things.  While they can&#39;t reach in and play with the stapler on your desk, they can stand at the door and ogle your new laptop for hours.  On a web system, window security is remarkably easy to set up.  Check whether or not the person is supposed to be there - if they are, they have access.  If they aren&#39;t, then the special features of the site are &quot;hidden.&quot; In reality, this means the web controls are still present, but they can&#39;t be used.  Someone with an incredibly high level of tech savvy can right click your website and select &quot;view source&quot; to see all of your private goodies.  Once again, while they can see them, they can&#39;t actually interact with anything. Benefits Very easy to code Lightweight on the server Easy to find &#39;broken&#39; elements should something go wrong on the administrative side Drawbacks As my brother would say, you can&#39;t walk around naked if you have a glass door - if the hidden parts of your website are unsightly, remember they are still visible to the righ people Priviledged information seems less protected to some stakeholders Brickwall Security Sometimes, you want to restrict people completely from your things.  It&#39;s not enough that they can&#39;t touch your stapler, you don&#39;t want them to even know you have one!  The majority of login-based web systems are built on the concept of brickwall security today.  You can&#39;t access any page, file, or folder in the file system without authenticating.  You can&#39;t even view the file tree without logging in!  Obviously, brickwall security requires a more refined system of authenticating users. Unlike window security, where protected information is merely &#39;hidden&#39; from prying eyes, brickwall security doesn&#39;t give it out at all.  Private data stays on the server and is only returned to the web browser when a user is authenticated.  An otherwise uneducated user wouldn&#39;t even know they&#39;re missing some of the information on your page. Benefits More secure Priviledged data is protected in its entirety from un-priviledged users The unsightly &#39;hidden&#39; elements of your website are truly hidden, only a select few will even know they exist Drawbacks A completely authenticated system is a much larger, more intricate piece of code that takes up more room on the server and in your files If something breaks on the administrative end, you might not be able to log in to find it In the end, the kind of security you choose for your website is heavily dependent on your personal style and needs.  Just like you wouldn&#39;t use a twenty pound sledgehammer to drive a nail into a birdhouse, you wouldn&#39;t want to build a brickwall security system to protect an online vanity photo album.  Overkill is overkill, no matter the variety.  (On that same note, you wouldn&#39;t use a piece of chewing gum to repair Hoover Dam, either.) So which kind of security do you use on your company&#39;s website (or social network)?  Why did you choose that particular variety?  Did you overspend on something more robust than you needed?  Did you build an ineffective system instead?  How can your resources be better allocated in the future?","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2009-04-03">
+                    April 3, 2009
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Security</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>Nothing can ever be truly secure. The best we can muster is the <em>illusion</em> of security - create a veil through which our world looks private and closed off from the idle hands of those who would disrupt it.</p>
+<p>I've been working quite a bit on website development lately, and I've been thinking a lot about web security.  The fact of the matter is, if one person can get into a website (through authentication, of course) then there's someone out there with the skills to circumvent any security measures you have and also get in.  It's like the old bank vault argument - if there's a door, then someone will be able to sneak through eventually.</p>
+<p>With this in mind, I see two potential forms of website security: <strong>window</strong> security and <strong>brickwall</strong> security.</p>
+<p>For simplicity's sake, I will not try to explain the coding behind how either method works.  That would bore you, frustrate me, and ultimately destroy the conversation I'd like to have on the topic.  Instead, assume your website is a building.  You have an open lobby to receive customers and display information about the services you offer.  There's also a door in the back through which your existing customers or employees can go for deeper access to your resources.</p>
+<p>It's this door that we're talking about.  What kind of a door would you use to protect your deepest, darkest secrets?</p>
+<p>Imagine, for the sake of this argument, that both kinds of doors are indestructible.  You can't beat through them or rip them off the hinges.  But, you probably could pick the lock if you knew what you were doing.  So really, what are the benefits and drawbacks of each door?</p>
+<h3>Window Security</h3>
+<p>You can lock people out, but you can't keep them entirely away from your things.  While they can't reach in and play with the stapler on your desk, they can stand at the door and ogle your new laptop for hours.  On a web system, window security is remarkably easy to set up.  Check whether or not the person is supposed to be there - if they are, they have access.  If they aren't, then the special features of the site are "hidden."</p>
+<p>In reality, this means the web controls are still present, but they can't be used.  Someone with an incredibly high level of tech savvy can right click your website and select "view source" to see all of your private goodies.  Once again, while they can see them, they can't actually interact with anything.</p>
+<p><strong>Benefits</strong></p>
+<ul>
+<li>Very easy to code</li>
+<li>Lightweight on the server</li>
+<li>Easy to find 'broken' elements should something go wrong on the administrative side</li>
+</ul>
+<p><strong>Drawbacks</strong></p>
+<ul>
+<li>As my brother would say, you can't walk around naked if you have a glass door - if the hidden parts of your website are unsightly, remember they are still visible to the righ people</li>
+<li>Priviledged information <em>seems</em> less protected to some stakeholders</li>
+</ul>
+<h3>Brickwall Security</h3>
+<p>Sometimes, you want to restrict people completely from your things.  It's not enough that they can't touch your stapler, you don't want them to even <em>know</em> you have one!  The majority of login-based web systems are built on the concept of brickwall security today.  You can't access any page, file, or folder in the file system without authenticating.  You can't even <em>view</em> the file tree without logging in!  Obviously, brickwall security requires a more refined system of authenticating users.</p>
+<p>Unlike window security, where protected information is merely 'hidden' from prying eyes, brickwall security doesn't give it out at all.  Private data stays on the server and is only returned to the web browser when a user is authenticated.  An otherwise uneducated user wouldn't even know they're missing some of the information on your page.</p>
+<p><strong>Benefits</strong></p>
+<ul>
+<li>More secure</li>
+<li>Priviledged data is protected in its entirety from un-priviledged users</li>
+<li>The unsightly 'hidden' elements of your website are truly hidden, only a select few will even know they exist</li>
+</ul>
+<p><strong>Drawbacks</strong></p>
+<ul>
+<li>A completely authenticated system is a much larger, more intricate piece of code that takes up more room on the server and in your files</li>
+<li>If something breaks on the administrative end, you might not be able to log in to find it</li>
+</ul>
+<p>In the end, the kind of security you choose for your website is heavily dependent on your personal style and needs.  Just like you wouldn't use a twenty pound sledgehammer to drive a nail into a birdhouse, you wouldn't want to build a brickwall security system to protect an online vanity photo album.  Overkill is overkill, no matter the variety.  (On that same note, you wouldn't use a piece of chewing gum to repair Hoover Dam, either.)</p>
+<p>So which kind of security do you use on your company's website (or social network)?  Why did you choose that particular variety?  Did you overspend on something more robust than you needed?  Did you build an ineffective system instead?  How can your resources be better allocated in the future?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Security&amp;url=https://ttmm.iotech/security/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/security/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#security"
+                    rel="tag">security</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="March 30, 2009">March 30, 2009</time>
+                </div>
+                <h3 class="post-title"><a href="/faith/whats-holding-you-back/">What's Holding You Back?</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 13, 2009">April 13, 2009</time>
+                </div>
+                <h3 class="post-title"><a href="/biz/pyschographics-redefined/">Pyschographics Redefined</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

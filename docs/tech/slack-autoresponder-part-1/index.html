@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Slack Autoresponder - Part I | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Slack Autoresponder - Part I" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The impacts of the COVID-19 pandemic are legion; millions contracted the disease, hundreds of thousands have died, schools are closed, businesses are closed, the economy is in turmoil, and I&#39;m working remotely once again. This last impact is the least concern, but as a software developer it&#39;s also the easiest thing for me to address in the immediate term.[ref]I am working hard to use my skills to affect positive change in as many areas as possible. Our company is still afloat and I&#39;m still supporting my family. With what time I do have I&#39;m donating to help other businesses and individuals stay afloat as well. This tutorial is meant to show the fruits of just one among many projects I have going.[/ref] I&#39;ve worked remotely before. It&#39;s an enjoyable work experience to skip your morning commute, make as much coffee as you want, and even take a break to have lunch with your family on a daily basis. It&#39;s a wonder more people don&#39;t focus on work-from-home as a default. Unfortunately, not everyone is as comfortable switching to a remote, asynchronous interaction style as I am. This is most evidenced by the number of random &quot;hey, you there?&quot; or &quot;got a sec?&quot; pings I&#39;ll get on Slack without context. It&#39;s a bit frustrating to come back to a message like this after being offline for an hour or two while taking care of my daughter only to see the person who asked is now also offline and left no further details to their problem. In a nutshell: Slack is asynchronous. We don&#39;t have to both be online at the same time to communicate. How I Slack In my career, I first used IRC. We had a dedicated, private channel for team communication and spun up one-off project channels when needed. Bots were used less for entertainment and more to keep a private channel private and controlled.[ref]Though once bot frameworks became a thing we totally started making our IRC bots smart![/ref] After IRC came HipChat with a strong integration into our other Atlassian-based tools. Now, though, my team is on Slack. It&#39;s still a great tool, but proper management of Slack requires a few specific things. Firstly, I am strictly disciplined about my Slack status. I set an emoji to let you know if I&#39;m home or (once this is all over?) in the office. If I&#39;m out for childcare or family reasons I change my status. If I&#39;m offline or at lunch I change my status.[ref]When I&#39;m offline I also put my phone number in my status so my team can reach me in an emergency.[/ref] I also update my Slack presence to let you know if I&#39;m at my desk or not. If it says I&#39;m here, I&#39;m available. If it says I&#39;m away - you can see where this is heading.[ref]Yes, I will sometimes be physically at my desk but marked &quot;away.&quot; This is because I&#39;m not working. I might be watching a video while eating lunch. Maybe I&#39;m on a second computer checking my bank account. The point is that I&#39;m unavailable.[/ref] Despite my status and presence being solid indicators of where I&#39;m at, some of my peers still fall into the &quot;are you there?&quot; trap and shout into the void when I&#39;m not around. I decided to fix that. The Slack Autoresponder Slack has an API - I use it to set my status/presence with several keyboard shortcuts already. But it also has an event notification API that will proactively send data to a server to allow the server to script a response. In my case, this is exactly what I want. Slack autoresponder in action In my situation, I want a Slack integration that: Checks to see if this is an urgent message - if so, send me a text message Checks to see if I&#39;m set to &quot;away&quot; If I&#39;m away, respond with a canned &quot;I&#39;m not here&quot; response If I&#39;m away but have sent a canned response in the past 10 minutes, ignore the message My tools of choice: AWS Lambda, the Serverless Framework, and Ring Central. I&#39;ll use Serverless to build my application, listening to Slack events and responding when the conditions are right. Because I don&#39;t have time to stand up a server (and don&#39;t want my local machine handling the influx of Slack messages), I&#39;ll host my app as an AWS Lambda function. To power urgent messaging to alert me when I need to head back to my desk immediately, I&#39;ll integrate everything with Ring Central&#39;s SMS APIs.[ref]You can also use Twilio if you want and my app can actually use either.[/ref] Now that you know what tools I&#39;ll use and what I want to build, though, you&#39;ll have to wait until next time to see the secret sauce. Tune in tomorrow for Part II where I walk you through the app and the build." />
+<meta property="og:description" content="The impacts of the COVID-19 pandemic are legion; millions contracted the disease, hundreds of thousands have died, schools are closed, businesses are closed, the economy is in turmoil, and I&#39;m working remotely once again. This last impact is the least concern, but as a software developer it&#39;s also the easiest thing for me to address in the immediate term.[ref]I am working hard to use my skills to affect positive change in as many areas as possible. Our company is still afloat and I&#39;m still supporting my family. With what time I do have I&#39;m donating to help other businesses and individuals stay afloat as well. This tutorial is meant to show the fruits of just one among many projects I have going.[/ref] I&#39;ve worked remotely before. It&#39;s an enjoyable work experience to skip your morning commute, make as much coffee as you want, and even take a break to have lunch with your family on a daily basis. It&#39;s a wonder more people don&#39;t focus on work-from-home as a default. Unfortunately, not everyone is as comfortable switching to a remote, asynchronous interaction style as I am. This is most evidenced by the number of random &quot;hey, you there?&quot; or &quot;got a sec?&quot; pings I&#39;ll get on Slack without context. It&#39;s a bit frustrating to come back to a message like this after being offline for an hour or two while taking care of my daughter only to see the person who asked is now also offline and left no further details to their problem. In a nutshell: Slack is asynchronous. We don&#39;t have to both be online at the same time to communicate. How I Slack In my career, I first used IRC. We had a dedicated, private channel for team communication and spun up one-off project channels when needed. Bots were used less for entertainment and more to keep a private channel private and controlled.[ref]Though once bot frameworks became a thing we totally started making our IRC bots smart![/ref] After IRC came HipChat with a strong integration into our other Atlassian-based tools. Now, though, my team is on Slack. It&#39;s still a great tool, but proper management of Slack requires a few specific things. Firstly, I am strictly disciplined about my Slack status. I set an emoji to let you know if I&#39;m home or (once this is all over?) in the office. If I&#39;m out for childcare or family reasons I change my status. If I&#39;m offline or at lunch I change my status.[ref]When I&#39;m offline I also put my phone number in my status so my team can reach me in an emergency.[/ref] I also update my Slack presence to let you know if I&#39;m at my desk or not. If it says I&#39;m here, I&#39;m available. If it says I&#39;m away - you can see where this is heading.[ref]Yes, I will sometimes be physically at my desk but marked &quot;away.&quot; This is because I&#39;m not working. I might be watching a video while eating lunch. Maybe I&#39;m on a second computer checking my bank account. The point is that I&#39;m unavailable.[/ref] Despite my status and presence being solid indicators of where I&#39;m at, some of my peers still fall into the &quot;are you there?&quot; trap and shout into the void when I&#39;m not around. I decided to fix that. The Slack Autoresponder Slack has an API - I use it to set my status/presence with several keyboard shortcuts already. But it also has an event notification API that will proactively send data to a server to allow the server to script a response. In my case, this is exactly what I want. Slack autoresponder in action In my situation, I want a Slack integration that: Checks to see if this is an urgent message - if so, send me a text message Checks to see if I&#39;m set to &quot;away&quot; If I&#39;m away, respond with a canned &quot;I&#39;m not here&quot; response If I&#39;m away but have sent a canned response in the past 10 minutes, ignore the message My tools of choice: AWS Lambda, the Serverless Framework, and Ring Central. I&#39;ll use Serverless to build my application, listening to Slack events and responding when the conditions are right. Because I don&#39;t have time to stand up a server (and don&#39;t want my local machine handling the influx of Slack messages), I&#39;ll host my app as an AWS Lambda function. To power urgent messaging to alert me when I need to head back to my desk immediately, I&#39;ll integrate everything with Ring Central&#39;s SMS APIs.[ref]You can also use Twilio if you want and my app can actually use either.[/ref] Now that you know what tools I&#39;ll use and what I want to build, though, you&#39;ll have to wait until next time to see the secret sauce. Tune in tomorrow for Part II where I walk you through the app and the build." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-16T07:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Slack Autoresponder - Part I" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Slack Autoresponder - Part I","dateModified":"2020-04-16T07:00:00-07:00","datePublished":"2020-04-16T07:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/slack-autoresponder-part-1/"},"url":"/tech/slack-autoresponder-part-1/","description":"The impacts of the COVID-19 pandemic are legion; millions contracted the disease, hundreds of thousands have died, schools are closed, businesses are closed, the economy is in turmoil, and I&#39;m working remotely once again. This last impact is the least concern, but as a software developer it&#39;s also the easiest thing for me to address in the immediate term.[ref]I am working hard to use my skills to affect positive change in as many areas as possible. Our company is still afloat and I&#39;m still supporting my family. With what time I do have I&#39;m donating to help other businesses and individuals stay afloat as well. This tutorial is meant to show the fruits of just one among many projects I have going.[/ref] I&#39;ve worked remotely before. It&#39;s an enjoyable work experience to skip your morning commute, make as much coffee as you want, and even take a break to have lunch with your family on a daily basis. It&#39;s a wonder more people don&#39;t focus on work-from-home as a default. Unfortunately, not everyone is as comfortable switching to a remote, asynchronous interaction style as I am. This is most evidenced by the number of random &quot;hey, you there?&quot; or &quot;got a sec?&quot; pings I&#39;ll get on Slack without context. It&#39;s a bit frustrating to come back to a message like this after being offline for an hour or two while taking care of my daughter only to see the person who asked is now also offline and left no further details to their problem. In a nutshell: Slack is asynchronous. We don&#39;t have to both be online at the same time to communicate. How I Slack In my career, I first used IRC. We had a dedicated, private channel for team communication and spun up one-off project channels when needed. Bots were used less for entertainment and more to keep a private channel private and controlled.[ref]Though once bot frameworks became a thing we totally started making our IRC bots smart![/ref] After IRC came HipChat with a strong integration into our other Atlassian-based tools. Now, though, my team is on Slack. It&#39;s still a great tool, but proper management of Slack requires a few specific things. Firstly, I am strictly disciplined about my Slack status. I set an emoji to let you know if I&#39;m home or (once this is all over?) in the office. If I&#39;m out for childcare or family reasons I change my status. If I&#39;m offline or at lunch I change my status.[ref]When I&#39;m offline I also put my phone number in my status so my team can reach me in an emergency.[/ref] I also update my Slack presence to let you know if I&#39;m at my desk or not. If it says I&#39;m here, I&#39;m available. If it says I&#39;m away - you can see where this is heading.[ref]Yes, I will sometimes be physically at my desk but marked &quot;away.&quot; This is because I&#39;m not working. I might be watching a video while eating lunch. Maybe I&#39;m on a second computer checking my bank account. The point is that I&#39;m unavailable.[/ref] Despite my status and presence being solid indicators of where I&#39;m at, some of my peers still fall into the &quot;are you there?&quot; trap and shout into the void when I&#39;m not around. I decided to fix that. The Slack Autoresponder Slack has an API - I use it to set my status/presence with several keyboard shortcuts already. But it also has an event notification API that will proactively send data to a server to allow the server to script a response. In my case, this is exactly what I want. Slack autoresponder in action In my situation, I want a Slack integration that: Checks to see if this is an urgent message - if so, send me a text message Checks to see if I&#39;m set to &quot;away&quot; If I&#39;m away, respond with a canned &quot;I&#39;m not here&quot; response If I&#39;m away but have sent a canned response in the past 10 minutes, ignore the message My tools of choice: AWS Lambda, the Serverless Framework, and Ring Central. I&#39;ll use Serverless to build my application, listening to Slack events and responding when the conditions are right. Because I don&#39;t have time to stand up a server (and don&#39;t want my local machine handling the influx of Slack messages), I&#39;ll host my app as an AWS Lambda function. To power urgent messaging to alert me when I need to head back to my desk immediately, I&#39;ll integrate everything with Ring Central&#39;s SMS APIs.[ref]You can also use Twilio if you want and my app can actually use either.[/ref] Now that you know what tools I&#39;ll use and what I want to build, though, you&#39;ll have to wait until next time to see the secret sauce. Tune in tomorrow for Part II where I walk you through the app and the build.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2020-04-16">
+                    April 16, 2020
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Slack Autoresponder - Part I</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p><!-- wp:paragraph --></p>
+<p>The impacts of <a href="https://en.wikipedia.org/wiki/Coronavirus_disease_2019">the COVID-19 pandemic</a> are legion; millions contracted the disease, hundreds of thousands have died, schools are closed, businesses are closed, the economy is in turmoil, and I'm working remotely once again. This last impact is the least concern, but as a software developer it's also the easiest thing for me to address in the immediate term.[ref]I am working hard to use my skills to affect positive change in as many areas as possible. Our company is still afloat and I'm still supporting my family. With what time I do have I'm donating to help other businesses and individuals stay afloat as well. This tutorial is meant to show the fruits of just one among many projects I have going.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I've worked remotely before. It's an enjoyable work experience to skip your morning commute, make as much coffee as you want, and even take a break to have lunch with your family <em>on a daily basis</em>. It's a wonder more people don't focus on work-from-home as a default.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Unfortunately, not everyone is as comfortable switching to a remote, asynchronous interaction style as I am. This is most evidenced by the number of random "hey, you there?" or "got a sec?" pings I'll get on Slack without context. It's a bit frustrating to come back to a message like this after being offline for an hour or two while taking care of my daughter only to see the person who asked is now also offline and left no further details to their problem.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In a nutshell: Slack is asynchronous. We don't have to both be online at the same time to communicate.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>How I Slack</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>In my career, I first used IRC. We had a dedicated, private channel for team communication and spun up one-off project channels when needed. Bots were used less for entertainment and more to keep a private channel private and controlled.[ref]Though once bot frameworks became a thing we totally started making our IRC bots smart![/ref] After IRC came HipChat with a strong integration into our other Atlassian-based tools. Now, though, my team is on Slack. It's still a great tool, but proper management of Slack requires a few specific things.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Firstly, I am strictly disciplined about my Slack status. I set an emoji to let you know if I'm home or (once this is all over?) in the office. If I'm out for childcare or family reasons I change my status. If I'm offline or at lunch I change my status.[ref]When I'm offline I also put my phone number in my status so my team can reach me in an emergency.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I also update my Slack <em>presence</em> to let you know if I'm at my desk or not. If it says I'm here, I'm available. If it says I'm away - you can see where this is heading.[ref]Yes, I will sometimes be physically at my desk but marked "away." This is because I'm <em>not working</em>. I might be watching a video while eating lunch. Maybe I'm on a second computer checking my bank account. The point is that I'm unavailable.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Despite my status and presence being solid indicators of where I'm at, some of my peers still fall into the "are you there?" trap and shout into the void when I'm not around. I decided to fix that.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>The Slack Autoresponder</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Slack has an API - I use it to set my status/presence with several keyboard shortcuts already. But it <em>also</em> has an event notification API that will proactively send data to a server to allow the server to script a response. In my case, this is <em>exactly</em> what I want.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"center","id":8189,"sizeSlug":"large"} --></p>
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img src="/assets/2020/04/autoresponder.png?fit=1024%2C549&amp;ssl=1" alt="Slack autoresponder in action" class="wp-image-8189" /><br />
+<figcaption>Slack autoresponder in action</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>In my situation, I want a Slack integration that:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Checks to see if this is an urgent message - if so, send me a text message</li>
+<li>Checks to see if I'm set to "away"
+<ul>
+<li>If I'm away, respond with a canned "I'm not here" response</li>
+<li>If I'm away but have sent a canned response in the past 10 minutes, ignore the message</li>
+</ul>
+</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>My tools of choice: <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>, the <a href="https://serverless.com/">Serverless Framework</a>, and <a href="https://www.ringcentral.com/">Ring Central.</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I'll use Serverless to build my application, listening to Slack events and responding when the conditions are right. Because I don't have time to stand up a server (and don't want my local machine handling the influx of Slack messages), I'll host my app as an AWS Lambda function. To power urgent messaging to alert me when I need to head back to my desk immediately, I'll integrate everything with Ring Central's SMS APIs.[ref]You can also use <a href="https://www.twilio.com/">Twilio</a> if you want and my app can actually use either.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that you know what tools I'll use and what I want to build, though, you'll have to wait until next time to see the secret sauce. Tune in tomorrow for Part II where I walk you through the app and the build.</p>
+<p><!-- /wp:paragraph --></p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Slack+Autoresponder+-+Part+I&amp;url=https://ttmm.iotech/slack-autoresponder-part-1/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/slack-autoresponder-part-1/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#JavaScript"
+                    rel="category">JavaScript</a>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                <a href="/categories/index.html#Tutorials"
+                    rel="category">Tutorials</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#AWS"
+                    rel="tag">AWS</a>
+                <a href="/tags/index.html#Slack"
+                    rel="tag">Slack</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="December 2, 2019">December 2, 2019</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/system76-superfan/">System76: Reflections of a Superfan</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 17, 2020">April 17, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/slack-autoresponder-2/">Slack Autoresponder - Part II</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

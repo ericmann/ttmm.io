@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Ultra-rapid Prototyping | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Ultra-rapid Prototyping" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I built an app last night that allows me to look up bus arrival times via SMS. It took me 2 hours. Node is incredible!" />
+<meta property="og:description" content="I built an app last night that allows me to look up bus arrival times via SMS. It took me 2 hours. Node is incredible!" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-09-23T08:00:34-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Ultra-rapid Prototyping" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Ultra-rapid Prototyping","dateModified":"2014-09-23T08:00:34-07:00","datePublished":"2014-09-23T08:00:34-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/ultra-rapid-prototyping/"},"url":"/tech/ultra-rapid-prototyping/","description":"I built an app last night that allows me to look up bus arrival times via SMS. It took me 2 hours. Node is incredible!","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2014-09-23">
+                    September 23, 2014
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Ultra-rapid Prototyping</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>I work daily with PHP and JavaScript thanks to WordPress. Our server environments are primarily PHP, and the front-ends are scripted with JavaScript. It's fun, but building a prototype in two languages, one of which that needs a server to process requests, is a bit burdensome.</p>
+<p>Lately I've been experimenting a lot with Node, the V8-powered server-side JavaScript tool we all know and love thanks to Grunt, Bower, and countless other JS-based task runners. Node lets me work quickly in JavaScript, spin up sophisticated prototypes quickly, and test my work both locally <em>and</em> on a real (remote) server in seconds.</p>
+<h2>The Power</h2>
+<p>When I first dabbled with programming in high school, the only options available to me were QuickBasic and C++. At the time, all but one C++ compiler were closed-source and, frankly, my allowance wasn't large enough for me to afford both an instruction manual <em>and</em> the compiler so I could learn how to write C++ and actually <em>use</em> C++ at the same time.</p>
+<p>Instead I stuck with Basic - actually with <em>QBasic</em>, a stripped-down, compiler-free version that shipped with Windows 98. It was easy to learn and in no time I was building fun little to-do applications and mock console UIs and monkeys-throwing-explosive-banana games.</p>
+<p>But without a compiler, I was forced to run all of my code in QBasic itself. I worked around the limitation by writing a few .bat files that would load QBasic, load my script, and run it automatically. Unfortunately, when the program closed, QBasic was still there in the background. If an exception/error was triggered, users would be thrown into QBasic's debugger.</p>
+<p>It was a crappy experience.</p>
+<p>The power of a tool like Node,[ref]Or Ruby. Or Python. Or newer versions of PHP that come with a bundled, lightweight server.[/ref] however, is that you can write a <em>script</em> that runs locally. No compiler, no distributable binary. Just a script file and an interpreter.</p>
+<p>While you still need the interpreter, once it's installed scripts behave just like they're regular, built-in commands. I use Grunt and Bower as if they're system commands (both are Node applications). Like most of my peers, I use [cci]vagrant up[/cci] daily - it's a Ruby command.</p>
+<p>This is hugely powerful, and the exact kind of experience teenage me would've loved to see.</p>
+<h2>Case-in-point</h2>
+<p>My wife takes the bus. Unfortunately, our local transit system has stopped posting bus schedules at the stops and instead urges you to either call a help line (with annoyingly long instructions) or text an SMS shortcode (that potentially charges you each time <em>and</em> bundles meaningless ads for gold to "keep the service free"). Instead of dealing with the super-long messages on the phone, or risking a charge for texting, she texts <em>me</em> and asks me to look up when the next bus will arrive so she knows when to leave work and head to her stop.</p>
+<p>It's a great system for her, but a minor interruption in my day.[ref]I'm more than happy to help, but we both wanted to figure out a way that didn't require me to pause in a meeting or stop coding to look up bus times.[/ref]</p>
+<p>Yesterday, I took some time to prototype an automated application to do the lookup for me.</p>
+<p>Our transit system has a rich API that I can pull against when I know a stop ID. The API will return both scheduled and estimated stop times; if a bus is late I can still grab it's information to figure out when it will arrive.</p>
+<p>My first attempt was a simple command line utility. Specify a stop ID at the command line, get back an array of route numbers and estimated arrival times. Fantastic! But my wife can't use the command line on my local machine while she's at work downtown.</p>
+<p>Enter Twilio.</p>
+<p>I wired the utility up to Twilio's API. A text message to a specific phone number triggers an HTTP POST to my application, which in turn reads and validates the stop ID you've sent it. The application still pulls the same data from the network, but instead of writing it to the console, it pushes the data back through Twilio to the device that sent the stop ID.</p>
+<p>Now my wife can text her stop ID to my custom number, and my application texts back a list of upcoming bus arrivals. For free. Without advertising. Win-win-win.</p>
+<p>I built the app in a grand total of 2 hours last night. It's less than 120 lines of code. Thanks to <a title="OpenShift" href="https://www.openshift.com/">RedHat</a>, it's also hosted online for free. Make that win-win-win-win-win-win.</p>
+<p>What kinds of tools do <em>you</em> prototype with easy-to-use scripting languages like Node, Ruby, and Python?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Ultra-rapid+Prototyping&amp;url=https://ttmm.iotech/ultra-rapid-prototyping/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/ultra-rapid-prototyping/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#javascript"
+                    rel="tag">javascript</a>
+                <a href="/tags/index.html#Node"
+                    rel="tag">Node</a>
+                <a href="/tags/index.html#prototype"
+                    rel="tag">prototype</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="September 22, 2014">September 22, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/faith/fasting/">Fasting</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="September 24, 2014">September 24, 2014</time>
+                </div>
+                <h3 class="post-title"><a href="/biz/aware-context/">Be Aware of Context</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

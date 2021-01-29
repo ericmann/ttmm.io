@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Slack Autoresponder - Part II | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Slack Autoresponder - Part II" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Last time, we talked about my motivations for building a Slack autoresponder so I can better communicate with my colleagues. Today we&#39;ll walk through the components required and all the steps for wiring together the full application. Serverless Framework First things first, we need to build the application itself. We&#39;ll be leveraging the Serverless framework, so if you don&#39;t already have that installed go ahead and install it: npm i -g serverless We install this tool globally to make the sls command available everywhere. When we&#39;re ready to deploy our application, a simple sls deploy will push everything up to AWS. That said, the next thing we need to do is configure our AWS credentials for Serverless to use - rather than walk you though those steps here, I&#39;ll refer you to Serverless&#39; excellent configuration walkthrough. Once your system is configured, you can clone my existing project and take a look through the code. I&#39;ll step through some significant functionality below once we&#39;ve configured the rest of our credentials. RingCentral RingCentral&#39;s App Creation Interface For this illustration, we&#39;re going to use the Node SDK for RingCentral. The code is straight-forward and can be taken directly from the documentation&#39;s Quick Start Guide. Clicking the &quot;Create SMS App&quot; button on the Guide page will launch you into the developer console, where you can configure an Other Non-UI application for use with this tool. Accept all of the details and click through the Create buttons to get started with the app - the defaults are acceptable enough for this solution, though as you become more accustomed with RingCentral you might want to make changes. RingCentral App Credentials Once you&#39;ve created an app, you can grab all of the credentials you&#39;ll need to configure our integration. You&#39;ll need: The API server URL (this should be for their dev/test platform) Your client ID Your client secret Your account phone number (this is also be your username) Your account password Your phone extension (by default this is 101, so we&#39;ll just use that) That&#39;s all we need from RingCentral for now! Slack Application Configuring the Slack application itself is equally straight-forward. Go to the Slack App console and create a new app. Once it&#39;s created, you&#39;ll need to grab the app&#39;s Signing Secret for use with our integration. Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, scroll down the the User Token Scopes section and add the scopes we need for the integration to work: chat:write im:history users.profile:read users:read Now scroll back up and install the app in your Slack workspace. This will set up OAuth permission for the app to work and give you the application&#39;s OAuth Access Token (which you&#39;ll need for our integration to work). Finally, you&#39;ll need to get your user ID. I found mine by viewing my profile in the web version of Slack (not the desktop app). Create a DM with yourself and say hi. Then click on your name to view a small version of your profile with a &quot;View full profile&quot; link - click that link. On your profile screen, click the kebob menu on the right and you&#39;ll see your Member ID in the resulting dropdown. This is the value you need. Likewise, if there&#39;s anyone in your org you don&#39;t want to automatically respond to while you&#39;re away, grab their member IDs as well. The Slack Autoresponder The autoresponder itself is fully coded for you. It&#39;s open source, so you can use it, modify it, and do whatever you want.[ref]Note that I offer no guarantees or warranties of any kind. The system works for me and I use it daily, but it&#39;s not a fully fleshed-out system with integration tests so there might be edge cases where things break.[/ref] First, clone the repository to your local system and run npm install from the newly-created directory to set up all of the package dependencies. Now, copy _secrets.yml to secrets.yml in the project and fill in all of the credentials we&#39;ve copied down from the systems above. Ensure you set the sms_tool value to ringcentral and enter your own phone number in destination_phone. The rest of the credentials will be obvious based on the steps above. The ignore_users field is a quoted, comma-delimited list of the user IDs you want to skip the autoresponder. At the very minimum, your ID should be in there so you don&#39;t accidentally respond to yourself. I&#39;d also highly recommend you also include your boss&#39; ID. Deploying the app with Serverless Once everything is set up, you&#39;re ready to deploy! Use Serverless from the same directory, and it will configure your Lambda function, APIGateway endpoints, and CloudFormation monitoring all for you. Just sls deploy and wait. Before you can use the autoresponder, though, you&#39;ll need to tell Slack about it. Go back to the app&#39;s configuration page in the Slack console and select the Event Subscriptions option under Features. You need to enable events, then add your new Lambda function&#39;s URL (Serverless will give it to you after the deployment completes). Slack will verify things, then you&#39;re good! You also need to subscribe to message events by expanding the Subscribe to events on behalf of users section and adding the message.im event. Now the application is fully configured and ready to go! In Summary The application is configured to respond to anyone who sends you a DM when your Slack presence is set to &quot;away.&quot; If you&#39;re &quot;active,&quot; then the system remains quiet and no one gets a notice, but once you toggle yourself to being &quot;away&quot; they&#39;ll get a subtle reminder that you won&#39;t respond immediately to any pings. RingCentral SMS Additionally, if someone sends you a message starting with the word &quot;urgent,&quot; you&#39;ll immediately get a text message via RingCentral alerting you that they need your attention. It&#39;s a great way to both suppress unwanted interruptions while also ensuring you&#39;re notified of actual urgent issues. The system is also smart enough to not respond to the same person twice in a 10 minute period. It uses a DynamoDB table to keep track of who it&#39;s responded to and suppresses itself in a short window. This will (hopefully) avoid annoying your team while still reminding them you&#39;re unavailable. Now that you have a Lambda-powered Slack integration, what are some other integrations you think would be useful?" />
+<meta property="og:description" content="Last time, we talked about my motivations for building a Slack autoresponder so I can better communicate with my colleagues. Today we&#39;ll walk through the components required and all the steps for wiring together the full application. Serverless Framework First things first, we need to build the application itself. We&#39;ll be leveraging the Serverless framework, so if you don&#39;t already have that installed go ahead and install it: npm i -g serverless We install this tool globally to make the sls command available everywhere. When we&#39;re ready to deploy our application, a simple sls deploy will push everything up to AWS. That said, the next thing we need to do is configure our AWS credentials for Serverless to use - rather than walk you though those steps here, I&#39;ll refer you to Serverless&#39; excellent configuration walkthrough. Once your system is configured, you can clone my existing project and take a look through the code. I&#39;ll step through some significant functionality below once we&#39;ve configured the rest of our credentials. RingCentral RingCentral&#39;s App Creation Interface For this illustration, we&#39;re going to use the Node SDK for RingCentral. The code is straight-forward and can be taken directly from the documentation&#39;s Quick Start Guide. Clicking the &quot;Create SMS App&quot; button on the Guide page will launch you into the developer console, where you can configure an Other Non-UI application for use with this tool. Accept all of the details and click through the Create buttons to get started with the app - the defaults are acceptable enough for this solution, though as you become more accustomed with RingCentral you might want to make changes. RingCentral App Credentials Once you&#39;ve created an app, you can grab all of the credentials you&#39;ll need to configure our integration. You&#39;ll need: The API server URL (this should be for their dev/test platform) Your client ID Your client secret Your account phone number (this is also be your username) Your account password Your phone extension (by default this is 101, so we&#39;ll just use that) That&#39;s all we need from RingCentral for now! Slack Application Configuring the Slack application itself is equally straight-forward. Go to the Slack App console and create a new app. Once it&#39;s created, you&#39;ll need to grab the app&#39;s Signing Secret for use with our integration. Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, scroll down the the User Token Scopes section and add the scopes we need for the integration to work: chat:write im:history users.profile:read users:read Now scroll back up and install the app in your Slack workspace. This will set up OAuth permission for the app to work and give you the application&#39;s OAuth Access Token (which you&#39;ll need for our integration to work). Finally, you&#39;ll need to get your user ID. I found mine by viewing my profile in the web version of Slack (not the desktop app). Create a DM with yourself and say hi. Then click on your name to view a small version of your profile with a &quot;View full profile&quot; link - click that link. On your profile screen, click the kebob menu on the right and you&#39;ll see your Member ID in the resulting dropdown. This is the value you need. Likewise, if there&#39;s anyone in your org you don&#39;t want to automatically respond to while you&#39;re away, grab their member IDs as well. The Slack Autoresponder The autoresponder itself is fully coded for you. It&#39;s open source, so you can use it, modify it, and do whatever you want.[ref]Note that I offer no guarantees or warranties of any kind. The system works for me and I use it daily, but it&#39;s not a fully fleshed-out system with integration tests so there might be edge cases where things break.[/ref] First, clone the repository to your local system and run npm install from the newly-created directory to set up all of the package dependencies. Now, copy _secrets.yml to secrets.yml in the project and fill in all of the credentials we&#39;ve copied down from the systems above. Ensure you set the sms_tool value to ringcentral and enter your own phone number in destination_phone. The rest of the credentials will be obvious based on the steps above. The ignore_users field is a quoted, comma-delimited list of the user IDs you want to skip the autoresponder. At the very minimum, your ID should be in there so you don&#39;t accidentally respond to yourself. I&#39;d also highly recommend you also include your boss&#39; ID. Deploying the app with Serverless Once everything is set up, you&#39;re ready to deploy! Use Serverless from the same directory, and it will configure your Lambda function, APIGateway endpoints, and CloudFormation monitoring all for you. Just sls deploy and wait. Before you can use the autoresponder, though, you&#39;ll need to tell Slack about it. Go back to the app&#39;s configuration page in the Slack console and select the Event Subscriptions option under Features. You need to enable events, then add your new Lambda function&#39;s URL (Serverless will give it to you after the deployment completes). Slack will verify things, then you&#39;re good! You also need to subscribe to message events by expanding the Subscribe to events on behalf of users section and adding the message.im event. Now the application is fully configured and ready to go! In Summary The application is configured to respond to anyone who sends you a DM when your Slack presence is set to &quot;away.&quot; If you&#39;re &quot;active,&quot; then the system remains quiet and no one gets a notice, but once you toggle yourself to being &quot;away&quot; they&#39;ll get a subtle reminder that you won&#39;t respond immediately to any pings. RingCentral SMS Additionally, if someone sends you a message starting with the word &quot;urgent,&quot; you&#39;ll immediately get a text message via RingCentral alerting you that they need your attention. It&#39;s a great way to both suppress unwanted interruptions while also ensuring you&#39;re notified of actual urgent issues. The system is also smart enough to not respond to the same person twice in a 10 minute period. It uses a DynamoDB table to keep track of who it&#39;s responded to and suppresses itself in a short window. This will (hopefully) avoid annoying your team while still reminding them you&#39;re unavailable. Now that you have a Lambda-powered Slack integration, what are some other integrations you think would be useful?" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-17T07:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Slack Autoresponder - Part II" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Slack Autoresponder - Part II","dateModified":"2020-04-17T07:00:00-07:00","datePublished":"2020-04-17T07:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/slack-autoresponder-2/"},"url":"/tech/slack-autoresponder-2/","description":"Last time, we talked about my motivations for building a Slack autoresponder so I can better communicate with my colleagues. Today we&#39;ll walk through the components required and all the steps for wiring together the full application. Serverless Framework First things first, we need to build the application itself. We&#39;ll be leveraging the Serverless framework, so if you don&#39;t already have that installed go ahead and install it: npm i -g serverless We install this tool globally to make the sls command available everywhere. When we&#39;re ready to deploy our application, a simple sls deploy will push everything up to AWS. That said, the next thing we need to do is configure our AWS credentials for Serverless to use - rather than walk you though those steps here, I&#39;ll refer you to Serverless&#39; excellent configuration walkthrough. Once your system is configured, you can clone my existing project and take a look through the code. I&#39;ll step through some significant functionality below once we&#39;ve configured the rest of our credentials. RingCentral RingCentral&#39;s App Creation Interface For this illustration, we&#39;re going to use the Node SDK for RingCentral. The code is straight-forward and can be taken directly from the documentation&#39;s Quick Start Guide. Clicking the &quot;Create SMS App&quot; button on the Guide page will launch you into the developer console, where you can configure an Other Non-UI application for use with this tool. Accept all of the details and click through the Create buttons to get started with the app - the defaults are acceptable enough for this solution, though as you become more accustomed with RingCentral you might want to make changes. RingCentral App Credentials Once you&#39;ve created an app, you can grab all of the credentials you&#39;ll need to configure our integration. You&#39;ll need: The API server URL (this should be for their dev/test platform) Your client ID Your client secret Your account phone number (this is also be your username) Your account password Your phone extension (by default this is 101, so we&#39;ll just use that) That&#39;s all we need from RingCentral for now! Slack Application Configuring the Slack application itself is equally straight-forward. Go to the Slack App console and create a new app. Once it&#39;s created, you&#39;ll need to grab the app&#39;s Signing Secret for use with our integration. Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, Next, go to the OAuth &amp; Permissions screen (link on the left-hand side under Features). First, scroll down the the User Token Scopes section and add the scopes we need for the integration to work: chat:write im:history users.profile:read users:read Now scroll back up and install the app in your Slack workspace. This will set up OAuth permission for the app to work and give you the application&#39;s OAuth Access Token (which you&#39;ll need for our integration to work). Finally, you&#39;ll need to get your user ID. I found mine by viewing my profile in the web version of Slack (not the desktop app). Create a DM with yourself and say hi. Then click on your name to view a small version of your profile with a &quot;View full profile&quot; link - click that link. On your profile screen, click the kebob menu on the right and you&#39;ll see your Member ID in the resulting dropdown. This is the value you need. Likewise, if there&#39;s anyone in your org you don&#39;t want to automatically respond to while you&#39;re away, grab their member IDs as well. The Slack Autoresponder The autoresponder itself is fully coded for you. It&#39;s open source, so you can use it, modify it, and do whatever you want.[ref]Note that I offer no guarantees or warranties of any kind. The system works for me and I use it daily, but it&#39;s not a fully fleshed-out system with integration tests so there might be edge cases where things break.[/ref] First, clone the repository to your local system and run npm install from the newly-created directory to set up all of the package dependencies. Now, copy _secrets.yml to secrets.yml in the project and fill in all of the credentials we&#39;ve copied down from the systems above. Ensure you set the sms_tool value to ringcentral and enter your own phone number in destination_phone. The rest of the credentials will be obvious based on the steps above. The ignore_users field is a quoted, comma-delimited list of the user IDs you want to skip the autoresponder. At the very minimum, your ID should be in there so you don&#39;t accidentally respond to yourself. I&#39;d also highly recommend you also include your boss&#39; ID. Deploying the app with Serverless Once everything is set up, you&#39;re ready to deploy! Use Serverless from the same directory, and it will configure your Lambda function, APIGateway endpoints, and CloudFormation monitoring all for you. Just sls deploy and wait. Before you can use the autoresponder, though, you&#39;ll need to tell Slack about it. Go back to the app&#39;s configuration page in the Slack console and select the Event Subscriptions option under Features. You need to enable events, then add your new Lambda function&#39;s URL (Serverless will give it to you after the deployment completes). Slack will verify things, then you&#39;re good! You also need to subscribe to message events by expanding the Subscribe to events on behalf of users section and adding the message.im event. Now the application is fully configured and ready to go! In Summary The application is configured to respond to anyone who sends you a DM when your Slack presence is set to &quot;away.&quot; If you&#39;re &quot;active,&quot; then the system remains quiet and no one gets a notice, but once you toggle yourself to being &quot;away&quot; they&#39;ll get a subtle reminder that you won&#39;t respond immediately to any pings. RingCentral SMS Additionally, if someone sends you a message starting with the word &quot;urgent,&quot; you&#39;ll immediately get a text message via RingCentral alerting you that they need your attention. It&#39;s a great way to both suppress unwanted interruptions while also ensuring you&#39;re notified of actual urgent issues. The system is also smart enough to not respond to the same person twice in a 10 minute period. It uses a DynamoDB table to keep track of who it&#39;s responded to and suppresses itself in a short window. This will (hopefully) avoid annoying your team while still reminding them you&#39;re unavailable. Now that you have a Lambda-powered Slack integration, what are some other integrations you think would be useful?","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2020-04-17">
+                    April 17, 2020
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Slack Autoresponder - Part II</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p><!-- wp:paragraph --></p>
+<p><a href="https://ttmm.io/tech/slack-autoresponder-part-1/">Last time</a>, we talked about my motivations for building a Slack autoresponder so I can better communicate with my colleagues. Today we'll walk through the components required and all the steps for wiring together the full application.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Serverless Framework</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>First things first, we need to build <a rel="noreferrer noopener" href="https://github.com/ericmann/slack-autoresponder" target="_blank">the application</a> itself. We'll be leveraging the Serverless framework, so if you don't already have that installed go ahead and install it:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>npm i -g serverless</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We install this tool <em>globally</em> to make the <tt>sls</tt> command available everywhere. When we're ready to deploy our application, a simple <tt>sls deploy</tt> will push everything up to AWS. That said, the next thing we need to do is configure our AWS credentials for Serverless to use - rather than walk you though those steps here, I'll refer you to <a href="https://serverless.com/framework/docs/providers/aws/guide/credentials/">Serverless' excellent configuration walkthrough</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once your system is configured, you can <a href="https://github.com/ericmann/slack-autoresponder">clone my existing project</a> and take a look through the code. I'll step through some significant functionality below once we've configured the rest of our credentials.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>RingCentral</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image {"align":"right","id":8201,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/ringcentralsetup.png" target="_blank" rel="noopener noreferrer"><img src="/assets/2020/04/ringcentralsetup-300x253.png" alt="RingCentral App Creation Interface" class="wp-image-8201" /></a><br />
+<figcaption>RingCentral's App Creation Interface</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>For this illustration, we're going to use the Node SDK for RingCentral. The code is straight-forward and can be taken directly from <a href="https://developers.ringcentral.com/guide/messaging/quick-start/node">the documentation's Quick Start Guide</a>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Clicking the "Create SMS App" button on the Guide page will launch you into the developer console, where you can configure an <strong>Other Non-UI</strong> application for use with this tool. Accept all of the details and click through the Create buttons to get started with the app - the defaults are acceptable enough for this solution, though as you become more accustomed with RingCentral you might want to make changes.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8203,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/ringcentral-app.png" target="_blank" rel="noopener noreferrer"><img src="/assets/2020/04/ringcentral-app-300x204.png" alt="RingCentral App Credentials" class="wp-image-8203" /></a><br />
+<figcaption>RingCentral App Credentials</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once you've created an app, you can grab all of the credentials you'll need to configure our integration. You'll need:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>The API server URL (this should be for their dev/test platform)</li>
+<li>Your client ID</li>
+<li>Your client secret</li>
+<li>Your account phone number (this is also be your username)</li>
+<li>Your account password</li>
+<li>Your phone extension (by default this is 101, so we'll just use that)</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>That's all we need from RingCentral for now!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Slack Application</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Configuring the Slack application itself is equally straight-forward. Go to <a rel="noreferrer noopener" href="https://api.slack.com/apps" target="_blank">the Slack App console</a> and create a new app. Once it's created, you'll need to grab the app's <strong>Signing Secret</strong> for use with our integration.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next, go to the <strong>OAuth &amp; Permissions</strong> screen (link on the left-hand side under Features). First, </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next, go to the <strong>OAuth &amp; Permissions</strong> screen (link on the left-hand side under Features). First, scroll down the the <strong>User Token Scopes</strong> section and add the scopes we need for the integration to work:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>chat:write</li>
+<li>im:history</li>
+<li>users.profile:read</li>
+<li>users:read</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now scroll back up and install the app in your Slack workspace. This will set up OAuth permission for the app to work and give you the application's <strong>OAuth Access Token</strong> (which you'll need for our integration to work).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Finally, you'll need to get your user ID. I found mine by viewing my profile in the <em>web</em> version of Slack (not the desktop app). Create a DM with yourself and say hi. Then click on your name to view a small version of your profile with a "View full profile" link - click that link.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>On your profile screen, click the kebob menu on the right and you'll see your <strong>Member ID</strong> in the resulting dropdown. This is the value you need.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Likewise, if there's anyone in your org you <em>don't</em> want to automatically respond to while you're away, grab their member IDs as well.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>The Slack Autoresponder</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The autoresponder itself is <a href="https://github.com/ericmann/slack-autoresponder">fully coded for you</a>. It's open source, so you can use it, modify it, and do whatever you want.[ref]Note that I offer no guarantees or warranties of any kind. The system works for me and I use it daily, but it's not a fully fleshed-out system with integration tests so there might be edge cases where things break.[/ref] First, <a href="https://github.com/ericmann/slack-autoresponder">clone the repository</a> to your local system and run <tt>npm install</tt> from the newly-created directory to set up all of the package dependencies.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now, copy <tt>_secrets.yml</tt> to <tt>secrets.yml</tt> in the project and fill in all of the credentials we've copied down from the systems above. Ensure you set the <tt>sms_tool</tt> value to <tt>ringcentral</tt> and enter your own phone number in <tt>destination_phone</tt>. The rest of the credentials will be obvious based on the steps above.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The <tt>ignore_users</tt> field is a quoted, comma-delimited list of the user IDs you want to skip the autoresponder. At the very minimum, your ID should be in there so you don't accidentally respond to yourself. I'd also highly recommend you also include your boss' ID.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8212,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/sls-deploy.png" target="_blank" rel="noopener noreferrer"><img src="/assets/2020/04/sls-deploy-300x193.png" alt="Deploying the app with Serverless." class="wp-image-8212" /></a><br />
+<figcaption>Deploying the app with Serverless</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Once everything is set up, you're ready to deploy! Use Serverless from the same directory, and it will configure your Lambda function, APIGateway endpoints, and CloudFormation monitoring all for you. Just <tt>sls deploy</tt> and wait.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Before you can use the autoresponder</strong>, though, you'll need to tell Slack about it. Go back to the app's configuration page in the Slack console and select the <strong>Event Subscriptions</strong> option under Features. You need to enable events, then add your new Lambda function's URL (Serverless will give it to you after the deployment completes). Slack will verify things, then you're good!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>You also need to subscribe to message events by expanding the <strong>Subscribe to events on behalf of users</strong> section and adding the <tt>message.im</tt> event. <em>Now</em> the application is fully configured and ready to go!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>In Summary</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The application is configured to respond to anyone who sends you a DM when your Slack presence is set to "away." If you're "active," then the system remains quiet and no one gets a notice, but once you toggle yourself to being "away" they'll get a subtle reminder that you won't respond immediately to any pings.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"align":"right","id":8209,"sizeSlug":"medium","linkDestination":"media"} --></p>
+<div class="wp-block-image">
+<figure class="alignright size-medium"><a href="https://ttmm.io/wp-content/uploads/2020/04/textscreenshot.png" target="_blank" rel="noopener noreferrer"><img src="/assets/2020/04/textscreenshot-150x300.png" alt="Screenshot of RingCentral text message" class="wp-image-8209" /></a><br />
+<figcaption>RingCentral SMS</figcaption>
+</figure>
+</div>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Additionally, if someone sends you a message starting with the word "urgent," you'll immediately get a text message via RingCentral alerting you that they need your attention. It's a great way to both suppress unwanted interruptions while also ensuring you're notified of <em>actual</em> urgent issues.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The system is also smart enough to not respond to the same person twice in a 10 minute period. It uses a DynamoDB table to keep track of who it's responded to and suppresses itself in a short window. This will (hopefully) avoid annoying your team while still reminding them you're unavailable.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that you have a Lambda-powered Slack integration, what are some other integrations you think would be useful?</p>
+<p><!-- /wp:paragraph --></p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Slack+Autoresponder+-+Part+II&amp;url=https://ttmm.iotech/slack-autoresponder-2/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/slack-autoresponder-2/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#JavaScript"
+                    rel="category">JavaScript</a>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                <a href="/categories/index.html#Tutorials"
+                    rel="category">Tutorials</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#AWS"
+                    rel="tag">AWS</a>
+                <a href="/tags/index.html#RingCentral"
+                    rel="tag">RingCentral</a>
+                <a href="/tags/index.html#Slack"
+                    rel="tag">Slack</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="April 16, 2020">April 16, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/slack-autoresponder-part-1/">Slack Autoresponder - Part I</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="May 7, 2020">May 7, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/unboxing-the-lemur-pro/">Unboxing the Lemur Pro</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

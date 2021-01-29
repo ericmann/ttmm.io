@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Gutenberg and the Road Ahead | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Gutenberg and the Road Ahead" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I have a confession to make. I really like the new Gutenberg editor for WordPress. I know, I know. Developers aren&amp;#x27;t supposed to like massive, intrusive changes like this. As of the time of this writing, the plugin stands with 2.6 stars on the plugin repository - at least 133 of those ratings are 1-star critiques. &lt;/p&gt; Gutenberg suffers not from design aesthetic, but from the high level of distrust the community seems to have for the &quot;new&quot; principles of the editor. As a writer﻿, though, it&amp;#x27;s an incredibly slick interface. As a developer, I can also see the promise behind the block structure for taking over the rest of the WordPress admin. The customizer could easily use the block structure for things like widgets and navigation and content layout. Even settings pages could be updated to leverage blocks for different sections. Also as a developer, I can see why so many are hesitant to dive in with the new system. It still has a few rough edges, but nothing that&amp;#x27;s impossible to polish as development moves forward. It&amp;#x27;s also﻿ a massive deviation from the interface we&amp;#x27;re all used to. The Problems Ahead Having worked both as a WordPress freelancer and with a larger WordPress agency team I admit this new editor does give me pause. Several of the systems I&amp;#x27;ve built or worked with feature rich, custom interfaces - all built atop the standard WordPress editor screen. While I plan to leverage Gutenberg&amp;#x27;s newer interfaces with any project I build atop WordPress 5.0 or later, this isn&amp;#x27;t a solution for everyone. Not that long ago, a friend of mine who works with an established non-profit reached out to me for some WordPress help. The team had hired a developer to build out their site, but they&amp;#x27;d since parted ways. Unfortunately, the developer had left a large banner on the front-end of the site pointing out the design was new and soliciting user feedback. The team wanted to turn off the banner, but didn&amp;#x27;t know how. They also couldn&amp;#x27;t ask the original developer to take care of it for them. My point﻿ is that many existing WordPress users﻿ are working with platforms built by outside parties or powered by themes and plugins that they cannot update on their own for whatever reason. Switching to the Gutenberg editor for posts (and pages and other CPTs) is going to pull the rug out from under a lot of businesses who&amp;#x27;ve grown to trust our product to build their business. A Potential Solution Two roads diverged in a yellow wood,And sorry I could not travel bothAnd be one traveler, long I stoodAnd looked down one as far as I couldTo where it bent in the undergrowth The Road Not Taken, Robert Frost About four years ago, I suggested that WordPress should fork itself for the sake of updating its PHP requirements and empowering developers to leverage newer features in their code. Several other developers chimed in and supported the idea, but we didn&amp;#x27;t tread down that path because, honestly, it wasn&amp;#x27;t a good fit for the project as a whole. Now, though, everything is different. Gutenberg is great, but it&amp;#x27;s not a good fit for the project as a whole. WordPress is not﻿ just a blogging platform. It&amp;#x27;s not﻿ just a tool for the creation of prose. It&amp;#x27;s a rich content management system with support for both prose and media and, thanks to the power of custom post types, anything else a customer might need﻿. I strongly believe that Gutenberg, and its block-based approach to building webpages is the way of the future. I strongly believe that Gutenberg should be part of WordPress - perhaps not just a part but should take over﻿ the WordPress interface entirely. I just as strongly believe that the broader WordPress community isn&amp;#x27;t ready for Gutenberg and won&amp;#x27;t be for quite some time. For the time being, I propose that WordPress create a &quot;soft fork&quot; of the project. Maintenance, security, and minor﻿ feature improvements should continue on a 4.X branch (with a 4.10 release coming next, followed by 4.11, etc). Gutenberg should (and will) be the default editor with WordPress 5.0, but no one necessarily has to﻿ upgrade to the 5.X branch until they&amp;#x27;re ready for it. This would give developers the time to upgrade their plugins and themes. It would give users the time to familiarize themselves with the newer interface. It would also allow for faster, broader﻿ experimentation with the new block-based approach. Rationale WordPress&amp;#x27; overarching development principle has been to always﻿ maintain backwards compatibility. It&amp;#x27;s one of the reasons why we target PHP 5.2 as a minimum. It&amp;#x27;s one of the reasons why I can click &quot;upgrade&quot; on an older 3.X site and bring it up to speed with 4.9.1 without anything breaking. It&amp;#x27;s one of the primary reasons why WordPress has been so successful as a platform. Unfortunately, Gutenberg is such a deviation from what we&amp;#x27;ve used in the past that it&amp;#x27;s all but impossible to maintain backwards compatibility without ugly hacks.﻿ Meta boxes, one of the core ways plugins extend the WordPress admin interface, are included in Gutenberg by way of iFrames. It&amp;#x27;s a buggy implementation that has many developers arguing over best practices and approach. The page editor is missing the concept of &quot;page templates&quot; entirely. Up til now, templates were the key way site owners customized the appearance of their content - this doesn&amp;#x27;t fit within a Gutenberg model. Leveraging a page template requires deactivating the plugin, selecting the template, then re-activating the plugin to build content. Blocks are added to post content using HTML comment tags - the content isn&amp;#x27;t actually broken up into separate blocks and the blocks themselves don&amp;#x27;t function as standalone objects. This reminds me too much of media within WordPress, where media items are inserted by way of HTML tags into content rather than as references back to the original media item. Gutenberg reimagines and reinvents the way WordPress is built. This is a good thing! But we shouldn&amp;#x27;t be shoehorning the newer features into older structures because we&amp;#x27;re afraid of breaking backwards compatibility on the back-end. Gutenberg already sacrifices backwards compatibility on the front-end!﻿ A soft fork of WordPress would allow us to: Update all the JavaScript used within the admin interface Update the database to better house blocks as objects that can be reused and references across content Reimagine the media library as a catalog of reusable media blocks Update other components of the WordPress admin to leverage blocks (a &quot;settings&quot; block perhaps?) All of this would be possible without breaking the functionality of highly customized sites if they remained on the 4.X branch. They&amp;#x27;d still get security updates, maybe performance updates, and possibly even minor, non-Gutenberg-related feature updates moving forward. Maintaining both the 4.X and 5.X branches in parallel would also provide developers (both on the larger agency and smaller freelance side) the ability to seamlessly upgrade from a legacy to a Gutenberg environment. Soft-forking isn&amp;#x27;t unheard of. Microsoft followed this pattern when they replaced Internet Explorer with IE Edge. Firefox did it with the new Firefox Quantum. Gutenberg is the road ahead for WordPress. It&amp;#x27;s a road I want us to take. But it&amp;#x27;s a road that not everyone will be willing to tread. We should respect that and plan a way to help those who can&amp;#x27;t﻿ follow to keep up." />
+<meta property="og:description" content="I have a confession to make. I really like the new Gutenberg editor for WordPress. I know, I know. Developers aren&amp;#x27;t supposed to like massive, intrusive changes like this. As of the time of this writing, the plugin stands with 2.6 stars on the plugin repository - at least 133 of those ratings are 1-star critiques. &lt;/p&gt; Gutenberg suffers not from design aesthetic, but from the high level of distrust the community seems to have for the &quot;new&quot; principles of the editor. As a writer﻿, though, it&amp;#x27;s an incredibly slick interface. As a developer, I can also see the promise behind the block structure for taking over the rest of the WordPress admin. The customizer could easily use the block structure for things like widgets and navigation and content layout. Even settings pages could be updated to leverage blocks for different sections. Also as a developer, I can see why so many are hesitant to dive in with the new system. It still has a few rough edges, but nothing that&amp;#x27;s impossible to polish as development moves forward. It&amp;#x27;s also﻿ a massive deviation from the interface we&amp;#x27;re all used to. The Problems Ahead Having worked both as a WordPress freelancer and with a larger WordPress agency team I admit this new editor does give me pause. Several of the systems I&amp;#x27;ve built or worked with feature rich, custom interfaces - all built atop the standard WordPress editor screen. While I plan to leverage Gutenberg&amp;#x27;s newer interfaces with any project I build atop WordPress 5.0 or later, this isn&amp;#x27;t a solution for everyone. Not that long ago, a friend of mine who works with an established non-profit reached out to me for some WordPress help. The team had hired a developer to build out their site, but they&amp;#x27;d since parted ways. Unfortunately, the developer had left a large banner on the front-end of the site pointing out the design was new and soliciting user feedback. The team wanted to turn off the banner, but didn&amp;#x27;t know how. They also couldn&amp;#x27;t ask the original developer to take care of it for them. My point﻿ is that many existing WordPress users﻿ are working with platforms built by outside parties or powered by themes and plugins that they cannot update on their own for whatever reason. Switching to the Gutenberg editor for posts (and pages and other CPTs) is going to pull the rug out from under a lot of businesses who&amp;#x27;ve grown to trust our product to build their business. A Potential Solution Two roads diverged in a yellow wood,And sorry I could not travel bothAnd be one traveler, long I stoodAnd looked down one as far as I couldTo where it bent in the undergrowth The Road Not Taken, Robert Frost About four years ago, I suggested that WordPress should fork itself for the sake of updating its PHP requirements and empowering developers to leverage newer features in their code. Several other developers chimed in and supported the idea, but we didn&amp;#x27;t tread down that path because, honestly, it wasn&amp;#x27;t a good fit for the project as a whole. Now, though, everything is different. Gutenberg is great, but it&amp;#x27;s not a good fit for the project as a whole. WordPress is not﻿ just a blogging platform. It&amp;#x27;s not﻿ just a tool for the creation of prose. It&amp;#x27;s a rich content management system with support for both prose and media and, thanks to the power of custom post types, anything else a customer might need﻿. I strongly believe that Gutenberg, and its block-based approach to building webpages is the way of the future. I strongly believe that Gutenberg should be part of WordPress - perhaps not just a part but should take over﻿ the WordPress interface entirely. I just as strongly believe that the broader WordPress community isn&amp;#x27;t ready for Gutenberg and won&amp;#x27;t be for quite some time. For the time being, I propose that WordPress create a &quot;soft fork&quot; of the project. Maintenance, security, and minor﻿ feature improvements should continue on a 4.X branch (with a 4.10 release coming next, followed by 4.11, etc). Gutenberg should (and will) be the default editor with WordPress 5.0, but no one necessarily has to﻿ upgrade to the 5.X branch until they&amp;#x27;re ready for it. This would give developers the time to upgrade their plugins and themes. It would give users the time to familiarize themselves with the newer interface. It would also allow for faster, broader﻿ experimentation with the new block-based approach. Rationale WordPress&amp;#x27; overarching development principle has been to always﻿ maintain backwards compatibility. It&amp;#x27;s one of the reasons why we target PHP 5.2 as a minimum. It&amp;#x27;s one of the reasons why I can click &quot;upgrade&quot; on an older 3.X site and bring it up to speed with 4.9.1 without anything breaking. It&amp;#x27;s one of the primary reasons why WordPress has been so successful as a platform. Unfortunately, Gutenberg is such a deviation from what we&amp;#x27;ve used in the past that it&amp;#x27;s all but impossible to maintain backwards compatibility without ugly hacks.﻿ Meta boxes, one of the core ways plugins extend the WordPress admin interface, are included in Gutenberg by way of iFrames. It&amp;#x27;s a buggy implementation that has many developers arguing over best practices and approach. The page editor is missing the concept of &quot;page templates&quot; entirely. Up til now, templates were the key way site owners customized the appearance of their content - this doesn&amp;#x27;t fit within a Gutenberg model. Leveraging a page template requires deactivating the plugin, selecting the template, then re-activating the plugin to build content. Blocks are added to post content using HTML comment tags - the content isn&amp;#x27;t actually broken up into separate blocks and the blocks themselves don&amp;#x27;t function as standalone objects. This reminds me too much of media within WordPress, where media items are inserted by way of HTML tags into content rather than as references back to the original media item. Gutenberg reimagines and reinvents the way WordPress is built. This is a good thing! But we shouldn&amp;#x27;t be shoehorning the newer features into older structures because we&amp;#x27;re afraid of breaking backwards compatibility on the back-end. Gutenberg already sacrifices backwards compatibility on the front-end!﻿ A soft fork of WordPress would allow us to: Update all the JavaScript used within the admin interface Update the database to better house blocks as objects that can be reused and references across content Reimagine the media library as a catalog of reusable media blocks Update other components of the WordPress admin to leverage blocks (a &quot;settings&quot; block perhaps?) All of this would be possible without breaking the functionality of highly customized sites if they remained on the 4.X branch. They&amp;#x27;d still get security updates, maybe performance updates, and possibly even minor, non-Gutenberg-related feature updates moving forward. Maintaining both the 4.X and 5.X branches in parallel would also provide developers (both on the larger agency and smaller freelance side) the ability to seamlessly upgrade from a legacy to a Gutenberg environment. Soft-forking isn&amp;#x27;t unheard of. Microsoft followed this pattern when they replaced Internet Explorer with IE Edge. Firefox did it with the new Firefox Quantum. Gutenberg is the road ahead for WordPress. It&amp;#x27;s a road I want us to take. But it&amp;#x27;s a road that not everyone will be willing to tread. We should respect that and plan a way to help those who can&amp;#x27;t﻿ follow to keep up." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-12-15T10:00:31-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Gutenberg and the Road Ahead" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Gutenberg and the Road Ahead","dateModified":"2017-12-15T10:00:31-08:00","datePublished":"2017-12-15T10:00:31-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/gutenberg-and-the-road-ahead/"},"url":"/tech/gutenberg-and-the-road-ahead/","description":"I have a confession to make. I really like the new Gutenberg editor for WordPress. I know, I know. Developers aren&amp;#x27;t supposed to like massive, intrusive changes like this. As of the time of this writing, the plugin stands with 2.6 stars on the plugin repository - at least 133 of those ratings are 1-star critiques. &lt;/p&gt; Gutenberg suffers not from design aesthetic, but from the high level of distrust the community seems to have for the &quot;new&quot; principles of the editor. As a writer﻿, though, it&amp;#x27;s an incredibly slick interface. As a developer, I can also see the promise behind the block structure for taking over the rest of the WordPress admin. The customizer could easily use the block structure for things like widgets and navigation and content layout. Even settings pages could be updated to leverage blocks for different sections. Also as a developer, I can see why so many are hesitant to dive in with the new system. It still has a few rough edges, but nothing that&amp;#x27;s impossible to polish as development moves forward. It&amp;#x27;s also﻿ a massive deviation from the interface we&amp;#x27;re all used to. The Problems Ahead Having worked both as a WordPress freelancer and with a larger WordPress agency team I admit this new editor does give me pause. Several of the systems I&amp;#x27;ve built or worked with feature rich, custom interfaces - all built atop the standard WordPress editor screen. While I plan to leverage Gutenberg&amp;#x27;s newer interfaces with any project I build atop WordPress 5.0 or later, this isn&amp;#x27;t a solution for everyone. Not that long ago, a friend of mine who works with an established non-profit reached out to me for some WordPress help. The team had hired a developer to build out their site, but they&amp;#x27;d since parted ways. Unfortunately, the developer had left a large banner on the front-end of the site pointing out the design was new and soliciting user feedback. The team wanted to turn off the banner, but didn&amp;#x27;t know how. They also couldn&amp;#x27;t ask the original developer to take care of it for them. My point﻿ is that many existing WordPress users﻿ are working with platforms built by outside parties or powered by themes and plugins that they cannot update on their own for whatever reason. Switching to the Gutenberg editor for posts (and pages and other CPTs) is going to pull the rug out from under a lot of businesses who&amp;#x27;ve grown to trust our product to build their business. A Potential Solution Two roads diverged in a yellow wood,And sorry I could not travel bothAnd be one traveler, long I stoodAnd looked down one as far as I couldTo where it bent in the undergrowth The Road Not Taken, Robert Frost About four years ago, I suggested that WordPress should fork itself for the sake of updating its PHP requirements and empowering developers to leverage newer features in their code. Several other developers chimed in and supported the idea, but we didn&amp;#x27;t tread down that path because, honestly, it wasn&amp;#x27;t a good fit for the project as a whole. Now, though, everything is different. Gutenberg is great, but it&amp;#x27;s not a good fit for the project as a whole. WordPress is not﻿ just a blogging platform. It&amp;#x27;s not﻿ just a tool for the creation of prose. It&amp;#x27;s a rich content management system with support for both prose and media and, thanks to the power of custom post types, anything else a customer might need﻿. I strongly believe that Gutenberg, and its block-based approach to building webpages is the way of the future. I strongly believe that Gutenberg should be part of WordPress - perhaps not just a part but should take over﻿ the WordPress interface entirely. I just as strongly believe that the broader WordPress community isn&amp;#x27;t ready for Gutenberg and won&amp;#x27;t be for quite some time. For the time being, I propose that WordPress create a &quot;soft fork&quot; of the project. Maintenance, security, and minor﻿ feature improvements should continue on a 4.X branch (with a 4.10 release coming next, followed by 4.11, etc). Gutenberg should (and will) be the default editor with WordPress 5.0, but no one necessarily has to﻿ upgrade to the 5.X branch until they&amp;#x27;re ready for it. This would give developers the time to upgrade their plugins and themes. It would give users the time to familiarize themselves with the newer interface. It would also allow for faster, broader﻿ experimentation with the new block-based approach. Rationale WordPress&amp;#x27; overarching development principle has been to always﻿ maintain backwards compatibility. It&amp;#x27;s one of the reasons why we target PHP 5.2 as a minimum. It&amp;#x27;s one of the reasons why I can click &quot;upgrade&quot; on an older 3.X site and bring it up to speed with 4.9.1 without anything breaking. It&amp;#x27;s one of the primary reasons why WordPress has been so successful as a platform. Unfortunately, Gutenberg is such a deviation from what we&amp;#x27;ve used in the past that it&amp;#x27;s all but impossible to maintain backwards compatibility without ugly hacks.﻿ Meta boxes, one of the core ways plugins extend the WordPress admin interface, are included in Gutenberg by way of iFrames. It&amp;#x27;s a buggy implementation that has many developers arguing over best practices and approach. The page editor is missing the concept of &quot;page templates&quot; entirely. Up til now, templates were the key way site owners customized the appearance of their content - this doesn&amp;#x27;t fit within a Gutenberg model. Leveraging a page template requires deactivating the plugin, selecting the template, then re-activating the plugin to build content. Blocks are added to post content using HTML comment tags - the content isn&amp;#x27;t actually broken up into separate blocks and the blocks themselves don&amp;#x27;t function as standalone objects. This reminds me too much of media within WordPress, where media items are inserted by way of HTML tags into content rather than as references back to the original media item. Gutenberg reimagines and reinvents the way WordPress is built. This is a good thing! But we shouldn&amp;#x27;t be shoehorning the newer features into older structures because we&amp;#x27;re afraid of breaking backwards compatibility on the back-end. Gutenberg already sacrifices backwards compatibility on the front-end!﻿ A soft fork of WordPress would allow us to: Update all the JavaScript used within the admin interface Update the database to better house blocks as objects that can be reused and references across content Reimagine the media library as a catalog of reusable media blocks Update other components of the WordPress admin to leverage blocks (a &quot;settings&quot; block perhaps?) All of this would be possible without breaking the functionality of highly customized sites if they remained on the 4.X branch. They&amp;#x27;d still get security updates, maybe performance updates, and possibly even minor, non-Gutenberg-related feature updates moving forward. Maintaining both the 4.X and 5.X branches in parallel would also provide developers (both on the larger agency and smaller freelance side) the ability to seamlessly upgrade from a legacy to a Gutenberg environment. Soft-forking isn&amp;#x27;t unheard of. Microsoft followed this pattern when they replaced Internet Explorer with IE Edge. Firefox did it with the new Firefox Quantum. Gutenberg is the road ahead for WordPress. It&amp;#x27;s a road I want us to take. But it&amp;#x27;s a road that not everyone will be willing to tread. We should respect that and plan a way to help those who can&amp;#x27;t﻿ follow to keep up.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2017-12-15">
+                    December 15, 2017
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Gutenberg and the Road Ahead</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p><!-- wp:core/paragraph --></p>
+<p>I have a confession to make. I really like the new Gutenberg editor for WordPress.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I know, I know. Developers aren&#x27;t supposed to like massive, intrusive changes like this. As of the time of this writing, the plugin stands with 2.6 stars on the plugin repository - at least 133 of those ratings are 1-star critiques.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":7104,"className":"text-center"} --></p>
+<figure class="wp-block-image text-center"><img src="/assets/2017/12/Screen-Shot-2017-12-15-at-8.01.14-AM.png?fit=300%2C240&amp;ssl=1" class="aligncenter" /></p>
+<figcaption>Gutenberg suffers not from design aesthetic, but from the high level of distrust the community seems to have for the &quot;new&quot; principles of the editor.</figcaption>
+</figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As a <em>writer</em>﻿, though, it&#x27;s an incredibly slick interface. </p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As a <em>developer</em>, I can also see the promise behind the block structure for taking over the rest of the WordPress admin. The customizer could easily use the block structure for things like widgets and navigation and content layout. Even settings pages could be updated to leverage blocks for different sections.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Also as a developer, I can see why so many are hesitant to dive in with the new system. It still has a few rough edges, but nothing that&#x27;s impossible to polish as development moves forward. It&#x27;s <em>also</em>﻿ a massive deviation from the interface we&#x27;re all used to.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>The Problems Ahead</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Having worked both as a WordPress freelancer and with a larger WordPress agency team I admit this new editor does give me pause. Several of the systems I&#x27;ve built or worked with feature rich, custom interfaces - all built atop the standard WordPress editor screen.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>While I plan to leverage Gutenberg&#x27;s newer interfaces with any project I build atop WordPress 5.0 or later, this isn&#x27;t a solution for everyone.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Not that long ago, a friend of mine who works with an established non-profit reached out to me for some WordPress help. The team had hired a developer to build out their site, but they&#x27;d since parted ways. Unfortunately, the developer had left a large banner on the front-end of the site pointing out the design was new and soliciting user feedback.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The team wanted to turn off the banner, but didn&#x27;t know how. They also couldn&#x27;t ask the original developer to take care of it for them.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p><strong>My point</strong>﻿ is that many existing WordPress <em>users</em>﻿ are working with platforms built by outside parties or powered by themes and plugins that they cannot update on their own for whatever reason. Switching to the Gutenberg editor for posts (and pages and other CPTs) is going to pull the rug out from under a lot of businesses who&#x27;ve grown to trust our product to build their business.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>A Potential Solution</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/quote --></p>
+<blockquote class="wp-block-quote">
+<p>Two roads diverged in a yellow wood,<br />And sorry I could not travel both<br />And be one traveler, long I stood<br />And looked down one as far as I could<br />To where it bent in the undergrowth</p>
+<p><cite><em>The Road Not</em> <em>Taken</em>, Robert Frost</cite></p></blockquote>
+<p><!-- /wp:core/quote --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>About four years ago, <a href="https://ttmm.io/tech/wordpress-forking-and-the-road-to-4-0/">I suggested that WordPress should fork itself</a> for the sake of updating its PHP requirements and empowering developers to leverage newer features in their code. Several other developers chimed in and supported the idea, but we didn&#x27;t tread down that path because, honestly, it wasn&#x27;t a good fit for the project as a whole.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Now, though, everything is different.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Gutenberg is great, but it&#x27;s not a good fit for the project as a whole. WordPress is <em>not</em>﻿ just a blogging platform. It&#x27;s <em>not</em>﻿ just a tool for the creation of prose. It&#x27;s a rich content management system with support for both prose and media and, thanks to the power of custom post types, <em>anything else a customer might need</em>﻿.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I strongly believe that Gutenberg, and its block-based approach to building webpages is the way of the future. I strongly believe that Gutenberg should be part of WordPress - perhaps not just a <em>part</em> but should <em>take over</em>﻿ the WordPress interface entirely.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>I just as strongly believe that the broader WordPress community isn&#x27;t ready for Gutenberg and won&#x27;t be for quite some time.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>For the time being, I propose that WordPress create a &quot;soft fork&quot; of the project. Maintenance, security, and <em>minor</em>﻿ feature improvements should continue on a 4.X branch (with a 4.10 release coming next, followed by 4.11, etc). Gutenberg should (and <a href="https://ma.tt/2017/08/we-called-it-gutenberg-for-a-reason/">will</a>) be the default editor with WordPress 5.0, but no one necessarily <em>has to</em>﻿ upgrade to the 5.X branch until they&#x27;re ready for it.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This would give developers the time to upgrade their plugins and themes. It would give users the time to familiarize themselves with the newer interface. It would also allow for faster, <em>broader</em>﻿ experimentation with the new block-based approach.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Rationale</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>WordPress&#x27; overarching development principle has been to <em>always</em>﻿ maintain backwards compatibility. It&#x27;s one of the reasons why we target PHP 5.2 as a minimum. It&#x27;s one of the reasons why I can click &quot;upgrade&quot; on an older 3.X site and bring it up to speed with 4.9.1 without anything breaking.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>It&#x27;s one of the primary reasons why WordPress has been so successful as a platform.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Unfortunately, Gutenberg is such a deviation from what we&#x27;ve used in the past that it&#x27;s all but impossible to maintain backwards compatibility without ugly hacks.<a href="https://developer.wordpress.org/plugins/metadata/custom-meta-boxes/">﻿</a></p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/list --></p>
+<ul>
+<li><a href="https://developer.wordpress.org/plugins/metadata/custom-meta-boxes/">Meta boxes</a>, one of the core ways plugins extend the WordPress admin interface, are included in Gutenberg by way of iFrames. It&#x27;s a buggy implementation that has many developers arguing over best practices and approach.</li>
+<li>The page editor is missing the concept of &quot;page templates&quot; entirely. Up til now, templates were the key way site owners customized the appearance of their content - this doesn&#x27;t fit within a Gutenberg model. Leveraging a page template requires <em>deactivating</em> the plugin, selecting the template, then re-activating the plugin to build content.</li>
+<li>Blocks are added to post content using HTML comment tags - the content isn&#x27;t <em>actually</em> broken up into separate blocks and the blocks themselves don&#x27;t function as standalone objects. This reminds me too much of media within WordPress, where media items are inserted by way of HTML tags into content rather than as references back to the original media item.</li>
+</ul>
+<p><!-- /wp:core/list --></p>
+<p><!-- wp:core-embed/twitter {"url":"https://twitter.com/JJJ/status/940953146817380352"} --></p>
+<figure class="wp-block-embed-twitter">
+    <br />
+</figure>
+<p><!-- /wp:core-embed/twitter --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Gutenberg reimagines and reinvents the way WordPress is built. This is a good thing! But we shouldn&#x27;t be shoehorning the newer features into older structures because we&#x27;re afraid of breaking backwards compatibility on the back-end. <em>Gutenberg already sacrifices backwards compatibility on the front-end!</em>﻿</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>A soft fork of WordPress would allow us to:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/list --></p>
+<ul>
+<li>Update <em>all</em> the JavaScript used within the admin interface</li>
+<li>Update the database to better house blocks <em>as objects</em> that can be reused and references across content</li>
+<li>Reimagine the media library as a catalog of reusable media blocks</li>
+<li>Update other components of the WordPress admin to leverage blocks (a &quot;settings&quot; block perhaps?)</li>
+</ul>
+<p><!-- /wp:core/list --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>All of this would be possible <em>without</em> breaking the functionality of highly customized sites if they remained on the 4.X branch. They&#x27;d still get security updates, maybe performance updates, and possibly even minor, non-Gutenberg-related feature updates moving forward.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Maintaining both the 4.X and 5.X branches in parallel would <em>also</em> provide developers (both on the larger agency and smaller freelance side) the ability to seamlessly upgrade from a legacy to a Gutenberg environment.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Soft-forking isn&#x27;t unheard of. Microsoft followed this pattern when they replaced Internet Explorer with IE Edge. Firefox did it with the new Firefox Quantum.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Gutenberg is the road ahead for WordPress. It&#x27;s a road I want us to take. But it&#x27;s a road that not everyone will be willing to tread. We should respect that and plan a way to help those who <em>can&#x27;t</em>﻿ follow to keep up.</p>
+<p><!-- /wp:core/paragraph --></p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Gutenberg+and+the+Road+Ahead&amp;url=https://ttmm.iotech/gutenberg-and-the-road-ahead/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/gutenberg-and-the-road-ahead/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="November 6, 2017">November 6, 2017</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/missing-diversity-in-tech/">Missing: Diversity in Tech</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="December 23, 2017">December 23, 2017</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/building-a-phone-routing-system/">Building a Phone Routing System</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

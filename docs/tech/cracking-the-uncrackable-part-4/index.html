@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Cracking the Uncrackable - Hashing Setup | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Cracking the Uncrackable - Hashing Setup" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="If like last week simply guessing a password is insufficient, then you can bring out the big guns. I&#39;m talking about Hashcat, and advanced system that allows you to automate the cracking of passwords using optimized GPU code. Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of password is unique from one of P@s$w0rd1. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this. It&#39;s also easily paired with a centralized command server like Hashtopolis, that allows you to spread the hashing job out over multiple servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider. Any way you slice it, Hashcat allows you to attempt several thousand passwords per second. Hashtopolis further allows you to do so on several machines at the same time. Hashcat Setup Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. Your private key is symmetrically encrypted with a random master key, and that master key is subsequently encrypted with a user-defined password. We don&#39;t want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct. The Openwall Project maintains a tool called John the Ripper that is somewhat similar to Hashcat. The advantage of their tool is that it&#39;s open source and includes various additional utility scripts that make our job easier. The bitcoin2join script, for example, takes a wallet.dat file and converts it to a string that&#39;s easily processed by either hashing system. Running this script alone won&#39;t crack your wallet. What it will do is convert a large binary blob (your wallet) into a string like $bitcoin$64$f6f42a9e0cb0eda2669fa8.... This string, when provided to Hashcat, is the foundation of our next cracking attempt. Hashcat Setup Hashcat has various attacks and hashing modes. Since we&#39;re specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a &quot;straight&quot; attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don&#39;t have a wordlist to start from, this is a good place to begin.[/ref] In our case, we put the hash generated from bitcoin2john above in hash.txt and a list of possible passwords into wordlist.txt. Our execution of Hashcat would then look like: ./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3 The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information. That Takes Forever ... The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I&#39;ve seen folks complain that Hashcat reports &quot;the next big bang&quot; as the expected completion date for a cracking run. Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there are ways we can make things go faster. First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing as with @s or 0s with Os, for example. But still, this doesn&#39;t speed things up on your machine. In fact, the problem is often that you&#39;re trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you&#39;ll likely be overloading the system if you try to crack a password and run a display at the same time. Running things locally means you&#39;re limited to that one machine&#39;s hardware as well. Next week we&#39;ll cover an approach to farm the cracking job out to multiple cracking machines in hopes we can expedite the job." />
+<meta property="og:description" content="If like last week simply guessing a password is insufficient, then you can bring out the big guns. I&#39;m talking about Hashcat, and advanced system that allows you to automate the cracking of passwords using optimized GPU code. Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of password is unique from one of P@s$w0rd1. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this. It&#39;s also easily paired with a centralized command server like Hashtopolis, that allows you to spread the hashing job out over multiple servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider. Any way you slice it, Hashcat allows you to attempt several thousand passwords per second. Hashtopolis further allows you to do so on several machines at the same time. Hashcat Setup Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. Your private key is symmetrically encrypted with a random master key, and that master key is subsequently encrypted with a user-defined password. We don&#39;t want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct. The Openwall Project maintains a tool called John the Ripper that is somewhat similar to Hashcat. The advantage of their tool is that it&#39;s open source and includes various additional utility scripts that make our job easier. The bitcoin2join script, for example, takes a wallet.dat file and converts it to a string that&#39;s easily processed by either hashing system. Running this script alone won&#39;t crack your wallet. What it will do is convert a large binary blob (your wallet) into a string like $bitcoin$64$f6f42a9e0cb0eda2669fa8.... This string, when provided to Hashcat, is the foundation of our next cracking attempt. Hashcat Setup Hashcat has various attacks and hashing modes. Since we&#39;re specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a &quot;straight&quot; attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don&#39;t have a wordlist to start from, this is a good place to begin.[/ref] In our case, we put the hash generated from bitcoin2john above in hash.txt and a list of possible passwords into wordlist.txt. Our execution of Hashcat would then look like: ./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3 The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information. That Takes Forever ... The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I&#39;ve seen folks complain that Hashcat reports &quot;the next big bang&quot; as the expected completion date for a cracking run. Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there are ways we can make things go faster. First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing as with @s or 0s with Os, for example. But still, this doesn&#39;t speed things up on your machine. In fact, the problem is often that you&#39;re trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you&#39;ll likely be overloading the system if you try to crack a password and run a display at the same time. Running things locally means you&#39;re limited to that one machine&#39;s hardware as well. Next week we&#39;ll cover an approach to farm the cracking job out to multiple cracking machines in hopes we can expedite the job." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-11-23T07:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Cracking the Uncrackable - Hashing Setup" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Cracking the Uncrackable - Hashing Setup","dateModified":"2020-11-23T07:00:00-08:00","datePublished":"2020-11-23T07:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/cracking-the-uncrackable-part-4/"},"url":"/tech/cracking-the-uncrackable-part-4/","description":"If like last week simply guessing a password is insufficient, then you can bring out the big guns. I&#39;m talking about Hashcat, and advanced system that allows you to automate the cracking of passwords using optimized GPU code. Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of password is unique from one of P@s$w0rd1. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this. It&#39;s also easily paired with a centralized command server like Hashtopolis, that allows you to spread the hashing job out over multiple servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider. Any way you slice it, Hashcat allows you to attempt several thousand passwords per second. Hashtopolis further allows you to do so on several machines at the same time. Hashcat Setup Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. Your private key is symmetrically encrypted with a random master key, and that master key is subsequently encrypted with a user-defined password. We don&#39;t want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct. The Openwall Project maintains a tool called John the Ripper that is somewhat similar to Hashcat. The advantage of their tool is that it&#39;s open source and includes various additional utility scripts that make our job easier. The bitcoin2join script, for example, takes a wallet.dat file and converts it to a string that&#39;s easily processed by either hashing system. Running this script alone won&#39;t crack your wallet. What it will do is convert a large binary blob (your wallet) into a string like $bitcoin$64$f6f42a9e0cb0eda2669fa8.... This string, when provided to Hashcat, is the foundation of our next cracking attempt. Hashcat Setup Hashcat has various attacks and hashing modes. Since we&#39;re specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a &quot;straight&quot; attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don&#39;t have a wordlist to start from, this is a good place to begin.[/ref] In our case, we put the hash generated from bitcoin2john above in hash.txt and a list of possible passwords into wordlist.txt. Our execution of Hashcat would then look like: ./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3 The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information. That Takes Forever ... The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I&#39;ve seen folks complain that Hashcat reports &quot;the next big bang&quot; as the expected completion date for a cracking run. Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there are ways we can make things go faster. First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing as with @s or 0s with Os, for example. But still, this doesn&#39;t speed things up on your machine. In fact, the problem is often that you&#39;re trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you&#39;ll likely be overloading the system if you try to crack a password and run a display at the same time. Running things locally means you&#39;re limited to that one machine&#39;s hardware as well. Next week we&#39;ll cover an approach to farm the cracking job out to multiple cracking machines in hopes we can expedite the job.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2020-11-23">
+                    November 23, 2020
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Cracking the Uncrackable - Hashing Setup</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p><!-- wp:paragraph --></p>
+<p>If like <a href="https://ttmm.io/tech/cracking-the-uncrackable-part-3/">last week</a> simply guessing a password is insufficient, then you can bring out the big guns. I'm talking about <a href="https://hashcat.net/hashcat/">Hashcat</a>, and advanced system that allows you to automate the cracking of passwords using optimized GPU code.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of <tt>password</tt> is unique from one of <tt>P@s$w0rd1</tt>. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>It's also easily paired with a centralized command server like <a href="https://github.com/s3inlc/hashtopolis">Hashtopolis</a>, that allows you to spread the hashing job out over <em>multiple</em> servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Any way you slice it, Hashcat allows you to attempt several <em>thousand</em> passwords per second. Hashtopolis further allows you to do so on several <em>machines</em> at the same time.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Hashcat Setup</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. <a href="https://ttmm.io/tech/cracking-the-uncrackable-part-2/">Your private key is symmetrically encrypted</a> with a random master key, and that master key is subsequently encrypted with a user-defined password.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>We don't want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The <a href="https://www.openwall.com/">Openwall Project</a> maintains a tool called <a href="https://github.com/openwall/john">John the Ripper</a> that is somewhat similar to Hashcat. The advantage of their tool is that it's open source and includes various additional utility scripts that make our job easier. The <a href="https://github.com/openwall/john/blob/bleeding-jumbo/run/bitcoin2john.py"><tt>bitcoin2join</tt> script</a>, for example, takes a <tt>wallet.dat</tt> file and converts it to a string that's easily processed by either hashing system.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Running this script alone won't crack your wallet. What it <em>will</em> do is convert a large binary blob (your wallet) into a string like <tt>$bitcoin$64$f6f42a9e0cb0eda2669fa8...</tt>. This string, when provided to Hashcat, is the foundation of our next cracking attempt.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Hashcat Setup</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Hashcat has <a href="https://hashcat.net/wiki/doku.php?id=hashcat">various attacks and hashing </a>modes. Since we're specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a "straight" attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don't have a wordlist to start from, this is a good place to begin.[/ref]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In our case, we put the hash generated from <tt>bitcoin2john</tt> above in <tt>hash.txt</tt> and a list of possible passwords into <tt>wordlist.txt</tt>. Our execution of Hashcat would then look like:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>That Takes Forever ...</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I've seen folks complain that Hashcat reports "the next big bang" as the expected completion date for a cracking run. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there <em>are</em> ways we can make things go faster.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing <tt>a</tt>s with <tt>@</tt>s or <tt>0</tt>s with <tt>O</tt>s, for example. But still, this doesn't speed things up on your machine.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In fact, the problem is often that you're trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you'll likely be overloading the system if you try to crack a password <em>and</em> run a display at the same time. Running things locally means you're limited to that one machine's hardware as well.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Next week we'll cover an approach to farm the cracking job out to <em>multiple</em> cracking machines in hopes we can expedite the job.</p>
+<p><!-- /wp:paragraph --></p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Cracking+the+Uncrackable+-+Hashing+Setup&amp;url=https://ttmm.iotech/cracking-the-uncrackable-part-4/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/cracking-the-uncrackable-part-4/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#Bitcoin"
+                    rel="tag">Bitcoin</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="November 16, 2020">November 16, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/cracking-the-uncrackable-part-3/">Cracking the Uncrackable - Password Guessing</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="November 30, 2020">November 30, 2020</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/cracking-the-uncrackable-part-5/">Cracking the Uncrackable - Hashtopolis</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

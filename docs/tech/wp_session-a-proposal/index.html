@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>WP_Session: A Proposal | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="WP_Session: A Proposal" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="My first experience with WordPress was when a client asked me to hack apart the registration system to allow for simple custom referral links.  They wanted users to be placed at different user levels depending on the URL they used to sign up for an account. My initial attempt was ... atrocious   When a user hit a referral link, I used a hook to change the default user level, then changed it back after they registered.  The problems with this approach are so glaring, I won&#39;t bother explaining them.  Seriously, it was a stupid idea. My refined attempt tried to hack WordPress to add PHP session support.  The redefined user level was stored in the [cci]$_SESSION[/cci] superglobal and pulled back out upon registration.  Less stupid, but still not very elegant. The Problem with Sessions Split Servers I came to despise sessions the first time I worked with a distributed system.  Basically, the system was composed of two web servers positioned behind a load balancer.  Both web services pulled information from the same database.  When you requested the domain, the load balancer would forward your request to whichever server was under less of a load.  It was fast and efficient.  But we consistently had problems logging in. The issue was that both webservers handled their sessions internally, and authentication was session based.  You could be logged in according to one server and be moving along just fine.  Then, on a subsequent request when the load balancer moved you to the other server, you were no longer logged in. Queue months of headaches and debating session handling with the IT guys. Validation When you&#39;re using a normal PHP [cci]$_SESSION[/cci], there&#39;s a session cooking stored in your browser that gets sent with every request.  The server reads this cookie, finds the appropriate session file on the server, unserializes the data, and populates the superglobal.  Unfortunately, there&#39;s no way to verify that you are actually the owner of the session. The chances of someone guessing your session ID are miniscule, but possible.  All they&#39;d need to do is spoof your session ID and voila, they&#39;d have access to all of your session data as well. Use Case in WordPress I can hear you saying now, &quot;so what?&quot;  You&#39;ll probably never want to use sessions in WordPress.  But I can think of a few situations where either [cci]$_SESSION[/cci] is already being used or where it would be hugely useful. Shopping Carts Just about every quality shopping cart solution I&#39;ve seen for WordPress uses sessions or some form of custom server-side data store based on them.  It&#39;s important to keep the actual cart and purchase information on the server to protect it from tampering. Per-User API Caching Recently I built a project that requested large chunks of appointment information from a remote API.  This is somewhat sensitive data, requested over SSL to protect it from prying eyes, and specific to each user so it can&#39;t be cached in a generic WordPress option.  Originally, I passed the API response through to a cookie so it would live in the user&#39;s browser (the data needs to be presented across multiple pages).  However, cookies have a finite size and some larger responses were being lost. Instead, I ended up creating a transient with a unique ID for every response and storing this unique ID in a cookie so WordPress could map cached data to the user later.  Wait, that sounds exactly like a PHP session ... A Proposal I propose adding an object to WordPress.  Something that looks and feels a lot like [cci]$_SESSION[/cci] to developers, but takes advantage of WordPress&#39; database model and caching systems. Essentially, every visitor will be issued a session by something like [cci]wp_session_start()[/cci].  This session will be identified by a key stored as a browser cookie.  It will also be validated against the visitor&#39;s IP address (stored in the [cci]WP_Session[/cci] instance itself). Each [cci]WP_Session[/cci] object will act as a key-value store (similar to [cci]$_SESSION[/cci]): // Start a session. This can be called directly or hard-coded // into WordPress&#39; init functionality. wp_session_start();&lt;/p&gt; global $wp_session; $wp_session[&#39;string&#39;] = &#39;This is a string&#39;; $wp_session[&#39;object&#39;] = new stdClass(); $wp_session[&#39;array&#39;] = array(); // Write out the session. Can be called directly or hard-coded // into WordPress&#39; shutdown functionality. wp_session_commit(); &lt;/code&gt; Storage The actual data in a WordPress session object will be stored in a short-lived transient.  The expiration date of the transient will be advanced every time the object is touched (either a read or a write) because it&#39;s still active.  It will essentially just be a serialized associative array and can store just about anything WordPress needs ot to store. The advantage of using transients (which are just WordPress options) is that they can be backed by memcached in certain optimized configurations.  Also, the session data will always be available where WordPress&#39; data is available since they both exist in the same place. Thoughts? Not everyone will have a use for sessions when developing with WordPress.  But having a standard, core object people can code against would be useful.  Is this something you could see yourself using?  When, where, and why?  Is this something that should be baked in to core to be available to all, or should it remain plugin territory?" />
+<meta property="og:description" content="My first experience with WordPress was when a client asked me to hack apart the registration system to allow for simple custom referral links.  They wanted users to be placed at different user levels depending on the URL they used to sign up for an account. My initial attempt was ... atrocious   When a user hit a referral link, I used a hook to change the default user level, then changed it back after they registered.  The problems with this approach are so glaring, I won&#39;t bother explaining them.  Seriously, it was a stupid idea. My refined attempt tried to hack WordPress to add PHP session support.  The redefined user level was stored in the [cci]$_SESSION[/cci] superglobal and pulled back out upon registration.  Less stupid, but still not very elegant. The Problem with Sessions Split Servers I came to despise sessions the first time I worked with a distributed system.  Basically, the system was composed of two web servers positioned behind a load balancer.  Both web services pulled information from the same database.  When you requested the domain, the load balancer would forward your request to whichever server was under less of a load.  It was fast and efficient.  But we consistently had problems logging in. The issue was that both webservers handled their sessions internally, and authentication was session based.  You could be logged in according to one server and be moving along just fine.  Then, on a subsequent request when the load balancer moved you to the other server, you were no longer logged in. Queue months of headaches and debating session handling with the IT guys. Validation When you&#39;re using a normal PHP [cci]$_SESSION[/cci], there&#39;s a session cooking stored in your browser that gets sent with every request.  The server reads this cookie, finds the appropriate session file on the server, unserializes the data, and populates the superglobal.  Unfortunately, there&#39;s no way to verify that you are actually the owner of the session. The chances of someone guessing your session ID are miniscule, but possible.  All they&#39;d need to do is spoof your session ID and voila, they&#39;d have access to all of your session data as well. Use Case in WordPress I can hear you saying now, &quot;so what?&quot;  You&#39;ll probably never want to use sessions in WordPress.  But I can think of a few situations where either [cci]$_SESSION[/cci] is already being used or where it would be hugely useful. Shopping Carts Just about every quality shopping cart solution I&#39;ve seen for WordPress uses sessions or some form of custom server-side data store based on them.  It&#39;s important to keep the actual cart and purchase information on the server to protect it from tampering. Per-User API Caching Recently I built a project that requested large chunks of appointment information from a remote API.  This is somewhat sensitive data, requested over SSL to protect it from prying eyes, and specific to each user so it can&#39;t be cached in a generic WordPress option.  Originally, I passed the API response through to a cookie so it would live in the user&#39;s browser (the data needs to be presented across multiple pages).  However, cookies have a finite size and some larger responses were being lost. Instead, I ended up creating a transient with a unique ID for every response and storing this unique ID in a cookie so WordPress could map cached data to the user later.  Wait, that sounds exactly like a PHP session ... A Proposal I propose adding an object to WordPress.  Something that looks and feels a lot like [cci]$_SESSION[/cci] to developers, but takes advantage of WordPress&#39; database model and caching systems. Essentially, every visitor will be issued a session by something like [cci]wp_session_start()[/cci].  This session will be identified by a key stored as a browser cookie.  It will also be validated against the visitor&#39;s IP address (stored in the [cci]WP_Session[/cci] instance itself). Each [cci]WP_Session[/cci] object will act as a key-value store (similar to [cci]$_SESSION[/cci]): // Start a session. This can be called directly or hard-coded // into WordPress&#39; init functionality. wp_session_start();&lt;/p&gt; global $wp_session; $wp_session[&#39;string&#39;] = &#39;This is a string&#39;; $wp_session[&#39;object&#39;] = new stdClass(); $wp_session[&#39;array&#39;] = array(); // Write out the session. Can be called directly or hard-coded // into WordPress&#39; shutdown functionality. wp_session_commit(); &lt;/code&gt; Storage The actual data in a WordPress session object will be stored in a short-lived transient.  The expiration date of the transient will be advanced every time the object is touched (either a read or a write) because it&#39;s still active.  It will essentially just be a serialized associative array and can store just about anything WordPress needs ot to store. The advantage of using transients (which are just WordPress options) is that they can be backed by memcached in certain optimized configurations.  Also, the session data will always be available where WordPress&#39; data is available since they both exist in the same place. Thoughts? Not everyone will have a use for sessions when developing with WordPress.  But having a standard, core object people can code against would be useful.  Is this something you could see yourself using?  When, where, and why?  Is this something that should be baked in to core to be available to all, or should it remain plugin territory?" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2012-11-28T11:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="WP_Session: A Proposal" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"WP_Session: A Proposal","dateModified":"2012-11-28T11:00:00-08:00","datePublished":"2012-11-28T11:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/wp_session-a-proposal/"},"url":"/tech/wp_session-a-proposal/","description":"My first experience with WordPress was when a client asked me to hack apart the registration system to allow for simple custom referral links.  They wanted users to be placed at different user levels depending on the URL they used to sign up for an account. My initial attempt was ... atrocious   When a user hit a referral link, I used a hook to change the default user level, then changed it back after they registered.  The problems with this approach are so glaring, I won&#39;t bother explaining them.  Seriously, it was a stupid idea. My refined attempt tried to hack WordPress to add PHP session support.  The redefined user level was stored in the [cci]$_SESSION[/cci] superglobal and pulled back out upon registration.  Less stupid, but still not very elegant. The Problem with Sessions Split Servers I came to despise sessions the first time I worked with a distributed system.  Basically, the system was composed of two web servers positioned behind a load balancer.  Both web services pulled information from the same database.  When you requested the domain, the load balancer would forward your request to whichever server was under less of a load.  It was fast and efficient.  But we consistently had problems logging in. The issue was that both webservers handled their sessions internally, and authentication was session based.  You could be logged in according to one server and be moving along just fine.  Then, on a subsequent request when the load balancer moved you to the other server, you were no longer logged in. Queue months of headaches and debating session handling with the IT guys. Validation When you&#39;re using a normal PHP [cci]$_SESSION[/cci], there&#39;s a session cooking stored in your browser that gets sent with every request.  The server reads this cookie, finds the appropriate session file on the server, unserializes the data, and populates the superglobal.  Unfortunately, there&#39;s no way to verify that you are actually the owner of the session. The chances of someone guessing your session ID are miniscule, but possible.  All they&#39;d need to do is spoof your session ID and voila, they&#39;d have access to all of your session data as well. Use Case in WordPress I can hear you saying now, &quot;so what?&quot;  You&#39;ll probably never want to use sessions in WordPress.  But I can think of a few situations where either [cci]$_SESSION[/cci] is already being used or where it would be hugely useful. Shopping Carts Just about every quality shopping cart solution I&#39;ve seen for WordPress uses sessions or some form of custom server-side data store based on them.  It&#39;s important to keep the actual cart and purchase information on the server to protect it from tampering. Per-User API Caching Recently I built a project that requested large chunks of appointment information from a remote API.  This is somewhat sensitive data, requested over SSL to protect it from prying eyes, and specific to each user so it can&#39;t be cached in a generic WordPress option.  Originally, I passed the API response through to a cookie so it would live in the user&#39;s browser (the data needs to be presented across multiple pages).  However, cookies have a finite size and some larger responses were being lost. Instead, I ended up creating a transient with a unique ID for every response and storing this unique ID in a cookie so WordPress could map cached data to the user later.  Wait, that sounds exactly like a PHP session ... A Proposal I propose adding an object to WordPress.  Something that looks and feels a lot like [cci]$_SESSION[/cci] to developers, but takes advantage of WordPress&#39; database model and caching systems. Essentially, every visitor will be issued a session by something like [cci]wp_session_start()[/cci].  This session will be identified by a key stored as a browser cookie.  It will also be validated against the visitor&#39;s IP address (stored in the [cci]WP_Session[/cci] instance itself). Each [cci]WP_Session[/cci] object will act as a key-value store (similar to [cci]$_SESSION[/cci]): // Start a session. This can be called directly or hard-coded // into WordPress&#39; init functionality. wp_session_start();&lt;/p&gt; global $wp_session; $wp_session[&#39;string&#39;] = &#39;This is a string&#39;; $wp_session[&#39;object&#39;] = new stdClass(); $wp_session[&#39;array&#39;] = array(); // Write out the session. Can be called directly or hard-coded // into WordPress&#39; shutdown functionality. wp_session_commit(); &lt;/code&gt; Storage The actual data in a WordPress session object will be stored in a short-lived transient.  The expiration date of the transient will be advanced every time the object is touched (either a read or a write) because it&#39;s still active.  It will essentially just be a serialized associative array and can store just about anything WordPress needs ot to store. The advantage of using transients (which are just WordPress options) is that they can be backed by memcached in certain optimized configurations.  Also, the session data will always be available where WordPress&#39; data is available since they both exist in the same place. Thoughts? Not everyone will have a use for sessions when developing with WordPress.  But having a standard, core object people can code against would be useful.  Is this something you could see yourself using?  When, where, and why?  Is this something that should be baked in to core to be available to all, or should it remain plugin territory?","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2012-11-28">
+                    November 28, 2012
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">WP_Session: A Proposal</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>My first experience with WordPress was when a client asked me to hack apart the registration system to allow for simple custom referral links.  They wanted users to be placed at different user levels depending on the URL they used to sign up for an account.</p>
+<p>My initial attempt was ... atrocious   When a user hit a referral link, I used a hook to change the default user level, then changed it back after they registered.  The problems with this approach are so glaring, I won't bother explaining them.  Seriously, it was a stupid idea.</p>
+<p>My refined attempt tried to hack WordPress to add PHP session support.  The redefined user level was stored in the [cci]$_SESSION[/cci] superglobal and pulled back out upon registration.  Less stupid, but still not very elegant.<!--more--></p>
+<h2>The Problem with Sessions</h2>
+<h3>Split Servers</h3>
+<p>I came to despise sessions the first time I worked with a distributed system.  Basically, the system was composed of two web servers positioned behind a load balancer.  Both web services pulled information from the same database.  When you requested the domain, the load balancer would forward your request to whichever server was under less of a load.  It was fast and efficient.  But we consistently had problems logging in.</p>
+<p>The issue was that both webservers handled their sessions internally, and authentication was session based.  You could be logged in according to one server and be moving along just fine.  Then, on a subsequent request when the load balancer moved you to the other server, you were no longer logged in.</p>
+<p>Queue months of headaches and debating session handling with the IT guys.</p>
+<h3>Validation</h3>
+<p>When you're using a normal PHP [cci]$_SESSION[/cci], there's a session cooking stored in your browser that gets sent with every request.  The server reads this cookie, finds the appropriate session file on the server, unserializes the data, and populates the superglobal.  Unfortunately, there's no way to verify that <em>you</em> are actually the owner of the session.</p>
+<p>The chances of someone guessing your session ID are miniscule, but possible.  All they'd need to do is spoof your session ID and voila, they'd have access to all of your session data as well.</p>
+<h2>Use Case in WordPress</h2>
+<p>I can hear you saying now, "so what?"  You'll probably never want to use sessions in WordPress.  But I can think of a few situations where either [cci]$_SESSION[/cci] is already being used or where it would be hugely useful.</p>
+<h3>Shopping Carts</h3>
+<p>Just about every quality shopping cart solution I've seen for WordPress uses sessions or some form of custom server-side data store based on them.  It's important to keep the actual cart and purchase information on the server to protect it from tampering.</p>
+<h3>Per-User API Caching</h3>
+<p>Recently I built a project that requested large chunks of appointment information from a remote API.  This is somewhat sensitive data, requested over SSL to protect it from prying eyes, and specific to each user so it can't be cached in a generic WordPress option.  Originally, I passed the API response through to a cookie so it would live in the user's browser (the data needs to be presented across multiple pages).  However, cookies have a finite size and some larger responses were being lost.</p>
+<p>Instead, I ended up creating a transient with a unique ID for every response and storing this unique ID in a cookie so WordPress could map cached data to the user later.  Wait, that sounds <em>exactly</em> like a PHP session ...</p>
+<h2>A Proposal</h2>
+<p>I propose adding an object to WordPress.  Something that looks and feels a lot like [cci]$_SESSION[/cci] to developers, but takes advantage of WordPress' database model and caching systems.</p>
+<p>Essentially, every visitor will be issued a session by something like [cci]wp_session_start()[/cci].  This session will be identified by a key stored as a browser cookie.  It will also be validated against the visitor's IP address (stored in the [cci]WP_Session[/cci] instance itself).</p>
+<p>Each [cci]WP_Session[/cci] object will act as a key-value store (similar to [cci]$_SESSION[/cci]):</p>
+<p><code lang="php" width="570px"><br />
+// Start a session.  This can be called directly or hard-coded<br />
+// into WordPress' init functionality.<br />
+wp_session_start();</p>
+<p>global $wp_session;<br />
+$wp_session['string'] = 'This is a string';<br />
+$wp_session['object'] = new stdClass();<br />
+$wp_session['array'] = array();</p>
+<p>// Write out the session. Can be called directly or hard-coded<br />
+// into WordPress' shutdown functionality.<br />
+wp_session_commit();<br />
+</code></p>
+<h3>Storage</h3>
+<p>The actual data in a WordPress session object will be stored in a short-lived transient.  The expiration date of the transient will be advanced every time the object is touched (either a read or a write) because it's still active.  It will essentially just be a serialized associative array and can store just about anything WordPress needs ot to store.</p>
+<p>The advantage of using transients (which are just WordPress options) is that they can be backed by memcached in certain optimized configurations.  Also, the session data will always be available where WordPress' data is available since they both exist in the same place.</p>
+<h2>Thoughts?</h2>
+<p>Not everyone will have a use for sessions when developing with WordPress.  But having a standard, core object people can code against would be useful.  Is this something you could see yourself using?  When, where, and why?  Is this something that should be baked in to core to be available to all, or should it remain plugin territory?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=WP_Session%3A+A+Proposal&amp;url=https://ttmm.iotech/wp_session-a-proposal/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/wp_session-a-proposal/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="November 25, 2012">November 25, 2012</time>
+                </div>
+                <h3 class="post-title"><a href="/faith/haiti-2012/">Haiti 2012</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="December 1, 2012">December 1, 2012</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/introducing-wp_session/">Introducing WP_Session</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>WordPress Plugin Structure | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="WordPress Plugin Structure" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;plugins. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed. The official plugin repository on WordPress.org is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn&#39;t even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality. Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. Instead of focusing on the what for your plugins, this tutorial will focus on the how. Namely, the three different ways you can structure a WordPress Plugin. Functional The quickest, easiest approach is to use standard functions to define your custom functionality. For simple plugins, this is actually the best and most straight-forward approach. All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. Prefixing every function name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. It also makes it easy for other developers to remove and re-add action hooks and filters should they need to. The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard: function myplugin_count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; ); if ( current_user_can( &#39;edit_posts&#39; ) ) { $num = &quot;$num&quot;; $text = &quot;$text&quot;; } echo &#39; &#39; . $num . &#39; &#39;; echo &#39; &#39; . $text . &#39; &lt;/tr&gt; &#39;; } add_action( &#39;right_now_content_table_end&#39;, &#39;myplugin_count_posts&#39; ); &lt;/code&gt; This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. Keep things consistent in your code, and things will work well for community involvement. Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. Figuring out which functions are defined where in a large, monolithic file can be challenging. Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties. For more complex plugins, you should begin structuring things in a class format. Static Class Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, &quot;namespace&quot; your plugin&#39;s functionality. After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure. The trick is that action hooks and filters are now added using an array notation rather than a straight string. For example, instead of [cci]add_action( &#39;wp_head&#39;, &#39;myplugin_head&#39; )[/cci], you would call [cci]add_action( &#39;wp_head&#39;, array( &#39;My_Plugin&#39;, &#39;head&#39; ) )[/cci]. Similar notation, but it&#39;s important to include the class reference here, otherwise WordPress won&#39;t know where your code is defined. Breaking your function up into several files is best done when each file represents a distinct class. It&#39;s easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. It&#39;s also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci]. Here is our functional example from above, but rewritten as a call from a static class: class My_Plugin { static function count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; );" />
+<meta property="og:description" content="The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;plugins. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed. The official plugin repository on WordPress.org is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn&#39;t even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality. Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. Instead of focusing on the what for your plugins, this tutorial will focus on the how. Namely, the three different ways you can structure a WordPress Plugin. Functional The quickest, easiest approach is to use standard functions to define your custom functionality. For simple plugins, this is actually the best and most straight-forward approach. All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. Prefixing every function name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. It also makes it easy for other developers to remove and re-add action hooks and filters should they need to. The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard: function myplugin_count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; ); if ( current_user_can( &#39;edit_posts&#39; ) ) { $num = &quot;$num&quot;; $text = &quot;$text&quot;; } echo &#39; &#39; . $num . &#39; &#39;; echo &#39; &#39; . $text . &#39; &lt;/tr&gt; &#39;; } add_action( &#39;right_now_content_table_end&#39;, &#39;myplugin_count_posts&#39; ); &lt;/code&gt; This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. Keep things consistent in your code, and things will work well for community involvement. Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. Figuring out which functions are defined where in a large, monolithic file can be challenging. Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties. For more complex plugins, you should begin structuring things in a class format. Static Class Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, &quot;namespace&quot; your plugin&#39;s functionality. After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure. The trick is that action hooks and filters are now added using an array notation rather than a straight string. For example, instead of [cci]add_action( &#39;wp_head&#39;, &#39;myplugin_head&#39; )[/cci], you would call [cci]add_action( &#39;wp_head&#39;, array( &#39;My_Plugin&#39;, &#39;head&#39; ) )[/cci]. Similar notation, but it&#39;s important to include the class reference here, otherwise WordPress won&#39;t know where your code is defined. Breaking your function up into several files is best done when each file represents a distinct class. It&#39;s easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. It&#39;s also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci]. Here is our functional example from above, but rewritten as a call from a static class: class My_Plugin { static function count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; );" />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2012-12-27T08:00:34-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="WordPress Plugin Structure" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"WordPress Plugin Structure","dateModified":"2012-12-27T08:00:34-08:00","datePublished":"2012-12-27T08:00:34-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/php/wordpress-plugin-structure/"},"url":"/php/wordpress-plugin-structure/","description":"The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;plugins. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed. The official plugin repository on WordPress.org is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn&#39;t even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality. Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. Instead of focusing on the what for your plugins, this tutorial will focus on the how. Namely, the three different ways you can structure a WordPress Plugin. Functional The quickest, easiest approach is to use standard functions to define your custom functionality. For simple plugins, this is actually the best and most straight-forward approach. All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. Prefixing every function name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. It also makes it easy for other developers to remove and re-add action hooks and filters should they need to. The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard: function myplugin_count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; ); if ( current_user_can( &#39;edit_posts&#39; ) ) { $num = &quot;$num&quot;; $text = &quot;$text&quot;; } echo &#39; &#39; . $num . &#39; &#39;; echo &#39; &#39; . $text . &#39; &lt;/tr&gt; &#39;; } add_action( &#39;right_now_content_table_end&#39;, &#39;myplugin_count_posts&#39; ); &lt;/code&gt; This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. Keep things consistent in your code, and things will work well for community involvement. Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. Figuring out which functions are defined where in a large, monolithic file can be challenging. Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties. For more complex plugins, you should begin structuring things in a class format. Static Class Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, &quot;namespace&quot; your plugin&#39;s functionality. After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure. The trick is that action hooks and filters are now added using an array notation rather than a straight string. For example, instead of [cci]add_action( &#39;wp_head&#39;, &#39;myplugin_head&#39; )[/cci], you would call [cci]add_action( &#39;wp_head&#39;, array( &#39;My_Plugin&#39;, &#39;head&#39; ) )[/cci]. Similar notation, but it&#39;s important to include the class reference here, otherwise WordPress won&#39;t know where your code is defined. Breaking your function up into several files is best done when each file represents a distinct class. It&#39;s easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. It&#39;s also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci]. Here is our functional example from above, but rewritten as a call from a static class: class My_Plugin { static function count_posts() { $posts = wp_count_posts();&lt;/p&gt; $num = number_format_i18n( $posts-&gt;draft ); $text = _n( &#39;Draft&#39;, &#39;Drafts&#39;, intval( $posts-&gt;draft ), &#39;myplugin_translate&#39; );","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2012-12-27">
+                    December 27, 2012
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">WordPress Plugin Structure</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>The power of WordPress lies in its pluggable infrastructure. &nbsp;Unlike other content management applications which require you to edit the core code of the system to make changes, WordPress supports&nbsp;<em>plugins</em>. &nbsp;These smaller applications tie in to a rich API provided by WordPress that allows you to change just about everything about the application and customize it as needed.</p>
+<p>The <a href="http://wordpress.org/extend/plugins/" title="WordPress Plugin Repository">official plugin repository on WordPress.org</a> is currently home to over 20,000 distinct plugins. &nbsp;Each one adds some new functionality to WordPress, giving you the ability to tweak content, change colors, adjust layouts, or integrate with external systems. &nbsp;This doesn't even begin to cover the hundreds of premium plugins you can find online that provide even richer functionality.</p>
+<p>Most WordPress developers will, at some point, be asked to create some kind of plugin for a client site. These client plugins can range from a shortcode manager to some kind of advertisement rotation engine to an API integration with a third-party customer management system. Instead of focusing on the <em>what</em> for your plugins, this tutorial will focus on the <em>how</em>. Namely, the three different ways you can structure a WordPress Plugin.<!--more--></p>
+<h2 id="functional">Functional</h2>
+<p>The quickest, easiest approach is to use standard functions to define your custom functionality. For simple plugins, this is actually the best and most straight-forward approach.</p>
+<p>All of your plugin code will reside in a single file - [cci]my-plugin.php[/cci] - in the root of your [cci]/my-plugin[/cci] directory. <a href="http://yoast.com/wp-best-practice/namespaces/" title="Using a namespace for your functions and classes">Prefixing every function</a> name with a unique string (i.e. [cci]myplugin_[/cci]) will prevent your code from colliding with any code shipped by another developer. It also makes it easy for other developers to remove and re-add action hooks and filters should they need to.</p>
+<p>The following example code will add the number of draft posts to the Right Now box on the WordPress dashboard:</p>
+<p><code lang="php">function myplugin_count_posts() {<br />
+  $posts = wp_count_posts();</p>
+<p>$num = number_format_i18n( $posts->draft );<br />
+  $text = _n( 'Draft', 'Drafts', intval( $posts->draft ), 'myplugin_translate' );</p>
+<p>if (  current_user_can( 'edit_posts' ) ) {<br />
+    $num = "<a href="edit.php">$num</a>";<br />
+    $text = "<a href="edit.php">$text</a>";<br />
+  }</p>
+<p>echo '<br />
+<tr>
+<td class="first b b">' . $num . '</td>
+<p>';<br />
+  echo '
+<td class="t">' . $text . '</td>
+</tr>
+<p>';<br />
+}<br />
+add_action( 'right_now_content_table_end', 'myplugin_count_posts' );<br />
+</code></p>
+<p>This hook can easily be removed, reordered, or otherwise manipulated by other developers if they know the hook name. Keep things consistent in your code, and things will work well for community involvement.</p>
+<p>Unfortunately, if your plugin is much more complex, the functional approach can quickly become a nightmare. Figuring out which functions are defined where in a large, monolithic file can be challenging. Once you start breaking your one file into smaller pieces of distinct functionality, though, you face other organizational difficulties.</p>
+<p>For more complex plugins, you should begin structuring things in a class format.</p>
+<h2 id="static">Static Class</h2>
+<p>Just like prefixing function names can prevent function collision, making your functions all static members of a class will, essentially, "namespace" your plugin's functionality. After prefixing, this is the easiest way to organize your plugin in such a way that it plays well with other systems in the WordPress infrastructure.</p>
+<p>The trick is that action hooks and filters are now added using an array notation rather than a straight string. For example, instead of [cci]add_action( 'wp_head', 'myplugin_head' )[/cci], you would call [cci]add_action( 'wp_head', array( 'My_Plugin', 'head' ) )[/cci]. Similar notation, but it's important to include the class reference here, otherwise WordPress won't know where your code is defined.</p>
+<p>Breaking your function up into several files is best done when each file represents a distinct class. It's easy to know which functionality is encapsulated within which class if you keep related functions together and are clear with your project names. It's also relatively easy for other developers to manipulate your code later, so long as they also remember the static class notation you used with [cci]add_action()[/cci].</p>
+<p>Here is our functional example from above, but rewritten as a call from a static class:</p>
+<p><code lang="php">class My_Plugin {<br />
+  static function count_posts() {<br />
+    $posts = wp_count_posts();</p>
+<pre><code>$num = number_format_i18n( $posts-&gt;draft );
+$text = _n( 'Draft', 'Drafts', intval( $posts-&gt;draft ), 'myplugin_translate' );
+
+if (  current_user_can( 'edit_posts' ) ) {
+  $num = "&lt;a href='edit.php'&gt;$num&lt;/a&gt;";
+  $text = "&lt;a href='edit.php'&gt;$text&lt;/a&gt;";
+}
+
+echo '&lt;tr&gt;&lt;td class="first b b"&gt;' . $num . '&lt;/td&gt;';
+echo '&lt;td class="t"&gt;' . $text . '&lt;/td&gt;&lt;/tr&gt;';
+</code></pre>
+<p>}<br />
+}<br />
+add_action( 'right_now_content_table_end', array( 'My_Plugin', 'count_posts' ) );</code></p>
+<p><a href="http://hardcorewp.com/2012/enabling-action-and-filter-hook-removal-from-class-based-wordpress-plugins/" title="Enabling Action and Filter Hook Removal from Class-based WordPress Plugins">Some tutorials recommend</a> an instantiated class with some static elements for adding/removing action hooks and filters. Their code will work, but is a bit hacky. Particularly if you're ever in a place where the class can be instantiated more than once. With that in mind, I would never recommend that approach - either keep everything static, or go with my favorite pattern below.</p>
+<h2 id="singleton">Singleton</h2>
+<p>A singleton is a class that can only be instantiated once. Every other reference to the instantiated object is a reference to the <em>same</em> object. This is a pattern that works beautifully for plugins because, honestly, you only ever need to instantiate the plugin once. It's also the way I prefer to build plugins since it keeps things clean, avails private variables to the plugin, and is an easy pattern to follow.</p>
+<p>Basically, a singleton is a class with a read-only static instance and a private constructor. When you attempt to get the class instance, it checks to see if the class has been instantiated - if not, it fires the constructor internally and stores the constructed object inside the static instance. Now, every request for the instance returns the same object. Here's a very basic example of a singleton class.</p>
+<p><code lang="php">class Singleton {<br />
+  private static $instance = false;</p>
+<p>public static function get_instance() {<br />
+    if ( ! self::$instance ) {<br />
+      self::$instance = new self();<br />
+    }<br />
+    return self::$instance;<br />
+  }</p>
+<p>private function __construct() { }<br />
+}</code></p>
+<p>With a singleton class, you can have methods and members that are members of the class, can refer to each other, and can reference data (properties) which are private to the class itself. For example, if you build a singleton and populate it with certain properties that are meant to be read-only, you can store those values as private members of the class and expose public getter functions.</p>
+<p><code lang="php">class My_Class {<br />
+  private $hidden_var; // Invisible outside of the class<br />
+  var $visible_var; // Visible outside the class</p>
+<p>public function get_hidden() {<br />
+    return $this->hidden_var;<br />
+  }</p>
+<p>public function __construct() {<br />
+    $this->hidden_var = 4;<br />
+    $this->visible_var = 6;<br />
+  }<br />
+}</p>
+<p>$instance = new My_Class;<br />
+echo $instance->visible_var;  // Echos 6<br />
+echo $instance->hidden_var;   // Fatal Error<br />
+echo $instance->get_hidden(); // Echos 4</p>
+<p>$instance->visible_var = 2;   // Works<br />
+$instance->hidden_var = 2;    // Fatal Error</code></p>
+<p>Removing action hooks and filters is straight forward because you always have access to the instance of the class that wired them up in the first place. This means it's easy for developers down the road to manipulate your code.</p>
+<p>Here's the same plugin example from above, but rewritten as part of a singleton class:</p>
+<p><code lang="php">class My_Plugin {<br />
+  private static $instance = false;</p>
+<p>public static function get_instance() {<br />
+    if ( ! self::$instance ) {<br />
+      self::$instance = new self();<br />
+    }<br />
+    return self::$instance;<br />
+  }</p>
+<p>private function __construct() {<br />
+    add_action( 'right_now_content_table_end', array( $this, 'count_posts' ) );<br />
+  }</p>
+<p>public function count_posts() {<br />
+    $posts = wp_count_posts();</p>
+<pre><code>$num = number_format_i18n( $posts-&gt;draft );
+$text = _n( 'Draft', 'Drafts', intval( $posts-&gt;draft ), 'myplugin_translate' );
+
+if (  current_user_can( 'edit_posts' ) ) {
+  $num = "&lt;a href='edit.php'&gt;$num&lt;/a&gt;";
+  $text = "&lt;a href='edit.php'&gt;$text&lt;/a&gt;";
+}
+
+echo '&lt;tr&gt;&lt;td class="first b b"&gt;' . $num . '&lt;/td&gt;';
+echo '&lt;td class="t"&gt;' . $text . '&lt;/td&gt;&lt;/tr&gt;';
+</code></pre>
+<p>}<br />
+}</p>
+<p>$my_plugin = My_Plugin::get_instance();</code></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Most developers are just beginning to embrace object-oriented design patterns with WordPress. Unfortunately, few of us have enough experience with OOP to discern good versus bad programming patterns.  Many developers are using instantiated objects to encapsulate plugin functionality - and running the risk of multiple instances being created during a single request.  Others are properly using static classes and objects, then running afoul of global variables when attempting to pass data from one static method to another.</p>
+<p>The most efficient pattern for WordPress plugin development is, hands down, the singleton. It can only be instantiated once, and has the ability to store data internally for quick recall - meaning member functions can easily pass data back and forth without cluttering the global namespace.</p>
+<p>Which patterns are you using for plugin development?  What other alternatives have you found?</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=WordPress+Plugin+Structure&amp;url=https://ttmm.iophp/wordpress-plugin-structure/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iophp/wordpress-plugin-structure/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#PHP"
+                    rel="category">PHP</a>
+                <a href="/categories/index.html#Tutorials"
+                    rel="category">Tutorials</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#Class"
+                    rel="tag">Class</a>
+                <a href="/tags/index.html#Class+Format"
+                    rel="tag">Class Format</a>
+                <a href="/tags/index.html#Classes"
+                    rel="tag">Classes</a>
+                <a href="/tags/index.html#Design+Patterns"
+                    rel="tag">Design Patterns</a>
+                <a href="/tags/index.html#plugin"
+                    rel="tag">plugin</a>
+                <a href="/tags/index.html#Plugin+Development"
+                    rel="tag">Plugin Development</a>
+                <a href="/tags/index.html#singleton"
+                    rel="tag">singleton</a>
+                <a href="/tags/index.html#Static+Class"
+                    rel="tag">Static Class</a>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                <a href="/tags/index.html#Wordpress+Plugin"
+                    rel="tag">Wordpress Plugin</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="December 1, 2012">December 1, 2012</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/introducing-wp_session/">Introducing WP_Session</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="December 28, 2012">December 28, 2012</time>
+                </div>
+                <h3 class="post-title"><a href="/tech/the-case-for-singletons/">The Case for Singletons in WordPress</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

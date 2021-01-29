@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+        <!-- Begin Jekyll SEO tag v2.7.1 -->
+<title>Don’t Dequeue WordPress’ jQuery | Things that Matter Most</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Don’t Dequeue WordPress’ jQuery" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="As a moderator on the WordPress Stack Exchange, I end up spending a lot of time on the site.  I see lots of great questions, lots of not-so-great questions, and several you&#39;ve-got-to-be-kidding-me questions.  But the question I see the most often frustrates me: How do I remove WordPress&#39; jQuery and use Google&#39;s CDN version instead? I have no trouble saying that, if you&#39;re asking this question, you have no business building a website in the first place. Why Use Google&#39;s CDN? The three most commonly cited reasons to dequeue WordPress&#39; bundled version of jQuery in favor of Googles are: Decreased Latency Increased Parallelism Better Caching If you didn&#39;t know any better, each of these arguments makes a lot of sense. Decreased latency - the idea that jQuery will download faster from a properly-located CDN than your arbitrarily-located server - is a fallacy in today&#39;s high-bandwidth world.  jQuery by itself is 91KB when it&#39;s minified (not counting any server-side data compression).  Over a high-bandwidth connection, this downloads in less than half a second from just about anywhere (my server is located in a different country, yet jQuery still downloads in ~200ms for me).  Consider the size of the rest of your site - ~300k of scripts, ~100k of content, ~1-2m of images - and the footprint left by jQuery is inconsequential. Increased parallelism - the fact that a browser can only download so many resources at a time - is a valid concern.  But consider that nearly all of your calls to jQuery are wrapped in some kind of document-ready event and there&#39;s an easy work-around: load jQuery in the footer rather than the header.  Your content will load first and the user experience is not impacted by waiting a fraction of a second before your fancy animations fire. Better caching - the idea that Google&#39;s servers will be configured more efficiently than yours - is bogus.  If you&#39;re counting on Google&#39;s well-configured CDN to save your site from a poorly set-up server environment, then you have absolutely no business building or hosting websites.  Your server should be fully capable of setting the appropriate cache control headers on script files and, if not, you should contract with someone who know what they&#39;re doing to set it up. Why NOT Use Google&#39;s CDN? WordPress takes great care to make sure its bundled libraries are fully compatible with other bundled scripts.  jQuery is loaded in &quot;no conflict&quot; mode to prevent any potential script collisions over the [cci]$[/cci] variable in the global namespace.  As of version 3.6, WordPress will be shipping with version 1.9 of jQuery - which removes several deprecated APIs like [cci].live()[/cci].  To prevent things from breaking, WordPress automatically loads jQuery Migrate, a plugin that adds these removed APIs back to the system, but alerts you in the browser console of their deprecation. If you load jQuery 1.9 yourself from Google&#39;s CDN, you&#39;ll miss out on the jQuery Migrate plugin and end up breaking several themes and plugins that depend on these deprecated APIs.  I still find [cci].live()[/cci] even in new code, so the chances of it littering your site and breaking things when you start swapping out libraries are extremely high. Also, WordPress is taking steps to prevent you from dequeueing jQuery on the back end at all.  You&#39;ll still be able to override it for the front-end if you absolutely need to, but if you ever find such a need, stop and ask yourself why before heading down that path.  Chances are good that your &quot;need&quot; is really just a patch over a deeper problem you don&#39;t fully understand. Why is this the Wrong Question? I recently build a project for a client that worked flawlessly with jQuery 1.9, but broke with any lesser version.  My first (wrong) instinct was to remove the bundled jQuery and bump the loaded version to 1.9 instead.  It would have worked, but it wouldn&#39;t really have fixed the issue. Instead, I doubled down and walked back through the code instead.  I was using a lot of non-jQuery code in my system, and it turned out I had a typo.  With older versions of jQuery, my typo resulted in plain, non-functional code.  With the newer version of jQuery, my typo accidentally invoked a jQuery method where I was attempting to invoke a native JavaScript method. The fix was to correct the typo, making my code work 100% independent of jQuery. I spent a few hours looking for the best way to override the bundled version of jQuery, but that was the wrong approach.  The right approach was to ask an entirely different question: what will a different version of jQuery give me that I don&#39;t have right now?  The answer to that question: nothing. Moving On The only reason you should ever enqueue Google&#39;s version of jQuery is if you are building a project for Google and they ask you to.  A properly configured server will cache just as effectively, completely eliminating any concerns regarding cache duration or script latency.  Moving your scripts to the right part of the page - the bottom - will further allay concerns about load time and user experience. Nine times out of ten, &quot;how do I replace the bundled version of jQuery&quot; is the wrong question.  It&#39;s a question most frequently asked by newer web developers and it betrays your inexperience.  Instead, take some extra time to learn to do things the right way and your site will be just as fast.  Go for a fully-thought-out solution, not just a quick fix." />
+<meta property="og:description" content="As a moderator on the WordPress Stack Exchange, I end up spending a lot of time on the site.  I see lots of great questions, lots of not-so-great questions, and several you&#39;ve-got-to-be-kidding-me questions.  But the question I see the most often frustrates me: How do I remove WordPress&#39; jQuery and use Google&#39;s CDN version instead? I have no trouble saying that, if you&#39;re asking this question, you have no business building a website in the first place. Why Use Google&#39;s CDN? The three most commonly cited reasons to dequeue WordPress&#39; bundled version of jQuery in favor of Googles are: Decreased Latency Increased Parallelism Better Caching If you didn&#39;t know any better, each of these arguments makes a lot of sense. Decreased latency - the idea that jQuery will download faster from a properly-located CDN than your arbitrarily-located server - is a fallacy in today&#39;s high-bandwidth world.  jQuery by itself is 91KB when it&#39;s minified (not counting any server-side data compression).  Over a high-bandwidth connection, this downloads in less than half a second from just about anywhere (my server is located in a different country, yet jQuery still downloads in ~200ms for me).  Consider the size of the rest of your site - ~300k of scripts, ~100k of content, ~1-2m of images - and the footprint left by jQuery is inconsequential. Increased parallelism - the fact that a browser can only download so many resources at a time - is a valid concern.  But consider that nearly all of your calls to jQuery are wrapped in some kind of document-ready event and there&#39;s an easy work-around: load jQuery in the footer rather than the header.  Your content will load first and the user experience is not impacted by waiting a fraction of a second before your fancy animations fire. Better caching - the idea that Google&#39;s servers will be configured more efficiently than yours - is bogus.  If you&#39;re counting on Google&#39;s well-configured CDN to save your site from a poorly set-up server environment, then you have absolutely no business building or hosting websites.  Your server should be fully capable of setting the appropriate cache control headers on script files and, if not, you should contract with someone who know what they&#39;re doing to set it up. Why NOT Use Google&#39;s CDN? WordPress takes great care to make sure its bundled libraries are fully compatible with other bundled scripts.  jQuery is loaded in &quot;no conflict&quot; mode to prevent any potential script collisions over the [cci]$[/cci] variable in the global namespace.  As of version 3.6, WordPress will be shipping with version 1.9 of jQuery - which removes several deprecated APIs like [cci].live()[/cci].  To prevent things from breaking, WordPress automatically loads jQuery Migrate, a plugin that adds these removed APIs back to the system, but alerts you in the browser console of their deprecation. If you load jQuery 1.9 yourself from Google&#39;s CDN, you&#39;ll miss out on the jQuery Migrate plugin and end up breaking several themes and plugins that depend on these deprecated APIs.  I still find [cci].live()[/cci] even in new code, so the chances of it littering your site and breaking things when you start swapping out libraries are extremely high. Also, WordPress is taking steps to prevent you from dequeueing jQuery on the back end at all.  You&#39;ll still be able to override it for the front-end if you absolutely need to, but if you ever find such a need, stop and ask yourself why before heading down that path.  Chances are good that your &quot;need&quot; is really just a patch over a deeper problem you don&#39;t fully understand. Why is this the Wrong Question? I recently build a project for a client that worked flawlessly with jQuery 1.9, but broke with any lesser version.  My first (wrong) instinct was to remove the bundled jQuery and bump the loaded version to 1.9 instead.  It would have worked, but it wouldn&#39;t really have fixed the issue. Instead, I doubled down and walked back through the code instead.  I was using a lot of non-jQuery code in my system, and it turned out I had a typo.  With older versions of jQuery, my typo resulted in plain, non-functional code.  With the newer version of jQuery, my typo accidentally invoked a jQuery method where I was attempting to invoke a native JavaScript method. The fix was to correct the typo, making my code work 100% independent of jQuery. I spent a few hours looking for the best way to override the bundled version of jQuery, but that was the wrong approach.  The right approach was to ask an entirely different question: what will a different version of jQuery give me that I don&#39;t have right now?  The answer to that question: nothing. Moving On The only reason you should ever enqueue Google&#39;s version of jQuery is if you are building a project for Google and they ask you to.  A properly configured server will cache just as effectively, completely eliminating any concerns regarding cache duration or script latency.  Moving your scripts to the right part of the page - the bottom - will further allay concerns about load time and user experience. Nine times out of ten, &quot;how do I replace the bundled version of jQuery&quot; is the wrong question.  It&#39;s a question most frequently asked by newer web developers and it betrays your inexperience.  Instead, take some extra time to learn to do things the right way and your site will be just as fast.  Go for a fully-thought-out solution, not just a quick fix." />
+<meta property="og:site_name" content="Things that Matter Most" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-02-03T14:20:29-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Don’t Dequeue WordPress’ jQuery" />
+<meta name="twitter:site" content="@" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Don’t Dequeue WordPress’ jQuery","dateModified":"2013-02-03T14:20:29-08:00","datePublished":"2013-02-03T14:20:29-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"/tech/dont-dequeue-wordpress-jquery/"},"url":"/tech/dont-dequeue-wordpress-jquery/","description":"As a moderator on the WordPress Stack Exchange, I end up spending a lot of time on the site.  I see lots of great questions, lots of not-so-great questions, and several you&#39;ve-got-to-be-kidding-me questions.  But the question I see the most often frustrates me: How do I remove WordPress&#39; jQuery and use Google&#39;s CDN version instead? I have no trouble saying that, if you&#39;re asking this question, you have no business building a website in the first place. Why Use Google&#39;s CDN? The three most commonly cited reasons to dequeue WordPress&#39; bundled version of jQuery in favor of Googles are: Decreased Latency Increased Parallelism Better Caching If you didn&#39;t know any better, each of these arguments makes a lot of sense. Decreased latency - the idea that jQuery will download faster from a properly-located CDN than your arbitrarily-located server - is a fallacy in today&#39;s high-bandwidth world.  jQuery by itself is 91KB when it&#39;s minified (not counting any server-side data compression).  Over a high-bandwidth connection, this downloads in less than half a second from just about anywhere (my server is located in a different country, yet jQuery still downloads in ~200ms for me).  Consider the size of the rest of your site - ~300k of scripts, ~100k of content, ~1-2m of images - and the footprint left by jQuery is inconsequential. Increased parallelism - the fact that a browser can only download so many resources at a time - is a valid concern.  But consider that nearly all of your calls to jQuery are wrapped in some kind of document-ready event and there&#39;s an easy work-around: load jQuery in the footer rather than the header.  Your content will load first and the user experience is not impacted by waiting a fraction of a second before your fancy animations fire. Better caching - the idea that Google&#39;s servers will be configured more efficiently than yours - is bogus.  If you&#39;re counting on Google&#39;s well-configured CDN to save your site from a poorly set-up server environment, then you have absolutely no business building or hosting websites.  Your server should be fully capable of setting the appropriate cache control headers on script files and, if not, you should contract with someone who know what they&#39;re doing to set it up. Why NOT Use Google&#39;s CDN? WordPress takes great care to make sure its bundled libraries are fully compatible with other bundled scripts.  jQuery is loaded in &quot;no conflict&quot; mode to prevent any potential script collisions over the [cci]$[/cci] variable in the global namespace.  As of version 3.6, WordPress will be shipping with version 1.9 of jQuery - which removes several deprecated APIs like [cci].live()[/cci].  To prevent things from breaking, WordPress automatically loads jQuery Migrate, a plugin that adds these removed APIs back to the system, but alerts you in the browser console of their deprecation. If you load jQuery 1.9 yourself from Google&#39;s CDN, you&#39;ll miss out on the jQuery Migrate plugin and end up breaking several themes and plugins that depend on these deprecated APIs.  I still find [cci].live()[/cci] even in new code, so the chances of it littering your site and breaking things when you start swapping out libraries are extremely high. Also, WordPress is taking steps to prevent you from dequeueing jQuery on the back end at all.  You&#39;ll still be able to override it for the front-end if you absolutely need to, but if you ever find such a need, stop and ask yourself why before heading down that path.  Chances are good that your &quot;need&quot; is really just a patch over a deeper problem you don&#39;t fully understand. Why is this the Wrong Question? I recently build a project for a client that worked flawlessly with jQuery 1.9, but broke with any lesser version.  My first (wrong) instinct was to remove the bundled jQuery and bump the loaded version to 1.9 instead.  It would have worked, but it wouldn&#39;t really have fixed the issue. Instead, I doubled down and walked back through the code instead.  I was using a lot of non-jQuery code in my system, and it turned out I had a typo.  With older versions of jQuery, my typo resulted in plain, non-functional code.  With the newer version of jQuery, my typo accidentally invoked a jQuery method where I was attempting to invoke a native JavaScript method. The fix was to correct the typo, making my code work 100% independent of jQuery. I spent a few hours looking for the best way to override the bundled version of jQuery, but that was the wrong approach.  The right approach was to ask an entirely different question: what will a different version of jQuery give me that I don&#39;t have right now?  The answer to that question: nothing. Moving On The only reason you should ever enqueue Google&#39;s version of jQuery is if you are building a project for Google and they ask you to.  A properly configured server will cache just as effectively, completely eliminating any concerns regarding cache duration or script latency.  Moving your scripts to the right part of the page - the bottom - will further allay concerns about load time and user experience. Nine times out of ten, &quot;how do I replace the bundled version of jQuery&quot; is the wrong question.  It&#39;s a question most frequently asked by newer web developers and it betrays your inexperience.  Instead, take some extra time to learn to do things the right way and your site will be just as fast.  Go for a fully-thought-out solution, not just a quick fix.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+
+    <!-- Site Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/png" />
+
+    <!-- Font Embed Code -->
+	<link href="https://fonts.googleapis.com/css?family=Crimson+Text:400,400i,600,600i|Karla:400,400i,700,700i" rel="stylesheet">
+
+    <!-- CSS Styles -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+
+
+<body class="layout-post">
+    <div id="page" class="site">
+        <header id="masthead" class="site-header">
+    <div class="site-header-wrap">
+        <div class="site-header-inside">
+
+            <div class="site-branding">
+                
+                <p class="profile">
+                    <a href="/">
+                        <img src="/assets/images/authorimage.jpg" alt="'s Picture"
+                            class="avatar" />
+                    </a>
+                </p>
+                <div class="site-identity">
+                    
+                    <h1 class="site-title">
+                        <a href="/">Things that Matter Most</a>
+                    </h1>
+                    
+                    
+                    <p class="site-description">Things that Matter Most</p>
+                    
+                </div><!-- .site-identity -->
+                
+                <button id="menu-toggle" class="menu-toggle"><span class="screen-reader-text">Main Menu</span><span
+                        class="icon-menu" aria-hidden="true"></span></button>
+            </div><!-- .site-branding -->
+
+            <nav id="main-navigation" class="site-navigation" aria-label="Main Navigation">
+                <div class="site-nav-wrap">
+                    <div class="site-nav-inside">
+                    <ul class="menu">
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/">Home</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/about">About</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/contact">Contact Me</a></li>
+                        
+                        
+                        
+                        <li class="menu-item "><a href="/search">Search</a></li>
+                        
+                    </ul>
+                    <p class="social-links">
+    
+    <a href="https://twitter.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    <a href="https://github.com/ericmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/ericallenmann" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+<!--
+Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+-->
+    </a>
+    
+    
+    
+</p>
+                    </div><!-- .site-nav-inside -->
+                </div><!-- .site-nav-wrap -->
+            </nav><!-- .site-navigation -->
+
+        </div><!-- .site-header-inside -->
+    </div><!-- .site-header-wrap -->
+</header><!-- .site-header -->
+        <div id="content" class="site-content fadeInDown delay_075s">
+            <div class="inner-wide">
+                <main id="main" class="site-main">
+
+    <article class="post-full inner">
+
+        <header class="post-header">
+            <div class="post-meta">
+                <time class="post-date" datetime="2013-02-03">
+                    February 3, 2013
+                </time>
+            </div><!-- .post-meta -->
+            <h1 class="post-title">Don't Dequeue WordPress' jQuery</h1>
+        </header><!-- .post-header -->
+
+        
+        <div class="post-content">
+            <p>As a moderator on the <a title="WordPress Stack Exchange" href="http://wordpress.stackexchange.com/">WordPress Stack Exchange</a>, I end up spending a lot of time on the site.  I see lots of <a title="When should you use WP_Query vs query_posts() vs get_posts()?" href="http://wordpress.stackexchange.com/q/1753/46">great questions</a>, lots of not-so-great questions, and several you've-got-to-be-kidding-me questions.  But the question I see the most often frustrates me:</p>
+<blockquote><p>How do I remove WordPress' jQuery and use Google's CDN version instead?</p></blockquote>
+<p>I have no trouble saying that, if you're asking this question, you have no business building a website in the first place.<!--more--></p>
+<h2>Why Use Google's CDN?</h2>
+<p>The three <a title="3 reasons why you should let Google host jQuery for you" href="http://encosia.com/3-reasons-why-you-should-let-google-host-jquery-for-you/">most commonly cited reasons</a> to dequeue WordPress' bundled version of jQuery in favor of Googles are:</p>
+<ol>
+<li>Decreased Latency</li>
+<li>Increased Parallelism</li>
+<li>Better Caching</li>
+</ol>
+<p>If you didn't know any better, each of these arguments makes a lot of sense.</p>
+<p><strong>Decreased latency</strong> - the idea that jQuery will download faster from a properly-located CDN than your arbitrarily-located server - is a fallacy in today's high-bandwidth world.  jQuery by itself is 91KB when it's minified (not counting any server-side data compression).  Over a high-bandwidth connection, this downloads in less than half a second from just about anywhere (my server is located in a different country, yet jQuery still downloads in ~200ms for me).  Consider the size of the rest of your site - ~300k of scripts, ~100k of content, ~1-2m of images - and the footprint left by jQuery is inconsequential.</p>
+<p><strong>Increased parallelism -</strong> the fact that a browser can only download so many resources at a time - is a valid concern.  But consider that nearly <em>all</em> of your calls to jQuery are wrapped in some kind of document-ready event and there's an easy work-around: load jQuery in the <em>footer</em> rather than the header.  Your content will load first and the user experience is not impacted by waiting a fraction of a second before your fancy animations fire.</p>
+<p><strong>Better caching - </strong>the idea that Google's servers will be configured more efficiently than yours - is bogus.  If you're counting on Google's well-configured CDN to save your site from a poorly set-up server environment, then you have absolutely no business building or hosting websites.  Your server should be fully capable of setting the appropriate cache control headers on script files and, if not, you should contract with someone who know what they're doing to set it up.</p>
+<h2>Why NOT Use Google's CDN?</h2>
+<p>WordPress takes great care to make sure its bundled libraries are fully compatible with other bundled scripts.  jQuery is loaded in "no conflict" mode to prevent any potential script collisions over the [cci]$[/cci] variable in the global namespace.  As of version 3.6, WordPress will be shipping with version 1.9 of jQuery - which removes several deprecated APIs like [cci].live()[/cci].  To prevent things from breaking, WordPress automatically loads jQuery Migrate, a plugin that adds these removed APIs back to the system, but alerts you in the browser console of their deprecation.</p>
+<p>If you load jQuery 1.9 yourself from Google's CDN, you'll miss out on the jQuery Migrate plugin and end up breaking several themes and plugins that depend on these deprecated APIs.  I still find [cci].live()[/cci] even in <em>new</em> code, so the chances of it littering your site and breaking things when you start swapping out libraries are extremely high.</p>
+<p>Also, WordPress is <a title="Prevent plugins from overriding jQuery in the admin" href="http://core.trac.wordpress.org/ticket/22896">taking steps to prevent you</a> from dequeueing jQuery on the back end at all.  You'll still be able to override it for the front-end if you absolutely need to, but if you ever find such a need, stop and ask yourself <em>why</em> before heading down that path.  Chances are good that your "need" is really just a patch over a deeper problem you don't fully understand.</p>
+<h2>Why is this the Wrong Question?</h2>
+<p>I recently build a project for a client that worked flawlessly with jQuery 1.9, but broke with any lesser version.  My first (wrong) instinct was to remove the bundled jQuery and bump the loaded version to 1.9 instead.  It would have worked, but it wouldn't really have fixed the issue.</p>
+<p>Instead, I doubled down and walked back through the code instead.  I was using a lot of non-jQuery code in my system, and it turned out I had a typo.  With older versions of jQuery, my typo resulted in plain, non-functional code.  With the newer version of jQuery, my typo accidentally invoked a jQuery method where I was attempting to invoke a native JavaScript method.</p>
+<p>The fix was to correct the typo, making my code work 100% independent of jQuery.</p>
+<p>I spent a few hours looking for the best way to override the bundled version of jQuery, but that was the <em>wrong</em> approach.  The <em>right</em> approach was to ask an entirely different question: <strong>what will a different version of jQuery give me that I don't have right now?</strong>  The answer to that question: <strong>nothing</strong>.</p>
+<h2>Moving On</h2>
+<p>The only reason you should ever enqueue Google's version of jQuery is if you are building a project for Google and they ask you to.  A properly configured server will cache just as effectively, completely eliminating any concerns regarding cache duration or script latency.  Moving your scripts to the right part of the page - the bottom - will further allay concerns about load time and user experience.</p>
+<p>Nine times out of ten, "how do I replace the bundled version of jQuery" is the wrong question.  It's a question most frequently asked by newer web developers and it betrays your inexperience.  Instead, take some extra time to learn to do things the right way and your site will be just as fast.  Go for a fully-thought-out solution, not just a quick fix.</p>
+
+        </div>
+        <footer class="post-footer">
+            <div class="post-share">
+                <span class="post-share-title">Share:</span>
+                <a target="_blank"
+                    href="https://twitter.com/share?text=Don%27t+Dequeue+WordPress%27+jQuery&amp;url=https://ttmm.iotech/dont-dequeue-wordpress-jquery/">Twitter</a>
+                <a target="_blank"
+                    href="https://www.facebook.com/sharer/sharer.php?u=https://ttmm.iotech/dont-dequeue-wordpress-jquery/">Facebook</a>
+            </div><!-- .share-post -->
+            
+            <p class="post-cats">
+                <span class="post-share-title">Filed under </span>
+                <a href="/categories/index.html#Technology"
+                    rel="category">Technology</a>
+                
+            </p>
+            
+            
+            <p class="post-tags">
+                <span class="post-share-title">Tagged with </span>
+                <a href="/tags/index.html#Cdn"
+                    rel="tag">Cdn</a>
+                <a href="/tags/index.html#Dequeue"
+                    rel="tag">Dequeue</a>
+                <a href="/tags/index.html#Google"
+                    rel="tag">Google</a>
+                <a href="/tags/index.html#javascript"
+                    rel="tag">javascript</a>
+                <a href="/tags/index.html#jQuery"
+                    rel="tag">jQuery</a>
+                <a href="/tags/index.html#Question"
+                    rel="tag">Question</a>
+                <a href="/tags/index.html#Stupid+Questions"
+                    rel="tag">Stupid Questions</a>
+                <a href="/tags/index.html#WordPress"
+                    rel="tag">WordPress</a>
+                
+            </p>
+            
+        </footer>
+        
+    </article>
+    
+    <section class="read-next inner">
+        <h2 class="read-next-title">Read Next</h2>
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="January 29, 2013">January 29, 2013</time>
+                </div>
+                <h3 class="post-title"><a href="/journal/distraction-free-reading-mode/">Distraction Free Reading Mode</a>
+                </h3>
+            </header>
+        </article>
+        
+        
+        <article class="post">
+            <header class="post-header">
+                <div class="post-meta">
+                    <time class="published" datetime="February 11, 2013">February 11, 2013</time>
+                </div>
+                <h3 class="post-title"><a href="/faith/podcast-episode-4-5-6/">Podcast</a></h3>
+            </header>
+        </article>
+        
+    </section><!-- .read-next -->
+
+</main><!-- .site-main -->
+
+
+                
+
+                
+                <footer id="colophon" class="site-footer">
+    <p class="site-info inner">
+        <a href="#">Things that Matter Most</a> &copy; 2021. Royce theme by
+        <a target="_blank" href="https://justgoodthemes.com/">JustGoodThemes</a>.
+        <br />
+        Powered by <a target="_blank" href="https://jekyllrb.com/">Jekyll</a>.
+    </p>
+    <a id="back-to-top" class="back-to-top" href="#page">
+        <span class="icon-arrow-up" aria-hidden="true"></span>
+        <span class="screen-reader-text">Back to top</span>
+    </a>
+</footer><!-- .site-footer -->
+            </div><!-- .inner-wide -->
+        </div><!-- .site-content -->
+    </div><!-- .site -->
+
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4156949-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-4156949-6', { 'anonymize_ip': true });
+  </script>
+
+    <!-- Javascript Assets -->
+    <script src="/assets/js/jquery-3.3.1.min.js"></script>
+    <script src="/assets/js/plugins.js"></script>
+    <script src="/assets/js/custom.js"></script>
+
+</body>
+
+</html>

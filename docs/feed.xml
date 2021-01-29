@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Things that Matter Most</title>
+    <description>Things that Matter Most</description>
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 29 Jan 2021 14:05:01 -0800</pubDate>
+    <lastBuildDate>Fri, 29 Jan 2021 14:05:01 -0800</lastBuildDate>
+    <generator>Jekyll v3.9.0</generator>
+    
+      <item>
+        <title>Cracking the Uncrackable - Hashtopolis</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://ttmm.io/tech/cracking-the-uncrackable-part-4/&quot;&gt;Last week&lt;/a&gt; we started down the path of password cracking with an introduction to Hashcat. The unfortunate thing is that Hashcat is limited to the capabilities of your own machine. Rather than stick with &lt;em&gt;one&lt;/em&gt; machine for a cracking run, we want to leverage multiple boxes. The open source Hashtopolis project allows us to do just that by splitting Hashcat operations across as many machines as you want!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Basic Setup&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/s3inlc/hashtopolis&quot;&gt;Hashtopolis&lt;/a&gt; is easily installed on any Linux machine, but I happen to prefer Ubuntu when working in the cloud, so we'll start there. The first step is to provision a server &lt;em&gt;somewhere&lt;/em&gt; and make sure you have access to it. For my purposes, I set up a &lt;tt&gt;t2.micro&lt;/tt&gt; EC2 instance on Amazon and configured it with an Elastic IP so I could keep track of things. I also pointed a vanity subdomain[ref]From one of my other, private top-level domains I use for experimentation...[/ref] at it so I can log in and use the machine easily.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I won't go into basic server provisioning here - that's an exercise left for some other time.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Once the machine is available, connect via SSH and start setting things up:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;sudo apt update &amp;amp;&amp;amp; sudo apt upgrade
+sudo apt install mysql-server apache2 libapache2-mod-php php-mysql php php-gd php-pear php-curl git phpmyadmin&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The above installations will get almost everything set up. You'll also want to execute &lt;tt&gt;mysql_secure_installation&lt;/tt&gt; to ensure MySQL is set up securely. Remove anonymous users, disallow remote root login, and remove the test database. Then you're ready for Hashtopolis.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Installing Hashtopolis&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Hashtopolis itself is installed by cloning the project from GitHub and moving it to the appropriate location.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;git clone https://github.com/s3inlc/hashtopolis.git
+sudo mkdir /var/www/hashtopolis
+sudo cp -r hashtopolis/src/* /var/www/hashtopolis
+sudo chown -R www-data:www-data /var/www/hashtopolis&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Then, create a dedicated MySQL database for Hashtopolis to use:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;sudo mysql -uroot -e &quot;create database hashtopolis;&quot;
+sudo mysql -uroot -e &quot;GRANT ALL ON hashtopolis.* TO 'hashtopolis'@'localhost' identified by 'securePassword';&quot;
+sudo mysql -uroot -e &quot;flush privileges;&quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Finally, create a configuration file for the site you're building out (for example in &lt;tt&gt;/etc/apache2/sites-available/hash.yourcooldomain.com.conf&lt;/tt&gt;) with the appropriate configuration[ref]It's a good idea to enable TLS encryption for your site as well. Apache is &lt;a href=&quot;https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-ubuntu-20-04&quot;&gt;fairly easy to set up with a completely free certificate&lt;/a&gt; from LetsEncrypt.[/ref]:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;&lt;virtualhost *:80=&quot;&quot;&gt;
+ ServerName hash.yourcooldomain.com
+ DocumentRoot /var/www/hashtopolis
+ ErrorLog ${APACHE_LOG_DIR}/error.log
+ CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Enabling this site and disabling the default Apache web demo.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;sudo a2dissite 000-default
+sudo a2ensite hash.yourcooldomain.com
+sudo systemctl reload apache2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;It's a good idea to tweak your PHP settings as well to increase the memory limit and maximum upload sizes (as some of our wordlists are quite large). I also changed my Apache configuration to keep requests open as long as possible. Make any tweaks or customizations you want, then restart Apache before moving on with the installation.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading {&quot;level&quot;:3} --&gt;&lt;/p&gt;
+&lt;h3&gt;Run the Installer&lt;/h3&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The first time you load your newly created site, Hashtopolis will kick off an installation automatically. Fill in your database details (using your local MySQL server on port 3306). Then set up an administrator account with a &lt;em&gt;strong&lt;/em&gt; password.[ref]Your administrator account will have full access to jobs, configuration, and the eventual results of your cracking attempts. Keep this account safe![/ref]&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Once you've set things up and logged in to verify your credentials, it's a good idea to remove the install directory from your server. This way no one can attempt to overwrite your installation and corrupt your data:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code class=&quot;&quot;&gt;sudo rm -rf /var/www/hashtopolis/install&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Divide and Conquer&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Now that your command server is set up, it's time to boot up a fleet of cracking machines and get started with cracking. But that configuration will come next week.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 30 Nov 2020 07:00:00 -0800</pubDate>
+        <link>/tech/cracking-the-uncrackable-part-5/</link>
+        <guid isPermaLink="true">/tech/cracking-the-uncrackable-part-5/</guid>
+        
+        <category>Bitcoin</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Cracking the Uncrackable - Hashing Setup</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If like &lt;a href=&quot;https://ttmm.io/tech/cracking-the-uncrackable-part-3/&quot;&gt;last week&lt;/a&gt; simply guessing a password is insufficient, then you can bring out the big guns. I'm talking about &lt;a href=&quot;https://hashcat.net/hashcat/&quot;&gt;Hashcat&lt;/a&gt;, and advanced system that allows you to automate the cracking of passwords using optimized GPU code.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Rather than manually guessing one password at a time - or even iterating over one password at a time - Hashcat can automate password cracking attempts using various rules. A password of &lt;tt&gt;password&lt;/tt&gt; is unique from one of &lt;tt&gt;P@s$w0rd1&lt;/tt&gt;. There are a slew of rules and configurations that enable Hashcat to stretch a smaller password list by swapping characters and applying transformations like this.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;It's also easily paired with a centralized command server like &lt;a href=&quot;https://github.com/s3inlc/hashtopolis&quot;&gt;Hashtopolis&lt;/a&gt;, that allows you to spread the hashing job out over &lt;em&gt;multiple&lt;/em&gt; servers at once. You can leverage several local machines or rent machines from Amazon or a similar cloud provider.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Any way you slice it, Hashcat allows you to attempt several &lt;em&gt;thousand&lt;/em&gt; passwords per second. Hashtopolis further allows you to do so on several &lt;em&gt;machines&lt;/em&gt; at the same time.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Hashcat Setup&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Before we can even begin hashing, we need to have something to crack. This is where our Bitcoin wallet comes in. Locally, a Bitcoin wallet is stored as a wallet.dat file that is partially encrypted using a password of your choosing. &lt;a href=&quot;https://ttmm.io/tech/cracking-the-uncrackable-part-2/&quot;&gt;Your private key is symmetrically encrypted&lt;/a&gt; with a random master key, and that master key is subsequently encrypted with a user-defined password.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;We don't want the entire wallet, though, just the parts necessary for guessing a password and verifying that password is correct.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&quot;https://www.openwall.com/&quot;&gt;Openwall Project&lt;/a&gt; maintains a tool called &lt;a href=&quot;https://github.com/openwall/john&quot;&gt;John the Ripper&lt;/a&gt; that is somewhat similar to Hashcat. The advantage of their tool is that it's open source and includes various additional utility scripts that make our job easier. The &lt;a href=&quot;https://github.com/openwall/john/blob/bleeding-jumbo/run/bitcoin2john.py&quot;&gt;&lt;tt&gt;bitcoin2join&lt;/tt&gt; script&lt;/a&gt;, for example, takes a &lt;tt&gt;wallet.dat&lt;/tt&gt; file and converts it to a string that's easily processed by either hashing system.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Running this script alone won't crack your wallet. What it &lt;em&gt;will&lt;/em&gt; do is convert a large binary blob (your wallet) into a string like &lt;tt&gt;$bitcoin$64$f6f42a9e0cb0eda2669fa8...&lt;/tt&gt;. This string, when provided to Hashcat, is the foundation of our next cracking attempt.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Hashcat Setup&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Hashcat has &lt;a href=&quot;https://hashcat.net/wiki/doku.php?id=hashcat&quot;&gt;various attacks and hashing &lt;/a&gt;modes. Since we're specifically trying to get into a Bitcoin wallet, we want mode 11300. We can also use a &quot;straight&quot; attack mode with a specific list of possible words if we have one.[ref]The Openwall Project also maintains a comprehensive wordlist commonly used to crack many passwords. If you don't have a wordlist to start from, this is a good place to begin.[/ref]&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In our case, we put the hash generated from &lt;tt&gt;bitcoin2john&lt;/tt&gt; above in &lt;tt&gt;hash.txt&lt;/tt&gt; and a list of possible passwords into &lt;tt&gt;wordlist.txt&lt;/tt&gt;. Our execution of Hashcat would then look like:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:code --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-code&quot;&gt;&lt;code&gt;./hashcat64.bin -a 0 -m 11300 ./hash.txt ./wordlist.txt -O -w 3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:code --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The flags here identify our attack type (straight), hashing mode (Bitcoin), a request to use an optimized kernel, and a high workload profile. The tool allows you to tweak all of these settings - and more - to your desire, so please check out the wiki for more information.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;That Takes Forever ...&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The only problem with Hashcat is that it takes a long time to process even the most conservative wordlist for a Bitcoin wallet. In many other blog entries I've seen folks complain that Hashcat reports &quot;the next big bang&quot; as the expected completion date for a cracking run. &lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Given how many possible passwords there are to go through, this is a reasonable estimate for a comprehensive brute force attack. But there &lt;em&gt;are&lt;/em&gt; ways we can make things go faster.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;First, curating our wordlist helps target the cracking attempt to words we know were likely to be used as part of the password. Hashcat also allows for powerful rule setting to manipulate potential passwords and stretch the number of candidates available - replacing &lt;tt&gt;a&lt;/tt&gt;s with &lt;tt&gt;@&lt;/tt&gt;s or &lt;tt&gt;0&lt;/tt&gt;s with &lt;tt&gt;O&lt;/tt&gt;s, for example. But still, this doesn't speed things up on your machine.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In fact, the problem is often that you're trying to run this on the same machine you use for other tasks. Hashcat uses your GPU for cracking, so you'll likely be overloading the system if you try to crack a password &lt;em&gt;and&lt;/em&gt; run a display at the same time. Running things locally means you're limited to that one machine's hardware as well.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Next week we'll cover an approach to farm the cracking job out to &lt;em&gt;multiple&lt;/em&gt; cracking machines in hopes we can expedite the job.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 23 Nov 2020 07:00:00 -0800</pubDate>
+        <link>/tech/cracking-the-uncrackable-part-4/</link>
+        <guid isPermaLink="true">/tech/cracking-the-uncrackable-part-4/</guid>
+        
+        <category>Bitcoin</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Cracking the Uncrackable - Password Guessing</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://ttmm.io/tech/cracking-the-uncrackable-part-2/&quot;&gt;Last week&lt;/a&gt; we covered the basics of how Bitcoin keys work and how software like Bitcoin Core can protect a private key with a user-defined password. Assume you've set up your wallet, set a password, then left things along for long enough to forget your password. Now Bitcoin has exploded in value and you want back in.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If it's your own wallet, chances are high you know enough about how you set your password that you can guess what it was.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Maybe you remember a handful of words from a mneumonic. Or that you had used you child's birthday to make the password stronger. You just can't remember the exact format.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:pullquote --&gt;&lt;/p&gt;
+&lt;figure class=&quot;wp-block-pullquote&quot;&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Something about a horse being correct? About a staple? Or a battery? And I used my son's birth year I'm sure of it!&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/figure&gt;
+&lt;p&gt;&lt;!-- /wp:pullquote --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If this is the boat you're in, you can try enumerating some of the possibilities and get the wallet unlocked. When you know enough of the password you &lt;em&gt;could&lt;/em&gt; just type repeated options into the software manually.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If you know pieces but not the full thing, you're better served by some automation. In this case, we'll use a nifty Python script to automate our attempts.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;btcrecover&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/gurnec/btcrecover&quot;&gt;btcrecover&lt;/a&gt; is an open source Python utility built specifically to help you recover your password. It allows you to quickly build a list of potential passwords from a list of known tokens[ref]The parts of the password you remember are the tokens we'll use.[/ref] and test each of those passwords against the wallet.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;First, you'll want to clone the software to your local machine:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;git clone git@github.com:gurnec/btcrecover.git&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Then move your &lt;tt&gt;wallet.dat&lt;/tt&gt; file into the same directory.[ref]It's a good idea to back up your wallet from Bitcoin Core in the event your attempts to break in corrupt the file.[/ref] This way the software can more easily find the file and you keep everything in the same place.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Create a file called &lt;tt&gt;tokens.txt&lt;/tt&gt; in the same directory and place each part of the password you remember on a separate line. If you know you used the words &quot;battery,&quot; &quot;correct,&quot; &quot;horse,&quot; and &quot;staple&quot; but can't remember the order, just put each of those on a line. The more words you can remember, the better.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Also, you think you used your son's birth year. Or was it your anniversary? You can either include both years as tokens, or use wildcard placeholders to expand dates. All years from 1900 to 2099 can be expressed through the two tokens &quot;19%2d&quot; and &quot;20%2d.&quot; Including these two tokens will drastically expand your word list. It also ensures you won't miss things if you'd included your spouse's birth year instead of your child's.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;For our simple example here, this is enough for now and will give us quite a few possible passwords. But we can't run things just yet. btcrecover requires Python 2.7 to run.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Virtual Environment&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;My machine has both Python 2.7 and Python 3 installed. The latter is used by default and the former is coded explicitly as python2 at the command line. To set up a virtual environment for btcrecover, I need to do the following:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;virtualenv -p $(which python2) venv&lt;br /&gt;source venv/bin/activate&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Now, the python binary in this environment references Python 2.7 and btcrecover can run just fine. I can further install additional extension as needed with pip running as a module:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;python -m pip install [dependency]&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Running btcrecover&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Now that you have a Python environment and a tokens file, you can test the passwords generated by the script to see what's going to happen.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;python btcrecover.py --listpass --tokenlist tokens.txt | more&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Exit at any time; this step is just to preview what passwords are being generated by the system. When you're ready to &lt;em&gt;actually&lt;/em&gt; give things a try, you run btcrecover against your actual wallet:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;python btcrecover.py --tokenlist tokens.txt --wallet wallet.dat&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The program will load your token list and generate the same list of passwords as our earlier test. It uses each in tern in attempts to decrypt your wallet and will display a helpful progress bar and ETA for when the keyspace will be fully exhausted (when the system runs out of passwords to test).&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If your token list was exhaustive enough and was able to generate your original password, you'll be back into your Bitcoin wallet in no time!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;What Next?&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;btcrecover runs on your CPU, so it can leverage multithreading and perform quite quickly with these various password attempts. That being said, if you don't have an exhaustive token list to work from, you might end up running things for several days and &lt;em&gt;still&lt;/em&gt; not get into your wallet.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;For trickier scenarios where you still have a handful of suspected tokens (or even a list of words you're confident were related to your passwords at the time), you can leverage GPU-accelerated hashing to try to get in. We'll cover that topic next time.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 16 Nov 2020 07:00:00 -0800</pubDate>
+        <link>/tech/cracking-the-uncrackable-part-3/</link>
+        <guid isPermaLink="true">/tech/cracking-the-uncrackable-part-3/</guid>
+        
+        <category>Bitcoin</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Cracking the Uncrackable - Background</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://ttmm.io/tech/cracking-the-uncrackable/&quot;&gt;Last time&lt;/a&gt;, I explained the backstory for why I'm treading down this bizarro path in the first place. If I can't &lt;em&gt;find&lt;/em&gt; my Bitcoin and it's nearly impossible to turn a profit from &lt;em&gt;mining&lt;/em&gt; as a hobby, I'll try to buy my way into wealth instead.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The very first step forward is to acquire a wallet with sufficient funds to make the journey worth it and sufficient information about the password to give me a head start. But before we dive into &lt;em&gt;that&lt;/em&gt;, let's discuss &lt;em&gt;why&lt;/em&gt; it's possible to &quot;recover&quot; a Bitcoin wallet in the first place.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Bitcoin Keys&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;To understand Bitcoin wallets you have to first understand Bitcoin keys. Bitcoin, like most modern cryptographic systems, is built atop a protocol that uses public key cryptography. You hold one key known only to you and publicize another key folks can use to communicate with you.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In the world of Bitcoin, your private key is a 256-bit number. More specifically, this key is a number valid in the &lt;a href=&quot;https://en.bitcoin.it/wiki/Secp256k1&quot;&gt;Secp256k1 curve&lt;/a&gt; used for elliptic curve cryptography.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Your wallet's public key is another number derived from that fixed private key. With a public key anyone can verify the balance you hold, while only the holder of the &lt;em&gt;private&lt;/em&gt; key can cryptographically sign transactions on behalf of your account.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;When you transfer money from your account to another, you use your private key to sign the transaction and publish this transaction and signature to the public ledger - the blockchain. Miners will then verify the block containing your transaction, making it part of the public blockchain and immutable.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If you lose your private key, you lose the ability to transfer, spend, or otherwise to &lt;em&gt;anything&lt;/em&gt; with your Bitcoins.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading {&quot;level&quot;:3} --&gt;&lt;/p&gt;
+&lt;h3&gt;What About Random Guessing?&lt;/h3&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Humans aren't very good at imagining big things. When I tell you a Bitcoin private key is a 256-bit number you see the &quot;256&quot; and think it's relatively small. In reality, 256 bits means 2&lt;sup&gt;256&lt;/sup&gt;. There are that many possible private keys.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Expanded out, 2&lt;sup&gt;256&lt;/sup&gt; is:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:preformatted --&gt;&lt;/p&gt;
+&lt;pre class=&quot;wp-block-preformatted&quot;&gt;115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,
+665,640,564,039,457,584,007,913,129,639,936&lt;/pre&gt;
+&lt;p&gt;&lt;!-- /wp:preformatted --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;That is an unfathomably large number. To put it in context, this number is actually larger than the total number of atoms in the known universe.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Said another way - even picking a million random numbers per second, the chances that someone could guess at random the same number you use as a private key is infinitesimally small. There is no real chance anyone could guess the private key of an already existing Bitcoin wallet containing value.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Bitcoin Wallet Encryption&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Keeping track of a private number is relatively easy. Some people even write it out on a piece of paper to keep things entirely offline. &lt;em&gt;Using&lt;/em&gt; that private number to sign transactions, though, is hard unless you use a tool to do the signing.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://bitcoin.org/en/bitcoin-core/&quot;&gt;Bitcoin Core&lt;/a&gt; is a free, cross-platform application that will keep track of your private key, track your balance and transactions over time, and facilitate sending/receiving Bitcoin on the blockchain. By default it doesn't encrypt anything, which means anyone with access to your computer has access to your wallet.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;But Bitcoin Core has a feature to set a password on your wallet. Your password is used to create an encryption key, which is then used to encrypt a completely random &lt;em&gt;master&lt;/em&gt; key, which is then used to encrypt your Bitcoin private key. Without your password, Bitcoin Core can still display your balance and transaction history (and facilitate &lt;em&gt;receiving&lt;/em&gt; funds) but cannot &lt;em&gt;send&lt;/em&gt; funds anywhere.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Bitcoin Core uses &lt;a href=&quot;https://en.wikipedia.org/wiki/Advanced_Encryption_Standard&quot;&gt;AES-256&lt;/a&gt; for encryption, meaning it's also using 256-bit cryptographic keys. It would be just as likely for someone to randomly guess your Bitcoin private key as it would be for them to randomly guess the master key used by the software to encrypt it.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Guessing the &lt;em&gt;password&lt;/em&gt; you used to encrypt the master key, however, is far more reasonable. And that's where we'll pick up in the next piece of this series.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 09 Nov 2020 07:00:00 -0800</pubDate>
+        <link>/tech/cracking-the-uncrackable-part-2/</link>
+        <guid isPermaLink="true">/tech/cracking-the-uncrackable-part-2/</guid>
+        
+        <category>Bitcoin</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Cracking the Uncrackable</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Several years ago, I spent the majority of my time freelancing while looking for regular work. Usually this paid well. Occasionally a client would take my work and skip the bill. It happened once with an architecture website. Again with a college seminar tracking site.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;One customer, those, admitted he couldn't pay me in cash and offered instead to pay his debt in &lt;a href=&quot;https://en.wikipedia.org/wiki/Bitcoin&quot;&gt;Bitcoin&lt;/a&gt;. I was fascinated with cryptocurrency, but had never owned any, so this seemed fair. I created a wallet, he transferred the crypto, and we went our separate ways.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The bill was tiny - around $100 - so I didn't keep track of anything at the time and long ago lost track of that wallet. It was more a novelty than anything else. Until recently when I discovered Bitcoin was now valued over $10k &lt;em&gt;each&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;That would've put that long-forgotten wallet at well over a million dollars in today's value. I've spent weeks trying to track it down - scouring every hard disk, USB drive, and dusty old machine I can find.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;It's not there.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Plan B&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In a fit of frustration when I realized this wallet was nowhere to be found, I started dipping my toe into the world of mining. I have a handful of computers, some with relatively high-end GPUs; surely I could put them to work in my off hours earning a bit of revenue here and there.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;My first experiment ran my desktop for a full day, the GPU maxed out at 85 degrees Celsius[ref]That's 185 degrees Fahrenheit for those of us not used to Celsius measurements.[/ref]. In all I earned about fifteen cents.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I'm sure I spent far more in terms of power and wear on my machine that I earned. I had also mined as part of a pool that held a $75 minimum payout. It would be ages before I'd ever see a cent from mining.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Surely there must be a better way.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Plan C&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If you can't find the coin, mine it. If you can't mine the coin, &lt;em&gt;buy&lt;/em&gt; it.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I found a handful of broker websites where folks had similar stories to mine. They'd created a wallet once, invested what was a relatively small amount at the time, then forgot about Bitcoin entirely.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Fast forward to 2020 and their initial investment has ballooned by several orders of magnitude. Except their wallet is protected by a decade-old password they can't remember. Their options:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:list {&quot;ordered&quot;:true} --&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Forget the whole thing&lt;/li&gt;
+&lt;li&gt;Spend additional time and money &lt;em&gt;maybe&lt;/em&gt; cracking their old password&lt;/li&gt;
+&lt;li&gt;Convincing a random stranger to buy their old wallet and spend &lt;em&gt;their own&lt;/em&gt; time and money &lt;em&gt;maybe&lt;/em&gt; cracking their old password&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;!-- /wp:list --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;There are a handful of marketplaces catering to the third option. You post your old wallet for sale and upload it to a Bitcoin-powered escrow site. A random stranger (read: me) comes by, pays for the wallet, and you get at least &lt;em&gt;some&lt;/em&gt; recompense for your forgotten coin. Then the same stranger can spin up &lt;a href=&quot;https://hashcat.net/hashcat/&quot;&gt;Hashcat&lt;/a&gt; or similar and try to crack the password on the wallet.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;At worst, they've spent a couple hundred dollars on the wallet and even more on infrastructure as a hobby. At best, they make their way in and win the crypto lottery.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I'm hoping for the &lt;em&gt;latter&lt;/em&gt; to occur and spending some time documenting my very own journey as the &quot;random stranger&quot; who bought a crypto wallet online in the hopes of striking gold.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In the next piece in this series I'll talk more about the crypto wallet itself, how it's protected, and how I hope to start with password cracking.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 02 Nov 2020 07:00:00 -0800</pubDate>
+        <link>/tech/cracking-the-uncrackable/</link>
+        <guid isPermaLink="true">/tech/cracking-the-uncrackable/</guid>
+        
+        <category>Bitcoin</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>One year ago today ...</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;... I was in Washington D.C. enjoying my time at &lt;a href=&quot;https://world.phparch.com/&quot;&gt;php[world]&lt;/a&gt;. I've mentioned before that this is my absolute favorite tech conference. The talks are stellar. The hallway track is outstanding. Everything about the event - from the content to the locale - is bound to inspire.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;One year ago today I sat in the National Mall. I reflected on the inspiring monuments. The excited crowds of tourists from around the world. Most of all, on a road to the future that looked promising even if paved with discord and partisan frustration.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:embed {&quot;url&quot;:&quot;https://twitter.com/EricMann/status/1187077433914208256&quot;,&quot;type&quot;:&quot;rich&quot;,&quot;providerNameSlug&quot;:&quot;twitter&quot;,&quot;responsive&quot;:true,&quot;className&quot;:&quot;&quot;} --&gt;&lt;/p&gt;
+&lt;figure class=&quot;wp-block-embed is-type-rich is-provider-twitter wp-block-embed-twitter&quot;&gt;
+&lt;div class=&quot;wp-block-embed__wrapper&quot;&gt;
+&lt;div class=&quot;embed-container rich &quot;&gt;&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;Same mall, same feels, different era altogether... &lt;a href=&quot;https://t.co/YOYxmOo2aT&quot;&gt;https://t.co/YOYxmOo2aT&lt;/a&gt; &lt;a href=&quot;https://t.co/N7JttXIJUJ&quot;&gt;pic.twitter.com/N7JttXIJUJ&lt;/a&gt;&lt;/p&gt;&amp;mdash; Eric Mann (@EricMann) &lt;a href=&quot;https://twitter.com/EricMann/status/1187077433914208256?ref_src=twsrc%5Etfw&quot;&gt;October 23, 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/figure&gt;
+&lt;p&gt;&lt;!-- /wp:embed --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Today, I sit at home looking back on Google-recommended &quot;memories&quot; of this last big trip to the Capital. The next to last of the large events I attended before lockdown.[ref]The last conf I attended was SunshinePHP this past February. Also inspiring content, but not quite the same in terms of location.[/ref] I've been mulling over everything we've lost in the past year and it's beyond depressing.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;My friends have lost jobs. I've lost friends. We've lost our means to gather and support one another. Many of us have lost the outlets on which we relied absolutely for creative expression and inspiration.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Still, we carry on in the hope that the dawn of tomorrow will bring not only the promise of a new day, but the hope of change and a future to come. I long for the day when we can gather again and inspire one another with the work we're all doing.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Until then, stay safe. Stay in touch. Keep moving forward.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Fri, 23 Oct 2020 10:00:00 -0700</pubDate>
+        <link>/journal/one-year-ago-today/</link>
+        <guid isPermaLink="true">/journal/one-year-ago-today/</guid>
+        
+        
+        <category>Journal</category>
+        
+      </item>
+    
+      <item>
+        <title>One Man's Unsolicited Opinion on the WordPress 5.6 All-Women Release Squad</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Long overdue.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;That's it. In a nutshell. Having an &lt;a href=&quot;https://make.wordpress.org/core/2020/03/11/all-women-release-squad/&quot;&gt;all-women release team&lt;/a&gt; for one of the largest projects on the Internet should have happened ages ago. While I'm disappointed it took this long, I'm glad we're finally there.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Whether you like it or not, whether you &lt;em&gt;agree&lt;/em&gt; with it or not, men are overly represented in technology. We've built a world where men are given every opportunity and afforded the benefit of the doubt when it comes to technology. When a man introduces himself as a developer, he gets knowing nods of agreement or questions about his tech stack. When a woman introduces herself the same way ...&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:core-embed/twitter {&quot;url&quot;:&quot;https://twitter.com/novallkhan/status/1295365140494405634&quot;,&quot;type&quot;:&quot;rich&quot;,&quot;providerNameSlug&quot;:&quot;twitter&quot;,&quot;className&quot;:&quot;&quot;} --&gt;&lt;/p&gt;
+&lt;figure class=&quot;wp-block-embed-twitter wp-block-embed is-type-rich is-provider-twitter&quot;&gt;
+&lt;div class=&quot;wp-block-embed__wrapper&quot;&gt;
+&lt;div class=&quot;embed-container rich &quot;&gt;&lt;blockquote class=&quot;twitter-tweet&quot;&gt;&lt;p lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;&lt;a href=&quot;https://twitter.com/hashtag/womenintech?src=hash&amp;amp;ref_src=twsrc%5Etfw&quot;&gt;#womenintech&lt;/a&gt; true story.&lt;br&gt;&lt;br&gt;A colleague invited me to a party.&lt;br&gt;&lt;br&gt;One guy intro&amp;#39;d himself and asked me what I do.&lt;br&gt;&lt;br&gt;Me: I&amp;#39;m a developer.&lt;br&gt;&lt;br&gt;Him: Uh &amp;#39;developer&amp;#39; can mean a lot of things. What do you *actually* do?&lt;br&gt;&lt;br&gt;My colleague had to back me up and I explain that I do program at work.&lt;/p&gt;&amp;mdash; Novall Swift (@NovallSwift) &lt;a href=&quot;https://twitter.com/NovallSwift/status/1295365140494405634?ref_src=twsrc%5Etfw&quot;&gt;August 17, 2020&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&quot;https://platform.twitter.com/widgets.js&quot; charset=&quot;utf-8&quot;&gt;&lt;/script&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/figure&gt;
+&lt;p&gt;&lt;!-- /wp:core-embed/twitter --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Frankly, the double standard in our community is disgusting.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;WordPress&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I've been involved off and on with WordPress for almost my entire professional career as a developer. I've seen layouts come and go, ridden out the storm of several controversies, and contributed in terms of code, documentation, consulting, and speaking at WordCamps. It's a vibrant community and, while I don't always see eye-to-eye with everything the community does, it's one I'm proud to be a part of.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Most communities claim their leadership structures are meritocracies. The leaders are the ones with the most contributions (either in terms of volume or impact). The loudest voices are those of the largest contributors. The best work always floats to the top. We explain how a meritocracy works to newcomers with the expectation that it's unbiased, truly merit-based, and completely fair.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;This is not true.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Again, men are afforded the benefit of the doubt in tech. If a man makes a poor suggestion or contribution, we[ref]By &quot;we&quot; I mean the community. And also myself as I've been guilty of these mistakes more times than I can count.[/ref] take the time to communicate or help him understand why. If a woman makes an otherwise solid suggestion, but challenges our understanding or roadmap, we go into attack mode.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Don't believe me? Take 5 minutes to look at Twitter or Reddit.[ref]Actually, no. Don't do that. It's a toxic cesspool of misogyny. You have better things to do with your time.[/ref] Or just read the commentary on posts highlighting the WordPress 5.6 team. Our meritocracies are broken.[ref]Two years ago, I was invited to speak again at ZendCon. It was exciting as I see conferences - particularly larger ones sponsored by organizations like Zend - as being among the pinnacles of achievement in open source. You get to speak based on your contributions and proven experience. It's rewarding and helps stave off imposter syndrome. Except ... &lt;a href=&quot;https://ttmm.io/tech/zendcon/&quot;&gt;this time I couldn't do it&lt;/a&gt;. The speakers list for ZendCon was almost &lt;em&gt;entirely&lt;/em&gt; male.[/ref]&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If we want to build a truly open, democratized community we &lt;em&gt;&lt;strong&gt;must&lt;/strong&gt;&lt;/em&gt; focus on amplifying the voices and the impact of those who have traditionally been left in the margins. The women on &lt;a href=&quot;https://make.wordpress.org/core/2020/08/13/wordpress-5-6-release-planning/&quot;&gt;the WordPress 5.6 release team&lt;/a&gt; are amazing contributors in their own right and I have no doubt the project is safe in their hands - because it's already &lt;em&gt;been&lt;/em&gt; in their hands for a long time.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I admit that I haven't contributed to WordPress core in a while. But right now I'm excited and happy to dive back in. This change shows the project is truly living up to its motto to democratize publishing.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I wish the best of luck to the entire team! This is an exciting release to see and I'm thrilled to watch where you take things.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Wed, 19 Aug 2020 09:00:00 -0700</pubDate>
+        <link>/tech/opinion-wordpress-5-6-release-squad/</link>
+        <guid isPermaLink="true">/tech/opinion-wordpress-5-6-release-squad/</guid>
+        
+        <category>WordPress</category>
+        
+        
+        <category>Politics</category>
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Storytelling</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I studied marketing in grad school, but it wasn't until after graduation that I really &quot;got it.&quot; Going in, I loved the story-based aspect of marketing, so that's where I focused. Advertising, brand strategy, product marketing - they're all different ways of telling stories.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I love telling stories, but I'm not always good at it.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;For a while I wanted to write a book about marketing and storytelling. The idea was to examine the three dimensions of the marketing story:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:list {&quot;ordered&quot;:true} --&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The story of your customers without your product&lt;/li&gt;
+&lt;li&gt;The story of your product/business&lt;/li&gt;
+&lt;li&gt;The story of you and your customers working together&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;!-- /wp:list --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The idea seemed sound at the time, but storytelling is far more nuanced than that. My exposure to data science has driven that point home because, at it's core, data science and analysis is &lt;em&gt;also&lt;/em&gt; all about storytelling.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Interpretation&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;One of my undergrad degrees is in political science. We studied a lot of history but often used historical statistics to describe events and motivations.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;A specific professor confused me a great deal during that program. I took two different courses from her; though I can remember exactly which ones, I do remember two specific lectures she gave.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In one, she cited a statistic in a specific community in Northern Africa: the average age at which couples married. Her argument was that higher marriage ages implied people lived with their parents longer due to improving economic conditions. In her models, women stayed at home longer to focus on their education, deferring both marriage and children.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;In the next quarter, tho, she used the same statistic to imply the exact opposite. People would stay with their parents longer due to economic uncertainty, deferring marriage and children because they lacked the means to start a family.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The same statistic. The same professor. Two different yet equally compelling interpretations.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Data Science&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;A similar issue came up when working with some data scientists to solve a problem. Due to conflicting guidance from business leaders we had only a fuzzy definition of success for a project. Rather than let perfect be the enemy of good, we proceeded with the fuzzy definitions and ran a few experiments.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The problem was that, depending on who we were talking to, the experiments were either a success or a failure.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The goal was to increase throughput of a specific system. The fuzziness in the goal was two-fold: over what time horizon did the increase matter and how did we measure throughput?&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;On the one hand, we had definitely improved overall &lt;em&gt;delivery&lt;/em&gt; over the one-month period of the experiment. It was an overwhelming success.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;On the other hand, long-term forecasting showed we'd sacrificed long-term delivery on a one year horizon in favor of immediate returns. The increased rate of short term delivery also amounted to higher volumes of work-in-progress for the system. In other words, it was an overwhelming failure.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Ultimately those in the second camp won out and we disabled the new system in favor of rolling back to a proven yet unreliable system and went back to the drawing board. The benefit of hindsight has taught us to clearly define metrics of success before proceeding, even if that means a project needs to be put on hold.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Data Storytelling&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Whether it's telling the story of a system experiment or explaining the implications of historical statistics around marriage rates, compelling storytelling is vital to communication. Statistics and raw data are completely objective, which is great. But objective truth tells us nothing without subjective interpretation.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Lies,_damned_lies,_and_statistics&quot;&gt;Lies, damned lies, and statistics&lt;/a&gt; can be used to strengthen otherwise weak arguments. On the flip side, strong arguments are required to provide context and meaning to the statistics and data from which they're derived.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Data science is something data scientists &lt;em&gt;do&lt;/em&gt;. They study the data, explore the story it's telling, run experiments to verify their hypothesis, and craft a compelling narrative around it. This is the crux of the field, and is a far cry more difficult than even the most sophisticated linear algebra or higher math that goes into the analysis itself.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I've spent most of my career learning to be a better storyteller. It's not until somewhat more recently I learned just how critical that skill really is.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Mon, 11 May 2020 05:00:00 -0700</pubDate>
+        <link>/biz/storytelling/</link>
+        <guid isPermaLink="true">/biz/storytelling/</guid>
+        
+        <category>data science</category>
+        
+        <category>marketing</category>
+        
+        
+        <category>Business</category>
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Sciencing the Data</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Over the past month I've been engaged in a Coursera specialization to better understand the field of data science. As part of &lt;a href=&quot;https://github.com/ericmann/Coursera_Capstone&quot;&gt;the capstone project&lt;/a&gt; I was tasked with evaluating various neighborhoods in the region of my choice to make a business decision. As part of the project, I was also asked to produce either a PowerPoint presentation or a blog post.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;The Problem&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;My goal was to help a new (fictitious) brewery identify the best neighborhood in the Portland metro area in which to open a new location. They specifically want to target neighborhoods with relatively high concentrations of &lt;em&gt;existing&lt;/em&gt; breweries to foster cooperation and partnership among the industry.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;To solve the problem, we needed to look at multiple angles:&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:list --&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What neighborhoods do we have data for?&lt;/li&gt;
+&lt;li&gt;What is the population of each neighborhood?&lt;/li&gt;
+&lt;li&gt;How many breweries exist in each neighborhood already?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;!-- /wp:list --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;The Data&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Neighborhood labels, geography, and population data was scraped from PDXListed.com. They also have plenty of unstructured data describing the culture and community of each neighborhood, which might help with future analysis projects as well.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Existing brewery locations (names and positions) were pulled directly from the Foursquare API using each neighborhood center as a location of interest. Since the API is in meters, I converted a half-mile to meters and used that to limit the API response.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;The Analysis&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Finally, I collated all of the above data to calculate the per capita density of existing breweries and overlaid all of the geological information on a map. Given I live in the Portland area, I'd expect (anecdotally) for the highest per capita concentrations of breweries to be downtown. I wasn't really surprised by the results.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:image {&quot;id&quot;:8233,&quot;sizeSlug&quot;:&quot;large&quot;} --&gt;&lt;/p&gt;
+&lt;figure class=&quot;wp-block-image size-large&quot;&gt;&lt;img src=&quot;/assets/2020/05/breweryneighborhoods.png&quot; alt=&quot;&quot; class=&quot;wp-image-8233&quot; /&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;!-- /wp:image --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;The Results&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Unsurprisingly, Old Town Chinatown had the highest density of breweries due to the lower number of people who live in this rapidly developing area. Central downtown followed closely thereafter with the Pearl district in third.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If I were making an &lt;em&gt;actual&lt;/em&gt; business recommendation based on this data I would encourage our fictitious brewing company to open in the Pearl. There are 9 other breweries in the area (the same as Old Town Chinatown) but a substantially higher number of residents, likely encouraging a more vibrant night life.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I also happen to know of a brewery location recently put on the market right in the center of the Pearl, so this would be a great opportunity for our client.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Overall, this specialization was a fun experience. I already knew Python and most of the basics they taught in the introductory classes so I was able to rush through them rather quickly. The focus on visualization during data exploration was useful, though, and introduced me to additional tools I haven't used before professionally.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;My immediate next steps are to apply the new knowledge I've obtained in industry. Adding rich visualizations alone will make storytelling with data more compelling!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 09 May 2020 09:05:07 -0700</pubDate>
+        <link>/tech/sciencing-the-data/</link>
+        <guid isPermaLink="true">/tech/sciencing-the-data/</guid>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+      <item>
+        <title>Unboxing the Lemur Pro</title>
+        <description>&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Over the past several months I've dug deep into the RingCentral Game Changers challenge in the hope of redeeming my points for the grand prize of an all expense paid trip to Coder Cruise. Given the current state of the world, however, it's become increasingly unlikely I'll attend this (or any) cruise in the foreseeable future. As an alternative, I elected to cash in my points for a new laptop - the &lt;a href=&quot;https://system76.com/laptops/lemur&quot;&gt;Lemur Pro&lt;/a&gt; from &lt;a href=&quot;https://system76.com/&quot;&gt;System76&lt;/a&gt;.[ref]The &lt;em&gt;actual&lt;/em&gt; 75k point laptop is supposed to be a MacBook Pro ... but I'm over Apple products and have no intention of ever using them as personal machines again. I reached out to the managers of the Game Changers program and &lt;s&gt;begged&lt;/s&gt; asked them to buy me a System76 machine instead.[/ref]&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;For those of you taking notes, this is &lt;em&gt;not&lt;/em&gt; my first System76 machine. I picked up an &lt;a href=&quot;https://ttmm.io/uncategorized/system76-oryx-pro-first-impressions/&quot;&gt;Oryx Pro&lt;/a&gt; about 2 years ago and was gifted a &lt;a href=&quot;https://ttmm.io/tech/system76-superfan/&quot;&gt;Thelio&lt;/a&gt; desktop last fall. To say I'm a fan of this company and their work would be an understatement. I've been advocating their hardware and their &lt;a href=&quot;https://pop.system76.com/&quot;&gt;Linux OS&lt;/a&gt; for ages now and successfully talked multiple people into giving it a try. Everyone's happy and we're supporting an incredible team.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;First Impressions&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;After sitting and waiting for a week for the UPS driver to show up, I finally received my brand new Lemur Pro today. I'd selected this machine for its size - it's a bit smaller than the family Chromebook bit a &lt;em&gt;significant&lt;/em&gt; amount. I was a bit worried when the box arrived, though, as it was &lt;em&gt;huge&lt;/em&gt;. It also felt ... empty.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:image {&quot;align&quot;:&quot;center&quot;,&quot;id&quot;:8219,&quot;sizeSlug&quot;:&quot;medium&quot;} --&gt;&lt;/p&gt;
+&lt;div class=&quot;wp-block-image&quot;&gt;
+&lt;figure class=&quot;aligncenter size-medium&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_144331-300x225.jpg&quot; alt=&quot;Unopened Lemur still in shipping box.&quot; class=&quot;wp-image-8219&quot; /&gt;&lt;br /&gt;
+&lt;figcaption&gt;Unopened shipping box&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;!-- /wp:image --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Once I got things open, I was greeted by the usual stellar branding I'm familiar with from System76 products. I also realized immediately why the box was so light. The Lemur is remarkably small!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:image {&quot;align&quot;:&quot;center&quot;,&quot;id&quot;:8221,&quot;sizeSlug&quot;:&quot;medium&quot;} --&gt;&lt;/p&gt;
+&lt;div class=&quot;wp-block-image&quot;&gt;
+&lt;figure class=&quot;aligncenter size-medium&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_144417-300x225.jpg&quot; alt=&quot;Packaged Lemur laptop in the shipping container.&quot; class=&quot;wp-image-8221&quot; /&gt;&lt;br /&gt;
+&lt;figcaption&gt;Tiny laptop is tiny&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;!-- /wp:image --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;As much as I wanted to dive right in, I had a tiny bit of work to do. I have family who works at Intel, and they'd managed to order me a couple of fairly sizable NVMe SSDs a few months ago. Originally I had planned to add one to my Thelio, but have since switched to standard SATA SSDs in the available drive bays. I decided to hold onto one for my Oryx (I've just been too lazy to add it) and hold the other as a spare.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Since I had a pristine machine on my hands and no user files to migrate, this was a &lt;em&gt;perfect&lt;/em&gt; opportunity to upgrade the drive without any potential headaches!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;The System76 team is dedicated to being as open and transparent about their tech as possible, so they've published full maintenance and repair guides for the Lemur online. I used the guides to navigate the internals of my machine and swap out the drive with ease.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:image {&quot;align&quot;:&quot;center&quot;,&quot;id&quot;:8223,&quot;sizeSlug&quot;:&quot;medium&quot;} --&gt;&lt;/p&gt;
+&lt;div class=&quot;wp-block-image&quot;&gt;
+&lt;figure class=&quot;aligncenter size-medium&quot;&gt;&lt;img src=&quot;/assets/2020/05/internals-scaled-e1588826979160-300x173.jpg&quot; alt=&quot;Lemur Pro Interior&quot; class=&quot;wp-image-8223&quot; /&gt;&lt;br /&gt;
+&lt;figcaption&gt;An interior look at the Lemur Pro.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;!-- /wp:image --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;Next I booted things up with a live USB drive for Pop_OS and installed the operating system anew. After a few more minutes of work I had everything configured and ready to go. I even connected my machines on the local network so I could share background images and user avatars!&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:image {&quot;align&quot;:&quot;center&quot;,&quot;id&quot;:8226,&quot;sizeSlug&quot;:&quot;medium&quot;} --&gt;&lt;/p&gt;
+&lt;div class=&quot;wp-block-image&quot;&gt;
+&lt;figure class=&quot;aligncenter size-medium&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_215202-300x244.jpg&quot; alt=&quot;Lemur Pro in action&quot; class=&quot;wp-image-8226&quot; /&gt;&lt;br /&gt;
+&lt;figcaption&gt;Lemur Pro in action&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;!-- /wp:image --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;I've only used this machine for a few hours today, mostly between configuration and writing this blog post. That said, I'm already a fan! It's light, portable, the battery seems solid. I have one minor gripe with the trackpad,[ref]The absence of physical buttons on the trackpad is nice, but the secondary action requires a two-finger press rather than the typical &quot;click the lower right corner.&quot; This might be a mere configuration issue I can change later, though, so I'll live with it and can get used to the new settings regardless.[/ref] but the machine itself is definitely worth the price. If you have any interest in an ultraportable yet powerful Linux machine, I'd encourage you to &lt;a href=&quot;https://system76.com/laptops/lemur&quot;&gt;pick one up yourself&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:gallery {&quot;ids&quot;:[8227,8228,8229],&quot;columns&quot;:3,&quot;linkTo&quot;:&quot;media&quot;,&quot;sizeSlug&quot;:&quot;medium&quot;} --&gt;&lt;/p&gt;
+&lt;figure class=&quot;wp-block-gallery columns-3 is-cropped&quot;&gt;
+&lt;ul class=&quot;blocks-gallery-grid&quot;&gt;
+&lt;li class=&quot;blocks-gallery-item&quot;&gt;
+&lt;figure&gt;&lt;a href=&quot;https://ttmm.io/wp-content/uploads/2020/05/IMG_20200506_144641-300x225.jpg&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_144641-300x225.jpg&quot; alt=&quot;&quot; data-id=&quot;8227&quot; data-link=&quot;https://ttmm.io/?attachment_id=8227&quot; class=&quot;wp-image-8227&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;figcaption class=&quot;blocks-gallery-item__caption&quot;&gt;The Lemur is super low-profile.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li class=&quot;blocks-gallery-item&quot;&gt;
+&lt;figure&gt;&lt;a href=&quot;https://ttmm.io/wp-content/uploads/2020/05/IMG_20200506_144648-300x225.jpg&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_144648-300x225.jpg&quot; alt=&quot;&quot; data-id=&quot;8228&quot; data-link=&quot;https://ttmm.io/?attachment_id=8228&quot; class=&quot;wp-image-8228&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;figcaption class=&quot;blocks-gallery-item__caption&quot;&gt;Flat (rather than gloss) screen is a huge plus. Small bevel is awesome, too!&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;li class=&quot;blocks-gallery-item&quot;&gt;
+&lt;figure&gt;&lt;a href=&quot;https://i0.wp.com/ttmm.io/wp-content/uploads/2020/05/IMG_20200506_162027-scaled.jpg?fit=1920%2C2560&amp;amp;ssl=1&quot;&gt;&lt;img src=&quot;/assets/2020/05/IMG_20200506_162027-225x300.jpg&quot; alt=&quot;&quot; data-id=&quot;8229&quot; data-full-url=&quot;https://i0.wp.com/ttmm.io/wp-content/uploads/2020/05/IMG_20200506_162027-scaled.jpg?fit=1920%2C2560&amp;amp;ssl=1&quot; data-link=&quot;https://ttmm.io/?attachment_id=8229&quot; class=&quot;wp-image-8229&quot; /&gt;&lt;/a&gt;&lt;br /&gt;
+&lt;figcaption class=&quot;blocks-gallery-item__caption&quot;&gt;Lemur atop my far beefier Oryx for comparison.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figcaption class=&quot;blocks-gallery-caption&quot;&gt;More unboxing shots for the curious.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;&lt;!-- /wp:gallery --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:heading --&gt;&lt;/p&gt;
+&lt;h2&gt;RingCentral Game Changers&lt;/h2&gt;
+&lt;p&gt;&lt;!-- /wp:heading --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;For anyone who missed my earlier posts, the Game Changers program is a way for anyone who writes code to get experience with RingCentral and the APIs they publish. You can leverage their platform for voice, SMS, video, and even app-based communication. The Game Changers program itself empowers developers to experiment with the system, write tutorials, and give back to the community.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;It's a great way to learn how to use the systems produced by an outstanding team from a super relevant telecommunications company. Not only that, but completing challenges earns you points you can exchange for awesome swag. Want a bust of Captain Picard facepalming? 10,000 points. Want a one-year subscription to Nomad PHP? 15,000 points. Want an awesome new &lt;s&gt;MacBook&lt;/s&gt; Lemur Pro? 75,000 points.&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;&lt;!-- wp:paragraph --&gt;&lt;/p&gt;
+&lt;p&gt;If you want to get started, merely sign up at &lt;a href=&quot;https://gamechanging.dev&quot;&gt;gamechanging.dev&lt;/a&gt; and dive in. It's a blast![ref]While RingCentral did not sponsor or in any way compensate me for this blog post, they did just send me a brand new laptop in exchange for the 75,000 points I'd earned as a participant in the Game Changers program.[/ref]&lt;/p&gt;
+&lt;p&gt;&lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+</description>
+        <pubDate>Thu, 07 May 2020 05:00:37 -0700</pubDate>
+        <link>/tech/unboxing-the-lemur-pro/</link>
+        <guid isPermaLink="true">/tech/unboxing-the-lemur-pro/</guid>
+        
+        <category>RingCentral</category>
+        
+        <category>system76</category>
+        
+        
+        <category>Technology</category>
+        
+      </item>
+    
+  </channel>
+</rss>
