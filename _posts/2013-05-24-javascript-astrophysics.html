@@ -14,30 +14,6 @@ tags:
 - chandrasekhar limit
 - javascript
 - white dwarf
-meta:
-  _yoast_wpseo_linkdex: '86'
-  _edit_last: '2'
-  _yoast_wpseo_focuskw: javascript
-  _yoast_wpseo_title: JavaScript Astrophysics
-  _yoast_wpseo_metadesc: JavaScript is both approachable and ubiquitous - this is
-    a good thing, because JavaScript can even be used to perform advanced scientific
-    analysis.
-  _wpas_done_all: '1'
-  yourls_shorturl: http://eam.me/qi
-  _wpas_skip_1588757: '1'
-  _zem_rp_image: empty
-  _jetpack_related_posts_cache: a:1:{s:32:"8f6677c9d6b0f903e98ad32ec61f8deb";a:2:{s:7:"expires";i:1408606485;s:7:"payload";a:3:{i:0;a:1:{s:2:"id";i:6263;}i:1;a:1:{s:2:"id";i:6095;}i:2;a:1:{s:2:"id";i:6232;}}}}
-  keen_postview_count_this_24_hours: '1'
-  keen_postview_count_this_7_days: '3'
-  _genesis_scripts_body_position: bottom
-  _yoast_wpseo_primary_category: ''
-  _yoast_wpseo_is_cornerstone: ''
-  _wpas_skip_1588752: '1'
-  _wpas_skip_1650274: '1'
-  _yoast_wpseo_focuskw_text_input: javascript
-  _yoast_wpseo_content_score: '60'
-  _wpcom_is_markdown: '1'
-  _wpghs_github_path: _posts/2013-05-24-javascript-astrophysics.md
 author:
   login: eamann
   email: eric@eamann.com
@@ -53,25 +29,25 @@ permalink: "/tech/javascript-astrophysics/"
 <p>Every star in the sky obeys the same four physical laws:</p>
 <ol>
 <li>Hydrostatic Equilibrium - the force of gravity pushing <em>in</em> balances the pressure pushing <em>out</em><br />
-$latex P'(x) = -(\frac{GM\rho}{r^2}) $</li>
+$$ P'(x) = -(\frac{GM\rho}{r^2}) $$</li>
 <li>Energy Transport - energy moves from hot to cool<br />
-$latex T'(r) = -(\frac{3 \kappa \rho L}{16\pi acT^3r^2}) $</li>
+$$ T'(r) = -(\frac{3 \kappa \rho L}{16\pi acT^3r^2}) $$</li>
 <li>Conservation of Mass - the total mass is equal to the sum of the mass of all composite layers<br />
-$latex M'(r) = 4\pi r^2 \rho $</li>
+$$ M'(r) = 4\pi r^2 \rho $$</li>
 <li>Conservation of Energy - the total energy is equal to the sum of the energies of composite layers<br />
-$latex L'(r) = 4\pi r^2 \rho e$</li>
+$$ L'(r) = 4\pi r^2 \rho e $$</li>
 </ol>
 <p>The variables above:</p>
 <ul>
-<li>$latex \pi $ - Pi</li>
-<li>$latex P $ - the pressure of a layer of the star</li>
-<li>$latex G $ - the gravitational constant typical in stellar calculations</li>
-<li>$latex \rho $ - the density at a particular point in the star relative to its center</li>
-<li>$latex r $ - the distance from the center of the star to the point above</li>
-<li>$latex T $ - the energy of the star</li>
-<li>$latex L $ - the star’s luminosity</li>
-<li>$latex e $ - the charge of an electron</li>
-<li>$latex \kappa $, $latex a $, $latex c $ - constants dictating the energy of a star. .</li>
+<li>\( \pi \) - Pi</li>
+<li>$$ P $$ - the pressure of a layer of the star</li>
+<li>$$ G $$ - the gravitational constant typical in stellar calculations</li>
+<li>$$ \rho $$ - the density at a particular point in the star relative to its center</li>
+<li>$$ r $$ - the distance from the center of the star to the point above</li>
+<li>$$ T $$ - the energy of the star</li>
+<li>$$ L $$ - the star’s luminosity</li>
+<li>$$ e $$ - the charge of an electron</li>
+<li>$$ \kappa $$, $$ a $$, $$ c $$ - constants dictating the energy of a star. .</li>
 </ul>
 <h3>The Death of Stars</h3>
 <p>All stars are initially composed of the same material: hydrogen. The difference is in the amount of hydrogen present.  Some of the smallest stars[ref]Red dwarfs typically have a mass below ~0.4 time that of our sun.[/ref] are called red dwarfs.  Due to their small size, mass, and temperature they can burn for a long time without running out of fuel.</p>
@@ -82,7 +58,7 @@ $latex L'(r) = 4\pi r^2 \rho e$</li>
 <p>Each atom has electron orbitals that can have, in the 1s and 2s orbitals, at most two electrons or, in the 2p orbital, at most six electrons.  Electron degeneracy[ref]The <a title="Pauli Exclusion Principle" href="http://en.wikipedia.org/wiki/Pauli_exclusion_principle">Pauli Exclusion Principle</a> is the theory that there are only so many differences between electrons and no two electrons can occupy the same point in space if they are identical.[/ref] is responsible for sustaining a white dwarf against its own gravity.  Identical electrons in the matter that makes up a white dwarf <a title="Electron Degeneracy Pressure" href="http://en.wikipedia.org/wiki/Electron_degeneracy_pressure">will push against each other</a>, preventing the star from collapsing.</p>
 <h3>Equation of State</h3>
 <p>A white dwarf with low mass has a low pressure, thus its electrons can be treated non-relativistically.  In this case, the equation of state defining the relation between pressure and density is rather simple.</p>
-<p style="text-align: center;">$latex P( \rho ) = 1.004 \times 10^{13} (\frac{\rho}{\mu_{e}})^\frac{5}{3} $</p>
+<p style="text-align: center;">$$ P( \rho ) = 1.004 \times 10^{13} (\frac{\rho}{\mu_{e}})^\frac{5}{3} $$</p>
 <p>In most cases, μ<sub>e</sub>, the mean molecular weight per electron, is about equal to 2.  This equation can then be used in conjunction with four equations above to generate a rough computer model of the structure of a white dwarf.</p>
 <p>Under higher pressures, electrons are moving around so rapidly that they need to be treated relativistically.  Broken into several steps, the equation of state becomes:</p>
 <p style="text-align: center;">$latex P = 6.003 \times 10^{22} f(x) $</p>
@@ -113,3 +89,5 @@ $latex L'(r) = 4\pi r^2 \rho e$</li>
 <p>Studying astrophysics often involves complex mathematics and computer models to make sense of the world around us. In the past, this involved archaic programming syntax, specialized equipment, and development environments with significant learning curves. The astrophysics of today, however, <em><strong>is accessible to anyone with a computer and a web browser.</strong></em><b><i><br />
 </i></b></p>
 <p>In fact, if you're seeing the charts above, it means you just executed this very astrophysics simulation. In your own browser. In real time.</p>
+
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>

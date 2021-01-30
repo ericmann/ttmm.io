@@ -12,40 +12,6 @@ categories:
 tags:
 - concept
 - WordPress
-meta:
-  yourls_shorturl: http://eam.me/eu
-  _oembed_ef3a84045d1b6b24076fe53353604883: <blockquote class="twitter-tweet" width="500"><p>“But
-    The Client Wants IE 6 Support!” <a href="http://t.co/tOMKHwLq" title="http://www.smashingmagazine.com/2011/11/03/">smashingmagazine.com/2011/11/03/</a>“but-the-client-wants-ie-6-support”/</p>&mdash;
-    Irv Briscoe (@irvbriscoe) <a href="https://twitter.com/irvbriscoe/status/187622178039148545"
-    data-datetime="2012-04-04T19:26:27+00:00">April 4, 2012</a></blockquote><script
-    src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  _oembed_0ad7af5e6fa4fd1c44332fac21e9a1e5: <blockquote class="twitter-tweet" width="500"
-    lang="fr"><p>“But The Client Wants IE 6 Support!” <a href="http://t.co/tOMKHwLq"
-    title="http://www.smashingmagazine.com/2011/11/03/">smashingmagazine.com/2011/11/03/</a>“but-the-client-wants-ie-6-support”/</p>&mdash;
-    Irv Briscoe (@irvbriscoe) <a href="https://twitter.com/irvbriscoe/status/187622178039148545"
-    data-datetime="2012-04-04T19:26:27+00:00">Avril 4, 2012</a></blockquote><script
-    src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  _edit_last: '2'
-  _yoast_wpseo_focuskw: URL
-  _yoast_wpseo_title: URLs and UX - Mindshare Strategy
-  _yoast_wpseo_metadesc: Does it make sense for WordPress to automatically check URLs
-    for validity before inserting them in post content?
-  _blackbirdpie-187622178039148545: a:13:{s:2:"id";s:18:"187622178039148545";s:11:"screen_name";s:10:"irvbriscoe";s:9:"real_name";s:11:"Irv
-    Briscoe";s:10:"tweet_text";s:215:"&#8220;But The Client Wants IE 6 Support!&#8221;
-    <a href="http://t.co/tOMKHwLq&#8220;but-the-client-wants-ie-6-support&#8221;/"
-    rel="nofollow">http://t.co/tOMKHwLq&#8220;but-the-client-wants-ie-6-support&#8221;/</a>";s:6:"source";s:101:"<a
-    href="http://itunes.apple.com/us/app/twitter/id409789998?mt=12" rel="nofollow">Twitter
-    for Mac</a>";s:11:"profile_pic";s:62:"http://a0.twimg.com/profile_images/1856915396/image_normal.jpg";s:16:"profile_bg_color";s:6:"FFFFFF";s:15:"profile_bg_tile";s:1:"1";s:16:"profile_bg_image";s:62:"http://a0.twimg.com/profile_background_images/196211220/bg.gif";s:18:"profile_text_color";s:6:"000000";s:18:"profile_link_color";s:6:"49BBCF";s:10:"time_stamp";s:10:"1333567587";s:10:"utc_offset";s:6:"-21600";}
-  yourls_tweeted: '1'
-  _oembed_93371e29ff399abcf9a0d295c59ca23a: <blockquote class="twitter-tweet" width="550"
-    lang="fr"><p>“But The Client Wants IE 6 Support!” <a href="http://t.co/tOMKHwLq"
-    title="http://www.smashingmagazine.com/2011/11/03/">smashingmagazine.com/2011/11/03/</a>“but-the-client-wants-ie-6-support”/</p>&mdash;
-    Irv Briscoe (@irvbriscoe) <a href="https://twitter.com/irvbriscoe/status/187622178039148545"
-    data-datetime="2012-04-04T19:26:27+00:00">Avril 4, 2012</a></blockquote><script
-    src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  _yoast_wpseo_linkdex: '79'
-  _zem_rp_image: '4017'
-  _wpghs_github_path: _posts/2012-04-05-urls-and-ux.md
 author:
   login: eamann
   email: eric@eamann.com
@@ -58,7 +24,9 @@ permalink: "/tech/urls-and-ux/"
 <p>Most of the sites I read on a daily basis are littered with links to this site or that site.  Many of them are written quickly to get news stories out promptly and, as a result, are published with typos.</p>
 <p>It's one thing when I catch a typo in body content - <a href="http://www.ecenglish.com/learnenglish/lessons/can-you-read">most of us can read English words if the characters are in any order</a> - but a typo in a <em>link</em> can be catastrophic.</p>
 <p>The other day, for example, a friend posted a link to Twitter. Twitter immediately tried to parse the link to auto-shorten it ... and broke the link in the process (apparently their tool doesn't like quotes in URLs):</p>
-<p>https://twitter.com/irvbriscoe/status/187622178039148545</p>
+<blockquote class="twitter-tweet">
+  <p>“But The Client Wants IE 6 Support!” <a href="http://t.co/tOMKHwLq" title="http://www.smashingmagazine.com/2011/11/03/">smashingmagazine.com/2011/11/03/</a>“but-the-client-wants-ie-6-support”/</p>&mdash; Irv Briscoe (@irvbriscoe) <a href="https://twitter.com/irvbriscoe/status/187622178039148545" data-datetime="2012-04-04T19:26:27+00:00">Avril 4, 2012</a>
+</blockquote>
 <p>Similar mistakes make blogs and news posts difficult to follow.  A simple entry error can turn an otherwise useful link (i.e. <a href="http://google.com">http://google.com</a>) into a broken one that results in a 404 Not Found error (i.e <a href="http://mindsharestrategy.com/htpt://google.com">http://mindsharestrategy.com/htpt://google.com</a>).</p>
 <p>Not checking for broken links can lead to a poor user experience.  WordPress is all about creating a <em>great</em> user experience, so I think it should do a certain amount of checking for authors to protect us from our own proofreading laziness.</p>
 <h2>An Alternative</h2>
@@ -73,3 +41,4 @@ permalink: "/tech/urls-and-ux/"
 <p style="text-align: left;">Placing the mouse cursor over the indicator icon or the highlighted URL field would prompt the user to explain that the URL as typed returned an error and might be invalid.</p>
 <p style="text-align: left;">This would in no way prevent the user from adding the link anyway. It's merely intended to be a quick check to help prevent broken links from making their way into the field.</p>
 <p style="text-align: left;">What are your thoughts? Do you see any value in this feature? Do you think your customers would see any value?</p>
+<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
