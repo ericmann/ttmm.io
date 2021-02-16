@@ -1,15 +1,11 @@
 ---
 layout: page
 title: About
-featured_image: /assets/images/pages/about.jpg
+featured_image: /assets/images/pages/monkeyface.png
 ---
 
-Charles Lavoie is a senior developer from Vilnius, Lithuania. After graduating from The College with a degree in **Computer Science**, he worked for three small web shops where he honed his development skills and love for JavaScript.
+Eric is a technical leader and software polyglot with over a decade of experience working on projects big and small. He has built high performance marketing websites for Fortune 500 enterprises, developed security applications for organizations like [DARPA](https://www.darpa.mil/), and [written extensively](https://www.phparch.com/books/security-principles-for-php-applications/) about best practices for software development.
 
-His work has been recognized by Communication Arts, IBM, How, ID, IdN, AIGA, Effie, Archive, Graphis, AdFed and Rockport. **Net** magazine named him a person to watch in 2018.
-
->The world always seems brighter when you’ve just made something that wasn’t there before. <cite>Neil Gaiman</cite>
-
-As a hobby, Daniel authors the most influential JavaScript blog in Lithuania with over 100,000 page views a month. He lives in Vilnius with his beautiful wife, two boys and one girl.
+Eric calls himself a ["Tekton"](https://en.wikipedia.org/wiki/Tekt%C5%8Dn) professionally. This is an ancient Greek word meaning artisan, craftsman, or builder that was used to describe the profession of Jesus Christ. This is an apt description of what Eric does and his identity.
 
 *Thank You for reading!*

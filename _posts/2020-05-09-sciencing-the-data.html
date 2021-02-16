@@ -2,77 +2,32 @@
 layout: post
 title: Sciencing the Data
 date: 2020-05-09 09:05:07.000000000 -07:00
-type: post
-parent_id: '0'
-published: true
-password: ''
-status: publish
+featured: true
+featured_image: /assets/2020/05/breweryneighborhoods.png
 categories:
 - Technology
 tags: []
-author:
-  login: eamann
-  email: eric@eamann.com
-  display_name: Eric
-  first_name: Eric
-  last_name: Mann
 permalink: "/tech/sciencing-the-data/"
 ---
-<p><!-- wp:paragraph --></p>
 <p>Over the past month I've been engaged in a Coursera specialization to better understand the field of data science. As part of <a href="https://github.com/ericmann/Coursera_Capstone">the capstone project</a> I was tasked with evaluating various neighborhoods in the region of my choice to make a business decision. As part of the project, I was also asked to produce either a PowerPoint presentation or a blog post.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:heading --></p>
 <h2>The Problem</h2>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>My goal was to help a new (fictitious) brewery identify the best neighborhood in the Portland metro area in which to open a new location. They specifically want to target neighborhoods with relatively high concentrations of <em>existing</em> breweries to foster cooperation and partnership among the industry.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:paragraph --></p>
 <p>To solve the problem, we needed to look at multiple angles:</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:list --></p>
 <ul>
 <li>What neighborhoods do we have data for?</li>
 <li>What is the population of each neighborhood?</li>
 <li>How many breweries exist in each neighborhood already?</li>
 </ul>
-<p><!-- /wp:list --></p>
-<p><!-- wp:heading --></p>
 <h2>The Data</h2>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>Neighborhood labels, geography, and population data was scraped from PDXListed.com. They also have plenty of unstructured data describing the culture and community of each neighborhood, which might help with future analysis projects as well.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:paragraph --></p>
 <p>Existing brewery locations (names and positions) were pulled directly from the Foursquare API using each neighborhood center as a location of interest. Since the API is in meters, I converted a half-mile to meters and used that to limit the API response.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:heading --></p>
 <h2>The Analysis</h2>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>Finally, I collated all of the above data to calculate the per capita density of existing breweries and overlaid all of the geological information on a map. Given I live in the Portland area, I'd expect (anecdotally) for the highest per capita concentrations of breweries to be downtown. I wasn't really surprised by the results.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:image {"id":8233,"sizeSlug":"large"} --></p>
 <figure class="wp-block-image size-large"><img src="{{ site.baseurl }}/assets/2020/05/breweryneighborhoods.png" alt="" class="wp-image-8233" /></figure>
-<p><!-- /wp:image --></p>
-<p><!-- wp:heading --></p>
 <h2>The Results</h2>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>Unsurprisingly, Old Town Chinatown had the highest density of breweries due to the lower number of people who live in this rapidly developing area. Central downtown followed closely thereafter with the Pearl district in third.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:paragraph --></p>
 <p>If I were making an <em>actual</em> business recommendation based on this data I would encourage our fictitious brewing company to open in the Pearl. There are 9 other breweries in the area (the same as Old Town Chinatown) but a substantially higher number of residents, likely encouraging a more vibrant night life.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:paragraph --></p>
 <p>I also happen to know of a brewery location recently put on the market right in the center of the Pearl, so this would be a great opportunity for our client.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:heading --></p>
 <h2>Next Steps</h2>
-<p><!-- /wp:heading --></p>
-<p><!-- wp:paragraph --></p>
 <p>Overall, this specialization was a fun experience. I already knew Python and most of the basics they taught in the introductory classes so I was able to rush through them rather quickly. The focus on visualization during data exploration was useful, though, and introduced me to additional tools I haven't used before professionally.</p>
-<p><!-- /wp:paragraph --></p>
-<p><!-- wp:paragraph --></p>
 <p>My immediate next steps are to apply the new knowledge I've obtained in industry. Adding rich visualizations alone will make storytelling with data more compelling!</p>
-<p><!-- /wp:paragraph --></p>

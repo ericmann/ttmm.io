@@ -7,7 +7,7 @@ title: Home
 {% if page.url == "/" %}
 <div class="hero inner">
     <p class="hero-text">{{ site.author.greetings }}</p>
-</div>        
+</div>
 {% endif %}
 
 {% if page.url == "/" %}
@@ -25,7 +25,7 @@ title: Home
 <!-- Posts Index -->
 <div class="post-feed inner">
     {% if page.url == "/" %}
-    <div class="post-feed-title">Latest Articles</div>
+    <div class="post-feed-title">Latest Content</div>
     {% endif %}
     <div class="post-feed inner-wide">
         {% for post in paginator.posts %}
@@ -39,5 +39,3 @@ title: Home
     {% include newsletter-box.html %}
 {% endif %}
 </main>
-
-

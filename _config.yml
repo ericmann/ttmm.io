@@ -6,8 +6,7 @@ logo:
 # Author image is used in site sidebar and greetings in the home page hero text
 author:
   image: 'authorimage.jpg'
-  #greetings: "Eric is a storyteller, web developer, and outdoorsman living in the Pacific Northwest. If he's not working with new tech in web development, you can probably find him out running, climbing, or hiking in the woods."
-favicon: 'assets/images/favicon.ico'
+  greetings: "I'm Eric Mann, a software innovator from the Pacific Northwest. Welcome!"
 baseurl:
 production_url: https://vnext.ttmm.io
 #disqus: 'justgoodthemes'
@@ -39,8 +38,6 @@ navigation:
     url: /
   - text: About
     url: /about
-  - text: Contact Me
-    url: /contact
   - text: Search
     url: /search
 
