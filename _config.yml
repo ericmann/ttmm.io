@@ -8,7 +8,7 @@ author:
   image: 'authorimage.jpg'
   greetings: "I'm Eric Mann, a software innovator from the Pacific Northwest. Welcome!"
 baseurl:
-production_url: https://vnext.ttmm.io
+production_url: https://ttmm.io
 #disqus: 'justgoodthemes'
 #mailchimp_url: '//justgoodthemes.us3.list-manage.com/subscribe/post?u=78f1bab16028354caeb23aecd&amp;id=4a7330d117'
 # Add your GA Tracking Id
